@@ -1,0 +1,94 @@
+\section{Current Diagnostic Experiments}
+
+\subsection{Experiment 1: stationary stochastic quadratic}
+
+\paragraph{Purpose.}
+The first experiment tests whether the LIF communication primitive behaves as intended before introducing federation or neural networks. The objective is
+\begin{equation}
+  F(w)=\frac12 w^2,
+\end{equation}
+with stochastic gradients
+\begin{equation}
+  g_k=w_k+\epsilon_k,\qquad \epsilon_k\sim\mathcal{N}(0,2^2).
+\end{equation}
+The initial parameter is $w_0=3$. The main run uses 5000 gradient evaluations and 200 Monte Carlo seeds. The LIF parameters are
+\begin{equation}
+  \gamma=0.05,\qquad \Delta=0.5,\qquad q=0.05,\qquad \rho=0.98.
+\end{equation}
+For SGD, the learning rate is chosen as
+\begin{equation}
+  \eta_{\mathrm{SGD}}=\frac{q\gamma}{\Delta}=0.005,
+\end{equation}
+so that its mean small-signal gradient-flow scale is comparable to the event encoder. signSGD uses the same fixed update quantum $q$ as one IF/LIF event but updates every gradient evaluation.
+
+\paragraph{Baselines.}
+The methods are ordinary SGD, periodic signSGD, non-leaky IF-SGD ($\rho=1$), and LIF-SGD. The experiment additionally holds $w$ fixed at several values to measure communication-event rate and the probability that an emitted signed event points in the wrong direction. A leak sweep varies $\rho\in\{1,0.995,0.99,0.98,0.95,0.90\}$.
+
+\paragraph{Observed optimization behavior.}
+For the current configuration, the 200-seed averages were approximately
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & final $\E|w|$ & tail $\E[w^2]$ & mean $w^2$ & communications \\
+\midrule
+SGD & 0.0793 & 0.01017 & 0.18973 & 5000 \\
+signSGD & 0.2020 & 0.06218 & 0.11658 & 5000 \\
+IF-SGD & 0.0790 & 0.01035 & 0.19226 & 206.3 \\
+LIF-SGD ($\rho=0.98$) & 0.0743 & 0.00934 & 0.20122 & 177.8 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Thus, in this deliberately small diagnostic, IF/LIF reach an SGD-like tail error with roughly 4\% of the periodic communication count. This number must not be interpreted as an FL bandwidth claim: the problem is scalar, event addressing is absent, and periodic SGD/signSGD are intentionally simple references.
+
+\paragraph{Temporal evidence improves sign reliability.}
+The strongest observation is obtained by fixing $w$ while feeding noisy gradients. For example, at $|w|=0.5$, the instantaneous signSGD decision is wrong about 40\% of the time under the selected noise level, whereas the measured LIF wrong-event probability is about 3.5\%. At $|w|=1$, the corresponding values are roughly 30.9\% and 0.14\%. This supports the interpretation that LIF is not merely a low-bit representation: it implements a temporal evidence test before a signed update is emitted.
+
+\paragraph{Rate code.}
+The measured event rate increases approximately linearly with $|w|$ in the high-signal regime, consistent with
+\begin{equation}
+  f\approx\frac{\gamma|\nabla F|}{\Delta}.
+\end{equation}
+Near the optimum, stochastic noise still creates occasional events. Leakage reduces this chatter.
+
+\paragraph{Leak sweep.}
+Stronger leak reduces communication and tail variance but slows the transient because useful evidence is forgotten before it reaches threshold. For the current sweep, communication decreased from roughly 206 events at $\rho=1$ to 97 at $\rho=0.9$, while whole-run mean squared error increased. This establishes the first empirical communication--responsiveness trade-off controlled by the memory parameter.
+
+\subsection{Experiment 2: suddenly moving optimum}
+
+\paragraph{Purpose.}
+The second experiment asks whether leakage is beneficial when stored gradient evidence becomes stale. The objective becomes
+\begin{equation}
+  F_k(w)=\frac12(w-\theta_k)^2,
+\end{equation}
+with
+\begin{equation}
+  \theta_k=\begin{cases}
+  0,&k<500,\\
+  2,&k\geq500.
+  \end{cases}
+\end{equation}
+The experiment uses the same gradient-noise level and LIF parameterization and averages 300 Monte Carlo runs.
+
+\paragraph{Critical plotting convention.}
+The primary performance curves must be mean absolute error or RMSE to the instantaneous optimum. The signed ensemble mean $\E[w]$ is not a valid primary convergence diagnostic under symmetric stochastic oscillations. In particular, signSGD can have $\E[w]\approx\theta$ while individual trajectories retain a large steady-state variance. In the current experiment, the final-500-sample signSGD mean signed error is almost zero, but its mean absolute error is about 0.205 and its RMSE about 0.256. The corresponding LIF-SGD ($\rho=0.98$) values are approximately 0.074 and 0.095.
+
+\paragraph{Stale membrane evidence.}
+Immediately before the switch, the IF membrane contains residual evidence primarily associated with motion toward the old optimum. At the switch, the mean IF membrane is about $-0.094$, and roughly 69\% of realizations have a negative membrane state, which opposes the new positive update direction after the optimum jumps to 2.
+
+\paragraph{Oracle reset diagnostic.}
+To isolate stale evidence, an oracle baseline resets the IF membrane to zero exactly at the objective change. The resulting performance change is very small: post-switch MSE over the first 1000 samples improves only from roughly 0.325 to 0.321, and the recovery time changes only by a few gradient evaluations. Therefore, for this large optimum shift, stale membrane evidence is not the dominant limitation. The new gradient is strong enough to reverse the accumulator rapidly.
+
+\paragraph{Role of leak in this experiment.}
+Increasing leakage mainly trades communication for responsiveness. Post-switch event counts decrease as $\rho$ decreases, but recovery becomes slower. The current evidence therefore does \emph{not} support the strong claim that leakage inherently improves adaptation to a changing objective. A better stale-evidence test should use a moderate objective shift whose new gradient is comparable to the stored membrane state, or deliberately initialize a known stale membrane state and derive the first-correct-event delay analytically.
+
+\subsection{What these experiments establish---and what they do not}
+
+The current evidence supports four working observations:
+\begin{enumerate}
+  \item Event timing carries useful gradient-magnitude information.
+  \item Temporal accumulation can dramatically improve signed-update reliability under noisy gradients.
+  \item Sparse IF/LIF events can reproduce an SGD-like stochastic accuracy floor in the scalar diagnostic while using far fewer communication events.
+  \item Leakage is a genuine memory/communication parameter, but its benefit under nonstationarity remains unproven and regime-dependent.
+\end{enumerate}
+
+These experiments do not establish superiority over modern communication-efficient distributed optimization. They do not include vector event addresses, real bit accounting, client heterogeneity, partial participation, asynchronous server updates, or neural-network objectives. Their purpose is to validate and falsify mechanisms before those complications are introduced.
