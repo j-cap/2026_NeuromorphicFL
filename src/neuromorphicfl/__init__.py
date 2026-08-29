@@ -11,6 +11,11 @@ from .delayed_async import (
     run_delayed_rate_normalized_scalar_federation,
     weighted_quadratic_objective,
 )
+from .homeostatic import (
+    AdaptiveThresholdConfig,
+    HomeostaticBatchResult,
+    run_homeostatic_batch,
+)
 
 __all__ = [
     "QuadraticObjective",
@@ -28,4 +33,7 @@ __all__ = [
     "DelayedAsyncRun",
     "run_delayed_rate_normalized_scalar_federation",
     "weighted_quadratic_objective",
+    "AdaptiveThresholdConfig",
+    "HomeostaticBatchResult",
+    "run_homeostatic_batch",
 ]
