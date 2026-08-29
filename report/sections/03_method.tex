@@ -1,0 +1,125 @@
+\section{Candidate LIF-SGD Formulation}
+
+\subsection{Scalar quadratic starting point}
+
+The diagnostic problem is
+\begin{equation}
+  F(w)=\frac{a}{2}(w-\theta)^2,\qquad a>0,
+\end{equation}
+with gradient $\nabla F(w)=a(w-\theta)$. Ideal continuous gradient flow is
+\begin{equation}
+  \dot w=-\kappa a(w-\theta),
+\end{equation}
+which converges exponentially to $w^\star=\theta$.
+
+\subsection{Zero-leak integrate-and-fire encoder}
+
+Introduce a communication state $z$. Between events the model is held fixed and the desired gradient action is accumulated:
+\begin{align}
+  \dot w &= 0,\\
+  \dot z &= -\kappa a(w-\theta).
+\end{align}
+A communication event occurs when $|z|=\Delta$. The model then jumps by a fixed quantum $q$,
+\begin{align}
+  s &= \sign(z),\\
+  w^+ &= w+q s,\\
+  z^+ &= 0,
+\end{align}
+for the ideal continuous threshold-crossing model. In discrete implementations a subtractive reset $z^+=z-s\Delta$ is preferable because it preserves threshold overshoot.
+
+For fixed $w\neq\theta$ and zero leak, the inter-event interval is
+\begin{equation}
+  \tau=\frac{\Delta}{\kappa |\nabla F(w)|},
+\end{equation}
+so that
+\begin{equation}
+  f=\frac{1}{\tau}=\frac{\kappa |\nabla F(w)|}{\Delta}.
+\end{equation}
+Thus gradient magnitude is represented by event rate rather than event amplitude.
+
+If $q=\Delta$ and events are indexed by $j$, the deterministic scalar event map becomes
+\begin{equation}
+  w_{j+1}=w_j-q\,\sign(w_j-\theta),
+\end{equation}
+which is identical to constant-step sign descent in event index. This is an important negative result: the deterministic fixed-threshold jump sequence is not by itself a novel optimizer. Its distinctive information is the endogenous timing of those jumps.
+
+For fixed $q$, the event-indexed trajectory enters a practical neighborhood of the optimum. In the scalar deterministic case,
+\begin{equation}
+  \limsup_{t\rightarrow\infty}|w(t)-\theta|<q
+\end{equation}
+under the simple fixed-amplitude construction. Exact convergence requires a diminishing jump, adaptive quantization, or another refinement.
+
+\subsection{Stochastic gradients and LIF dynamics}
+
+The main candidate mechanism uses stochastic gradients
+\begin{equation}
+  g_k=a(w_k-\theta)+\epsilon_k,
+\end{equation}
+with zero-mean noise $\epsilon_k$. The discrete LIF state is
+\begin{equation}
+  z_{k+1}=\rho z_k-\gamma g_k,
+  \qquad 0\leq\rho\leq1.
+\end{equation}
+The relation to a continuous leak rate $\mu$ over sampling interval $h$ is approximately $\rho=e^{-\mu h}$. A threshold crossing $|z|\geq\Delta$ creates event $s=\sign(z)$ and model update
+\begin{equation}
+  w^+=w+q s,
+\end{equation}
+followed by subtractive reset
+\begin{equation}
+  z^+=z-s\Delta.
+\end{equation}
+The three parameters have deliberately separate roles:
+\begin{center}
+\begin{tabular}{cl}
+\toprule
+$q$ & optimization/update resolution \\
+$\Delta$ & amount of temporal evidence required before communication \\
+$\rho$ (or $\mu$) & memory/freshness timescale \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Before firing, the state is an exponentially weighted accumulation of past gradients,
+\begin{equation}
+  z_k\approx-\gamma\sum_{r=0}^{\infty}\rho^r g_{k-r}.
+\end{equation}
+Hence the event sign is not the sign of a single noisy minibatch gradient. It is the sign of accumulated evidence after enough magnitude has built up to cross a threshold.
+
+\subsection{Continuous stochastic interpretation}
+
+A diffusion approximation is
+\begin{equation}
+  dz=(-\mu z-\kappa a(w-\theta))dt-\kappa\sigma dB_t.
+\end{equation}
+For fixed $w$ and ignoring threshold/reset, this is an Ornstein--Uhlenbeck process with mean
+\begin{equation}
+  \E[z]=-\frac{\kappa a(w-\theta)}{\mu}
+\end{equation}
+and stationary variance
+\begin{equation}
+  \operatorname{Var}(z)=\frac{\kappa^2\sigma^2}{2\mu}.
+\end{equation}
+Without noise, a leaky state fires only if
+\begin{equation}
+  |\nabla F(w)|>\frac{\mu\Delta}{\kappa},
+\end{equation}
+which creates a deterministic gradient deadzone. This suppresses weak/noisy communication but can also slow learning.
+
+For zero leak, the Brownian first-passage model yields a wrong-boundary probability of the form
+\begin{equation}
+  p_{\mathrm{wrong}}(r)=\frac{1}{1+\exp\!\left(\frac{2ar\Delta}{\kappa\sigma^2}\right)},
+  \qquad r=|w-\theta|,
+\end{equation}
+showing explicitly that demanding more accumulated evidence improves sign reliability. The corresponding expected signed spike imbalance recovers the underlying gradient direction in expectation. This motivates viewing zero-leak IF as an information-conserving temporal encoder, while leakage intentionally trades information conservation for freshness and reduced noise chatter.
+
+\subsection{Proposed federated lift}
+
+For client $i$ with stochastic local gradient $g_i$, a first asynchronous federated form is
+\begin{equation}
+  z_i\leftarrow\rho_i z_i-\gamma_i g_i.
+\end{equation}
+Whenever coordinate $j$ crosses its threshold, the client emits only an event $(j,s_{i,j})$. The server applies
+\begin{equation}
+  w_j^+=w_j+q_j s_{i,j}
+\end{equation}
+and may broadcast the accepted event so all clients reconstruct the same global model trajectory. This removes the requirement for fixed FL rounds. The resulting system is an interconnected stochastic hybrid dynamical system and is the long-term theoretical target of the project.
