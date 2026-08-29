@@ -1,0 +1,135 @@
+\section{Experiment 9: Mechanism Audit Against Simpler Communication-Efficient Alternatives}
+\label{sec:exp9}
+
+\subsection{Purpose}
+
+Experiments~1--8 establish that finite-memory event communication can strongly reduce communication while retaining good scalar optimization accuracy. They do \emph{not}, however, establish that the LIF mechanism is algorithmically distinct from standard filtering, error-feedback, or event-thresholding constructions. Experiment~9 is therefore a gatekeeping experiment. Its question is
+\begin{equation}
+  \boxed{\text{Does the current FedLIF mechanism provide a distinct error--communication trade-off?}}
+\end{equation}
+The goal is explicitly not to obtain another favorable operating point. Each comparator is tuned over a small parameter grid and evaluated through an error--communication Pareto front.
+
+\subsection{Reference problem and fairness conventions}
+
+The audit keeps the heterogeneous delayed-asynchronous scalar problem from Experiment~8. Two equally weighted clients optimize
+\begin{equation}
+  F_i(w)=\frac12(w-\theta_i)^2,
+  \qquad
+  \theta_{\mathrm{slow}}=+0.05,
+  \quad
+  \theta_{\mathrm{fast}}=-0.05,
+\end{equation}
+so the intended aggregate optimum is $w^\star=0$. The slow/fast compute-delay ratio is $R=40$. A client computes on a server snapshot and returns the corresponding stochastic gradient only after its compute period. Compute-rate normalization is retained:
+\begin{equation}
+  \gamma_i=\gamma p_iT_i,
+\end{equation}
+so faster hardware does not receive larger optimization weight solely from producing more gradient results per wall-clock time.
+
+The primary noisy setting uses $\sigma=0.25$. A deterministic $\sigma=0$ control is retained. Initial conditions are randomized over a narrow interval to reduce lattice artifacts. All methods at a fixed noise setting use common random numbers. Event-based methods are tuned over the event quantum $q$ and their communication/filter parameters. Full-precision and periodic-sign anchors are also tuned over their step size or event quantum rather than inheriting one arbitrary setting.
+
+In this scalar experiment, communication cost is represented by the number of transmitted signed events/messages. This is only a mechanism-level proxy. In the vector experiments, actual bit accounting must include coordinate or block addresses, sign bits, packetization, and protocol overhead.
+
+\subsection{Comparator families}
+
+The following mechanisms are compared.
+\begin{enumerate}
+  \item \textbf{FedLIF with subtractive reset.} The current working algorithm,
+  \begin{align}
+    z_i^+ &= \rho z_i + u_i,\\
+    |z_i|\geq\Delta &\Rightarrow
+    \begin{cases}
+      w^+ = w + q\,\sign(z_i),\\
+      z_i^+ = z_i-\Delta\sign(z_i).
+    \end{cases}
+  \end{align}
+  \item \textbf{Full-reset LIF.} The same leaky integration and threshold, but a firing event resets the membrane to rest, $z_i^+=0$.
+  \item \textbf{IF with remote reset.} Infinite local memory, but a remote-client event invalidates the other client's accumulator. This is a simple explicit freshness mechanism.
+  \item \textbf{Memoryless pulse quantization.} The current rate-normalized gradient evidence is quantized directly into signed pulses without temporal memory.
+  \item \textbf{EMA plus memoryless pulse quantization.} A conventional exponential gradient filter is applied before stateless pulse quantization. This separates low-pass filtering from persistent residual accumulation.
+  \item \textbf{Periodic sign.} A fixed signed update is sent for every completed stochastic gradient.
+  \item \textbf{Full-precision asynchronous gradient updates.} This provides an accuracy anchor at high communication cost.
+\end{enumerate}
+
+\subsection{Exact equivalence results}
+
+The audit reveals an important novelty boundary that is stronger than any empirical comparison.
+
+\paragraph{Subtractive FedLIF is decayed error feedback after rescaling.}
+Let $u_k$ denote the LIF evidence increment and write the subtractive-reset recurrence abstractly as
+\begin{equation}
+  z_{k+1}=\rho z_k+u_k-\Delta s_k,
+\end{equation}
+where $s_k\in\{-1,0,+1\}$ denotes emitted threshold events. Define a residual in parameter-update units
+\begin{equation}
+  e_k=\frac{q}{\Delta}z_k.
+\end{equation}
+Then
+\begin{equation}
+  e_{k+1}=\rho e_k+\frac{q}{\Delta}u_k-q s_k.
+\end{equation}
+This is precisely a decayed error-feedback/residual recurrence with a fixed signed quantizer. The numerical equivalence check gives zero mismatching events/model states up to floating-point roundoff. Error feedback with memory decay already appears in communication-efficient learning, e.g. CO$^3$~\cite{chen2022co3}, while conventional gradient sparsification also accumulates unsent information~\cite{lin2017dgc,stich2018memory}. Consequently, the subtractive FedLIF recurrence alone cannot be claimed as a novel optimizer mechanism.
+
+\paragraph{Full-reset LIF is a reset EMA trigger after rescaling.}
+For one client with evidence gain $c_i$, full-reset LIF obeys
+\begin{equation}
+  z_{k+1}=\rho z_k-c_i g_k.
+\end{equation}
+Define
+\begin{equation}
+  m_k=-\frac{1-\rho}{c_i}z_k.
+\end{equation}
+Between reset events,
+\begin{equation}
+  m_{k+1}=\rho m_k+(1-\rho)g_k,
+\end{equation}
+which is the standard exponential moving average. The firing threshold maps to
+\begin{equation}
+  |m_k|\geq \frac{(1-\rho)\Delta}{c_i},
+\end{equation}
+and the LIF reset $z^+=0$ is exactly $m^+=0$. The numerical equivalence check again yields zero event/model mismatches up to floating-point roundoff. Thus the full-reset form is a neuromorphic interpretation of a thresholded resetting EMA, not a fundamentally different recurrence.
+
+These identities are central conclusions of Experiment~9. The project may still obtain value from the hybrid/event-driven interpretation, temporal coding, or additional neuromorphic design rules, but novelty cannot rest on either base recurrence alone.
+
+\subsection{Tuned noisy result}
+
+A higher-seed confirmation run at $R=40$ and $\sigma=0.25$ gives the representative best configurations in \cref{tab:exp9-noisy}.
+
+\begin{table}[ht]
+\centering
+\caption{Experiment~9 tuned comparator summary in the noisy heterogeneous delayed-asynchronous setting. Event/message counts are scalar communication proxies, not complete bit costs.}
+\label{tab:exp9-noisy}
+\begin{tabular}{lrrr}
+\toprule
+Method & Mean events/messages & Tail RMSE & Harmful-event fraction\\
+\midrule
+Full precision & 4612.0 & 0.02833 & 0.375\\
+Full-reset LIF & 28.33 & 0.03174 & 0.146\\
+FedLIF, subtractive reset & 28.88 & 0.03386 & 0.154\\
+IF & 31.38 & 0.03602 & 0.183\\
+IF with remote reset & 27.71 & 0.04129 & 0.142\\
+EMA + memoryless pulse & 42.89 & 0.08873 & 0.278\\
+Periodic sign & 4612.0 & 0.10428 & 0.498\\
+Memoryless pulse & 164.75 & 0.12885 & 0.445\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The event-driven finite-memory methods therefore remain highly effective as communication mechanisms in this toy problem. Full-reset LIF reaches a tail RMSE only slightly above the tuned full-precision reference while replacing thousands of messages by a few tens of signed events. It also marginally outperforms the subtractive-residual variant in this setting. This suggests that preserving every threshold overshoot is not essential here and can even retain undesirable noisy/heterogeneous evidence.
+
+However, the empirical advantage over the deliberately simpler EMA-plus-memoryless-pulse baseline does \emph{not} establish novelty over EMA filtering in general, because the exact rescaling above shows that a thresholded \emph{resetting} EMA can reproduce full-reset LIF exactly. The comparator family must therefore be interpreted together with the equivalence result, not in isolation.
+
+\subsection{Deterministic control}
+
+In the $\sigma=0$ control, IF, subtractive FedLIF, and full-reset LIF all obtain tail errors of order $2\times10^{-2}$ with roughly $25$--$32$ events for their best tuned configurations, while full precision reaches a much smaller numerical neighborhood at high communication cost. The relative finite-memory advantage is therefore markedly stronger under stochastic gradients, consistent with the earlier conclusion that temporal noise filtering is one of the robust mechanisms.
+
+\subsection{Interpretation and decision}
+
+Experiment~9 produces a mixed but decisive result.
+\begin{enumerate}
+  \item \textbf{The event-driven temporal mechanism is useful.} Properly tuned finite memory achieves an excellent scalar error--communication trade-off and is substantially better than periodic sign or memoryless pulse baselines.
+  \item \textbf{The current FedLIF-v0 recurrence is not algorithmically unique.} Subtractive reset is exactly decayed error feedback after rescaling.
+  \item \textbf{The empirically strongest full-reset variant is also not unique as a recurrence.} It is exactly a thresholded resetting EMA after rescaling.
+  \item \textbf{Explicit remote reset is competitive but weaker.} This reinforces the earlier conclusion that generic stale-gradient invalidation is not the main benefit.
+\end{enumerate}
+
+The original Experiment~9 gate should therefore be regarded as only partially passed. There is enough evidence to continue developing \emph{neuromorphic event-driven federation}, but there is not yet enough evidence to scale the present FedLIF-v0 recurrence directly and claim a new optimizer. Before or alongside the vector extension, the project should introduce and test a mechanism that is genuinely tied to the neuromorphic/event-time viewpoint, such as adaptive/homeostatic firing thresholds, firing-rate regulation, refractory dynamics, event-time-aware aggregation, or another hybrid design rule that is not algebraically reducible to standard EMA/error-feedback compression.
