@@ -2,31 +2,51 @@
 
 \subsection{Completed mechanism diagnostics}
 
-The first six experiments now establish the following progression:
+The first seven experiments now establish the following progression:
 \begin{enumerate}
   \item stationary stochastic quadratic: temporal accumulation improves signed-event reliability and strongly reduces communication relative to periodic sign updates in the toy setting;
   \item large moving optimum: residual membrane evidence is present but is rapidly overwhelmed by a strong new gradient;
   \item moderate moving optimum after stationary convergence: leakage does not improve tracking and mainly reduces communication at the cost of slower adaptation;
   \item controlled stale membrane: leakage erases an opposing membrane sign faster but does not reduce the total first-passage time to a useful threshold event, and sufficiently strong leakage creates a deadzone;
-  \item controlled asynchronous model drift: the same conclusion holds when the objective is fixed and the gradient changes only because the server model moves;
-  \item endogenous two-client asynchronous learning: mild leakage can reduce stale/harmful events and improve the communication--accuracy trade-off, whereas both infinite memory and aggressive forgetting/hard reset can be inferior.
+  \item controlled asynchronous model drift: the same distinction holds when the objective is fixed and the gradient changes only because the server model moves;
+  \item endogenous two-client asynchronous learning: a selected noisy operating point shows a net benefit for mild finite memory, initially suggesting soft stale-evidence invalidation;
+  \item asynchrony--memory regime map: the finite-memory optimum remains approximately $\rho=0.99$ for every tested compute-rate ratio, including $R=1$, and disappears entirely in a zero-noise control. This falsifies the strong claim that the observed gain is primarily caused by asynchronous stale-evidence handling in the homogeneous problem.
 \end{enumerate}
 
-These findings substantially sharpen the role of leak. It should not be motivated as a generic mechanism for faster adaptation. The strongest current interpretation is instead as a \emph{soft evidence-freshness mechanism}: old evidence is discounted continuously, but persistent gradients can still accumulate. This potentially balances two undesirable extremes---IF's infinite memory and hard residual invalidation after every remote update.
+The current interpretation of leak must therefore be narrower than initially hoped. The strongest supported role is
+\begin{equation}
+  \boxed{\text{stochastic temporal-evidence filtering and communication regularization}.}
+\end{equation}
+A genuinely federated freshness benefit remains a hypothesis to be tested under local-objective heterogeneity, where remote model motion can reverse a particular client's current gradient direction.
 
 \subsection{Immediate next experiments}
 
-The next work should stress-test whether the favorable two-client result is structural or a tuned scalar effect.
 \begin{enumerate}
-  \item \textbf{Asynchrony map.} Sweep the slow/fast compute-rate ratio, gradient-noise level, and random client phases. Measure harmful-event fraction, tail error, and communication for IF, hard reset, and LIF. The central question is whether an intermediate memory horizon remains optimal across a meaningful region rather than at one selected operating point.
-  \item \textbf{Memory/threshold map.} Systematically map $(\rho,\Delta,q,\gamma)$ to optimization error, event rate, stale-event probability, and deadzone behavior. The effective memory timescale should be compared with the characteristic time between remote server updates.
-  \item \textbf{Statistical heterogeneity.} Replace homogeneous client objectives by
+  \item \textbf{Heterogeneous asynchronous quadratics with rate normalization.} Use
   \begin{equation}
     F_i(w)=\frac12(w-\theta_i)^2
   \end{equation}
-  with controlled spreads in $\theta_i$. Distinguish an event that is stale relative to the client's current gradient from an event that is globally harmful; these notions no longer coincide under non-IID objectives.
-  \item \textbf{Random asynchronous schedules and delay.} Replace deterministic periods by Poisson or renewal computation times and introduce communication latency. This will test whether wall-clock LIF memory remains meaningful under realistic irregularity.
+  with controlled local optima. Choose configurations in which fast-client updates can move $w$ across the slow client's local optimum while its membrane still stores evidence from the opposite side. Because unequal compute rates otherwise implicitly overweight fast clients, introduce an explicit client/rate weighting rule so the intended aggregate objective
+  \begin{equation}
+    F(w)=\sum_i p_iF_i(w)
+  \end{equation}
+  remains well defined independently of hardware speed.
+
+  Measure two event labels separately:
+  \begin{enumerate}
+    \item locally stale: event sign disagrees with the client's \emph{current} exact local gradient;
+    \item globally harmful: the event increases the intended aggregate objective.
+  \end{enumerate}
+  This is now the decisive experiment for an FL-specific memory claim.
+
+  \item \textbf{Noise--memory map.} Since Experiment~7 identifies noise filtering as the main supported finite-memory mechanism, explicitly sweep $\sigma$ against $\rho$. Determine how the optimal memory horizon changes with stochastic-gradient signal-to-noise ratio and whether that behavior can be predicted from the scalar OU/LIF analysis.
+
+  \item \textbf{Memory/threshold map.} Systematically map $(\rho,\Delta,q,\gamma)$ to optimization error, event rate, wrong/harmful-event probability, and deadzone behavior. Separate the evidence threshold $\Delta$ from the update quantum $q$ throughout.
+
+  \item \textbf{Random asynchronous schedules and delay.} Replace deterministic periods by Poisson or renewal computation times and introduce communication latency only after the heterogeneous deterministic case is understood.
+
   \item \textbf{Vector quadratic.} Move from one coordinate to diagonal and then coupled quadratics. Study coordinate addressing, simultaneous threshold crossings, gradient correlation, and whether per-coordinate or blockwise LIF memory is preferable.
+
   \item \textbf{Block/event coding.} Compare one membrane per coordinate with blockwise norms or structured groups. This is required before neural networks because coordinate addresses may otherwise dominate the bit budget.
 \end{enumerate}
 
@@ -36,18 +56,19 @@ A useful theoretical progression is:
 \begin{enumerate}
   \item deterministic scalar hybrid model and practical-convergence bound;
   \item stochastic scalar first-passage analysis and expected descent;
-  \item asynchronous two-client quadratic with explicit model-drift and memory-timescale analysis;
+  \item explicit noise--memory design rule for the LIF evidence state;
+  \item asynchronous heterogeneous quadratic with rate-corrected client weighting and stale-sign conditions;
   \item vector strongly convex objective with coordinatewise or blockwise event encoders;
   \item stochastic smooth objective with bounded variance and asynchronous updates;
   \item multi-client objective $F=\sum_i p_iF_i$ with bounded heterogeneity, computation-rate mismatch, and communication delay;
   \item nonconvex neural-network setting.
 \end{enumerate}
 
-The theoretical quantities should mirror the control perspective where useful: Lyapunov/objective decrease, practical convergence neighborhood, event-rate bounds, robustness to noisy inputs, conditions for harmful stale events, and explicit communication-deadzone conditions. A particularly important design target is a relationship between the LIF memory timescale
+The theoretical quantities should mirror the control perspective where useful: Lyapunov/objective decrease, practical convergence neighborhood, event-rate bounds, robustness to noisy inputs, communication-deadzone conditions, and the relationship between evidence memory and the timescale on which the gradient signal itself changes. The previously proposed direct relation
 \begin{equation}
-  \tau_{\mathrm{mem}}\sim\frac{1}{1-\rho}
+  \tau_{\mathrm{mem}}\sim\tau_{\mathrm{remote\ model\ change}}
 \end{equation}
-and the characteristic timescale on which remote clients move the global model.
+should no longer be assumed; Experiment~7 shows that it is not supported in the homogeneous scalar setting.
 
 \subsection{Federated prototype}
 
@@ -55,7 +76,7 @@ The first broader federated prototype should still use a convex/vector objective
 
 The main performance axes should be
 \begin{equation}
-  \text{optimization/test error versus transmitted bits},
+  \text{optimization/test error versus transmitted bits}
 \end{equation}
 and
 \begin{equation}
@@ -63,18 +84,24 @@ and
 \end{equation}
 not accuracy versus nominal rounds. Actual encoding cost must include coordinate or block addresses and protocol overhead; an event is not literally one bit merely because its signed amplitude is binary.
 
+An additional fairness axis is now required:
+\begin{equation}
+  \text{per-client participation versus compute rate}.
+\end{equation}
+Experiment~7 shows that communication reduction can result from effectively silencing slow clients. Any heterogeneous-data experiment must detect and penalize this failure mode.
+
 \subsection{Neural-network experiment}
 
-Only after the asynchronous convex prototype survives parameter sweeps should an ordinary neural network be introduced. Backpropagation produces conventional stochastic gradients; the LIF bank acts after gradient computation as the communication encoder. Candidate benchmarks are a small MLP/CNN on MNIST followed by a modest CIFAR-10 model. The goal is not initially state-of-the-art accuracy, but to establish whether temporal evidence, soft freshness, and event-driven participation survive realistic high-dimensional, noisy, non-IID gradients.
+Only after the asynchronous convex prototype survives the heterogeneous/rate-normalized tests should an ordinary neural network be introduced. Backpropagation produces conventional stochastic gradients; the LIF bank acts after gradient computation as the communication encoder. Candidate benchmarks are a small MLP/CNN on MNIST followed by a modest CIFAR-10 model. The goal is not initially state-of-the-art accuracy, but to establish whether temporal evidence and event-driven communication survive realistic high-dimensional, noisy, non-IID gradients.
 
 \subsection{Paper-level decision criteria}
 
 The project should proceed toward a paper only if at least one of the following stronger claims survives comparison with existing methods:
 \begin{itemize}
   \item LIF/IF temporal evidence gives a better communication--reliability trade-off than periodic sign and standard error-feedback compression under stochastic gradients;
-  \item an intermediate finite memory horizon provides a robust advantage under true asynchronous model drift by reducing stale/harmful events without the evidence destruction caused by hard reset;
-  \item the hybrid-system formulation yields new convergence, event-rate, deadzone, or memory-timescale design rules unavailable from standard compression analysis;
-  \item asynchronous event timing itself provides a systems-level benefit under heterogeneous client computation and communication rates;
+  \item a finite memory horizon provides a robust advantage under \emph{true heterogeneous asynchronous model drift} after correcting for compute-rate bias;
+  \item the hybrid-system formulation yields new convergence, event-rate, deadzone, or memory/noise design rules unavailable from standard compression analysis;
+  \item asynchronous event timing itself provides a systems-level benefit under heterogeneous client computation and communication rates without silencing slow clients;
   \item bidirectional event-coded model evolution materially reduces communication while preserving useful learning behavior.
 \end{itemize}
 
