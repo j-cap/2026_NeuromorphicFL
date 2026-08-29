@@ -1,0 +1,37 @@
+\section{Roadmap Amendment After Experiment 9b}
+\label{sec:roadmap-post9b}
+
+Experiment~9b closes the first adaptive/homeostatic scalar branch. The project should not promote spike-triggered threshold homeostasis to the core optimizer on the basis of the current evidence. In the heterogeneous delayed-asynchronous scalar benchmark, a tuned fixed threshold dominates the tested adaptive-threshold family in tail error, whole-run error, communication, and harmful-event fraction. The adaptive threshold reacts qualitatively to changed stochastic activity, but the reaction does not improve the error--communication trade-off.
+
+The immediate roadmap is therefore:
+\begin{enumerate}
+  \item proceed to Experiment~10, the vector heterogeneous asynchronous quadratic, using the strongest simple fixed-threshold full-reset LIF/event encoder as the neuromorphic reference mechanism;
+  \item carry the Experiment~9 equivalence results explicitly into the vector study, so fixed full-reset LIF is interpreted as a resetting thresholded EMA unless an additional event mechanism changes that equivalence;
+  \item revisit adaptive/homeostatic thresholds only if the vector problem exposes a concrete failure of one shared fixed threshold, e.g., incompatible coordinate scales, layers, blocks, or client-specific event statistics;
+  \item do not introduce additional adaptive parameters merely to improve the scalar benchmark.
+\end{enumerate}
+
+\subsection{Explicit backlog: Lyapunov/descent-driven threshold and jump adaptation}
+
+A separate adaptive mechanism remains high-priority in the backlog:
+\begin{equation}
+  \boxed{\text{adapt }\Delta\text{ and/or }q\text{ from a descent/Lyapunov condition rather than an event-rate target}.}
+\end{equation}
+The motivation is fundamentally different from homeostasis. Event-rate control asks whether the communication activity is too high. A descent-driven mechanism asks whether a candidate event is sufficiently useful for the optimization objective.
+
+For a candidate signed event $s$ and jump magnitude $q$, consider
+\begin{equation}
+  w^+=w+q s.
+\end{equation}
+A future mechanism may require a certified or estimated decrease condition such as
+\begin{equation}
+  F(w^+)-F(w)\leq -\varepsilon,
+\end{equation}
+or use smoothness to derive a sufficient local condition. For example, for an $L$-smooth scalar/coordinate objective and a descent-aligned event, one obtains a bound of the form
+\begin{equation}
+  F(w+q s)-F(w)
+  \leq q\nabla F(w)^\top s+\frac{L}{2}q^2\norm{s}^2.
+\end{equation}
+This can potentially determine whether to fire, how large $q$ may be, or how the evidence threshold should vary.
+
+This backlog item is deliberately postponed until after the vector baseline. The vector experiment will clarify what information is available locally and at the server, what descent tests are implementable without destroying communication efficiency, and whether coordinate- or block-level usefulness tests are technically meaningful. If pursued, the method should be treated as a separate mechanism experiment rather than as a continuation of the unsuccessful firing-rate homeostasis study.
