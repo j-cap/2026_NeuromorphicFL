@@ -108,6 +108,35 @@ Smoke test:
 PYTHONPATH=src python experiments/07_asynchrony_memory_map.py --quick
 ```
 
+## 08 — heterogeneous delayed gradients with compute-rate normalization
+
+**Question.** Does finite LIF memory provide a genuinely federation-specific freshness advantage once clients have different local objectives and slow computations return gradients evaluated at outdated server snapshots?
+
+**Core setup.** Two equally weighted clients optimize `F_i(w)=0.5*(w-theta_i)^2` with `theta_slow=+0.05` and `theta_fast=-0.05`, so the intended aggregate optimum remains `w*=0`. A computation started by client `i` uses a server snapshot and returns only after `T_i` wall-clock ticks. The slow/fast delay ratio is swept over `R in {5,10,20,40,80}`. To remove compute-rate bias, a returned gradient contributes membrane evidence with gain `gamma_i = gamma * p_i * T_i`, making the mean evidence injection per wall-clock tick approximately proportional to the intended client weight rather than hardware speed.
+
+Two labels are reported separately:
+
+- **locally stale event:** the emitted sign disagrees with the client's exact local descent direction at the current server model;
+- **globally harmful event:** applying the event increases the intended weighted aggregate objective.
+
+A **fresh-gradient oracle** keeps the same completion schedule and rate normalization but evaluates the gradient at the current model when the job completes. This isolates computation-delay staleness from ordinary client heterogeneity and fixed-step/event regularization.
+
+**Current conclusion.** True deterministic locally stale events can be produced under sufficiently strong delayed computation; in the stress design they first appear clearly around `R=40`, and every such event is globally harmful. However, the fresh-gradient oracle removes those stale events without materially improving IF's tail error or global-harm rate. Mild LIF can eliminate the stale events and reduce global harm, but its much larger improvement comes from suppressing the broader heterogeneous event tug-of-war / creating a finite-memory deadzone, not from approximating the fresh oracle. With randomized initial conditions at `R=40`, deterministic IF has only about `0.36%` locally stale events, while roughly `36%` of all events are globally harmful; LIF `rho=0.995` removes the stale events and reduces global harm strongly, but the causal oracle confirms that stale gradients are not the main source of the gain. Under noisy gradients the wrong-direction-event fraction grows with delay, but finite memory does not consistently reduce it at high `R`.
+
+This is therefore another falsification of the strong freshness claim. The project now has evidence for temporal filtering/regularization and event suppression under heterogeneity, but not yet for a robust FL-specific stale-gradient benefit from leak itself.
+
+Full run:
+
+```bash
+PYTHONPATH=src python experiments/08_heterogeneous_delayed_async.py
+```
+
+Smoke test:
+
+```bash
+PYTHONPATH=src python experiments/08_heterogeneous_delayed_async.py --quick
+```
+
 ## Conventions
 
 - Use fixed random seeds and Monte Carlo ensembles.
@@ -120,3 +149,5 @@ PYTHONPATH=src python experiments/07_asynchrony_memory_map.py --quick
 - When studying nonstationarity, ensure methods have comparable states at the change point or explicitly control the state.
 - In asynchronous experiments, state explicitly whether leakage acts per wall-clock interval or per local gradient evaluation.
 - Always check whether reduced communication is caused by useful compression or by effectively silencing slow clients.
+- Distinguish sparse current-model sampling from true delayed gradients: a slow client is only genuinely stale if its returned gradient was computed from an older server snapshot.
+- Under heterogeneous objectives, distinguish locally stale/wrong-direction events from globally harmful events; they are not the same phenomenon.
