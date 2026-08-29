@@ -7,7 +7,7 @@ The central idea is to reinterpret communication-efficient distributed/federated
 ## Repository structure
 
 - `src/` — reusable objectives, optimizers, scalar and asynchronous simulation utilities, and metrics.
-- `experiments/` — self-contained experiment scripts built on `src/`.
+- `experiments/` — self-contained experiment scripts built on `src/` where appropriate.
 - `report/` — evolving LaTeX knowledge base, bibliography, and figure conventions.
 
 ## Current experiment progression
@@ -17,6 +17,9 @@ The central idea is to reinterpret communication-efficient distributed/federated
 3. **Moderate moving optimum** — controls the change-point state and shows that leak does not generically improve adaptation speed.
 4. **Controlled stale membrane** — separates stale-sign erasure from useful threshold firing and identifies the LIF deadzone.
 5. **Controlled asynchronous model drift** — keeps the local objective fixed while the server model moves, isolating the FL-specific source of gradient staleness.
-6. **Two-client asynchronous learning** — lets a fast client move the global model underneath a slow client's stored evidence. Mild LIF memory currently shows a promising soft-freshness trade-off between infinite IF memory and aggressive hard reset.
+6. **Two-client asynchronous learning** — a selected noisy operating point initially suggested a mild finite-memory advantage.
+7. **Asynchrony × memory regime map** — stress-tests that interpretation. The same finite-memory optimum appears even at `R=1` and disappears in the zero-noise control, so the current supported explanation is stochastic evidence filtering / event regularization rather than an established FL-specific freshness benefit.
 
-The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which a later manuscript can be distilled. Current results are mechanism diagnostics, not yet paper-level claims; the next stage is systematic asynchronous parameter and heterogeneity sweeps.
+A key negative result is now part of the project knowledge base: **reduced communication can be caused by silencing slow clients**, especially under wall-clock leakage. Future heterogeneous-client experiments must therefore report per-client participation and correct for unequal compute-rate weighting.
+
+The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which a later manuscript can be distilled. Current results are mechanism diagnostics, including falsified hypotheses; the next decisive stage is controlled heterogeneous asynchronous quadratics with explicit rate normalization.
