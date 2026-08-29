@@ -36,7 +36,7 @@ PYTHONPATH=src python experiments/02_moving_optimum.py
 
 Compare IF-SGD, an oracle-reset IF baseline, and several LIF retention factors. Measure pre-switch stationarity, short-horizon post-switch MAE, recovery time, first-event delay/correctness, and communication.
 
-**Diagnostic interpretation.** If stale membrane evidence is practically important, oracle resetting and/or mild leakage should improve post-switch adaptation after the methods begin from comparable parameter distributions. If not, leakage should continue to appear primarily as a communication/noise trade-off.
+**Current conclusion.** Once the change-point state is controlled, leakage does not improve tracking. It reduces communication but slows adaptation; an oracle membrane reset changes IF only marginally.
 
 Run:
 
@@ -55,12 +55,50 @@ Track two distinct quantities:
 1. time until the stale membrane sign is erased (`z >= 0`), and
 2. time until a useful communication event is actually emitted (`z >= +Delta`).
 
-The distinction is crucial. Leak can accelerate stale-sign cancellation while simultaneously slowing or even preventing threshold crossing because the same leak attenuates newly accumulated evidence.
+**Current conclusion.** Leak erases stale sign sooner, but does not make a useful threshold event occur sooner. Strong leak can prevent deterministic firing entirely through the LIF deadzone.
 
 Run:
 
 ```bash
 PYTHONPATH=src python experiments/04_controlled_stale_membrane.py
+```
+
+## 05 — controlled asynchronous model drift
+
+**Question.** Does the same stale-evidence mechanism appear when the *objective stays fixed* but the global model moves because of remote-client activity?
+
+**Core setup.** A single diagnostic client has fixed local objective `F_A(w)=0.5*(w-0.25)^2`. It has stored positive membrane evidence accumulated near `w=0`. Other clients are abstracted as an instantaneous server-model drift to `w=0.5`, which reverses the diagnostic client's local gradient while leaving its loss unchanged. Start from a controlled stale membrane `z=0.4` and compare IF/LIF first-passage behavior.
+
+Measure both stale-sign erasure and the delay until the first correct negative event. This is the FL-specific counterpart of Experiment 04: the gradient changes because `w` changes, not because the objective changes.
+
+**Current conclusion.** Mild leak erases the obsolete membrane sign earlier, but the first useful event is not accelerated; stronger leak again creates a responsiveness/deadzone cost. This isolates the mechanism but does not by itself establish an optimization benefit.
+
+Run:
+
+```bash
+PYTHONPATH=src python experiments/05_controlled_async_drift.py
+```
+
+## 06 — endogenous two-client asynchronous learning
+
+**Question.** Can finite LIF memory provide a net systems benefit when stale evidence is created endogenously by another client's server updates?
+
+**Core setup.** Two clients optimize the same scalar quadratic `F_i(w)=0.5 w^2`, eliminating statistical heterogeneity so stale/harmful event signs are unambiguous. The fast client evaluates a gradient every wall-clock tick; the slow client every five ticks. Server events are applied immediately. All client membranes decay every wall-clock tick for LIF, including while a client is idle. The slow client can therefore hold evidence accumulated at old server models while the fast client moves `w` underneath it.
+
+Compare:
+
+- IF (`rho=1`): infinite evidence memory,
+- an oracle hard-reset baseline that clears every other client's membrane after each server update,
+- LIF with several finite memory factors.
+
+Measure optimization error, total communication, fraction of events that oppose the *current* true descent direction, and client-specific harmful-event fractions.
+
+**Current diagnostic result.** With the present configuration (`slow period=5`, `fast period=1`, `sigma=0.5`, `Delta=0.5`, `q=0.05`), mild LIF memory (`rho=0.995`) reduces the harmful-event fraction from about 8.7% for IF to about 3.7%, reduces communication, and improves tail RMSE. Stronger leak removes harmful events further but degrades tracking through the already identified deadzone/responsiveness mechanism. The hard-reset oracle is also not ideal: frequent remote updates repeatedly destroy useful slow-client evidence. This suggests a candidate interpretation of mild LIF as a **soft freshness mechanism between infinite memory and hard invalidation**. The result is still a toy diagnostic and requires parameter sweeps and heterogeneous-client tests before any broader claim.
+
+Run:
+
+```bash
+PYTHONPATH=src python experiments/06_two_client_async.py
 ```
 
 ## Conventions
@@ -71,3 +109,4 @@ PYTHONPATH=src python experiments/04_controlled_stale_membrane.py
 - Preserve threshold `Delta` and parameter jump `q` as separate quantities.
 - Prefer subtractive membrane reset so discrete threshold overshoot is not discarded.
 - When studying nonstationarity, ensure methods have comparable states at the change point or explicitly control the state; otherwise apparent tracking gains can be initialization artifacts.
+- In asynchronous experiments, define whether leakage acts per local gradient evaluation or per wall-clock interval. Experiments 05--06 use wall-clock leakage because the intended LIF memory represents information age, including periods when a client is idle.
