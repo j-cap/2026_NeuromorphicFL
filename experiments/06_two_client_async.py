@@ -16,8 +16,8 @@ OUT = ROOT / "experiments" / "results" / "06_two_client_async"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # Both clients optimize the same quadratic F_i(w)=0.5*w^2. This deliberately
-# removes statistical heterogeneity so that every event whose sign opposes the
-# instantaneous descent direction is unambiguously stale/harmful globally.
+# removes statistical heterogeneity. A harmful event is classified exactly by
+# whether the fixed q-sized server jump increases the current quadratic.
 CLIENTS = [
     AsyncClient(theta=0.0, period=5),  # client 0: slow
     AsyncClient(theta=0.0, period=1),  # client 1: fast
@@ -82,9 +82,9 @@ def main():
                 "tail_rmse": np.sqrt(np.mean(W[:, -1000:] ** 2)),
                 "tail_mae": np.mean(np.abs(W[:, -1000:])),
                 "mean_total_events": np.mean(total_events),
-                "harmful_event_fraction": np.sum(harmful) / np.sum(total_events),
+                "objective_increasing_event_fraction": np.sum(harmful) / np.sum(total_events),
                 "mean_slow_client_events": np.mean(slow_events),
-                "slow_client_harmful_fraction": np.sum(slow_harmful) / np.sum(slow_events)
+                "slow_client_objective_increasing_fraction": np.sum(slow_harmful) / np.sum(slow_events)
                 if np.sum(slow_events) > 0
                 else np.nan,
             }
@@ -110,10 +110,7 @@ def main():
     plt.figure(figsize=(8, 5))
     plt.scatter(summary["mean_total_events"], summary["tail_rmse"])
     for _, row in summary.iterrows():
-        plt.annotate(
-            row["method"],
-            (row["mean_total_events"], row["tail_rmse"]),
-        )
+        plt.annotate(row["method"], (row["mean_total_events"], row["tail_rmse"]))
     plt.xlabel("Mean total communication events")
     plt.ylabel("Tail RMSE")
     plt.title("Communication--accuracy trade-off")
@@ -122,15 +119,15 @@ def main():
     plt.close()
 
     plt.figure(figsize=(8, 5))
-    plt.scatter(summary["harmful_event_fraction"], summary["tail_rmse"])
+    plt.scatter(summary["objective_increasing_event_fraction"], summary["tail_rmse"])
     for _, row in summary.iterrows():
         plt.annotate(
             row["method"],
-            (row["harmful_event_fraction"], row["tail_rmse"]),
+            (row["objective_increasing_event_fraction"], row["tail_rmse"]),
         )
-    plt.xlabel("Fraction of events opposing current descent direction")
+    plt.xlabel("Fraction of objective-increasing events")
     plt.ylabel("Tail RMSE")
-    plt.title("Stale/harmful events versus optimization accuracy")
+    plt.title("Harmful events versus optimization accuracy")
     plt.tight_layout()
     plt.savefig(OUT / "harmful_events_vs_accuracy.png", dpi=180)
     plt.close()
