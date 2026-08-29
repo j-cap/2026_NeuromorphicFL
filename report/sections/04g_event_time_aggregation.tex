@@ -1,0 +1,156 @@
+\section{Experiment 09c: Event-Time-Aware Aggregation}
+
+\subsection{Motivation}
+Experiment~09 showed that the base LIF recurrences are algebraically equivalent to established residual/EMA mechanisms after a change of variables. Experiment~09b then showed that firing-rate homeostasis does not improve the scalar optimizer relative to a tuned fixed threshold. The next remaining scalar mechanism was therefore to ask whether the \emph{event timing itself} contains useful information that is discarded by the fixed-jump server update.
+
+For a persistent deterministic gradient, the LIF/IF first-passage time satisfies approximately
+\begin{equation}
+  \tau \propto \frac{1}{\abs{g}},
+\end{equation}
+so spike timing clearly contains information about the driving signal. The question in Experiment~09c is whether this temporal information remains useful in the stochastic, heterogeneous, asynchronous optimization setting and whether the server can exploit it without adding communication payload.
+
+The initial hypothesis was deliberately stronger:
+\begin{quote}
+A short inter-event interval may indicate a high-confidence persistent gradient, while a long interval may indicate a weak or noisy threshold crossing. Therefore the server may improve aggregation by scaling the fixed event jump using the measured inter-event interval.
+\end{quote}
+The experiment was designed to distinguish this confidence interpretation from simpler effects such as client-speed bias, proximity to the optimum, or an ordinary learning-rate schedule.
+
+\subsection{Setup}
+The benchmark is the same two-client heterogeneous delayed-gradient problem used in Experiments~08--09b. The clients have
+\begin{equation}
+  \theta_{\mathrm{slow}}=+0.05,
+  \qquad
+  \theta_{\mathrm{fast}}=-0.05,
+\end{equation}
+with equal intended weights and compute periods
+\begin{equation}
+  T_{\mathrm{slow}}=40,
+  \qquad
+  T_{\mathrm{fast}}=1.
+\end{equation}
+The full-reset LIF reference uses
+\begin{equation}
+  \rho=0.999,
+  \qquad
+  \Delta=1.5,
+  \qquad
+  q=0.05,
+  \qquad
+  \sigma=0.25.
+\end{equation}
+Evidence injection remains compute-rate normalized through
+\begin{equation}
+  \gamma_i=\gamma p_i T_i.
+\end{equation}
+
+For every event, two timing variables are recorded:
+\begin{enumerate}[label=(\roman*)]
+  \item the raw wall-clock interval \(\tau_{\mathrm{wall}}\) since that client's previous event;
+  \item the number \(\tau_{\mathrm{local}}\) of returned local gradients since that client's previous event.
+\end{enumerate}
+The second quantity is the cleaner measure of evidence-accumulation duration because it removes the trivial difference in compute speed.
+
+Event quality is characterized by both
+\begin{equation}
+  \text{local wrong direction}
+\end{equation}
+and
+\begin{equation}
+  F(w^+)>F(w),
+\end{equation}
+which marks a globally harmful event.
+
+\subsection{Experiment 09c-A: does timing predict event quality?}
+When all events are pooled, the client-normalized local interval has essentially no rank correlation with global harm,
+\begin{equation}
+  \rho_{\mathrm{S}}(\tau_{\mathrm{local}},\text{harm})\approx -0.002,
+\end{equation}
+and only a small relation with local wrong-direction events. Raw wall-clock time appears much more predictive, but it is also extremely strongly anticorrelated with the current distance to the global optimum. Per client, for example, the slow client's wall interval has approximately
+\begin{equation}
+  \rho_{\mathrm{S}}(\tau_{\mathrm{wall}},\abs{w})\approx -0.93,
+\end{equation}
+while for the fast client the correlation is approximately \(-0.995\).
+
+Conditioning on comparable \(\abs{w}\) ranges largely removes the apparent timing--harm relationship. Near the optimum, fixed-amplitude events are intrinsically more likely to overshoot and become globally harmful; far from the optimum almost all events are beneficial regardless of their interval. Thus the original interpretation
+\begin{equation}
+  \text{long interval} \Rightarrow \text{low sign confidence}
+\end{equation}
+is not supported by this diagnostic. The timing signal is dominated by optimization stage / gradient magnitude rather than an independent event-reliability variable.
+
+\subsection{Experiment 09c-B: timing-aware jump scaling}
+Despite the failure of the confidence interpretation, timing can still be used as an adaptive update-resolution signal. The tested rule is
+\begin{equation}
+  w^+=w+q\,c(\tau)s,
+\end{equation}
+with
+\begin{equation}
+  c(\tau)=\min\left\{1,\left(\frac{\tau_c}{\tau}\right)^\alpha\right\}.
+\end{equation}
+No extra payload is required because the server already observes the event-arrival time.
+
+Using \(\tau_{\mathrm{local}}\) performs poorly. The best tested local-completion timing rule has tail RMSE about \(0.0385\), substantially worse than the fixed-jump reference at about \(0.0268\). A shuffled-local-timing control can even outperform the true-local-timing version, confirming that \(\tau_{\mathrm{local}}\) is not carrying a useful confidence signal in this benchmark.
+
+Raw wall-clock timing behaves differently. A representative rule with
+\begin{equation}
+  \tau_c=250,
+  \qquad
+  \alpha=0.5
+\end{equation}
+reduces tail RMSE from approximately
+\begin{equation}
+  0.0268 \rightarrow 0.0204
+\end{equation}
+while using essentially the same number of events
+\begin{equation}
+  23.7 \rightarrow 24.1.
+\end{equation}
+The whole-run MSE remains essentially unchanged.
+
+Two controls were used to determine whether this gain is merely static client-speed reweighting. Shuffling wall intervals \emph{within each client} gives tail RMSE about \(0.0263\), and replacing the dynamic timing weights by fixed per-client multipliers equal to their average timing weights gives approximately \(0.0243\). Both are worse than the true dynamic timing rule. Hence the improvement is not explained solely by slow-versus-fast client identity or by the marginal interval distribution.
+
+\subsection{Comparison with a conventional decreasing jump schedule}
+The remaining confounder is ordinary step-size adaptation. A tuned global wall-clock schedule of the form
+\begin{equation}
+  q(t)=q_0\left(1+\frac{t}{T_q}\right)^{-\beta}
+\end{equation}
+was therefore included. The best tested conventional schedule reaches tail RMSE about \(0.0210\), close to the timing-aware result \(0.0204\), but with slightly higher communication and worse whole-run error.
+
+This result shows that true event timing contains some useful local/state-dependent information beyond a single global learning-rate schedule at the selected operating point. However, the margin is small and is not robust enough to establish a new core mechanism.
+
+\subsection{Robustness sweep}
+The fixed-jump, timing-aware, and global-schedule variants were compared without retuning over
+\begin{equation}
+  R\in\{5,20,40,80\}
+\end{equation}
+and
+\begin{equation}
+  \sigma\in\{0,0.25,0.5\}.
+\end{equation}
+The main observations are:
+\begin{itemize}
+  \item In the deterministic case \(\sigma=0\), fixed \(q\) is consistently better than the timing-aware rule. Timing-dependent attenuation is unnecessary when gradient noise is absent and simply reduces useful progress.
+  \item At \(\sigma=0.25\), timing-aware jumps improve on fixed \(q\) by roughly \(3\%\)--\(15\%\) depending on the asynchrony ratio, but beat the tuned global schedule only for part of the grid.
+  \item At \(\sigma=0.5\), timing-aware scaling often improves on fixed \(q\), especially at low-to-moderate asynchrony, but a conventional global schedule is better for several high-asynchrony operating points.
+\end{itemize}
+
+Thus the supported interpretation is narrower than the original hypothesis:
+\begin{equation}
+  \boxed{\text{event timing can act as a useful stochastic update-resolution signal}}
+\end{equation}
+but the experiments do \emph{not} establish
+\begin{equation}
+  \boxed{\text{inter-event time is a robust independent confidence statistic}}
+\end{equation}
+or
+\begin{equation}
+  \boxed{\text{timing-aware aggregation consistently beats conventional step-size adaptation}.}
+\end{equation}
+
+\subsection{Decision after Experiment 09c}
+Experiment~09c is therefore a partial positive result, but it does not justify further scalar tuning. The event-time-aware rule should be retained as a secondary variant when the project moves to vector problems, because higher-dimensional blocks/coordinates may create substantially richer timing structure than the scalar benchmark. It should not replace the fixed full-reset LIF encoder as the project reference method yet.
+
+The next main experiment remains Experiment~10: vector heterogeneous asynchronous quadratics with explicit bit accounting. The scalar mechanism search is considered sufficiently exhausted. Two extensions remain in the backlog:
+\begin{enumerate}
+  \item block/coordinate competition or lateral inhibition, which only becomes meaningful in a vector problem;
+  \item adaptive threshold and jump dynamics derived from a Lyapunov/descent condition rather than firing-rate homeostasis or heuristic timing weights.
+\end{enumerate}
