@@ -73,12 +73,12 @@ def simulate_batch(
     periods = np.array([slow_period, 1], dtype=int)
     evidence_gains = GAMMA * WEIGHTS * periods
 
+    # Common random numbers across rho and the fresh-gradient oracle at fixed
+    # (R, sigma). This makes the noisy memory sweep a paired comparison.
     rng = np.random.default_rng(
         BASE_SEED
         + 1009 * slow_period
-        + int(1e6 * rho)
         + int(1000 * sigma)
-        + 31 * int(use_fresh_gradient_oracle)
         + 47 * int(randomized_initial_conditions)
     )
 
@@ -171,7 +171,6 @@ def simulate_batch(
                 global_harm_per_client[client, idx] += event_harmful.astype(int)
                 stale_and_harm[idx] += (event_stale & event_harmful).astype(int)
 
-            # Start the next job from the latest server model.
             snapshots[client] = w.copy()
             next_completion[client] = tick + periods[client]
 
@@ -236,8 +235,6 @@ def run_grid(*, n_ticks: int, n_seeds: int, r_values, rho_values):
                     }
                 )
 
-            # Causal baseline: same completion schedule and rate normalization,
-            # but remove computation-delay staleness by using current gradients.
             rows.append(
                 {
                     "sigma": sigma,
