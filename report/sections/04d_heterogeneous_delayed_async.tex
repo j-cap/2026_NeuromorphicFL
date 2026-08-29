@@ -1,0 +1,172 @@
+\section{Heterogeneous Delayed-Gradient Asynchrony with Rate Normalization}
+
+Experiment~8 is the first diagnostic that simultaneously introduces (i) heterogeneous local objectives, (ii) genuine delayed gradients computed from outdated server snapshots, and (iii) explicit compute-rate normalization. It was designed as the decisive test of the remaining strong hypothesis that finite LIF memory provides a specifically federated \emph{freshness} advantage beyond the stochastic filtering and event regularization already established in earlier experiments.
+
+\subsection{Why the previous asynchronous model was insufficient}
+
+The preceding asynchronous experiments made a slow client evaluate less often, but when it did evaluate it used the \emph{current} server model. This creates sparse sampling and model motion between local evaluations, but not a genuinely stale gradient computation. In the deterministic case it also explains why locally wrong-direction events were essentially absent: if a membrane is below threshold and the current local gradient reverses sign, the next current-gradient contribution moves the membrane away from the obsolete threshold before a wrong-sign event can be emitted.
+
+Experiment~8 therefore models computation delay explicitly. Client $i$ starts a job from server snapshot $\bar w_i$. The returned gradient becomes available only after $T_i$ wall-clock ticks,
+\begin{equation}
+  g_i^{\mathrm{return}} = \bar w_i-\theta_i+\epsilon_i,
+\end{equation}
+while the current server state at completion may already be $w\neq\bar w_i$. After the result is processed, the client immediately starts its next job from the current server model.
+
+\subsection{Heterogeneous objective and compute-rate normalization}
+
+The two local objectives are
+\begin{equation}
+  F_i(w)=\frac12(w-\theta_i)^2,
+\end{equation}
+with equal intended weights $p_1=p_2=1/2$. The stress design uses
+\begin{equation}
+  \theta_{\mathrm{slow}}=+0.05,
+  \qquad
+  \theta_{\mathrm{fast}}=-0.05,
+\end{equation}
+so the aggregate optimum remains
+\begin{equation}
+  w^\star=0.
+\end{equation}
+The weighted aggregate objective is
+\begin{equation}
+  F(w)=\sum_i p_iF_i(w)
+      =\frac12 w^2+\frac12(0.05)^2.
+\end{equation}
+Hence the excess objective is exactly $F(w)-F(w^\star)=w^2/2$.
+
+The fast client has $T_{\mathrm{fast}}=1$ and the slow client has
+\begin{equation}
+  T_{\mathrm{slow}}=R,
+  \qquad
+  R\in\{5,10,20,40,80\}.
+\end{equation}
+Without correction, a fast client would return more gradients per unit wall-clock time and would therefore receive a larger implicit optimization weight. Experiment~8 removes this hardware-speed bias by scaling each completed gradient contribution as
+\begin{equation}
+  \gamma_i=\gamma p_iT_i,
+\end{equation}
+so that, for a slowly varying model, the average evidence injection per wall-clock tick is approximately
+\begin{equation}
+  \frac{1}{T_i}\left(-\gamma p_iT_i g_i\right)
+  =-\gamma p_i g_i.
+\end{equation}
+Thus the intended aggregate weights, rather than the compute rates, determine the mean evidence flux.
+
+The remaining event parameters in the stress test are
+\begin{equation}
+  \gamma=0.05,\qquad
+  \Delta=0.5,\qquad
+  q=0.1,
+\end{equation}
+with initial condition $w_0=1.03$. The local optima are deliberately close to the global operating region and the event quantum is large enough that sufficiently delayed remote updates can carry the server across a client's local optimum during an in-flight computation. This is a \emph{stress design}: the purpose is to make genuine local stale-sign events observable, not to claim that these particular scalar values are application-realistic.
+
+\subsection{Three distinct staleness/harm labels}
+
+The experiment separates three concepts that should not be conflated.
+
+\paragraph{Stale gradient result.}
+A completed gradient is direction-stale if the deterministic descent direction at the computation snapshot differs from the deterministic descent direction at completion:
+\begin{equation}
+  -\sign(\bar w_i-\theta_i)
+  \neq
+  -\sign(w-\theta_i).
+\end{equation}
+
+\paragraph{Locally stale event.}
+An emitted event $s\in\{-1,+1\}$ is locally stale if its sign disagrees with the client's \emph{current} exact local descent direction,
+\begin{equation}
+  s\neq-\sign(w-\theta_i).
+\end{equation}
+In the deterministic experiment this is a clean event-level consequence of delayed/stored information. With stochastic gradients, the same metric also counts wrong-direction events caused by gradient noise and should therefore be interpreted more cautiously.
+
+\paragraph{Globally harmful event.}
+An event is globally harmful if the intended aggregate objective increases,
+\begin{equation}
+  F(w+qs)>F(w).
+\end{equation}
+Under heterogeneous objectives, a locally correct event can be globally harmful because local and global descent directions need not agree. This distinction turns out to be central to the result.
+
+\subsection{Fresh-gradient causal oracle}
+
+To isolate computation-delay staleness from ordinary client conflict, an oracle keeps the exact same completion schedule, event quantization, client weights, and compute-rate normalization but replaces the old snapshot gradient at completion by the current-model gradient. Therefore the difference between delayed IF and fresh-gradient IF is specifically attributable to computation-delay staleness rather than heterogeneous objectives or fixed event size.
+
+\subsection{Deterministic stress-map result}
+
+The zero-noise experiment is the primary test of an FL-specific freshness effect because it removes stochastic wrong-sign events. Genuine locally stale events can be produced, but only in sufficiently stressed delay regimes. At $R=40$, delayed IF has a locally stale event fraction of approximately
+\begin{equation}
+  0.027,
+\end{equation}
+and every such locally stale event is globally harmful in the fixed-initial-condition stress run. Finite memory can remove these events; for example $\rho=0.995$ has zero locally stale events at this point.
+
+However, the causal comparison does \emph{not} support stale-gradient removal as the main explanation of the LIF improvement. Representative zero-noise results are
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method at $R=40$ & tail RMSE & local stale frac. & global harmful frac. & events \\
+\midrule
+Delayed IF ($\rho=1$) & 0.0472 & 0.0270 & 0.378 & 37 \\
+Fresh-gradient IF oracle & 0.0442 & 0 & 0.375 & 40 \\
+LIF ($\rho=0.995$) & 0.0300 & 0 & 0 & 10 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The fresh-gradient oracle removes the locally stale events but changes IF's error and global-harm rate only slightly. Therefore the stale events are real and individually harmful, but they are not the dominant source of IF's aggregate degradation.
+
+The stronger causal observation is that mild LIF also improves in regimes $R=5,10,20$ where deterministic IF produces \emph{zero} locally stale events. In those regimes, $\rho=0.995$ still reduces event traffic strongly and settles in a small practical neighborhood. Hence its principal effect cannot be described as correcting stale gradients.
+
+\subsection{Globally harmful events are mostly heterogeneity, not staleness}
+
+In the deterministic IF stress runs, roughly $36$--$38\%$ of events can increase the global objective even when the locally stale fraction is zero. These are ordinary heterogeneous-client conflicts: a client can make a locally correct move toward $\theta_i$ that moves the shared model away from the aggregate optimum. This explains why eliminating stale events with the fresh-gradient oracle leaves a large globally harmful fraction.
+
+Finite LIF memory suppresses this broader event tug-of-war. At $\rho=0.995$ the selected stress configuration emits far fewer events and can stop in a small deadzone around the aggregate optimum before the two clients continue exchanging locally motivated but globally conflicting events. This can improve tail RMSE, but it is better interpreted as
+\begin{equation}
+  \boxed{\text{heterogeneous event regularization / practical deadzone behavior}}
+\end{equation}
+than as stale-gradient correction.
+
+This distinction is scientifically important. It may still be useful for federated learning, but it is a different mechanism and must be compared with simpler deadband, proximal, damping, or server-side event-rejection baselines before it can support a neuromorphic novelty claim.
+
+\subsection{Random-initial-condition robustness}
+
+The fixed stress trajectory could in principle align favorably with the $q=0.1$ update lattice. A robustness check therefore randomizes the initial condition over approximately $[0.93,1.13]$ at $R=40$. The deterministic averages over 1000 runs are approximately
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & tail RMSE & local stale frac. & global harmful frac. & events \\
+\midrule
+Delayed IF & 0.0411 & 0.0036 & 0.363 & 36.8 \\
+Fresh-gradient IF oracle & 0.0413 & 0 & 0.372 & 39.2 \\
+LIF ($\rho=0.995$) & 0.0288 & 0 & 0.031 & 11.0 \\
+LIF ($\rho=0.99$) & 0.1045 & 0 & 0 & 9.3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The exact stale-event fraction becomes smaller when the trajectory phase is randomized, but the causal conclusion becomes even clearer: removing delay staleness alone does not improve IF, whereas LIF's gain accompanies much stronger suppression of the entire heterogeneous event process. Stronger leak eventually creates the known deadzone error.
+
+\subsection{Noisy delayed gradients}
+
+With gradient noise $\sigma=0.25$, the fraction of events that disagree with the current exact local descent direction grows with compute delay. For delayed IF it is approximately $0.008$, $0.029$, $0.069$, $0.133$, and $0.220$ for $R=5,10,20,40,80$, respectively, in the fixed stress design. However, this metric now combines true delay staleness with stochastic sign errors.
+
+The fresh-gradient oracle itself retains a substantial wrong-direction fraction under noise, confirming that not all such events are caused by asynchronous delay. Moreover, the best finite-memory settings do not consistently reduce the wrong-direction fraction at large $R$. For example, at $R=40$ the selected $\rho=0.995$ setting has a locally wrong/stale event fraction around $0.162$, larger than IF's approximately $0.133$, even though its tail RMSE and global-harm fraction improve. This again argues against a simple freshness explanation.
+
+\subsection{Conclusion of the decisive freshness test}
+
+Experiment~8 supports the following statements:
+\begin{enumerate}
+  \item True computation-delay staleness can be generated and measured separately from client heterogeneity once gradients are actually evaluated at old server snapshots.
+  \item Deterministic locally stale events, when they occur in the stress design, are globally harmful.
+  \item The stale-event fraction is small and regime-dependent; it is not monotone in delay because the quantized hybrid trajectory matters.
+  \item A fresh-gradient oracle removes stale events but does not materially improve IF's aggregate behavior in the tested scalar setup.
+  \item Finite LIF memory can improve tail error and reduce globally harmful events, but the improvement also occurs where stale events are absent and therefore cannot be attributed primarily to freshness.
+  \item Under noise, finite memory does not consistently reduce the current-direction error rate at large delays.
+\end{enumerate}
+
+The strong remaining freshness hypothesis is therefore rejected for the current scalar tests:
+\begin{equation}
+  \boxed{\text{no robust FL-specific stale-gradient advantage of LIF has been demonstrated.}}
+\end{equation}
+The supported mechanisms are now more clearly separated:
+\begin{equation}
+  \boxed{\text{temporal noise filtering + communication/event regularization + finite deadzone behavior}.}
+\end{equation}
+The heterogeneous event-suppression effect may still be valuable, but it requires its own comparison against conventional regularization and event-rejection mechanisms rather than being presented as evidence of neuromorphic freshness.
