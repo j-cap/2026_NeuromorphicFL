@@ -38,7 +38,7 @@
 \maketitle
 
 \begin{abstract}
-This report is a living technical knowledge base for a research direction that transfers the integrate--threshold--spike principle from neuromorphic control to distributed and federated optimization. The central idea is not to train a spiking neural network. Instead, ordinary stochastic gradients are treated as continuous or discrete evidence signals that drive leaky integrate-and-fire (LIF) communication states. Communication occurs only when sufficient signed evidence has accumulated, and the global model evolves through sparse fixed-amplitude signed parameter-update events. The event timing or rate therefore carries gradient-magnitude information, while the sign carries update direction. The project is motivated by the hybrid-systems viewpoint developed for neuromorphic control, especially the work of Petri, Scheres, Steur, and Heemels, but must be distinguished carefully from established work on one-bit gradients, error feedback, gradient sparsification, lazy/event-triggered distributed learning, and event-based optimization. This document consolidates the current mathematical formulation, literature position, scalar stochastic experiments, the first asynchronous multi-client diagnostics, observed strengths and limitations, and the roadmap toward a scalable federated algorithm.
+This report is a living technical knowledge base for a research direction that transfers the integrate--threshold--spike principle from neuromorphic control to distributed and federated optimization. The central idea is not to train a spiking neural network. Instead, ordinary stochastic gradients are treated as continuous or discrete evidence signals that drive leaky integrate-and-fire (LIF) communication states. Communication occurs only when sufficient signed evidence has accumulated, and the global model evolves through sparse fixed-amplitude signed parameter-update events. The event timing or rate therefore carries gradient-magnitude information, while the sign carries update direction. The project is motivated by the hybrid-systems viewpoint developed for neuromorphic control, especially the work of Petri, Scheres, Steur, and Heemels, but must be distinguished carefully from established work on one-bit gradients, error feedback, gradient sparsification, lazy/event-triggered distributed learning, and event-based optimization. This document consolidates the current mathematical formulation, literature position, scalar stochastic experiments, asynchronous multi-client diagnostics, falsified as well as supported mechanism hypotheses, and the roadmap toward a scalable federated algorithm.
 \end{abstract}
 
 \tableofcontents
@@ -49,6 +49,7 @@ This report is a living technical knowledge base for a research direction that t
 \input{sections/03_method}
 \input{sections/04_experiments}
 \input{sections/04b_async_experiments}
+\input{sections/04c_asynchrony_memory_map}
 \input{sections/05_roadmap}
 
 \bibliographystyle{unsrtnat}
