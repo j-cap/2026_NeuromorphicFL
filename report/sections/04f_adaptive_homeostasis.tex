@@ -1,0 +1,125 @@
+\section{Experiment 9b: Adaptive and Homeostatic Event-Rate Regularization}
+\label{sec:exp9b}
+
+\subsection{Purpose}
+
+Experiment~9 shows that the two fixed-threshold LIF recurrences studied so far are algebraically reducible to familiar optimization primitives: subtractive-reset FedLIF is decayed error feedback after rescaling, while full-reset LIF is a resetting thresholded exponential moving average. Experiment~9b therefore tests a mechanism that is genuinely state dependent in a different way: the \emph{firing threshold itself} becomes a dynamical state that reacts to recent event activity.
+
+The intended question is
+\begin{equation}
+  \boxed{\text{Can adaptive firing thresholds regulate communication better than a tuned fixed threshold?}}
+\end{equation}
+A positive result would provide a more specifically neuromorphic mechanism than the base LIF recurrence and would reduce the need to hand tune a single threshold $\Delta$ for each operating condition.
+
+\subsection{Why a constant firing-rate setpoint is inappropriate for optimization}
+
+A preliminary formulation attempted to regulate a nonzero target firing rate directly. This is conceptually problematic for optimization. Early in training, a burst of communication can be useful because gradients are large. Near convergence, however, the correct event rate may be arbitrarily close to zero. A controller that lowers the threshold merely to maintain a prescribed nonzero activity level recreates the very noise-driven chatter that event communication is intended to remove.
+
+The final Experiment~9b therefore uses \emph{spike-frequency adaptation} rather than an exact event-rate setpoint. Repeated firing temporarily raises the threshold, while inactivity lets the threshold relax toward a baseline value. This provides a homeostatic rate-suppression mechanism while preserving the possibility of natural silence.
+
+\subsection{Adaptive-threshold model}
+
+The membrane remains the full-reset LIF state used in the strongest Experiment~9 variant,
+\begin{equation}
+  z_i^{k+1}=\rho z_i^k-\gamma_i g_i^k,
+\end{equation}
+with rate-normalized gain $\gamma_i=\gamma p_iT_i$. The firing threshold is
+\begin{equation}
+  \Delta_i^k=\Delta_0+a_i^k,
+\end{equation}
+where the adaptation state decays on the wall-clock timescale,
+\begin{equation}
+  a_i^{k+1}=\exp(-1/\tau_a)a_i^k.
+\end{equation}
+When
+\begin{equation}
+  |z_i^k|\geq\Delta_i^k,
+\end{equation}
+the model receives the usual fixed signed jump
+\begin{equation}
+  w^+=w+q\,\sign(z_i),
+\end{equation}
+the membrane is reset,
+\begin{equation}
+  z_i^+=0,
+\end{equation}
+and the threshold adaptation state is incremented,
+\begin{equation}
+  a_i^+=a_i+\delta_a.
+\end{equation}
+Thus repeated events increase the threshold, whereas a quiet client gradually returns to the base threshold $\Delta_0$. This mechanism is analogous to activity-dependent threshold adaptation or spike-frequency adaptation and is not removed by the fixed linear state rescalings identified in Experiment~9.
+
+\subsection{Setup}
+
+The experiment retains the heterogeneous delayed-asynchronous scalar problem of Experiment~9: two equally weighted clients with local optima $\theta_{\mathrm{slow}}=+0.05$ and $\theta_{\mathrm{fast}}=-0.05$, compute-delay ratio $R=40$, stochastic-gradient standard deviation $\sigma=0.25$, memory factor $\rho=0.999$, and fixed event quantum $q=0.05$. Initial conditions are randomized in the same narrow interval as Experiment~9.
+
+The fixed-threshold reference sweeps
+\begin{equation}
+  \Delta\in\{0.25,0.35,0.5,0.7,0.9,1.2,1.5,2,2.5,3,4\}.
+\end{equation}
+The adaptive family sweeps base thresholds, spike-triggered threshold increments, and adaptation time constants,
+\begin{align}
+  \Delta_0 &\in \{0.25,0.35,0.5,0.7,0.9\},\\
+  \delta_a &\in \{0.1,0.25,0.5,1.0\},\\
+  \tau_a &\in \{50,200,500\}.
+\end{align}
+The primary comparison remains tail RMSE versus transmitted event count. Whole-run error and globally harmful event fraction are retained as secondary metrics.
+
+\subsection{Stationary result}
+
+The adaptive-threshold mechanism does \emph{not} improve the scalar Pareto front. The best fixed-threshold operating point in the extended sweep occurs near $\Delta=1.5$. A representative communication-matched comparison is shown in \cref{tab:exp9b-stationary}.
+
+\begin{table}[ht]
+\centering
+\caption{Experiment~9b stationary noisy comparison. The adaptive configuration is the best tested adaptive point below approximately 30 events.}
+\label{tab:exp9b-stationary}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Mean events & Tail RMSE & Whole-run MSE & Harmful fraction\\
+\midrule
+Fixed full-reset LIF, $\Delta=1.5$ & 22.34 & 0.02759 & 0.08996 & 0.0446\\
+Adaptive threshold, $\Delta_0=0.9$, $\delta_a=1$, $\tau_a=200$ & 25.84 & 0.03097 & 0.09838 & 0.1078\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The adaptive point therefore uses more events, has approximately $12\%$ larger tail RMSE, larger whole-run error, and more than twice the globally harmful-event fraction. The full adaptive grid is globally dominated by the best fixed-threshold point in this scalar operating condition.
+
+Extending the fixed-threshold sweep confirms that this conclusion is not caused by truncating the baseline search at $\Delta=1.5$. Increasing the fixed threshold beyond $1.5$ reduces communication further but worsens optimization: for $\Delta=2$, the mean event count decreases to approximately $20.6$ while tail RMSE rises to $0.0362$; for $\Delta=3$, tail RMSE exceeds $0.10$. Thus the fixed baseline has a genuine optimum in the tested range.
+
+\subsection{Noise-change diagnostic}
+
+To test the claimed adaptability directly, the gradient-noise level is changed halfway through the run from $\sigma=0.10$ to $\sigma=0.60$. The stationary selections above are retained without retuning. The adaptive threshold does react visibly to the change in stochastic activity, but this reaction does not improve the final error--communication trade-off:
+\begin{table}[ht]
+\centering
+\caption{Experiment~9b noise-change diagnostic.}
+\label{tab:exp9b-shift}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Mean events & Tail RMSE & Whole-run MSE & Harmful fraction\\
+\midrule
+Fixed threshold & 26.83 & 0.05469 & 0.08980 & 0.1297\\
+Adaptive threshold & 29.93 & 0.05516 & 0.09786 & 0.1683\\
+\bottomrule
+\end{tabular}
+\end{table}
+The adaptive state therefore performs the intended qualitative function---frequent events temporarily increase the threshold and quiet periods let it decay---but that homeostatic behavior is not itself sufficient to improve optimization in the scalar test.
+
+\subsection{Interpretation}
+
+Experiment~9b is a negative mechanism result. It establishes three useful points.
+\begin{enumerate}
+  \item A nonzero constant firing-rate target is structurally mismatched to optimization because useful communication should be allowed to vanish near convergence.
+  \item Spike-triggered adaptive thresholds provide a genuinely dynamic event-rate regularizer, but in the current scalar problem they are dominated by a well-tuned fixed threshold.
+  \item Adaptive thresholds therefore should not be promoted to the core algorithm merely because they are more neuromorphic. Their value would have to emerge in a setting where the communication statistics vary strongly across coordinates, clients, or phases and a single fixed threshold is intrinsically inadequate.
+\end{enumerate}
+
+The practical decision is to continue to Experiment~10 rather than spend additional scalar tuning effort on homeostasis. The vector setting is the first place where heterogeneous coordinate scales and many simultaneous event processes may give adaptive thresholds a legitimate role. Experiment~9b should be retained as a falsification result and as a warning that added neuromorphic dynamics do not automatically improve the optimizer.
+
+\subsection{Backlog: descent-driven threshold and jump dynamics}
+
+A conceptually different adaptive mechanism remains explicitly in the backlog. Instead of regulating event frequency, choose the threshold and/or event quantum from a Lyapunov/descent condition. For a candidate parameter jump $w^+=w+qs$, one may require a certified or estimated decrease
+\begin{equation}
+  F(w^+)-F(w)\leq -\varepsilon
+\end{equation}
+(or an appropriate local/surrogate version) before accepting the event, and adapt $q$ or $\Delta$ to maintain such a condition. This is closer to the greedy Lyapunov philosophy in neuromorphic control than activity homeostasis and may yield a mechanism that is both performance aware and harder to reduce to standard filtering. It is intentionally \emph{not} mixed into Experiment~9b; it should be investigated later as a separate mechanism after the vector baseline is established.
