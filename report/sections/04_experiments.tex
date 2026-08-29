@@ -79,16 +79,125 @@ Immediately before the switch, the IF membrane contains residual evidence primar
 To isolate stale evidence, an oracle baseline resets the IF membrane to zero exactly at the objective change. The resulting performance change is very small: post-switch MSE over the first 1000 samples improves only from roughly 0.325 to 0.321, and the recovery time changes only by a few gradient evaluations. Therefore, for this large optimum shift, stale membrane evidence is not the dominant limitation. The new gradient is strong enough to reverse the accumulator rapidly.
 
 \paragraph{Role of leak in this experiment.}
-Increasing leakage mainly trades communication for responsiveness. Post-switch event counts decrease as $\rho$ decreases, but recovery becomes slower. The current evidence therefore does \emph{not} support the strong claim that leakage inherently improves adaptation to a changing objective. A better stale-evidence test should use a moderate objective shift whose new gradient is comparable to the stored membrane state, or deliberately initialize a known stale membrane state and derive the first-correct-event delay analytically.
+Increasing leakage mainly trades communication for responsiveness. Post-switch event counts decrease as $\rho$ decreases, but recovery becomes slower. The current evidence therefore does \emph{not} support the strong claim that leakage inherently improves adaptation to a changing objective.
+
+\subsection{Experiment 3: moderate optimum shift after stationary convergence}
+
+\paragraph{Hypothesis and design.}
+A smaller objective shift was introduced to test the possibility that stale evidence matters when the new gradient is comparable to the residual membrane state. A first trial switching at $k=500$ was rejected as confounded: strongly leaky methods had not yet converged to the old optimum and therefore happened to start closer to the new optimum. The corrected experiment first lets all IF/LIF methods settle near the old optimum and then applies
+\begin{equation}
+  \theta_k=\begin{cases}
+  0,&k<2000,\\
+  0.5,&k\geq2000.
+  \end{cases}
+\end{equation}
+The experiment uses 400 Monte Carlo runs. This long pre-switch phase makes the old-objective errors of SGD and IF/LIF comparable: the mean absolute errors immediately before the switch are approximately 0.078 for SGD, 0.077 for IF, 0.075 for $\rho=0.995$, 0.072 for $\rho=0.98$, and 0.066 for $\rho=0.95$.
+
+\paragraph{Result.}
+The moderate shift does not reveal a tracking advantage from leakage. Over the first 500 post-switch samples, the measured MAEs are approximately
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Method & post-switch MAE, $0{:}500$ & post-switch events \\
+\midrule
+SGD & 0.203 & 1500 \\
+IF-SGD & 0.204 & 52.0 \\
+IF-SGD, oracle reset & 0.204 & 51.9 \\
+LIF-SGD, $\rho=0.995$ & 0.207 & 50.0 \\
+LIF-SGD, $\rho=0.98$ & 0.217 & 43.4 \\
+LIF-SGD, $\rho=0.95$ & 0.243 & 31.6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The oracle reset again changes the IF trajectory only marginally. Recovery to sustained mean absolute error below 0.1 takes about 397 gradient evaluations for IF and about 399 for oracle-reset IF, whereas stronger leakage delays recovery to roughly 421 evaluations at $\rho=0.98$ and 515 at $\rho=0.95$.
+
+\paragraph{Interpretation.}
+This experiment further weakens the initial hypothesis that leakage provides a direct adaptation advantage after an objective shift. Once pre-switch convergence is controlled, leak mainly reduces the rate at which new evidence is accumulated. The apparent benefit seen in the rejected early-switch trial was an initialization artifact. This is an important methodological lesson for later asynchronous experiments: methods must be compared at equivalent model states when the objective or global model changes.
+
+\subsection{Experiment 4: controlled stale membrane}
+
+\paragraph{Purpose.}
+The fourth experiment removes the optimization trajectory entirely and isolates the stale-evidence mechanism. The membrane is initialized at a prescribed negative state
+\begin{equation}
+  z_0\in\{-0.45,-0.30,-0.10\},
+\end{equation}
+with threshold $\Delta=0.5$. At $k=0$, a constant new gradient $g=-G$, $G=0.4$, is applied, so the desired event direction is positive. With $\gamma=0.05$, the deterministic membrane input is
+\begin{equation}
+  u=\gamma G=0.02.
+\end{equation}
+The discrete dynamics are
+\begin{equation}
+  z_{k+1}=\rho z_k+u.
+\end{equation}
+Two first-passage quantities are distinguished:
+\begin{enumerate}
+  \item the time until stale sign is erased, i.e. $z_k\geq0$;
+  \item the time until a useful positive event is emitted, i.e. $z_k\geq\Delta$.
+\end{enumerate}
+
+\paragraph{Exact deterministic expressions.}
+For IF ($\rho=1$),
+\begin{equation}
+  k_0^{\mathrm{IF}}=\left\lceil\frac{-z_0}{u}\right\rceil,
+  \qquad
+  k_\Delta^{\mathrm{IF}}=\left\lceil\frac{\Delta-z_0}{u}\right\rceil.
+\end{equation}
+For LIF ($0<\rho<1$), define the forced equilibrium
+\begin{equation}
+  z_\infty=\frac{u}{1-\rho}.
+\end{equation}
+Then
+\begin{equation}
+  z_k=z_\infty+\rho^k(z_0-z_\infty).
+\end{equation}
+The stale sign is erased after
+\begin{equation}
+  k_0^{\mathrm{LIF}}
+  =\left\lceil
+  \frac{\log\!\left(z_\infty/(z_\infty-z_0)\right)}{\log\rho}
+  \right\rceil.
+\end{equation}
+A positive communication event exists deterministically only if
+\begin{equation}
+  z_\infty>\Delta,
+\end{equation}
+which is equivalent to the discrete deadzone condition
+\begin{equation}
+  u>(1-\rho)\Delta.
+\end{equation}
+When this holds,
+\begin{equation}
+  k_\Delta^{\mathrm{LIF}}
+  =\left\lceil
+  \frac{\log\!\left((z_\infty-\Delta)/(z_\infty-z_0)\right)}{\log\rho}
+  \right\rceil.
+\end{equation}
+
+\paragraph{Key result.}
+Leak does indeed erase the stale sign faster. For $z_0=-0.45$, the deterministic zero-crossing times are 23, 22, 19, and 15 steps for $\rho=1$, 0.995, 0.98, and 0.95, respectively. However, the first useful threshold crossing is not accelerated: the corresponding $+\Delta$ passage times are 48, 48, 53, and no deterministic firing at all for $\rho=0.95$. The same qualitative behavior occurs for the other stale-state values.
+
+This separates two effects that were previously conflated:
+\begin{equation}
+  \boxed{\text{faster forgetting of stale sign}\;\not\Rightarrow\;\text{faster useful communication}.}
+\end{equation}
+The reason is structural. While $z<0$, the leak term assists movement toward zero; after zero crossing, the same leak opposes accumulation toward $+\Delta$. A sufficiently large leak creates a deadzone in which weak but persistent new gradients cannot produce any deterministic event.
+
+\paragraph{Noisy confirmation.}
+A Monte Carlo test with gradient-noise standard deviation 0.4 confirms the deterministic picture. For $z_0=-0.45$, the mean zero-crossing time decreases from about 23.4 steps at $\rho=1$ to 19.1 at $\rho=0.98$, whereas the mean first-event time increases from about 48.4 to 53.2 steps. At $\rho=0.95$, stochastic noise eventually drives most runs across the threshold, but the mean delay rises to roughly 196 steps. Wrong first events are rare in this selected constant-gradient regime, so the dominant effect is the first-passage delay rather than event-sign reliability.
+
+\paragraph{Implication for the role of leak.}
+The controlled experiment falsifies the simple narrative that leak should be added because it makes an optimizer respond faster to changed gradients. Its stronger current justification is instead as a \emph{memory and communication regularizer}: it suppresses long-lived/noisy evidence and introduces an explicit freshness horizon, but the price is attenuated accumulation of weak persistent gradients and a possible communication deadzone. Any future asynchronous-FL argument for leakage must therefore demonstrate a net systems benefit under realistic model drift, not merely cite faster decay of stale membrane state.
 
 \subsection{What these experiments establish---and what they do not}
 
-The current evidence supports four working observations:
+The current evidence supports the following working observations:
 \begin{enumerate}
   \item Event timing carries useful gradient-magnitude information.
   \item Temporal accumulation can dramatically improve signed-update reliability under noisy gradients.
   \item Sparse IF/LIF events can reproduce an SGD-like stochastic accuracy floor in the scalar diagnostic while using far fewer communication events.
-  \item Leakage is a genuine memory/communication parameter, but its benefit under nonstationarity remains unproven and regime-dependent.
+  \item Leakage is a genuine memory/communication parameter, but stronger leak generally slows the accumulation of useful persistent evidence.
+  \item Faster decay of stale membrane state does not by itself imply faster useful communication after a gradient reversal.
+  \item Apparent nonstationary-tracking advantages can be artifacts if competing methods are not at comparable states when the objective changes.
 \end{enumerate}
 
 These experiments do not establish superiority over modern communication-efficient distributed optimization. They do not include vector event addresses, real bit accounting, client heterogeneity, partial participation, asynchronous server updates, or neural-network objectives. Their purpose is to validate and falsify mechanisms before those complications are introduced.
