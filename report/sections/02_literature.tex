@@ -1,0 +1,59 @@
+\section{Literature Position and Novelty Constraints}
+
+\subsection{Federated learning and communication efficiency}
+
+Federated learning (FL) trains a shared model from decentralized data by aggregating locally computed updates rather than centralizing the raw data. Federated averaging (FedAvg) established the canonical round-based architecture and already identified communication as a principal systems constraint \citep{mcmahan2017fedavg}. The present project is therefore situated within a mature communication-efficient learning literature and must be evaluated against methods that reduce message precision, message sparsity, or message frequency.
+
+\subsection{One-bit and sign-based optimization}
+
+One-bit SGD showed that aggressive gradient quantization can be practical if quantization error is carried forward across minibatches \citep{seide2014onebit}. signSGD later formalized sign-only stochastic optimization and its distributed majority-vote variant \citep{bernstein2018signsgd}. These works already establish that fixed signed messages can be useful. Consequently, transmitting only $\pm1$ is not itself novel.
+
+The proposed LIF mechanism differs in how magnitude information is represented. Periodic signSGD acts on the instantaneous sign
+\begin{equation}
+  w_{k+1}=w_k-q\,\sign(g_k),
+\end{equation}
+whereas a neuromorphic temporal encoder accumulates gradient evidence and communicates only after a threshold crossing. The magnitude of a persistent gradient can therefore be represented through the inter-event interval or firing rate.
+
+\subsection{Error feedback, sparsification, and residual memory}
+
+Deep Gradient Compression (DGC) substantially reduces distributed gradient traffic by sparsifying communication and retaining information needed to preserve learning quality \citep{lin2017dgc}. Sparsified SGD with Memory gives a theoretical treatment of compression with accumulated error compensation \citep{stich2018memory}. EF21 develops a modern error-feedback mechanism with convergence guarantees for heterogeneous distributed optimization \citep{richtarik2021ef21}. Sparse Ternary Compression (STC) targets communication-efficient FL under non-IID data \citep{sattler2019stc}.
+
+These methods are a critical novelty constraint. A zero-leak accumulator of the form
+\begin{equation}
+  z_{k+1}=z_k-\gamma g_k
+\end{equation}
+followed by a quantization/threshold operation is closely related to error-feedback and sigma--delta ideas. Therefore, the project must not claim that ``accumulate small gradients until they are large enough'' is new.
+
+The candidate differentiators are instead:
+\begin{enumerate}[label=(\alph*)]
+  \item a temporal rate code in which gradient magnitude determines event timing;
+  \item an explicit LIF state with a tunable forgetting timescale;
+  \item a hybrid-system flow/jump model of optimization;
+  \item potentially Lyapunov/descent-derived event conditions rather than heuristic thresholds;
+  \item asynchronous bidirectional event representations of global model evolution.
+\end{enumerate}
+
+\subsection{Lazy and event-based distributed learning}
+
+LAG reduces communication by reusing stale gradients when local gradients change slowly and establishes convergence properties under standard optimization assumptions \citep{chen2018lag}. More recent event-based distributed optimization directly makes communication conditional on local events. In particular, \citet{er2025eventbased} develop an event-based ADMM framework with convergence analysis under heterogeneous local data distributions and demonstrate distributed learning experiments.
+
+Thus, event-triggered communication is also not new. The useful research question is whether the \emph{neuromorphic encoding mechanism itself} provides a new optimization object: local evidence states that integrate stochastic gradients, fire signed fixed-amplitude model updates, and jointly determine both communication frequency and update information.
+
+\subsection{Relationship to neuromorphic control}
+
+The control-theoretic inspiration is strongest in the hybrid model of \citet{petri2024simple}. There, neuron-like states integrate measured plant information, threshold crossings create spikes, and the controller is analyzed through continuous flows and discrete jumps. Practical stability and strictly positive dwell times are central quantities. The emulation-based work \citep{petri2025emulation} is especially relevant conceptually because it starts from a desired continuous signal and designs a spiking representation whose approximation properties are then connected to closed-loop stability.
+
+The optimization analogue is to start from ideal gradient flow
+\begin{equation}
+  \dot w=-\kappa \nabla F(w)
+\end{equation}
+and construct a spiking parameter trajectory that emulates the accumulated gradient action with bounded communication-state error.
+
+\subsection{Current novelty statement: deliberately provisional}
+
+The literature reviewed so far supports only the following cautious statement:
+\begin{quote}
+A candidate research gap exists in formulating federated/distributed stochastic optimization as a hybrid dynamical system whose local stochastic gradients drive LIF-like communication states and whose global model evolves through asynchronous fixed signed parameter-update events. The potentially distinctive contribution lies in the temporal evidence code, leak-controlled information freshness, hybrid convergence analysis, and event-driven model trajectory---not in gradient accumulation, compression, sign messages, or event triggering individually.
+\end{quote}
+
+This must be stress-tested continuously as the literature review deepens. Before any paper-level novelty claim, the project should explicitly compare against error-feedback compressors, sign-based optimization, LAG/event-triggered methods, and event-based distributed optimization.
