@@ -1,0 +1,60 @@
+\section{Motivation and Research Question}
+
+\subsection{From neuromorphic control to neuromorphic communication}
+
+Recent work on neuromorphic control develops feedback controllers whose information and actuation are represented by sparse fixed-amplitude spikes rather than continuously varying control values. In the simple two-neuron setting of \citet{petri2024simple}, leaky integrate-and-fire (LIF) states accumulate plant-output information, fire when a threshold is reached, and generate impulsive control actions. The resulting closed loop is naturally represented as a hybrid dynamical system. The work emphasizes practical stability, dwell-time guarantees, and explicit relationships between neuron parameters and closed-loop behavior. The later emulation-based formulation \citep{petri2025emulation} asks whether a spike train can emulate a continuous stabilizing input closely enough that stability properties can be transferred.
+
+The present project asks whether the same structural principle can be applied not to physical actuation but to \emph{learning communication}. The desired analogy is
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Neuromorphic control & Neuromorphic distributed learning \\
+\midrule
+plant/control error & stochastic gradient information \\
+LIF membrane state & communication evidence state \\
+threshold crossing & communication event \\
+fixed signed control spike & fixed signed parameter-update spike \\
+spike timing/rate & gradient-magnitude encoding \\
+closed-loop state & model parameter vector \\
+Lyapunov stability & optimization convergence/descent \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The intended neural network does \emph{not} need to be a spiking neural network. Backpropagation can remain completely conventional. The candidate novelty is an event-driven communication and optimization layer that transforms local stochastic-gradient information into sparse signed events.
+
+\subsection{Core research question}
+
+The working research question is
+\begin{quote}
+Can stochastic learning information be accumulated locally by leaky integrate-and-fire dynamics and communicated as sparse fixed-amplitude events while preserving useful optimization convergence properties and, in a federated setting, reducing communication without sacrificing learning quality?
+\end{quote}
+
+This question contains several subproblems that should be kept separate:
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Temporal encoding:} Can gradient magnitude be represented through spike timing or rate rather than transmitted amplitude?
+  \item \textbf{Statistical reliability:} Does temporal evidence accumulation reduce wrong-sign updates under stochastic gradients?
+  \item \textbf{Communication efficiency:} Does the event mechanism reduce the number of messages and ultimately transmitted bits at a given target error?
+  \item \textbf{Memory/freshness:} What role should leakage play when accumulated evidence becomes stale because the optimization landscape or global model changes?
+  \item \textbf{Federation:} Can multiple clients asynchronously generate events from heterogeneous local objectives while retaining convergence of a global model?
+\end{enumerate}
+
+\subsection{What the project is not}
+
+Several nearby formulations are intentionally excluded from the core claim.
+\begin{itemize}
+  \item The project is not simply ``federated learning of an SNN.'' Federated SNN training is a separate established topic.
+  \item The project is not simply one-bit gradient communication. One-bit SGD and sign-based distributed optimization are established \citep{seide2014onebit,bernstein2018signsgd}.
+  \item The project is not simply thresholding accumulated compression residuals. Error feedback, sparsified SGD with memory, and deep gradient compression already preserve discarded gradient information across iterations \citep{lin2017dgc,stich2018memory,richtarik2021ef21}.
+  \item The project is not simply event-triggered communication. Lazy and event-based distributed optimization already reduce communication by skipping uninformative exchanges \citep{chen2018lag,er2025eventbased}.
+\end{itemize}
+
+The research direction is therefore only compelling if the neuromorphic viewpoint produces a \emph{coherent hybrid optimization architecture}: a stateful temporal encoder that determines when to communicate, represents update magnitude through event timing/rate, supports explicit memory/freshness dynamics, and admits systems-style convergence and inter-event analysis.
+
+\subsection{Long-term federated interpretation}
+
+For a federated objective
+\begin{equation}
+  F(w)=\sum_{i=1}^N p_i F_i(w),
+\end{equation}
+each client will eventually maintain a communication state $z_i$ driven by its local stochastic gradients. The global model should change only when events arrive. In the strongest version of the architecture there is no fixed concept of a federated ``round.'' Instead, clients compute locally at their own pace, accumulate evidence, and emit sparse events only when their local communication states cross thresholds. This would turn the full learning process into an interconnected hybrid dynamical system.
