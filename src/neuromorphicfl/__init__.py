@@ -4,6 +4,13 @@ from .objectives import QuadraticObjective, PiecewiseQuadraticObjective
 from .optimizers import SGD, SignSGD, IFSGD, LIFSGD
 from .simulation import run_scalar_optimizer
 from .async_simulation import AsyncClient, AsyncRun, run_async_scalar_federation
+from .delayed_async import (
+    DelayedAsyncClient,
+    DelayedAsyncEvent,
+    DelayedAsyncRun,
+    run_delayed_rate_normalized_scalar_federation,
+    weighted_quadratic_objective,
+)
 
 __all__ = [
     "QuadraticObjective",
@@ -16,4 +23,9 @@ __all__ = [
     "AsyncClient",
     "AsyncRun",
     "run_async_scalar_federation",
+    "DelayedAsyncClient",
+    "DelayedAsyncEvent",
+    "DelayedAsyncRun",
+    "run_delayed_rate_normalized_scalar_federation",
+    "weighted_quadratic_objective",
 ]
