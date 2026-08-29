@@ -1,0 +1,107 @@
+\section{Asynchronous Model-Drift Experiments}
+
+The first four diagnostics changed an objective externally or prescribed the membrane state directly. Federated learning introduces a more specific source of nonstationarity: client $i$ may retain gradient evidence computed at an older global model while updates from clients $j\neq i$ move the server parameter. The local loss $F_i$ has not changed, but
+\begin{equation}
+  \nabla F_i(w_{\mathrm{old}})\neq \nabla F_i(w_{\mathrm{new}}).
+\end{equation}
+Experiments 5 and 6 isolate this mechanism before introducing statistical heterogeneity or high-dimensional models.
+
+\subsection{Experiment 5: controlled asynchronous model drift}
+
+\paragraph{Purpose.}
+This experiment is the federated analogue of the controlled stale-membrane test. A diagnostic client retains a fixed local objective
+\begin{equation}
+  F_A(w)=\frac12(w-0.25)^2.
+\end{equation}
+At the old server model $w_{\mathrm{old}}=0$, the gradient is negative, so the client would accumulate positive update evidence. Before it fires, activity from other clients is abstracted as a server-model change to
+\begin{equation}
+  w_{\mathrm{new}}=0.5.
+\end{equation}
+The local objective is unchanged, but now
+\begin{equation}
+  \nabla F_A(0.5)=+0.25,
+\end{equation}
+so the correct update direction has reversed. The membrane is initialized at a controlled stale value $z_0=0.4$ with threshold $\Delta=0.5$, gradient-integration gain $\gamma=0.05$, and gradient-noise standard deviation $0.25$.
+
+\paragraph{Hypothesis.}
+Finite memory should erase the obsolete positive membrane sign faster than IF. The stronger question is whether this also yields an earlier correct negative communication event. Experiments 3--4 showed that these are different quantities, so both are measured separately.
+
+\paragraph{Result.}
+The deterministic stale-sign erasure times are approximately 32, 30, 25, and 19 gradient evaluations for $\rho=1$, $0.995$, $0.98$, and $0.95$. However, the first correct negative threshold events occur after approximately 72, 75, and 105 evaluations for the first three cases; for $\rho=0.95$ the deterministic forced equilibrium lies inside the threshold and no event occurs. A 10,000-run stochastic test gives the same qualitative picture: mean stale-sign erasure decreases from about 32.9 evaluations for IF to 25.2 for $\rho=0.98$, while mean first-event delay increases from about 72.8 to 102.3 evaluations. At $\rho=0.95$, no event occurs within the selected horizon in the present configuration.
+
+The controlled FL-specific model drift therefore confirms the earlier conclusion:
+\begin{equation}
+  \boxed{\text{faster removal of obsolete evidence does not imply faster useful firing}.}
+\end{equation}
+By itself, the mechanism is not sufficient to motivate leak. Its value must be assessed at system level, where retained stale evidence can create harmful events while overly aggressive forgetting can destroy useful accumulation.
+
+\subsection{Experiment 6: endogenous two-client asynchronous learning}
+
+\paragraph{Purpose.}
+The sixth experiment is the first genuinely multi-client event-driven optimization test. Two clients optimize the same scalar objective
+\begin{equation}
+  F_1(w)=F_2(w)=\frac12w^2,
+\end{equation}
+so there is no statistical heterogeneity and the global optimum is $w^\star=0$. This deliberate simplification makes event correctness unambiguous: an event is harmful whenever its sign opposes the instantaneous global descent direction.
+
+The clients have different computational rates. Client~1 is slow and evaluates one stochastic gradient every five wall-clock ticks; client~2 is fast and evaluates one every tick. The initial model is $w_0=-1$, gradient-noise standard deviation is $0.5$, and the event parameters are
+\begin{equation}
+  \gamma=0.05,\qquad \Delta=0.5,\qquad q=0.05.
+\end{equation}
+Server events are applied immediately. Hence the fast client can move $w$ while the slow client's membrane contains evidence accumulated at earlier server models.
+
+\paragraph{Wall-clock leakage.}
+A crucial modeling choice is that LIF leakage acts once per wall-clock tick on every client membrane, including while a client is idle:
+\begin{equation}
+  z_i(t+1)\leftarrow \rho z_i(t)
+\end{equation}
+before any new local gradient is integrated. This is closer to the continuous-time LIF interpretation than applying $\rho$ only when a client happens to compute. It makes $1/(1-\rho)$ an information-age timescale rather than merely a count of local minibatches. Alternative timing models must be studied later.
+
+\paragraph{Baselines.}
+The experiment compares
+\begin{enumerate}
+  \item IF with infinite memory, $\rho=1$;
+  \item an oracle hard-reset rule that clears every \emph{other} client membrane after each server update;
+  \item LIF with $\rho\in\{0.995,0.98,0.95\}$.
+\end{enumerate}
+The oracle reset represents maximal freshness: no client may retain evidence predating the latest remote event. It is deliberately aggressive and not assumed to be optimal.
+
+\paragraph{Diagnostic results.}
+Across 400 Monte Carlo runs of 3000 wall-clock ticks, the current configuration gives approximately
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & tail RMSE & events & harmful-event fraction & slow-client events \\
+\midrule
+IF & 0.0303 & 28.77 & 0.087 & 4.40 \\
+IF, oracle reset & 0.0290 & 27.24 & 0.071 & 0.42 \\
+LIF, $\rho=0.995$ & \textbf{0.0238} & 22.93 & \textbf{0.037} & 2.00 \\
+LIF, $\rho=0.98$ & 0.0513 & 19.21 & 0.000 & 0.03 \\
+LIF, $\rho=0.95$ & 0.2469 & 15.25 & 0.000 & 0.00 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The mild-leak case $\rho=0.995$ is the first experiment in which finite memory shows a net systems-level advantage in the selected regime. Relative to IF, it reduces the fraction of events opposing the current descent direction from about $8.7\%$ to $3.7\%$, reduces the total event count by roughly $20\%$, and improves tail RMSE. Stronger leak suppresses harmful events even further but begins to suppress useful learning as well; the $\rho=0.95$ case is effectively dominated by the LIF deadzone.
+
+\paragraph{Hard reset is not an upper bound on performance.}
+The oracle-reset result is particularly informative. Because the fast client updates the global model frequently, resetting the slow client's membrane after every remote event repeatedly destroys useful gradient evidence. The slow client emits only about $0.42$ events on average, compared with $4.40$ for IF and $2.00$ for mild LIF. Thus ``perfect freshness'' is not synonymous with useful distributed learning. Accumulation itself is valuable and should not be discarded indiscriminately.
+
+This suggests the following interpretation:
+\begin{equation}
+  \boxed{\text{mild LIF memory can act as a soft evidence-invalidation mechanism}.}
+\end{equation}
+IF is one extreme, preserving all evidence indefinitely. Hard reset is the other, discarding all evidence after every remote model change. Moderate leakage continuously discounts old information while still allowing persistent gradients to accumulate. The current experiment provides preliminary evidence that an intermediate memory timescale can outperform both extremes.
+
+\paragraph{What is and is not established.}
+The result is encouraging but still highly diagnostic. The two clients are homogeneous, the objective is scalar and convex, communication is counted by events rather than encoded bits, client schedules are deterministic, server broadcasts are instantaneous, and the selected parameter point was not chosen through a systematic sweep. The result therefore supports a mechanism hypothesis rather than a general performance claim.
+
+The immediate questions are whether the mild-leak advantage persists under
+\begin{enumerate}
+  \item compute-rate and noise sweeps;
+  \item different event thresholds and jump sizes;
+  \item heterogeneous local optima $\theta_i$;
+  \item random/Poisson client computation times and communication delays;
+  \item vector objectives where events require coordinate or block addresses.
+\end{enumerate}
+These tests will determine whether finite LIF memory is a genuinely useful asynchronous-learning primitive or merely a favorable scalar tuning effect.
