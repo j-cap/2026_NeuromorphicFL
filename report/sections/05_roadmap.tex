@@ -1,0 +1,60 @@
+\section{Research Roadmap}
+
+\subsection{Immediate next experiments}
+
+The next experiments should remain deliberately small and mechanism-focused.
+\begin{enumerate}
+  \item \textbf{Moderate moving optimum.} Replace the large jump $0\rightarrow2$ by smaller changes such as $0\rightarrow0.3$ and $0\rightarrow0.5$. Determine whether LIF leakage improves first-correct-event time when the new gradient is comparable to stored stale evidence.
+  \item \textbf{Controlled stale-state experiment.} Initialize $z_0=-z_{\mathrm{stale}}$ close to the negative threshold, reverse the true gradient, and compare analytically and empirically how quickly IF and LIF generate the first correct event.
+  \item \textbf{Parameter sweeps.} Map $(q,\Delta,\rho,\sigma)$ to optimization error, wrong-event probability, event rate, and transient response. Separate the roles of update resolution, evidence threshold, and memory horizon.
+  \item \textbf{Vector quadratic.} Move from one coordinate to a diagonal and then coupled quadratic. Study coordinate addressing, simultaneous threshold crossings, and whether per-coordinate LIF states remain sensible at high dimension.
+\end{enumerate}
+
+\subsection{Theory milestones}
+
+A useful theoretical progression is:
+\begin{enumerate}
+  \item deterministic scalar hybrid model and practical-convergence bound;
+  \item stochastic scalar first-passage analysis and expected descent;
+  \item vector strongly convex objective with coordinatewise or blockwise event encoders;
+  \item stochastic smooth objective with bounded variance;
+  \item asynchronous multi-client objective $F=\sum_i p_iF_i$ with bounded heterogeneity;
+  \item nonconvex neural-network setting.
+\end{enumerate}
+
+The theoretical quantities should mirror the control perspective where useful: Lyapunov/objective decrease, practical convergence neighborhood, inter-event time or event-rate bounds, and robustness to noisy/stale inputs.
+
+\subsection{Federated prototype}
+
+The first federated prototype should use a small number of clients and a convex/vector objective before MNIST or CIFAR. Each client maintains its own membrane state and generates asynchronous signed coordinate or block events. Required baselines include FedAvg/local SGD, periodic sign methods, an error-feedback compressor, a sparsification method, and an event-triggered/lazy distributed-learning method.
+
+The main performance axes should be
+\begin{equation}
+  \text{optimization/test error versus transmitted bits},
+\end{equation}
+and
+\begin{equation}
+  \text{optimization/test error versus communication events},
+\end{equation}
+not accuracy versus nominal rounds. Actual encoding cost must include coordinate or block addresses and protocol overhead; an event is not literally one bit merely because its signed amplitude is binary.
+
+\subsection{Neural-network experiment}
+
+Only after the federated convex prototype is understood should an ordinary neural network be introduced. Backpropagation produces conventional stochastic gradients; the LIF bank acts after gradient computation as the communication encoder. Candidate benchmarks are a small MLP/CNN on MNIST followed by a modest CIFAR-10 model. The goal is not initially state-of-the-art accuracy, but to establish whether the temporal-evidence mechanism survives realistic high-dimensional, noisy, non-IID gradients.
+
+\subsection{Paper-level decision criteria}
+
+The project should proceed toward a paper only if at least one of the following stronger claims survives comparison with existing methods:
+\begin{itemize}
+  \item LIF temporal evidence gives a better communication--reliability trade-off than periodic sign and standard error-feedback compression under stochastic gradients;
+  \item leakage provides a demonstrable advantage under asynchronous model drift or stale local evidence;
+  \item the hybrid-system formulation yields new convergence/event-rate guarantees or design rules unavailable from standard compression analysis;
+  \item asynchronous event timing itself provides a systems-level benefit under heterogeneous client computation/communication rates;
+  \item bidirectional event-coded model evolution materially reduces communication while preserving useful learning behavior.
+\end{itemize}
+
+If none of these survives, the project should be reframed as an interpretation of existing error-feedback/event-triggered optimization rather than forced into a novelty claim.
+
+\subsection{Working name}
+
+The repository and umbrella project are named \texttt{NeuromorphicFL}. A future algorithm name can be introduced only after the mechanism stabilizes; \emph{LIF-SGD} is currently a descriptive working name rather than a claimed new method name.
