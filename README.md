@@ -18,8 +18,14 @@ The central idea is to reinterpret communication-efficient distributed/federated
 4. **Controlled stale membrane** — separates stale-sign erasure from useful threshold firing and identifies the LIF deadzone.
 5. **Controlled asynchronous model drift** — keeps the local objective fixed while the server model moves, isolating the FL-specific source of gradient staleness.
 6. **Two-client asynchronous learning** — a selected noisy operating point initially suggested a mild finite-memory advantage.
-7. **Asynchrony × memory regime map** — stress-tests that interpretation. The same finite-memory optimum appears even at `R=1` and disappears in the zero-noise control, so the current supported explanation is stochastic evidence filtering / event regularization rather than an established FL-specific freshness benefit.
+7. **Asynchrony × memory regime map** — shows that the same finite-memory optimum appears even at `R=1` and disappears in the zero-noise homogeneous control, so the robust explanation is stochastic evidence filtering / event regularization rather than a proven freshness benefit.
+8. **Heterogeneous delayed gradients with compute-rate normalization** — introduces true in-flight stale gradients and different local optima. Genuine locally stale events can be observed under strong delays, but a fresh-gradient oracle shows that they are not the main source of IF degradation. LIF's larger gains come from suppressing heterogeneous event activity / creating a finite-memory deadzone, not from robust stale-gradient correction.
 
-A key negative result is now part of the project knowledge base: **reduced communication can be caused by silencing slow clients**, especially under wall-clock leakage. Future heterogeneous-client experiments must therefore report per-client participation and correct for unequal compute-rate weighting.
+Two key negative results are now part of the project knowledge base:
 
-The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which a later manuscript can be distilled. Current results are mechanism diagnostics, including falsified hypotheses; the next decisive stage is controlled heterogeneous asynchronous quadratics with explicit rate normalization.
+- **reduced communication can be caused by silencing slow clients**, especially under wall-clock leakage;
+- **finite LIF memory has not yet demonstrated a robust FL-specific stale-gradient advantage** in the scalar tests, even when true delayed gradients and heterogeneous local objectives are introduced.
+
+The strongest supported mechanisms are currently temporal stochastic-gradient filtering, sparse event communication, and finite-memory event regularization. The next stage is therefore a mechanism-comparator study: test whether the heterogeneous event-suppression effect is genuinely distinctive relative to simpler deadband, proximal, EMA/filtering, reset, and error-feedback mechanisms.
+
+The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which a later manuscript can be distilled, and it records both successful mechanisms and falsified hypotheses.
