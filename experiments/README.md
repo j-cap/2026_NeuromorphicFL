@@ -1,14 +1,12 @@
 # Experiments
 
-All experiments should import reusable code from `src/neuromorphicfl` and write generated artifacts to `experiments/results/<experiment-name>/`.
+All experiments should import reusable code from `src/neuromorphicfl` where appropriate and write generated artifacts to `experiments/results/<experiment-name>/`.
 
 ## 01 — stationary stochastic quadratic
 
 **Question.** Does temporal gradient evidence accumulation improve signed-update reliability and reduce communication while retaining SGD-like steady-state accuracy?
 
 **Core setup.** `F(w)=0.5 w^2`, noisy stochastic gradients, fixed-amplitude update events. Compare SGD, signSGD, IF-SGD, and LIF-SGD. Characterize event rate, wrong-sign probability, communication reduction, tail MSE, and a leak sweep.
-
-Run:
 
 ```bash
 PYTHONPATH=src python experiments/01_stochastic_quadratic.py
@@ -22,8 +20,6 @@ PYTHONPATH=src python experiments/01_stochastic_quadratic.py
 
 **Current conclusion.** The large objective shift overwhelms the residual membrane quickly. Oracle resetting gives only a small benefit; leak mainly trades communication for responsiveness.
 
-Run:
-
 ```bash
 PYTHONPATH=src python experiments/02_moving_optimum.py
 ```
@@ -34,11 +30,7 @@ PYTHONPATH=src python experiments/02_moving_optimum.py
 
 **Core setup.** Use the same stochastic quadratic and parameters, but first allow the methods to settle near `theta=0` until `k=2000`, then shift only to `theta=0.5`. The long pre-switch phase is essential: switching earlier confounds the result because strongly leaky methods have not yet reached the old optimum and can accidentally start closer to the new target.
 
-Compare IF-SGD, an oracle-reset IF baseline, and several LIF retention factors. Measure pre-switch stationarity, short-horizon post-switch MAE, recovery time, first-event delay/correctness, and communication.
-
 **Current conclusion.** Once the change-point state is controlled, leakage does not improve tracking. It reduces communication but slows adaptation; an oracle membrane reset changes IF only marginally.
-
-Run:
 
 ```bash
 PYTHONPATH=src python experiments/03_moderate_optimum_shift.py
@@ -48,16 +40,9 @@ PYTHONPATH=src python experiments/03_moderate_optimum_shift.py
 
 **Question.** What does leak actually do to a known amount of stale evidence when the gradient direction reverses?
 
-**Core setup.** Remove optimization-trajectory confounders. Initialize a membrane at a prescribed stale negative value `z0` and then apply a constant new gradient requiring a positive event. Compare deterministic and stochastic first-passage behavior for IF and LIF.
-
-Track two distinct quantities:
-
-1. time until the stale membrane sign is erased (`z >= 0`), and
-2. time until a useful communication event is actually emitted (`z >= +Delta`).
+**Core setup.** Remove optimization-trajectory confounders. Initialize a membrane at a prescribed stale value and then apply a constant new gradient requiring the opposite event direction. Compare deterministic and stochastic first-passage behavior for IF and LIF.
 
 **Current conclusion.** Leak erases stale sign sooner, but does not make a useful threshold event occur sooner. Strong leak can prevent deterministic firing entirely through the LIF deadzone.
-
-Run:
 
 ```bash
 PYTHONPATH=src python experiments/04_controlled_stale_membrane.py
@@ -65,15 +50,11 @@ PYTHONPATH=src python experiments/04_controlled_stale_membrane.py
 
 ## 05 — controlled asynchronous model drift
 
-**Question.** Does the same stale-evidence mechanism appear when the *objective stays fixed* but the global model moves because of remote-client activity?
+**Question.** Does the same stale-evidence mechanism appear when the objective stays fixed but the global model moves because of remote-client activity?
 
-**Core setup.** A single diagnostic client has fixed local objective `F_A(w)=0.5*(w-0.25)^2`. It has stored positive membrane evidence accumulated near `w=0`. Other clients are abstracted as an instantaneous server-model drift to `w=0.5`, which reverses the diagnostic client's local gradient while leaving its loss unchanged. Start from a controlled stale membrane `z=0.4` and compare IF/LIF first-passage behavior.
+**Core setup.** A single diagnostic client has fixed local objective `F_A(w)=0.5*(w-0.25)^2`. It has stored positive membrane evidence accumulated near `w=0`. Other clients are abstracted as an instantaneous server-model drift to `w=0.5`, which reverses the diagnostic client's local gradient while leaving its loss unchanged.
 
-Measure both stale-sign erasure and the delay until the first correct negative event. This is the FL-specific counterpart of Experiment 04: the gradient changes because `w` changes, not because the objective changes.
-
-**Current conclusion.** Mild leak erases the obsolete membrane sign earlier, but the first useful event is not accelerated; stronger leak again creates a responsiveness/deadzone cost. This isolates the mechanism but does not by itself establish an optimization benefit.
-
-Run:
+**Current conclusion.** Mild leak erases the obsolete membrane sign earlier, but the first useful event is not accelerated; stronger leak again creates a responsiveness/deadzone cost.
 
 ```bash
 PYTHONPATH=src python experiments/05_controlled_async_drift.py
@@ -81,32 +62,61 @@ PYTHONPATH=src python experiments/05_controlled_async_drift.py
 
 ## 06 — endogenous two-client asynchronous learning
 
-**Question.** Can finite LIF memory provide a net systems benefit when stale evidence is created endogenously by another client's server updates?
+**Question.** Can finite LIF memory provide a net systems benefit when stored evidence is aged while another client moves the server model?
 
-**Core setup.** Two clients optimize the same scalar quadratic `F_i(w)=0.5 w^2`, eliminating statistical heterogeneity so stale/harmful event signs are unambiguous. The fast client evaluates a gradient every wall-clock tick; the slow client every five ticks. Server events are applied immediately. All client membranes decay every wall-clock tick for LIF, including while a client is idle. The slow client can therefore hold evidence accumulated at old server models while the fast client moves `w` underneath it.
+**Core setup.** Two clients optimize the same scalar quadratic `F_i(w)=0.5 w^2`. The fast client evaluates every wall-clock tick and the slow client every five ticks. Server events are immediate and LIF membranes decay with wall-clock time.
 
-Compare:
-
-- IF (`rho=1`): infinite evidence memory,
-- an oracle hard-reset baseline that clears every other client's membrane after each server update,
-- LIF with several finite memory factors.
-
-Measure optimization error, total communication, fraction of events that oppose the *current* true descent direction, and client-specific harmful-event fractions.
-
-**Current diagnostic result.** With the present configuration (`slow period=5`, `fast period=1`, `sigma=0.5`, `Delta=0.5`, `q=0.05`), mild LIF memory (`rho=0.995`) reduces the harmful-event fraction from about 8.7% for IF to about 3.7%, reduces communication, and improves tail RMSE. Stronger leak removes harmful events further but degrades tracking through the already identified deadzone/responsiveness mechanism. The hard-reset oracle is also not ideal: frequent remote updates repeatedly destroy useful slow-client evidence. This suggests a candidate interpretation of mild LIF as a **soft freshness mechanism between infinite memory and hard invalidation**. The result is still a toy diagnostic and requires parameter sweeps and heterogeneous-client tests before any broader claim.
-
-Run:
+**Initial diagnostic result.** A mild finite-memory setting improved tail RMSE and reduced communication relative to IF at one selected noisy operating point. This initially suggested a possible soft stale-evidence invalidation effect. Experiment 07 shows that this interpretation is too strong: the advantage persists even when asynchrony is removed and disappears in the zero-noise control. It should therefore currently be interpreted mainly as stochastic-gradient filtering / communication regularization, not as an established FL-specific freshness benefit.
 
 ```bash
 PYTHONPATH=src python experiments/06_two_client_async.py
 ```
 
+## 07 — asynchrony × memory regime map
+
+**Question.** Is the finite-memory advantage from Experiment 06 a robust consequence of client asynchrony, or a noise-regularization effect that happens to appear in the asynchronous example?
+
+**Core setup.** Keep homogeneous local objectives `F_1(w)=F_2(w)=0.5 w^2` and vary the slow/fast compute-period ratio
+
+`R in {1, 2, 5, 10, 20}`
+
+against
+
+`rho in {1, 0.999, 0.995, 0.99, 0.98, 0.95}`.
+
+The default stochastic run uses `sigma=0.5`, 4000 wall-clock ticks, and 300 Monte Carlo seeds. For fairness, every `rho` at a fixed `R` receives the same stochastic-gradient noise realizations. An event is classified as harmful only if the fixed jump actually increases the current quadratic objective, not by a sign-only proxy.
+
+The experiment additionally includes:
+
+- IF, hard-reset IF, and instantaneous-sign baselines;
+- a `local_step` leakage diagnostic to check whether the result is merely caused by wall-clock decay silencing slow clients;
+- a zero-gradient-noise control to separate temporal noise filtering from asynchronous stale-evidence effects.
+
+**Current conclusion.** In the noisy homogeneous problem, `rho≈0.99` gives the lowest tail RMSE at every tested `R`, including `R=1`. The same optimum remains when leakage is applied only on local gradient evaluations. In the zero-noise control, however, IF (`rho=1`) is optimal for every `R`, reaches the exact optimum, and produces no harmful events. Therefore the present regime map does **not** support the hypothesis that the optimal memory horizon shortens as asynchrony increases. The observed finite-memory benefit is primarily stochastic evidence filtering / event regularization. At large `R`, finite wall-clock memory can also silence the slow client entirely, which is a failure mode rather than a benefit.
+
+This is a deliberate falsification result. A genuine FL-specific stale-sign test now requires heterogeneous local objectives so that remote server movement can reverse a client's current local gradient. Such an experiment must also correct for unequal compute rates so that fast clients do not implicitly receive larger optimization weight.
+
+Full run:
+
+```bash
+PYTHONPATH=src python experiments/07_asynchrony_memory_map.py
+```
+
+Smoke test:
+
+```bash
+PYTHONPATH=src python experiments/07_asynchrony_memory_map.py --quick
+```
+
 ## Conventions
 
 - Use fixed random seeds and Monte Carlo ensembles.
+- Use common random numbers across parameter sweeps whenever possible.
 - Report both optimization quality and communication cost.
 - Do not use signed ensemble means as the primary convergence metric under stochastic updates.
 - Preserve threshold `Delta` and parameter jump `q` as separate quantities.
 - Prefer subtractive membrane reset so discrete threshold overshoot is not discarded.
-- When studying nonstationarity, ensure methods have comparable states at the change point or explicitly control the state; otherwise apparent tracking gains can be initialization artifacts.
-- In asynchronous experiments, define whether leakage acts per local gradient evaluation or per wall-clock interval. Experiments 05--06 use wall-clock leakage because the intended LIF memory represents information age, including periods when a client is idle.
+- Define harmful events through actual objective change whenever the objective is available.
+- When studying nonstationarity, ensure methods have comparable states at the change point or explicitly control the state.
+- In asynchronous experiments, state explicitly whether leakage acts per wall-clock interval or per local gradient evaluation.
+- Always check whether reduced communication is caused by useful compression or by effectively silencing slow clients.
