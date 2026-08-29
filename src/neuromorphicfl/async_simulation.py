@@ -56,22 +56,26 @@ def run_async_scalar_federation(
 ) -> AsyncRun:
     """Simulate an asynchronous event-driven scalar federation.
 
-    All clients share the current server model `w`, but retain independent
+    All clients share the current server model ``w``, but retain independent
     membrane states. At every wall-clock tick all membranes first decay by
-    `rho`, which approximates continuous LIF leakage even for clients that are
+    ``rho``, which approximates continuous LIF leakage even for clients that are
     temporarily idle. Active clients then evaluate a noisy local gradient,
     integrate it, and emit fixed signed jumps whenever their membrane crosses
-    `threshold`.
+    ``threshold``.
 
     Events are applied to the server immediately. Thus later clients at the
     same tick observe the updated model. Other clients retain their membrane
-    state unless `oracle_reset_others=True`, which implements the deliberately
+    state unless ``oracle_reset_others=True``, which implements the deliberately
     aggressive diagnostic baseline that invalidates all remote evidence after
     every server update.
 
-    An event is marked harmful when its sign opposes the instantaneous descent
-    direction of that client's *current* local quadratic. For homogeneous
-    clients with theta=0 this is also a harmful event for the global objective.
+    An event is marked harmful when it increases the emitting client's current
+    local quadratic exactly,
+
+        F_i(w + q s) > F_i(w),
+
+    rather than by a sign-only heuristic. For homogeneous clients with
+    ``theta=0`` this is also an exact global-objective criterion.
     """
 
     if not 0.0 < rho <= 1.0:
@@ -113,12 +117,13 @@ def run_async_scalar_federation(
             while abs(z[i]) >= threshold:
                 sign = 1 if z[i] > 0.0 else -1
                 w_before = w
+                w_after = w_before + jump * sign
 
-                true_gradient = w_before - client.theta
-                desired_sign = -np.sign(true_gradient) if true_gradient != 0.0 else 0
-                harmful = bool(desired_sign != 0 and sign != desired_sign)
+                f_before = 0.5 * (w_before - client.theta) ** 2
+                f_after = 0.5 * (w_after - client.theta) ** 2
+                harmful = bool(f_after > f_before + 1e-15)
 
-                w += jump * sign
+                w = w_after
                 z[i] -= sign * threshold
                 n_comm += 1
                 events_per_client[i] += 1
