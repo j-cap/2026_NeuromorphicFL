@@ -1,0 +1,169 @@
+\section{Experiment 11A Results: Descent-Aware Event Sizing}
+\label{sec:exp11a-results}
+
+\subsection{Purpose and experimental convention}
+
+Experiment~11A tests the descent-aware sizing hierarchy developed in the preceding design section. The event trigger is deliberately held fixed throughout the study: clients use the curvature-normalized full-reset coordinate-LIF encoder from Experiment~10A with $\rho=0.999$, $\gamma=0.05$, and $\Delta_j=0.25s_j$. A threshold crossing always produces a candidate coordinate event, the candidate is counted as transmitted communication, and the corresponding membrane is reset. The tested rules alter only whether the server applies the candidate and what jump amplitude it assigns. Consequently, an oracle that rejects a candidate does \emph{not} receive free communication savings. This convention isolates the value of descent-aware event sizing from the separate problem of changing the communication trigger itself.
+
+The primary campaign uses the same $N=10$, $d=20$ heterogeneous diagonal quadratic family as Experiment~10, $80$ problem realizations, $2000$ wall-clock ticks, a $500$-tick tail window, client periods
+\begin{equation}
+  T_i\in\{1,1,2,2,5,5,10,10,20,20\},
+\end{equation}
+and stochastic-gradient noise $\sigma_g=0.25$. Each signed coordinate event costs six logical payload bits before the illustrative packet header.
+
+The comparison contains the fixed-$q$ and global $q(t)$ references from Experiment~10C, the exact global descent oracle, the exact local-client descent rule, an oracle heterogeneity-aware certificate, the raw first-passage/event-derived local rule, and an event-derived rule supplied with oracle-valid estimation and heterogeneity margins.
+
+\subsection{Primary result}
+
+Table~\ref{tab:exp11a-main} summarizes representative configurations. Values reported as zero are at numerical precision in the quadratic benchmark.
+
+\begin{table}[ht]
+  \centering
+  \caption{Experiment~11A primary comparison. Candidate events are transmitted threshold crossings; accepted events are candidates that receive nonzero jump amplitude.}
+  \label{tab:exp11a-main}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Method & Tail gap & Whole-run gap & Payload bits & Candidates & Accepted \\
+    \midrule
+    Fixed $q=0.015$ & $4.36\!\times\!10^{-3}$ & 1.048 & 11113 & 1852 & 1852 \\
+    Global $q(t)$ & $3.76\!\times\!10^{-3}$ & 0.873 & 10513 & 1752 & 1752 \\
+    Global descent oracle, $\eta=1$ & $\approx0$ & 0.208 & 7990 & 1332 & 20.0 \\
+    Local descent oracle, $\eta=1$ & 1.610 & 1.803 & 8191 & 1365 & 1181 \\
+    Certified oracle, $\eta=1$ & $\approx0$ & 0.208 & 7991 & 1332 & 20.9 \\
+    Raw event-derived, $\eta=0.25$ & $8.30\!\times\!10^{-2}$ & 0.365 & 8410 & 1402 & 1402 \\
+    Event-derived + oracle margins, $\eta=1$ & $\approx0$ & 0.211 & 8001 & 1334 & 32.4 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The first gate is therefore passed very strongly. Relative to the empirically best conventional global schedule from Experiment~10C, the global descent oracle reduces whole-run excess cost by approximately
+\begin{equation}
+  \boxed{76\%}
+\end{equation}
+and reduces logical payload by approximately
+\begin{equation}
+  \boxed{24\%},
+\end{equation}
+while driving the tail error to numerical zero. For $\eta=1$ and the diagonal quadratic, an accepted globally aligned coordinate event is the exact one-dimensional minimizer. Starting from the common $0.8$ coordinate offset, the global oracle accepts on average exactly $20$ events per run, essentially one useful event per coordinate, and places those coordinates at the aggregate optimum.
+
+This result is intentionally an upper bound rather than a deployable algorithm. The server needs the exact aggregate gradient and curvature to compute the jump. Nevertheless, it proves that the weakness of the fixed-$q$ reference is not inherent to event-driven communication. There is substantial performance available if event amplitude is tied to objective decrease rather than an externally prescribed resolution schedule.
+
+\subsection{A second bottleneck appears: the trigger keeps communicating after useful descent is exhausted}
+
+The global oracle accepts only about
+\begin{equation}
+  \boxed{1.5\%}
+\end{equation}
+of transmitted candidate events. Approximately $98.5\%$ of threshold crossings are rejected by assigning $q=0$, but these events have already been counted as communication and their membranes have fired/reset. This is a direct consequence of heterogeneous clients: even at the global optimum, individual clients generally have nonzero local gradients and continue to excite their communication neurons.
+
+Thus Experiment~11A exposes two separate design layers:
+\begin{enumerate}
+  \item \textbf{event sizing/acceptance:} how large should an already generated event be, and should it affect the model at all?;
+  \item \textbf{event generation:} can a client avoid transmitting a candidate that cannot plausibly produce useful global descent?
+\end{enumerate}
+The present experiment resolves only the first layer. A future certified trigger/gate could potentially remove a large amount of currently wasted candidate traffic, but it must do so without access to the exact global gradient.
+
+\subsection{Local descent is not global descent}
+
+The exact local-client rule provides the decisive federated counterexample. With $\eta=1$, the local rule chooses the one-coordinate minimizer of the client's own quadratic whenever the spike sign is locally descent aligned. It performs very poorly on the heterogeneous global objective: the tail excess objective rises to approximately $1.61$, and approximately
+\begin{equation}
+  \boxed{51.6\%}
+\end{equation}
+of accepted events increase the aggregate objective. The best tested damping ($\eta=0.5$) reduces the tail gap to about $0.29$ but leaves the harmful-event fraction near $52\%$.
+
+The causal heterogeneity sweep makes the mechanism unambiguous. When all clients share the same local optimum ($\sigma_\theta=0$), the local and global oracle rules coincide and both converge to numerical zero with no harmful accepted events. As soon as client optima separate, the local rule deteriorates rapidly. Representative tail errors for the local oracle are
+\begin{equation}
+  0\;(\sigma_\theta=0),\quad
+  0.070\;(0.05),\quad
+  0.249\;(0.10),\quad
+  1.55\;(0.25),\quad
+  3.88\;(0.50),
+\end{equation}
+while the harmful-event fraction increases to roughly $47$--$54\%$. This is the clearest evidence so far that a descent-aware federated event law cannot simply substitute $F_i$ for $F$.
+
+\subsection{A heterogeneity margin is sufficient in the oracle benchmark}
+
+The certificate variant uses the exact eventwise disagreement magnitude
+\begin{equation}
+  \zeta_{i,j}=\abs{\nabla_jF_i(w)-\nabla_jF(w)}
+\end{equation}
+as an oracle-valid bound and forms
+\begin{equation}
+  \underline a_{i,j}=[-s\nabla_jF_i(w)-\zeta_{i,j}]_+.
+\end{equation}
+With $q=\underline a_{i,j}/L_j$, the certified rule essentially reproduces the global oracle: numerical-zero tail error, whole-run cost $0.208$, zero harmful accepted events, and approximately $21$ accepted events per run. It also remains stable throughout the tested heterogeneity sweep.
+
+This does not solve the practical FL problem because the exact eventwise $\zeta_{i,j}$ is unavailable. It does, however, prove an important structural point:
+\begin{equation}
+  \boxed{\text{a sufficiently informative local--global disagreement bound can convert local evidence into globally safe sparse events.}}
+\end{equation}
+The key open question is therefore how such a bound can be estimated, learned, or conservatively maintained without reintroducing dense communication.
+
+\subsection{First-passage timing estimates local gradient magnitude, but imperfectly}
+
+The event-derived rule uses the full-reset first-passage estimator
+\begin{equation}
+  \widehat{|g_{i,j}|}
+  =
+  \frac{\Delta_j(1-r_i)}{\gamma_i(1-r_i^\tau)},
+  \qquad r_i=\rho^{T_i},
+\end{equation}
+with gradient-sign estimate $\hat g_{i,j}=-s\widehat{|g_{i,j}|}$. On more than $10^5$ logged events from the main campaign, this estimator is informative but not accurate enough to be used naively:
+\begin{itemize}
+  \item Spearman correlation with exact current local-gradient magnitude: approximately $0.86$;
+  \item local gradient-sign accuracy: approximately $94.2\%$;
+  \item median relative magnitude error: approximately $35.6\%$;
+  \item 90th-percentile relative magnitude error: approximately $131\%$.
+\end{itemize}
+The estimator also becomes materially weaker for slow clients. For compute periods $T_i=1,2,5,10,20$, the median relative magnitude error grows approximately as
+\begin{equation}
+  0.32,\;0.33,\;0.34,\;0.38,\;0.43,
+\end{equation}
+while local sign accuracy decreases from about $99.2\%$ to $85.6\%$. The 90th-percentile relative error exceeds $400\%$ for $T_i=20$. Longer computation intervals expose the membrane to stronger model evolution and make the constant-gradient first-passage approximation less representative of the current local gradient.
+
+The raw event-derived jump
+\begin{equation}
+  q_{i,j}\propto\frac{\widehat{|g_{i,j}|}}{L_{i,j}}
+\end{equation}
+therefore does not solve the problem. The best tested raw event-derived setting obtains relatively low transient cost ($0.365$) but a much worse tail gap ($0.083$) and about $43\%$ globally harmful accepted events. It moves quickly but with poor final resolution/global alignment.
+
+\subsection{Oracle uncertainty margins show what would be needed}
+
+As a diagnostic only, the event-derived certificate subtracts the exact signed gradient-estimation error and exact local/global disagreement from the event-derived alignment estimate. Once these oracle margins are supplied, the method again reaches numerical-zero tail error with zero harmful accepted events and whole-run cost near $0.211$. This behavior remains robust over the tested gradient-noise sweep.
+
+This is a useful but deliberately limited result. It does \emph{not} show that event timing alone solves federated descent. Instead it shows that the temporal code contains useful local magnitude information and that a valid uncertainty/disagreement envelope can transform that information into a safe descent law. The unresolved problem is obtaining those envelopes without oracle access.
+
+\subsection{Noise robustness}
+
+The global and certified oracle rules remain at numerical-zero tail error for $\sigma_g\in\{0,0.1,0.25,0.5\}$. Increasing gradient noise mainly increases the number of useless threshold crossings and therefore communication. For the global oracle, accepted useful events remain approximately $20$ per run while candidate communication grows. The conventional $q(t)$ baseline degrades from a tail gap around $4.9\times10^{-3}$ at zero noise to about $8.0\times10^{-3}$ at $\sigma_g=0.5$.
+
+The raw event-derived method deteriorates more clearly with noise, increasing from a tail gap around $0.065$ to about $0.195$. This is consistent with the first-passage estimator analysis: noise and delayed/asynchronous model evolution primarily corrupt the magnitude/sign estimate, whereas the exact global descent certificate is insensitive to that corruption except through the rate at which candidate events become available.
+
+\subsection{Experiment 11A verdict}
+
+The hypotheses can now be classified as follows:
+\begin{equation}
+  \boxed{\text{H11A-1, value of descent-aware sizing: strong PASS}}
+\end{equation}
+The global oracle dominates the tuned $q(t)$ reference in transient cost, final accuracy, and communication on the diagonal quadratic benchmark.
+
+\begin{equation}
+  \boxed{\text{H11A-2, local information is sufficient: FAIL}}
+\end{equation}
+Client-local descent becomes strongly inconsistent with aggregate descent as statistical heterogeneity grows.
+
+\begin{equation}
+  \boxed{\text{H11A-3, heterogeneity-aware certificate: oracle PASS}}
+\end{equation}
+A valid disagreement bound is sufficient to recover globally safe sparse events, but the tested bound uses inaccessible oracle information.
+
+\begin{equation}
+  \boxed{\text{H11A-4, raw event-derived descent sizing: FAIL}}
+\end{equation}
+First-passage timing provides useful local gradient information but is too inaccurate and too local to replace the missing global certificate directly.
+
+The central conclusion is therefore
+\begin{equation}
+  \boxed{\textbf{descent-aware neuromorphic event sizing is promising; the research bottleneck is a sparse federated certificate of global alignment and uncertainty.}}
+\end{equation}
+This is a substantially sharper target than the earlier heuristic timing, homeostasis, or competition mechanisms.
