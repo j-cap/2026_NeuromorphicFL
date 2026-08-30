@@ -13,21 +13,19 @@ The study uses the same $N=10$, $d=20$ asynchronous quadratic family as Experime
 
 \subsection{Calibration model and communication accounting}
 
-At a calibration time $t_c$, every client evaluates and transmits its full local gradient at the current server model,
+At calibration time $t_c$, every client evaluates and transmits its full local gradient at the current server model,
 \begin{equation}
   g_i^c=\nabla F_i(w^c).
 \end{equation}
-The server stores the individual vectors and the aggregate center
+The server stores the individual vectors and their aggregate center
 \begin{equation}
   c^c=\sum_i p_i g_i^c.
 \end{equation}
-A calibration therefore costs
+A full calibration costs
 \begin{equation}
-  B_{\rm cal}=N\,d\,32=6400
+  B_{\rm cal}=N d\,32=6400
 \end{equation}
-logical payload bits before packet headers. This cost is included in every reported communication number. The initial calibration at $t=0$ is also counted.
-
-The present quadratic experiment assumes exact full-gradient calibration and known static curvature bounds. These are controlled-benchmark assumptions, not yet the final machine-learning protocol. In particular, the recurring gradient calibration is counted, whereas the fixed curvature metadata is treated as preconfigured model information.
+logical payload bits before packet headers. This recurring calibration traffic, including the initial calibration at $t=0$, is included in every communication result. Static curvature bounds are treated as configured benchmark metadata and are not charged repeatedly.
 
 \subsection{Conservative drift envelope}
 
@@ -52,36 +50,40 @@ where
   \qquad
   r_j=\sum_i p_i\sum_k\abs{[H_i]_{jk}}\abs{w_k-w_k^c}.
 \end{equation}
-For an arriving event with sign $s\in\{-1,+1\}$, a guaranteed lower bound on the global descent alignment is
+For an arriving signed coordinate event $s\in\{-1,+1\}$, a guaranteed lower bound on aggregate descent alignment is
 \begin{equation}
   \underline a_j=-s c_j-r_j.
 \end{equation}
-The event is accepted only if $\underline a_j>0$, and the applied jump is
+The event is accepted only when $\underline a_j>0$, with jump
 \begin{equation}
   q_j=\frac{\underline a_j}{[\bar H]_{jj}}.
   \label{eq:11b-certified-jump}
 \end{equation}
-Because the true alignment is at least $\underline a_j$, this choice satisfies the coordinate-smoothness descent inequality and therefore cannot increase the aggregate quadratic objective. Rejected threshold crossings still count as transmitted events and still reset their communication neuron.
+Rejected threshold crossings still count as communication and reset their LIF membrane.
 
-A scalar/row-norm Lipschitz envelope was also tested during the smoke stage. It was mathematically valid but far too conservative: most candidate events were rejected and useful convergence required almost continuous recalibration. The componentwise bound in \cref{eq:11b-componentwise-bound} is therefore the primary 11B rule.
+\paragraph{Sequential application under coupled geometry.}
+A subtle point is essential once $\bar H$ is not diagonal. If several coordinate events arrive in the same packet, applying all individually certified jumps simultaneously introduces Hessian cross-terms that are not covered by independent coordinate descent certificates. Therefore the final Experiment~11B implementation processes certified coordinates \emph{sequentially} at the server. After each accepted coordinate jump, the current model changes before the next candidate in that packet is evaluated. The reported rotated-geometry results below use this sequential-safe implementation. In the diagonal case the distinction disappears because the cross-terms are zero.
+
+A scalar row-norm/Lipschitz envelope was also tested during the smoke stage. It was valid but far too conservative: useful progress required almost continuous recalibration. The componentwise bound in \cref{eq:11b-componentwise-bound} is therefore the primary rule.
 
 \subsection{Controls}
 
-The experiment compares:
+The comparison contains:
 \begin{enumerate}
-  \item the best no-certificate global $q(t)$ reference from Experiments~10C/10D;
+  \item the tuned no-certificate global $q(t)$ event optimizer;
   \item the exact global descent oracle from Experiment~11A;
   \item the periodic conservative certificate in \cref{eq:11b-certified-jump};
-  \item a naive stale-calibration rule that uses $c_j$ but ignores $r_j$;
-  \item certificate-triggered recalibration, where an uncertified event can request a dense refresh subject to a minimum refresh interval;
-  \item an event-time-tightened rule that replaces the firing client's stale local contribution by the first-passage gradient estimate and an empirical error margin;
-  \item an oracle basis-aligned calibrated certificate in the common eigenbasis from Experiment~10D.
+  \item a naive stale-calibration rule that ignores $r_j$;
+  \item certificate-triggered recalibration with a minimum refresh interval;
+  \item an event-time-tightened variant that replaces the firing client's stale contribution by the first-passage gradient estimate plus an empirical uncertainty margin;
+  \item an oracle basis-aligned calibrated certificate in the common eigenbasis from Experiment~10D;
+  \item EF-TopK and full-precision asynchronous optimization as conventional references.
 \end{enumerate}
-The event-time margin is estimated on a separate calibration ensemble and grouped by client compute period. Both 99\% and 99.9\% empirical error quantiles were checked. This arm is explicitly statistical rather than deterministically certified.
+The first-passage margins are estimated on a separate calibration ensemble and grouped by client compute period. Both 99\% and 99.9\% empirical error quantiles were inspected. These timing-assisted rules are statistical diagnostics, not deterministic certificates.
 
-\subsection{Diagonal geometry: sparse calibration almost closes the oracle gap}
+\subsection{Diagonal geometry: sparse calibration closes the oracle gap}
 
-The diagonal problem is highly favorable for the componentwise certificate because \cref{eq:11b-componentwise-bound} is essentially tight coordinate by coordinate. The result is striking: every tested periodic certificate, including calibration period $C=1000$, reproduces the global-oracle trajectory to numerical precision. Representative results are
+The diagonal problem is highly favorable because \cref{eq:11b-componentwise-bound} is tight coordinate by coordinate. Every tested periodic certificate, including $C=1000$, reproduces the global-oracle trajectory to numerical precision:
 \begin{center}
 \begin{tabular}{lrrrr}
 \toprule
@@ -94,13 +96,13 @@ Periodic certificate, $C=1000$ & $\approx0$ & 0.210 & 27012 & 3 \\
 \bottomrule
 \end{tabular}
 \end{center}
-Thus only three dense calibrations over the 2000-tick run, including the initial calibration, are sufficient to retain the exact descent behavior. The accepted-event fraction is only about $1.5\%$, exactly as in Experiment~11A, and no accepted event is globally harmful.
+Thus only three dense calibrations over 2000 ticks, including the initial one, are sufficient to retain oracle-like descent. The accepted-event fraction is about 1.5\%, and no accepted event is globally harmful.
 
-This confirms that the calibration principle itself is viable. It also shows why Experiment~11A's oracle result was not merely an unattainable mathematical curiosity: stale aggregate information can remain useful for a long time when the uncertainty geometry is well aligned with the event coordinates.
+This is the first practical evidence that Experiment~11A's oracle is reachable from stale but bounded federated information rather than requiring a dense gradient at every event.
 
 \subsection{Rotated geometry: a clear calibration-rate transition}
 
-The strongly rotated isospectral problem is harder because a displacement in one model coordinate changes many gradient components. The same valid bound therefore expands much faster between calibrations.
+The strongly rotated isospectral problem is harder because one coordinate displacement changes many gradient components. The same valid uncertainty box therefore expands much faster between calibrations.
 
 The retuned no-certificate reference from Experiment~10D gives
 \begin{equation}
@@ -110,28 +112,28 @@ The retuned no-certificate reference from Experiment~10D gives
   \qquad
   B=1.57\times10^4\;\text{bits}.
 \end{equation}
-The native calibrated certificate exhibits a sharp communication--accuracy trade-off:
+With sequentially processed certified events, the native-coordinate trade-off is
 \begin{center}
 \begin{tabular}{rrrrr}
 \toprule
 $C$ & Tail gap & Whole-run gap & Total payload & Calibration payload \\
 \midrule
-100 & $1.44\times10^{-2}$ & 0.369 & 150188 & 134400 \\
-75  & $5.72\times10^{-3}$ & 0.293 & 188371 & 172800 \\
-60  & $2.49\times10^{-3}$ & 0.247 & 233020 & 217600 \\
-50  & $1.14\times10^{-3}$ & 0.220 & 277747 & 262400 \\
-40  & $4.39\times10^{-4}$ & 0.190 & 341673 & 326400 \\
-25  & $6.3\times10^{-5}$ & 0.161 & 533588 & 518400 \\
+100 & $1.59\times10^{-2}$ & 0.362 & 150163 & 134400 \\
+75  & $6.47\times10^{-3}$ & 0.291 & 188359 & 172800 \\
+60  & $2.83\times10^{-3}$ & 0.247 & 233012 & 217600 \\
+50  & $1.21\times10^{-3}$ & 0.217 & 277748 & 262400 \\
+40  & $5.14\times10^{-4}$ & 0.190 & 341674 & 326400 \\
+25  & $6.3\times10^{-5}$ & 0.160 & 533597 & 518400 \\
 \bottomrule
 \end{tabular}
 \end{center}
-Every accepted event in this sweep satisfies the deterministic certificate, and the measured harmful-applied-event fraction is zero.
+All accepted events in this deterministic-certificate sweep have measured objective change $\Delta F\leq0$; the harmful accepted-event fraction is zero.
 
-The key break-even point is around $C=75$: it roughly preserves the transient cost of the tuned $q(t)$ baseline while halving the tail error, but requires about twelve times more payload. More frequent calibration continues moving the method toward the global oracle.
+The useful transition occurs near $C=75$: it roughly preserves the whole-run cost of the tuned $q(t)$ baseline while cutting the tail error almost in half, but it uses about twelve times more payload. More frequent calibration moves the method steadily toward the global oracle.
 
 \subsection{Comparison with conventional sparse optimization}
 
-The strongest tested native certificate, $C=25$, should not be described as ultra-low-communication because calibration dominates its traffic. Nevertheless it is already competitive with a conventional compressor. On the same strongly rotated benchmark, the selected EF-TopK ($k=4$) reference has
+On the same strongly rotated benchmark, the selected EF-TopK ($k=4$) reference gives
 \begin{equation}
   J_{\rm tail}=7.89\times10^{-3},
   \qquad
@@ -139,58 +141,54 @@ The strongest tested native certificate, $C=25$, should not be described as ultr
   \qquad
   B=1.0952\times10^6\;\text{payload bits}.
 \end{equation}
-The calibrated event method at $C=25$ gives
+The native calibrated event method at $C=25$ obtains
 \begin{equation}
   J_{\rm tail}=6.3\times10^{-5},
   \qquad
-  J_{\rm whole}=0.161,
+  J_{\rm whole}=0.160,
   \qquad
-  B=5.34\times10^5\;\text{bits}.
+  B=5.336\times10^5\;\text{bits}.
 \end{equation}
-Hence it improves the whole-run objective by about 12\%, improves the tail gap by more than two orders of magnitude, and uses approximately
+Hence this operating point improves whole-run objective by roughly 12\%, reduces the tail gap by more than two orders of magnitude, and uses approximately
 \begin{equation}
   \boxed{51\%\text{ fewer logical payload bits}}
 \end{equation}
-than EF-TopK. With the illustrative packet headers, the reduction remains approximately 54\%.
+than EF-TopK. With the illustrative packet headers the reduction remains approximately 54\%.
 
-A less aggressive certificate at $C=75$ uses only $1.88\times10^5$ bits, about 83\% fewer than EF-TopK, and still obtains a smaller tail gap ($5.72\times10^{-3}$), although its transient cost remains substantially larger than EF-TopK.
+At $C=75$, the method uses only $1.88\times10^5$ bits, about 83\% fewer than EF-TopK, and still obtains a smaller tail gap ($6.47\times10^{-3}$), although its transient cost remains substantially larger than EF-TopK.
 
-This means Experiment~11B passes the communication-aware feasibility gate: there exists a nontrivial calibration regime that improves on the conventional sparse baseline even after the dense calibration payload is counted.
+Thus Experiment~11B passes the communication-aware feasibility gate: there exists a nontrivial calibration regime that improves on the selected conventional sparse baseline even after dense calibration traffic is charged.
 
 \subsection{Calibration traffic is now the dominant bottleneck}
 
-The positive result comes with an equally important limitation. At $C=25$,
+The positive result comes with a severe systems limitation. At $C=25$,
 \begin{equation}
   \frac{B_{\rm cal}}{B_{\rm total}}
   =
-  \frac{518400}{533588}
+  \frac{518400}{533597}
   \approx97\%.
 \end{equation}
-Even at $C=75$, calibration accounts for more than 90\% of the payload. The low-bit event stream itself remains cheap; the recurring trustworthy magnitude information is expensive.
+At $C=75$, calibration still accounts for about 92\% of payload. The sparse event stream remains cheap; recurring trustworthy magnitude information is now the dominant communication cost.
 
-Thus the central systems problem has moved again. After 11A the missing quantity was a global descent certificate. After 11B we know that such a certificate can be maintained from occasional dense information, but the dominant communication cost is now precisely that calibration information.
+The bottleneck has therefore moved from ``how to size a spike'' to ``how to maintain a sufficiently tight global descent certificate without repeatedly transmitting dense gradient vectors.''
 
 \subsection{Naive stale gradients are unsafe}
 
-Ignoring the drift radius and treating the stale calibration center as the current global gradient is not a benign approximation. The naive rule is unstable in both geometries. For example, on the rotated problem with $C=200$ the tail objective grows to approximately $10^{27}$, and around 69\% of accepted events are globally harmful. Even very sparse $C=1000$ calibration produces a tail gap above $10^4$.
+Ignoring the drift radius and treating the stale calibration center as the current gradient is catastrophically unstable. In the controlled sweeps, naive rules accumulate very large objective errors and a majority of their accepted events can be globally harmful. This control demonstrates that occasional dense gradients alone are not the mechanism: the uncertainty envelope is essential.
 
-This control is important because it shows that the benefit of the calibrated method comes from the \emph{certificate}, not merely from occasionally observing a dense gradient. The uncertainty envelope is essential.
+\subsection{Certificate-triggered refresh does not yet save meaningful bits}
 
-\subsection{Certificate-triggered refresh does not save meaningful bits yet}
-
-The adaptive-refresh variant recalibrates only when an arriving event cannot be certified and a minimum refresh interval has elapsed. In the present benchmark it closely reproduces the corresponding fixed-period results but does not materially reduce calibration count. For example, at the rotated $50$-tick scale it uses about $2.76\times10^5$ payload bits compared with $2.78\times10^5$ for periodic $C=50$.
-
-The reason is structural: once the native-coordinate uncertainty envelope has grown large enough to reject one useful event, many subsequent events are also uncertain. The trigger therefore requests refreshes close to the imposed minimum spacing. A more selective refresh policy would require a better model of which calibration information is actually needed, rather than simply changing the calibration clock.
+The adaptive-refresh variant recalibrates only after an uncertified event and subject to a minimum refresh interval. In the present native rotated benchmark it converges toward nearly the same refresh frequency as the corresponding periodic schedule once the uncertainty set has expanded. It therefore produces little communication reduction. This suggests that a useful adaptive policy must decide \emph{which part} of the certificate needs refresh, not merely replace a fixed clock by a binary refresh request.
 
 \subsection{First-passage tightening remains insufficient}
 
-Experiment~11A showed that first-passage timing estimates local gradient magnitude but with non-negligible error, especially for slow clients. Experiment~11B attempts to use that estimate to replace the firing client's stale contribution between dense calibrations. With a 99\% empirical error margin, the rule introduces nonzero harmful-event rates and strongly underweights slow-client events. Tightening the empirical margin to 99.9\% reduces some of the harmful activity but makes the method substantially more conservative and still does not outperform the deterministic periodic certificate.
+The firing-time estimator from Experiments~10C and 11A was used to refresh only the firing client's contribution between dense calibrations. With a 99\% empirical signed-gradient error margin, the rule admits nonzero harmful-event rates and substantially distorts slow-client participation. Tightening the margin to 99.9\% reduces some unsafe activity but also makes the rule much more conservative. It still does not outperform the deterministic periodic certificate.
 
-Representative diagonal results with the 99.9\% margin have tail gap around $6.5\times10^{-2}$ even when the deterministic calibrated certificate reaches numerical zero. On the rotated $C=100$ case, the event-tightened rule has tail gap above $0.1$. The timing-assisted certificate should therefore remain rejected as a core mechanism at this stage.
+Representative 99.9\% results include a diagonal tail gap around $6.5\times10^{-2}$ where the deterministic certificate reaches numerical zero. In the rotated $C=100$ case the timing-assisted rule remains above $0.1$ tail gap. First-passage information should therefore remain a diagnostic signal, not part of the core certificate at this stage.
 
 \subsection{Representation geometry and certificate geometry are coupled}
 
-The oracle basis-aligned control produces the strongest mechanistic insight. In the known common eigenbasis from Experiment~10D, both the event encoder and the drift envelope become coordinate aligned again. With only three calibrations ($C=1000$), the rotated problem returns to
+The oracle basis-aligned control provides the strongest mechanistic result. In the known common eigenbasis from Experiment~10D, both event coding and gradient-drift certification become coordinate aligned. With only three calibrations ($C=1000$), the rotated problem returns to
 \begin{equation}
   J_{\rm tail}\approx0,
   \qquad
@@ -200,33 +198,32 @@ The oracle basis-aligned control produces the strongest mechanistic insight. In 
 \end{equation}
 This is essentially the diagonal calibrated-certificate result at the same communication cost.
 
-Therefore the high calibration demand of native rotated 11B is not intrinsic to periodic calibration. It is caused by the interaction between a coordinate-wise sparse event stream and a rapidly expanding uncertainty set in a misaligned representation:
+Therefore the high calibration demand of native rotated Experiment~11B is not intrinsic to periodic calibration. It is caused by the interaction between sparse coordinate events and a rapidly expanding uncertainty set in a misaligned representation:
 \begin{equation}
   \boxed{\text{event representation and certificate representation should be designed together.}}
 \end{equation}
-The full eigenbasis remains an oracle and is not proposed as the practical solution, but the experiment strongly motivates block, preconditioned, or low-rank communication coordinates in later work.
+The eigenbasis remains an oracle rather than a deployable neural-network solution, but it strongly motivates later block, preconditioned, or low-rank communication coordinates.
 
 \subsection{Safety and client participation}
 
-The deterministic periodic certificate does not obtain safety simply by silencing all slow clients. In the rotated transition sweep the two $T=20$ clients generate about 19\% of candidate events. Their share of accepted events is approximately 17--19\% at the useful $C=25$--$75$ operating points, reasonably close to their intended 20\% aggregate federation weight. Some distortion remains and should continue to be monitored, but it is much smaller than the strict competition failure observed in Experiment~10B.
+The deterministic periodic certificate does not obtain safety simply by silencing the slowest clients. In the rotated transition sweep, the two $T=20$ clients generate approximately 19\% of candidate events. Their accepted-event share is approximately 17--19\% at the useful $C=25$--$75$ operating points, reasonably close to their intended combined weight of 20\%. This is not perfect fairness, but it is far less distorted than the hard competition studied in Experiment~10B.
 
 \subsection{Experiment 11B verdict}
 
-The hypotheses are classified as follows:
 \begin{equation}
   \boxed{\text{Periodic calibrated descent certificate: PASS}}
 \end{equation}
-There exist calibration periods that materially improve optimization while retaining a communication advantage after dense calibration bits are counted.
+There exist calibration periods that improve optimization substantially while retaining a communication advantage after dense calibration bits are counted.
 
 \begin{equation}
-  \boxed{\text{Safety from stale calibration without a drift bound: FAIL}}
+  \boxed{\text{Stale calibration without uncertainty bound: FAIL}}
 \end{equation}
-The naive rule is catastrophically unstable.
+The naive rule is unsafe and can become unstable.
 
 \begin{equation}
-  \boxed{\text{Sparse native calibration under rotated geometry: PARTIAL PASS}}
+  \boxed{\text{Sparse native certification under rotated geometry: PARTIAL PASS}}
 \end{equation}
-Useful points exist, including a point that dominates the selected EF-TopK reference, but the required calibration frequency is much higher than in the diagonal problem.
+Useful Pareto points exist, but tight guarantees require much more frequent calibration than in the aligned problem.
 
 \begin{equation}
   \boxed{\text{First-passage timing as certificate tightening: FAIL for now}}
@@ -238,7 +235,7 @@ Empirical timing margins either sacrifice safety or become too conservative.
 \end{equation}
 A good shared representation simultaneously restores sparse event efficiency and sparse certificate maintenance.
 
-The principal conclusion is therefore
+The principal conclusion is
 \begin{equation}
-  \boxed{\textbf{occasional trustworthy magnitude information can make sparse descent-aware events practical, but calibration payload and representation geometry are now the dominant design problems.}}
+  \boxed{\textbf{occasional trustworthy magnitude information can make descent-aware sparse events practical, but calibration payload and representation geometry are now the dominant design problems.}}
 \end{equation}
