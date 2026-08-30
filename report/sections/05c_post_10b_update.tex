@@ -1,0 +1,26 @@
+\section{Roadmap Update after Experiment 10B}
+
+Experiment~10B does not support naive competitive/lateral-inhibition selection as the missing algorithmic contribution. When suppressed coordinate neurons retain their evidence, a fixed per-packet Top-$K$ budget mainly defers events into later packets rather than eliminating them. The resulting backlog gives only small payload reductions, can increase packetized communication, slows the transient, and disproportionately clips slow clients because they have fewer communication opportunities per wall-clock interval. Competitive full-reset LIF is also exactly equivalent to thresholded reset-EMA Top-$K$ after the same state rescaling used in Experiments~9 and 10A.
+
+The vector program should therefore retain the normalized independent full-reset event encoder as the reference communication mechanism rather than adding competition to the core algorithm. Competitive selection remains useful only as an optional hard packet-size constraint if a deployment requires bounded packet payload.
+
+\subsection{Next mechanism test}
+
+The next compact experiment should be Experiment~10C: revisit event-time-aware jump scaling from Experiment~9c in the vector setting. In contrast to the scalar problem, each coordinate now has a different firing timescale because curvature, gradient magnitude, and local stochasticity vary by coordinate. The question is whether a coordinate-local inter-event interval contains useful adaptive-resolution information that cannot be reproduced by a single global jump schedule.
+
+The reference comparison should include:
+\begin{itemize}
+  \item normalized independent LIF with fixed $q$;
+  \item coordinate event-time-aware jump scaling $q_{i,j}(\tau_{i,j})$;
+  \item a conventional global decaying jump schedule $q(t)$;
+  \item a simple coordinate-scale baseline such as RMS-normalized fixed jumps.
+\end{itemize}
+The primary decision is again error versus transmitted bits, with transient cost and per-coordinate coverage retained as mandatory diagnostics.
+
+\subsection{Stronger theoretical branch remains in backlog}
+
+The Lyapunov/descent-derived adaptation of threshold and jump size remains the most substantial unresolved design branch. The motivation has strengthened after Experiments~9b and 10B: firing-rate homeostasis and winner-take-all competition regulate auxiliary communication quantities, but neither directly asks whether the next event produces sufficient optimization progress. A later mechanism should instead derive $\Delta$ and/or $q$ from a descent or Lyapunov condition, for example by bounding
+\begin{equation}
+  F(w+qs)-F(w)
+\end{equation}
+through smoothness or an estimated directional derivative. This branch is intentionally kept separate from Experiment~10C so that the smaller timing hypothesis can be resolved before introducing a more substantial new optimizer design.
