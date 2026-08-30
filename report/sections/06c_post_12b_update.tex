@@ -1,0 +1,73 @@
+\section{Roadmap Update after Experiment 12B}
+\label{sec:roadmap-post-12b}
+
+Experiment~12B clears the practical-certificate Pareto gate that Experiment~12A had left open. The project can therefore proceed to a small neural-network study, but the conclusion must be interpreted carefully.
+
+The selected nonlinear logistic configuration now combines all three properties that were previously separated across different methods:
+\begin{enumerate}
+ \item sparse sign-plus-address event communication;
+ \item a conservative global-descent certificate with zero measured harmful accepted events;
+ \item total payload at the scale of a conventional sparse optimizer rather than an order of magnitude above it.
+\end{enumerate}
+The leading selective-coordinate rule uses approximately $149.6$ kbit, compared with $164.3$ kbit for EF-TopK $k=1$, while reaching lower final test loss and a slightly lower whole-run training objective. It also reduces communication by approximately $67\%$ relative to the full Experiment~12A certificate.
+
+The remaining limitation is equally clear: about $85\%$ of the selected payload is still calibration/refresh information. Hence Experiment~12B does not prove that a rigorous certificate will scale to a large network. It proves that selective information refresh can close the gap at $d=20$ and gives us a concrete architecture to test at the next scale.
+
+\subsection{Recommended next step: Experiment 13A -- small neural network}
+
+The next study should be \textbf{Experiment~13A: small non-IID neural-network training with layer/block event communication}. The purpose is to determine whether the communication mechanism itself survives ordinary backpropagation and whether the selective-calibration idea remains useful once raw parameter coordinates are no longer a natural representation.
+
+A deliberately small network should be used first, for example a one-hidden-layer multilayer perceptron with a smooth activation and on the order of $10^2$--$10^3$ trainable parameters. The data should remain binary classification so that Experiment~12 provides a direct reference. The first version can use the same controlled non-IID client generator, followed by a public-data robustness check if the mechanism survives.
+
+The primary communication representation should be layer/microblock based rather than one neuron per raw parameter packet. Each block should maintain temporal gradient evidence and emit sparse signed coordinate or block events. Block sizes should be small enough that address overhead remains realistic but large enough that calibration is not performed independently for hundreds of unrelated scalar parameters.
+
+\subsection{Two questions must be separated in Experiment 13A}
+
+The neural-network experiment must not conflate communication viability with rigorous certification.
+
+\paragraph{Question 1: does sparse temporal event communication survive backpropagation?}
+Compare full-precision asynchronous SGD, EF-TopK, scheduled event communication, and layer/block-normalized event variants. The primary plots should remain test loss/accuracy versus cumulative transmitted bits. This question can be answered without pretending that a practical nonconvex descent certificate is already available.
+
+\paragraph{Question 2: how much of the Experiment-12 certificate architecture transfers?}
+For a nonconvex neural network, a global state-independent componentwise Hessian bound analogous to logistic regression will usually be extremely loose. Therefore the Experiment~12B certificate must not simply be copied. Instead, use a hierarchy:
+\begin{enumerate}
+ \item a global-gradient/descent oracle to measure the available headroom;
+ \item selective block calibration as an information architecture;
+ \item one or more explicitly labelled local/empirical curvature surrogates;
+ \item only claim a hard certificate when its assumptions provide a valid upper curvature bound.
+\end{enumerate}
+This preserves the methodological discipline established in Experiments~9--12: oracle value, practical approximation, and safety guarantee must remain distinct.
+
+\subsection{Suggested Experiment 13A design}
+
+A suitable first network is
+\begin{equation}
+  19\;\text{inputs}\rightarrow 8\;\text{hidden units}\rightarrow1\;\text{output},
+\end{equation}
+with a smooth activation such as $\tanh$ or softplus. This gives only a few hundred trainable parameters but introduces genuine nonconvex parameter coupling.
+
+Use the same ten client periods
+\begin{equation}
+  [1,1,2,2,5,5,10,10,20,20]
+\end{equation}
+and the same IID/moderate/strong non-IID split logic as Experiment~12. The event encoder should integrate ordinary mini-batch backpropagation gradients. At minimum compare:
+\begin{enumerate}
+ \item full-precision asynchronous SGD;
+ \item EF-TopK with explicit index/value bits;
+ \item scheduled LIF/event communication with per-layer or per-block normalization;
+ \item an oracle descent-aware event rule;
+ \item selective block calibration with clearly labelled empirical or conservative curvature information.
+\end{enumerate}
+
+Communication accounting must include parameter/block addresses, signed event payloads, any calibration gradients, and all curvature/statistical metadata used by the adaptive rule. Downlink model synchronization remains outside the present accounting convention and should be stated explicitly.
+
+\subsection{Experiment 13A decision gate}
+
+The small-network branch should be considered successful if sparse temporal event communication remains on or near the test-performance--bits Pareto front and the oracle descent-aware rule still provides meaningful headroom. A practical certificate is desirable but is not required to pass the first neural-network communication gate, because deriving a rigorous useful nonconvex curvature bound is itself a separate theoretical problem.
+
+If scheduled/event communication already fails badly relative to EF-TopK, the project should stop scaling and revisit representation design. If event communication succeeds but all practical descent surrogates fail, the scientific conclusion becomes sharper: event coding scales empirically, while rigorous global-descent certification is limited to structured convex or locally bounded objectives unless stronger theory is developed.
+
+The updated progression is therefore
+\begin{equation}
+ \boxed{13\mathrm{A}\;\text{small neural network communication gate}\;\rightarrow\;13\mathrm{B}\;\text{certificate/representation refinement only if justified}.}
+\end{equation}
