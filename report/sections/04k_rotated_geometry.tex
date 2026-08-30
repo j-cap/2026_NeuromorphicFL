@@ -1,0 +1,195 @@
+\section{Experiment 10D: Non-Axis-Aligned Quadratic Geometry}
+\label{sec:exp10d}
+
+\subsection{Purpose}
+
+Experiments~10A--10C use diagonal local Hessians. This is analytically convenient, but it is also unusually favorable to independent coordinate neurons because the optimization principal directions coincide with the communication coordinates. Experiment~10D therefore asks
+\begin{equation}
+  \boxed{\text{Does the low-bit event encoder remain useful when the objective is not aligned with the parameter coordinates?}}
+\end{equation}
+The experiment is deliberately constructed so that a change in geometry does not silently change the underlying optimization difficulty.
+
+\subsection{Controlled isospectral rotation}
+
+For every Monte-Carlo problem we first generate the same latent diagonal client objectives as in Experiment~10A,
+\begin{equation}
+  \widetilde F_i(v)
+  =\frac12(v-\widetilde\theta_i)^\top D_i(v-\widetilde\theta_i),
+\end{equation}
+where $D_i$ contains the heterogeneous positive eigenvalues. We then generate one orthogonal matrix $U$ that is shared by all clients in that problem and define
+\begin{equation}
+  H_i=UD_iU^\top,
+  \qquad
+  \theta_i=U\widetilde\theta_i,
+  \qquad
+  w=Uv.
+\end{equation}
+The initial error is transformed by the same matrix,
+\begin{equation}
+  w_0=U\left(\widetilde w^\star+0.8\mathbf 1\right).
+\end{equation}
+Thus changing the rotation strength changes only the coordinate representation. The eigenvalues, aggregate condition number, client heterogeneity in the latent problem, and initial objective gap remain fixed. In the primary campaign the mean aggregate condition number remains approximately $25.1$ at every rotation level and the mean initial excess objective remains approximately $10.0$.
+
+The rotation is built from a fixed sequence of Givens rotations whose angles are multiplied by a strength parameter
+\begin{equation}
+  \alpha\in\{0,0.25,0.5,1\}.
+\end{equation}
+As a direct measure of coordinate coupling we report
+\begin{equation}
+  \eta_{\rm off}
+  =
+  \frac{\|\bar H-\operatorname{diag}(\bar H)\|_F}{\|\bar H\|_F},
+\end{equation}
+which increases from $0$ to approximately $0.60$ over the sweep.
+
+A further control is important. Stochastic-gradient noise is sampled in the latent basis and rotated with the same $U$. Consequently, full-precision optimization is pathwise invariant to the coordinate rotation. An oracle basis-aligned event encoder is also pathwise invariant. Any degradation of native sparse coordinate communication can therefore be attributed to coordinate-dependent communication rather than a different spectrum, initialization, or noise realization.
+
+\subsection{Methods}
+
+The deployable event reference is the curvature-normalized full-reset coordinate LIF from Experiment~10A with the global jump schedule retained from Experiment~10C,
+\begin{equation}
+  q(t)=0.02\left(1+\frac{t}{500}\right)^{-0.25}.
+\end{equation}
+The native encoder integrates the gradient components in the parameter coordinates. Its preferred threshold normalization uses the native coordinate curvature,
+\begin{equation}
+  \Delta_j
+  =\Delta_0
+  \frac{[\bar H]_{jj}}{\operatorname{median}_\ell [\bar H]_{\ell\ell}},
+  \qquad \Delta_0=0.25.
+\end{equation}
+This uses oracle curvature information and is therefore a diagnostic normalization rather than a final learning rule.
+
+The key geometry control is an oracle shared-basis encoder. It transforms the local gradient to
+\begin{equation}
+  \widetilde g_i=U^\top g_i,
+\end{equation}
+maintains the same LIF neurons in that latent basis, and applies an event in direction $Ue_j$. The event still requires only a coordinate address and sign once the common basis is known, so the logical event payload remains unchanged.
+
+The comparison also includes error-feedback Top-$k$ with $k=4$, full-precision asynchronous gradients, and the exact global descent oracle from Experiment~11A. The latter retains the native LIF trigger but sizes each accepted native coordinate event by the exact current aggregate coordinate gradient.
+
+The primary numerical campaign uses $40$ problem realizations, $2000$ wall-clock ticks, a $500$-tick tail window, $N=10$ clients, $d=20$, the same heterogeneous client compute periods as Experiment~10A, and gradient-noise standard deviation $\sigma_g=0.25$.
+
+\subsection{Primary geometry result}
+
+Table~\ref{tab:exp10d-primary} gives the main results. The basis-aligned event encoder and full-precision method remain invariant by construction, while the native sparse methods change as coordinate coupling increases.
+
+\begin{table}[ht]
+  \centering
+  \caption{Experiment~10D isospectral rotation sweep. Payload is the mean logical uplink payload over $2000$ ticks.}
+  \label{tab:exp10d-primary}
+  \begin{tabular}{rrrrr}
+    \toprule
+    $\eta_{\rm off}$ & Method & Tail gap & Whole-run gap & Payload bits \\
+    \midrule
+    0.000 & Native LIF & $3.72\times10^{-3}$ & 0.881 & 10389 \\
+    0.000 & Basis LIF oracle & $3.67\times10^{-3}$ & 0.874 & 10420 \\
+    0.000 & EF-TopK & $5.89\times10^{-3}$ & 0.183 & 1095200 \\
+    \midrule
+    0.328 & Native LIF & $2.28\times10^{-2}$ & 0.802 & 12554 \\
+    0.328 & Basis LIF oracle & $3.67\times10^{-3}$ & 0.874 & 10420 \\
+    0.328 & EF-TopK & $6.68\times10^{-3}$ & 0.183 & 1095200 \\
+    \midrule
+    0.512 & Native LIF & $3.22\times10^{-2}$ & 0.643 & 15341 \\
+    0.512 & Basis LIF oracle & $3.67\times10^{-3}$ & 0.874 & 10420 \\
+    0.512 & EF-TopK & $7.33\times10^{-3}$ & 0.183 & 1095200 \\
+    \midrule
+    0.599 & Native LIF & $3.69\times10^{-2}$ & 0.585 & 16868 \\
+    0.599 & Basis LIF oracle & $3.67\times10^{-3}$ & 0.874 & 10420 \\
+    0.599 & EF-TopK & $7.89\times10^{-3}$ & 0.183 & 1095200 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The native LIF tail gap therefore worsens by a factor of approximately
+\begin{equation}
+  \boxed{9.9\times}
+\end{equation}
+between the diagonal and strongest-rotation cases. At the same time its event count and payload increase by approximately
+\begin{equation}
+  \boxed{62\%}.
+\end{equation}
+This is a clear failure of rotation invariance.
+
+The basis-aligned LIF control is decisive. Its tail gap, event count, payload, and whole-run cost remain unchanged to numerical precision across all rotation strengths. Hence the event mechanism itself is not intrinsically damaged by the rotated quadratic. The degradation arises because native coordinate neurons are a poor representation of persistent optimization evidence when the principal directions cut across many parameter coordinates.
+
+EF-TopK also degrades with rotation, although much more mildly: its tail gap increases by approximately $34\%$ while its communication remains fixed. Full precision is invariant to numerical precision, as intended by the construction.
+
+\subsection{Threshold normalization is necessary but not sufficient}
+
+The old Experiment~10A threshold scale was tied to the ordering of the diagonal eigenvalues. Carrying that scale over to native coordinates after a strong rotation is not meaningful and performs very poorly. At full rotation its tail gap is approximately
+\begin{equation}
+  0.202,
+\end{equation}
+with roughly $2.38\times10^4$ payload bits. Replacing it by the oracle native-coordinate curvature normalization reduces the tail gap to approximately $0.0369$. A uniform threshold gives a similar $0.0350$ tail gap.
+
+Thus one important part of the geometry failure is simply scale calibration. However, even after correcting that calibration, native LIF remains roughly one order of magnitude less accurate at the original horizon than its basis-aligned counterpart. Threshold normalization alone does not restore coordinate invariance.
+
+\subsection{Geometry changes event quality and participation}
+
+The full-reset event mechanism remains fully coordinate-covering in every tested geometry, so the degradation is not caused by silent coordinates. Instead the event stream becomes busier and less useful. The fraction of nonempty native-LIF packets that increase the exact aggregate objective rises from approximately
+\begin{equation}
+  26.1\%\quad\text{to}\quad35.2\%
+\end{equation}
+as $\eta_{\rm off}$ increases from $0$ to $0.60$.
+
+The two slowest clients jointly contribute about $21.0\%$ of native events in the diagonal case, close to their intended combined weight of $20\%$. Under the strongest rotation this share falls to about $18.9\%$. The effect is much smaller than the fairness failure from strict competition in Experiment~10B, but it shows that geometry can interact with asynchronous threshold-crossing rates even when explicit compute-rate normalization is retained.
+
+\subsection{Can jump-schedule retuning rescue native coordinates?}
+
+A local schedule sweep at the strongest rotation changes only the jump law; the trigger and threshold normalization remain fixed. The best tested native point uses approximately
+\begin{equation}
+  q(t)=0.05\left(1+\frac{t}{500}\right)^{-0.5}.
+\end{equation}
+On the independent $40$-problem validation this improves the $2000$-tick tail gap from
+\begin{equation}
+  0.0369\quad\text{to}\quad0.0116
+\end{equation}
+and reduces whole-run cost from $0.585$ to approximately $0.296$, with roughly $1.57\times10^4$ payload bits.
+
+This is a substantial recovery, but not a complete one. The basis-aligned LIF still reaches approximately $0.00367$ tail gap with only $1.04\times10^4$ payload bits. Moreover, the geometry-specific schedule is not uniformly better: when applied to the original diagonal problem it improves transient speed but gives a worse final tail gap than the Experiment~10C schedule. Geometry therefore changes the useful resolution schedule rather than merely requiring one universal retuning.
+
+\subsection{Longer-horizon diagnostic}
+
+The remaining native-coordinate gap is not a hard practical-convergence floor. At full rotation, extending the horizon from $2000$ to $4000$ ticks gives
+\begin{equation}
+  \begin{array}{lccc}
+  \text{method} & \text{tail gap} & \text{whole-run gap} & \text{payload bits}\\
+  \hline
+  \text{retuned native LIF} & 5.51\times10^{-3} & 0.151 & 31255\\
+  \text{basis-aligned LIF oracle} & 2.90\times10^{-3} & 0.439 & 18610\\
+  \text{EF-TopK, }k=4 & 7.91\times10^{-3} & 0.095 & 2190400.
+  \end{array}
+\end{equation}
+Thus the native event encoder eventually surpasses the selected EF-TopK tail error while using roughly
+\begin{equation}
+  \boxed{70\times}
+\end{equation}
+fewer logical payload bits. It still converges more slowly in integrated objective cost and requires about $68\%$ more event payload than the basis-aligned LIF control.
+
+The correct interpretation is therefore not that rotated geometry makes event coding unusable. Rather,
+\begin{equation}
+  \boxed{\text{native coordinate event coding remains highly communication efficient, but loses convergence efficiency when the communication basis is misaligned with curvature.}}
+\end{equation}
+
+\subsection{Global descent oracle under rotation}
+
+The exact global descent oracle from Experiment~11A remains extremely strong. Its tail gap stays near numerical zero throughout the rotation sweep. Unlike the diagonal case, however, it must accept many more coordinate corrections because changing one native coordinate changes the gradient of the others. Candidate communication rises from roughly $7.8\times10^3$ to $1.51\times10^4$ payload bits, and the accepted fraction rises from about $3\%$ to about $53\%$.
+
+This is an instructive complement to the basis experiment. Descent-aware sizing can compensate for coordinate coupling even without rotating the communication basis, but it needs a valid global alignment/curvature certificate. Hence the two main unresolved issues after Experiments~10D and 11A are related but distinct: representation geometry determines how efficiently evidence is encoded, while the descent certificate determines whether a proposed event is globally useful and how large it should be.
+
+\subsection{Experiment 10D verdict}
+
+The geometry gates are classified as follows:
+\begin{equation}
+  \boxed{\text{rotation invariance of native Coord-LIF: FAIL}}
+\end{equation}
+\begin{equation}
+  \boxed{\text{communication advantage under rotated geometry: PASS}}
+\end{equation}
+\begin{equation}
+  \boxed{\text{shared basis-aligned event representation: ORACLE PASS}}
+\end{equation}
+\begin{equation}
+  \boxed{\text{geometry is a hard stop for scaling: NO}}
+\end{equation}
+The strongest practical lesson is that future high-dimensional versions should not assume that raw parameter coordinates are the natural neurons. Layer/block structure, diagonal preconditioning, adaptive whitening, or another low-cost shared communication basis may be necessary. At the same time, Experiment~10D does not justify delaying the descent-certificate work exposed by Experiment~11A: even in a poor native basis, the global descent oracle remains highly effective.
