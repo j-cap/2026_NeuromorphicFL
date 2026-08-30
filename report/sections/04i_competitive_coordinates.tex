@@ -1,0 +1,129 @@
+\section{Experiment 10B: Competitive Coordinate Neurons}
+\label{sec:exp10b}
+
+\subsection{Purpose}
+
+Experiment~10A showed that a population of coordinate LIF encoders can reach a good final optimization neighborhood with very low communication, but it also showed that the basic full-reset recurrence remains equivalent to a reset EMA threshold encoder. Experiment~10B therefore tests the first genuinely vector-specific mechanism from the neuromorphic design backlog: competition among simultaneously active coordinate neurons under a finite per-packet event budget.
+
+The central question is
+\begin{equation}
+  \boxed{\text{Does competition among accumulated coordinate evidences allocate a sparse communication budget better than independent firing or conventional Top-$K$ selection?}}
+\end{equation}
+
+The benchmark, problem ensemble, asynchronous compute periods, stochastic-gradient noise, curvature-normalized thresholds, rate normalization, and communication accounting are inherited from Experiment~10A: $N=10$ clients, $d=20$ coordinates, $80$ heterogeneous problem realizations, $2000$ wall-clock ticks, and a $500$-tick tail window.
+
+\subsection{Competitive LIF rule}
+
+For each client and coordinate, the membrane follows
+\begin{equation}
+  z_{i,j}\leftarrow\rho z_{i,j}-\gamma p_iT_i\hat g_{i,j}.
+\end{equation}
+The normalized threshold from Experiment~10A is retained,
+\begin{equation}
+  \Delta_j=\Delta_0s_j.
+\end{equation}
+A coordinate is a candidate when $|z_{i,j}|\geq\Delta_j$. If at most $K$ coordinates are candidates, all are transmitted. If more than $K$ coordinates request communication in one client completion, only the largest normalized membrane excursions
+\begin{equation}
+  r_{i,j}=\frac{|z_{i,j}|}{\Delta_j}
+\end{equation}
+are selected.
+
+The key fairness choice is that a candidate that loses the competition is \emph{not} reset. Its membrane continues to retain and integrate evidence. Thus lateral inhibition limits the current packet but does not deliberately delete accumulated information. Selected coordinates produce the same fixed signed jump as Experiment~10A and are then fully reset.
+
+The main sweep uses
+\begin{equation}
+  K\in\{1,2,4,8,20\}.
+\end{equation}
+The Experiment~10A reference point is $\rho=0.999$, $\Delta_0=0.25$, and $q=0.02$. Local robustness checks vary $\Delta_0$, $q$, and the IF/LIF memory choice. Conventional comparators are instantaneous sign Top-$K$ and float-valued error-feedback Top-$K$.
+
+\subsection{Main result: retained evidence turns competition into delay}
+
+Table~\ref{tab:exp10b_k} shows the decisive $K$ sweep at the Experiment~10A reference operating point.
+
+\begin{table}[ht]
+  \centering
+  \small
+  \caption{Experiment~10B competition-budget sweep. ``Suppressed'' is the fraction of immediately eligible coordinate events that are deferred by the Top-$K$ competition. The two slowest clients have an intended combined weight of $20\%$.}
+  \label{tab:exp10b_k}
+  \begin{tabular}{lrrrrrr}
+    \toprule
+    Variant & Tail gap & Whole gap & Payload bits & Packetized bits & Suppressed & Slow share \\
+    \midrule
+    Independent & $0.00625$ & $0.8255$ & $10310$ & $50976$ & $0.0\%$ & $20.9\%$ \\
+    $K=1$ & $0.00880$ & $1.0702$ & $9314$ & $58987$ & $61.8\%$ & $12.6\%$ \\
+    $K=2$ & $0.00632$ & $0.9131$ & $10087$ & $52535$ & $23.1\%$ & $18.0\%$ \\
+    $K=4$ & $0.00641$ & $0.8416$ & $10281$ & $51103$ & $2.9\%$ & $20.4\%$ \\
+    $K=8$ & $0.00624$ & $0.8260$ & $10310$ & $50986$ & $0.06\%$ & $20.9\%$ \\
+    $K=20$ & $0.00625$ & $0.8255$ & $10310$ & $50976$ & $0.0\%$ & $20.9\%$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The central observation is that suppression of an event does not remove its evidence. The coordinate usually remains close to or above threshold and competes again at a later client completion. Consequently, the per-packet cap changes \emph{when} events are emitted much more than \emph{how many} events are eventually emitted.
+
+At $K=2$, approximately $23\%$ of immediate candidate crossings are suppressed, but total payload decreases by only about $2.2\%$ relative to independent LIF. At $K=1$, immediate suppression reaches about $62\%$, yet payload falls by only about $9.7\%$. The optimization cost is substantially worse: the whole-run objective rises from $0.826$ to $1.070$ and the tail gap also degrades.
+
+The effect is even less attractive after packet overhead is included. Because deferred coordinates return in later packets, the number of nonempty packets increases. At $K=1$, packetized communication rises from approximately $5.10\times10^4$ bits to $5.90\times10^4$ bits despite the lower raw payload. Thus a strict event cap can reduce instantaneous packet size while increasing total packetized communication.
+
+Local checks at other thresholds and jumps give the same qualitative result. For example, at $\Delta_0=0.40$, independent firing gives tail gap $0.00869$ with $6824$ payload bits. Competitive $K=2$ reduces payload only to $6774$ bits while worsening the tail gap to $0.00900$ and increasing packetized bits from $35704$ to $36615$. No practically meaningful competitive advantage appears in the tested neighborhood.
+
+\IfFileExists{../experiments/results/10b_competitive_coordinates/competition_bits.png}{
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.82\linewidth]{../experiments/results/10b_competitive_coordinates/competition_bits.png}
+  \caption{Payload and illustrative packetized communication versus the competitive per-packet event budget $K$.}
+\end{figure}
+}{}
+
+\subsection{What competition does provide: a hard packet-size bound}
+
+Competition is not useless. It provides deterministic control over the maximum number of coordinate events in one client packet. At the reference point, independent LIF has mean packet occupancy about $1.35$ coordinate events, a $95$th percentile of $3$, and a maximum observed occupancy of $12$. Competitive $K=2$ guarantees at most two transmitted events per packet, while $K=1$ guarantees exactly one event in every nonempty packet.
+
+This is best interpreted as \emph{traffic shaping or peak-packet control}, not as a reduction of total information. The independent event stream is already quite sparse: most nonempty packets contain only one to three events. Hence $K=4$ is almost inactive, whereas a cap strict enough to materially alter packets creates a deferred backlog.
+
+\subsection{A new fairness failure under heterogeneous compute rates}
+
+The fixed per-packet budget also exposes an important federation-specific problem. Rate normalization $p_iT_i$ compensates for unequal client compute rates in the evidence dynamics, but a fixed cap $K$ acts once per client completion. Slow clients complete fewer jobs and therefore have fewer communication opportunities. Because their rate-normalized evidence increments are larger, they are also more likely to present several simultaneously eligible coordinates and are clipped more aggressively.
+
+At $K=1$, clients with period $T=1$ lose only about $6$--$7\%$ of their candidate events, clients with $T=5$ lose roughly $50\%$, clients with $T=10$ lose roughly $74\%$, and the two $T=20$ clients lose about $86\%$. Consequently, the two slowest clients' event share falls from approximately $20.9\%$ under independent LIF to only $12.6\%$ at $K=1$. Even $K=2$ leaves them at about $18.0\%$.
+
+This is a critical warning: a naive winner-take-all packet budget can reintroduce hardware-speed bias after the evidence dynamics were explicitly normalized to remove it. A future budget mechanism would need to account for client opportunity rate, for example through $K_i$ that depends on $T_i$, an explicit long-term communication-credit mechanism, or a server scheduler that allocates a wall-clock rather than per-packet budget.
+
+\subsection{Comparison with conventional sparse selection}
+
+Instantaneous sign Top-$K$ performs substantially worse in final error at much higher payload than the temporal LIF family. This supports the broader Experiment~10A conclusion that temporal thresholded event generation is useful. For example, the best tested instantaneous sign Top-$K$ point has tail gap about $0.0197$ and uses roughly $3.55\times10^5$ payload bits, whereas the independent/weakly competitive LIF region reaches tail gaps near $0.0063$ with roughly $10^4$ payload bits.
+
+EF-TopK remains much faster in the transient and can achieve a smaller final gap, but requires orders of magnitude more payload. The $k=4$, $\eta=0.01$ EF point gives tail gap $0.00604$ with about $1.10\times10^6$ payload bits and whole-run gap $0.183$. As in Experiment~10A, the LIF family therefore retains a strong low-rate eventual-optimization advantage but a slow-transient disadvantage. Competition itself does not materially improve that trade-off.
+
+\subsection{Equivalence and novelty boundary}
+
+The algorithmic-distinctiveness result is again negative. With the change of variables
+\begin{equation}
+  z_{i,j}=-\frac{\gamma p_iT_i}{1-\rho}m_{i,j},
+\end{equation}
+full-reset LIF is equivalent to a reset exponential moving average $m_i$. The eligibility condition maps to a client- and coordinate-dependent EMA threshold, and
+\begin{equation}
+  \frac{|z_{i,j}|}{\Delta_j}
+\end{equation}
+induces exactly the same coordinate ranking as the correspondingly normalized EMA state. Resetting the selected LIF neurons maps exactly to resetting the selected EMA coordinates, while unselected candidates retain their states in both representations.
+
+A numerical equivalence check for competitive Top-$K$ produces zero selection/event mismatches and a maximum mapped-state error of approximately $10^{-16}$. Therefore
+\begin{equation}
+  \boxed{\text{competitive full-reset LIF}\equiv\text{thresholded reset-EMA Top-$K$}}
+\end{equation}
+for the present formulation. Lateral-inhibition language gives an intuitive neuromorphic interpretation of the allocator, but it does not create a new optimization primitive by itself.
+
+\subsection{Decision after Experiment 10B}
+
+Experiment~10B is a negative result for naive competitive coordinate neurons as the missing algorithmic contribution. The current conclusions are:
+\begin{enumerate}
+  \item temporal thresholded event coding from Experiment~10A remains communication-efficient relative to instantaneous sparse sign communication;
+  \item a fixed per-packet Top-$K$ competition with retained evidence mainly delays events instead of reducing their long-run number;
+  \item strict competition can increase packetized communication because deferred events generate more packets;
+  \item strict per-packet budgets disproportionately suppress slow clients and can undo compute-rate fairness;
+  \item the mechanism is exactly reproducible as thresholded reset-EMA Top-$K$ after state rescaling.
+\end{enumerate}
+
+The result therefore does \emph{not} justify making competitive/lateral-inhibition selection part of the core optimizer. It is retained only as a possible traffic-shaping constraint if a future deployment imposes a hard packet-size limit.
+
+The next research step should return to the unresolved weaknesses rather than adding another heuristic sparsifier. Two directions remain particularly relevant. First, Experiment~10C can test the partial-positive event-time result from Experiment~9c in the vector setting, where every coordinate has its own event timescale; this may provide genuinely coordinate-local adaptive resolution beyond a global learning-rate schedule. Second, the stronger backlog item is the Lyapunov/descent-derived adaptation of threshold and jump size. Experiment~10B increases the motivation for that branch because simple population competition is both conventionally equivalent and unable to fix the slow transient. A descent-driven event rule would target optimization usefulness directly rather than suppressing events solely because several neurons happened to fire together.
