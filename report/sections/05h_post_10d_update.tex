@@ -1,0 +1,79 @@
+\section{Roadmap Update after Experiment 10D}
+\label{sec:roadmap-post-10d}
+
+Experiment~10D completes the planned vector-quadratic geometry family. Together with Experiment~11A it leaves a substantially sharper picture than the original FedLIF-v0 proposal.
+
+The supported conclusions are now:
+\begin{enumerate}
+  \item \textbf{Sparse temporal event communication remains viable in vectors.} Even under strongly rotated curvature, native coordinate LIF can eventually beat the selected EF-TopK tail error with orders-of-magnitude fewer logical payload bits.
+  \item \textbf{Raw parameter coordinates are not a neutral representation.} Native coordinate LIF is not rotation invariant. Misalignment increases event traffic, harmful packets, and convergence time.
+  \item \textbf{A good shared communication basis can remove the geometry penalty.} The oracle basis-aligned LIF is exactly invariant in the isospectral test, showing that the limitation is representation geometry rather than the integrate--threshold--spike principle itself.
+  \item \textbf{Threshold normalization is necessary but not sufficient.} A native curvature scale avoids the catastrophic failure of carrying eigenvalue-index thresholds into rotated coordinates, but it does not recover basis-aligned performance.
+  \item \textbf{Descent-aware sizing remains powerful under coupling.} The Experiment~11A global descent oracle still reaches essentially zero tail error under rotated native coordinates, although coordinate coupling requires many more accepted corrections.
+\end{enumerate}
+
+\subsection{Chronology status}
+
+The non-monotone execution order described in \cref{sec:numbering-chronology-note} is now complete:
+\begin{equation}
+  10\mathrm{A}\rightarrow10\mathrm{B}\rightarrow10\mathrm{C}\rightarrow11\mathrm{A}\rightarrow10\mathrm{D}.
+\end{equation}
+Experiment~10D remains located with the Experiment-10 results in the report because it closes the vector-geometry family. Experiment~11A was executed first because Experiment~10C made descent-aware resolution the more urgent mechanism question. No Experiment-10 result is missing.
+
+\subsection{Recommended next step: Experiment 11B}
+
+The next experiment should not add another heuristic LIF mechanism and should not yet jump directly to a neural network. The strongest unresolved research problem is the information gap identified by Experiment~11A:
+\begin{equation}
+  \boxed{\text{construct a communication-efficient conservative estimate of global event alignment and uncertainty.}}
+\end{equation}
+This should be pursued as \textbf{Experiment~11B: periodically calibrated sparse descent certificates}.
+
+The simplest principled bridge between the oracle certificate and an implementable federated rule is to let the server maintain stale but bounded estimates of client gradients. At a low calibration rate, client $i$ sends a magnitude-bearing calibration message at model state $w_i^{\rm cal}$. Between calibrations, smoothness gives a deterministic drift envelope of the form
+\begin{equation}
+  \norm{\nabla F_i(w)-\nabla F_i(w_i^{\rm cal})}
+  \leq
+  L_i\norm{w-w_i^{\rm cal}},
+\end{equation}
+or a coordinate/block version of the same inequality. Gradient-noise uncertainty can be added as a statistical margin. Aggregating the client intervals gives a server-side interval for the global gradient component or block,
+\begin{equation}
+  \nabla_jF(w)\in[\underline g_j,\overline g_j].
+\end{equation}
+For an arriving signed event $s$, a conservative lower bound on descent alignment is then obtained from the worst case in this interval. The event is applied only if this lower bound is positive, and its jump size is chosen using the corresponding conservative curvature bound.
+
+This experiment directly tests whether occasional magnitude-bearing calibration traffic can pay for a much larger stream of one-sign-plus-address events. The calibration period should be swept from frequent to very sparse, and the primary result must include the calibration bits in the communication budget. The exact global oracle from Experiment~11A remains the upper bound and the global $q(t)$ rule remains the deployable no-certificate baseline.
+
+\subsection{Required Experiment 11B comparisons}
+
+At minimum, the study should compare:
+\begin{enumerate}
+  \item normalized native coordinate LIF with global $q(t)$;
+  \item the exact global descent oracle;
+  \item the exact oracle heterogeneity certificate from Experiment~11A;
+  \item a periodically calibrated conservative global-gradient interval;
+  \item the same calibrated certificate with event-time/first-passage local magnitude information between calibrations;
+  \item a deliberately naive stale-calibration rule without a drift bound, to show whether the certificate rather than the calibration value itself is responsible for robustness.
+\end{enumerate}
+The first implementation should use the controlled quadratic family, including both diagonal and strongly rotated geometry. This is important because Experiment~10D shows that coordinate coupling changes how rapidly one coordinate update alters the usefulness of the others.
+
+\subsection{Experiment 11B success criterion}
+
+A useful practical certificate should satisfy all of the following:
+\begin{itemize}
+  \item materially reduce the globally harmful applied-event rate relative to $q(t)$;
+  \item approach the oracle descent accuracy/transient behavior as calibration becomes more frequent;
+  \item retain a communication advantage after calibration payload is counted;
+  \item avoid achieving safety merely by rejecting nearly all slow-client or difficult-coordinate events;
+  \item remain useful in the rotated-geometry case rather than relying on diagonal separability.
+\end{itemize}
+If no calibration interval provides a favorable total-bit trade-off, the oracle descent result should be treated as a theoretical upper bound rather than the basis of the practical algorithm.
+
+\subsection{Representation-geometry backlog}
+
+Experiment~10D also creates a second, lower-priority design branch: how to choose the communication basis. The full eigenbasis used in 10D is an oracle and is not a realistic neural-network solution. Practical candidates include layerwise/block neurons, diagonal or block-diagonal preconditioning, optimizer-statistic normalization, low-rank shared bases, or occasional server-learned whitening transforms.
+
+This branch should not be developed simultaneously with Experiment~11B. The recommended order is to resolve the descent-certificate information problem first while retaining native coordinates plus simple scale normalization. If 11B succeeds, basis/preconditioning refinements can then be tested as an efficiency improvement before or during the transition to logistic regression. If 11B fails, a learned communication basis alone does not resolve the more fundamental algorithmic-distinctiveness problem.
+
+The current proposed progression is therefore
+\begin{equation}
+  \boxed{11\mathrm{B}\;\text{certificate}\;\rightarrow\;12\;\text{logistic regression}\;\rightarrow\;\text{basis/block refinement as required}.}
+\end{equation}
