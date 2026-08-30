@@ -1,0 +1,297 @@
+\section{Experiment 11A Design: Descent-Aware Event Sizing}
+\label{sec:exp11a-design}
+
+\subsection{Role of Experiment 11A}
+
+Experiment~11A starts a new design-principle family. It is therefore numbered as part of Experiment~11 rather than as ``Experiment~10C.5.'' Experiments~10A--10D answer vector scaling, competition, temporal decoding, and geometry-robustness questions. Experiment~11 asks a different question: \emph{how should the event magnitude and, later, the event threshold be selected from an optimization certificate rather than from fixed or heuristic hyperparameters?}
+
+The execution chronology is intentionally non-monotone in the labels: Experiment~11A is formulated and tested before Experiment~10D because Experiment~10C exposed jump-size selection as the more immediate unresolved mechanism. The numbering/chronology note in \cref{sec:numbering-chronology-note} should be read before interpreting the experiment order.
+
+The conceptual motivation is close to the greedy Lyapunov viewpoint in neuromorphic control, where a spike is emitted only when it improves a Lyapunov quantity relative to not spiking \cite{heemels2026greedy}. Here the optimization objective $F$ plays the role of the Lyapunov-like performance quantity. The analogy must nevertheless be used carefully: in federated optimization the global objective is distributed across heterogeneous clients, so the quantity required for a global descent certificate is generally not available at one client.
+
+\subsection{Central research question}
+
+The main question is
+\begin{equation}
+  \boxed{\text{Can the amplitude of a sparse signed event be selected from a descent condition rather than a fixed or heuristic schedule?}}
+\end{equation}
+The study deliberately separates an \emph{oracle design question} from an \emph{information-availability question}. A failure of the oracle rule would show that event-amplitude adaptation is not the important missing mechanism. A success of the oracle combined with a failure of local/event-derived rules would instead identify federated information constraints as the real obstacle.
+
+\subsection{Coordinate descent certificate}
+
+Consider a differentiable global objective $F:\mathbb{R}^d\rightarrow\mathbb{R}$ and a candidate coordinate event
+\begin{equation}
+  w^+=w+q s e_j,
+  \qquad s\in\{-1,+1\},\quad q\geq0,
+\end{equation}
+where $e_j$ is the $j$th coordinate vector. Assume that $F$ is coordinate-smooth with constant $L_j$, i.e.,
+\begin{equation}
+  F(w+\alpha e_j)
+  \leq
+  F(w)+\alpha\nabla_jF(w)+\frac{L_j}{2}\alpha^2.
+\end{equation}
+For the signed event define the global alignment quantity
+\begin{equation}
+  a_j(w,s):=-s\nabla_jF(w).
+\end{equation}
+Then
+\begin{equation}
+  F(w+qse_j)-F(w)
+  \leq
+  -q a_j+\frac{L_j}{2}q^2.
+  \label{eq:11a-descent-bound}
+\end{equation}
+A positive jump can be certified only if $a_j>0$. If this is true, any
+\begin{equation}
+  0<q<\frac{2a_j}{L_j}
+\end{equation}
+strictly decreases the quadratic upper bound. The parameterization
+\begin{equation}
+  q_j(\eta)=\eta\frac{a_j}{L_j},
+  \qquad 0<\eta<2,
+  \label{eq:11a-oracle-q}
+\end{equation}
+provides the bound
+\begin{equation}
+  F(w^+)-F(w)
+  \leq
+  -\left(\eta-\frac{\eta^2}{2}\right)\frac{a_j^2}{L_j}.
+\end{equation}
+The upper-bound decrease is maximal at $\eta=1$, giving
+\begin{equation}
+  q_j^\star=\frac{a_j}{L_j}.
+\end{equation}
+This rule has the desired multiscale behavior automatically: large aligned gradients permit large jumps, while the jump amplitude vanishes as the relevant global gradient component tends to zero.
+
+\subsection{Exact specialization to the quadratic benchmark}
+
+For the Experiment~10 diagonal aggregate quadratic,
+\begin{equation}
+  F(w)-F(w^\star)
+  =
+  \frac12(w-w^\star)^\top \bar H(w-w^\star),
+\end{equation}
+with diagonal $\bar H$, the coordinate-smoothness constant is exactly
+\begin{equation}
+  L_j=\bar H_{jj}.
+\end{equation}
+Moreover, the objective change under a coordinate event is exactly
+\begin{equation}
+  \Delta F
+  =q s\nabla_jF(w)+\frac12\bar H_{jj}q^2.
+  \label{eq:11a-exact-quadratic-change}
+\end{equation}
+Thus the quadratic benchmark provides an unusually clean design environment: \cref{eq:11a-descent-bound} is exact rather than conservative. The global-oracle jump
+\begin{equation}
+  q_{j,\mathrm{glob}}^\star
+  =
+  \frac{[-s\nabla_jF(w)]_+}{\bar H_{jj}}
+\end{equation}
+is the exact one-dimensional minimizer along the proposed event direction, where $[x]_+=\max\{x,0\}$. If the event sign is not globally descent aligned, the oracle rejects the event by assigning $q=0$.
+
+This exact case is the first required gate. If this ideal event sizing does not materially improve the error--communication trade-off over the empirically successful global $q(t)$ schedule from Experiment~10C, there is little reason to pursue more complicated federated approximations.
+
+\subsection{Federated information gap}
+
+The global objective is
+\begin{equation}
+  F(w)=\sum_{i=1}^Np_iF_i(w).
+\end{equation}
+Client $i$ generally observes information about $\nabla F_i(w)$, not $\nabla F(w)$. Statistical heterogeneity therefore creates the central difficulty
+\begin{equation}
+  \nabla F_i(w)\neq \nabla F(w).
+\end{equation}
+Related objective-inconsistency effects are well known in heterogeneous federated optimization and motivate explicit normalization/correction rather than naive use of unequal local progress \cite{wang2020fednova}. In the present setting the problem appears at the event level: a spike can be locally descent aligned while still increasing the global objective.
+
+For a candidate event define the local alignment
+\begin{equation}
+  a_{i,j}:=-s\nabla_jF_i(w).
+\end{equation}
+A direct local rule is
+\begin{equation}
+  q_{i,j}^{\mathrm{local}}
+  =
+  \eta\frac{[a_{i,j}]_+}{L_{i,j}},
+  \qquad 0<\eta<2.
+  \label{eq:11a-local-q}
+\end{equation}
+This can certify decrease of $F_i$ under the corresponding local smoothness assumption, but it does \emph{not} certify decrease of $F$. Experiment~11A must therefore explicitly measure the event class
+\begin{equation}
+  \boxed{\Delta F_i<0\quad\text{and}\quad\Delta F>0,}
+\end{equation}
+which represents a locally useful but globally harmful event.
+
+\subsection{Heterogeneity-aware sufficient certificate}
+
+A stronger intermediate formulation is possible if a coordinatewise gradient-disagreement bound is available,
+\begin{equation}
+  \abs{\nabla_jF_i(w)-\nabla_jF(w)}\leq \zeta_{i,j}.
+  \label{eq:11a-heterogeneity-bound}
+\end{equation}
+Then the global alignment satisfies
+\begin{equation}
+  -s\nabla_jF(w)
+  \geq
+  a_{i,j}-\zeta_{i,j}.
+\end{equation}
+Define the conservative alignment lower bound
+\begin{equation}
+  \underline a_{i,j}
+  :=[a_{i,j}-\zeta_{i,j}]_+.
+\end{equation}
+If the global coordinate smoothness constant $L_j$ is known or upper bounded, the event size
+\begin{equation}
+  q_{i,j}^{\mathrm{cert}}
+  =
+  \eta\frac{\underline a_{i,j}}{L_j},
+  \qquad 0<\eta<2,
+  \label{eq:11a-certified-q}
+\end{equation}
+provides a sufficient global-descent certificate whenever \cref{eq:11a-heterogeneity-bound} is valid. If $\underline a_{i,j}=0$, the event is rejected rather than transmitted/applied.
+
+This formulation is important even if it is initially oracle-assisted. It identifies explicitly what additional information is needed to convert a local spike into a globally certified federated event: a lower bound on global alignment and an upper bound on global curvature.
+
+\subsection{Gradient magnitude from LIF first-passage time}
+
+The final step in Experiment~11A asks whether the neuromorphic state can estimate the magnitude needed by the descent rule without transmitting a full floating-point gradient. Consider one client-coordinate after a full reset. Let the client's compute period be $T_i$ and let wall-clock leakage be $\rho$. Define the retention between two local gradient completions as
+\begin{equation}
+  r_i:=\rho^{T_i}.
+\end{equation}
+Under an approximately constant deterministic local gradient component $g_{i,j}$, the membrane after $\tau$ local completions is
+\begin{equation}
+  z_{i,j}(\tau)
+  =
+  -\gamma_i g_{i,j}
+  \sum_{m=0}^{\tau-1}r_i^m
+  =
+  -\gamma_i g_{i,j}
+  \frac{1-r_i^\tau}{1-r_i}.
+  \label{eq:11a-first-passage-state}
+\end{equation}
+At a threshold crossing $|z_{i,j}|\approx\Delta_j$, this yields the event-time magnitude estimator
+\begin{equation}
+  \widehat{|g_{i,j}|}
+  =
+  \frac{\Delta_j(1-r_i)}{\gamma_i(1-r_i^\tau)}.
+  \label{eq:11a-timing-gradient-estimator}
+\end{equation}
+In the non-leaky limit $r_i\rightarrow1$,
+\begin{equation}
+  \widehat{|g_{i,j}|}
+  \rightarrow
+  \frac{\Delta_j}{\gamma_i\tau}.
+\end{equation}
+This gives a principled interpretation of the timing observation from Experiment~10C. Long inter-event intervals correspond to weak persistent gradient evidence, but the timing should not be mapped to $q$ by an arbitrary inverse-power heuristic. Instead, timing estimates the gradient magnitude that enters a descent law.
+
+The approximation has clear failure modes that must be measured rather than hidden: gradients vary while the membrane integrates, noise perturbs first-passage time, threshold overshoot is discarded by full reset, and server-model changes can make old local evidence inconsistent with the current global state.
+
+\subsection{Event-derived descent rule}
+
+Using the spike sign as an estimate of the local descent direction and \cref{eq:11a-timing-gradient-estimator} for magnitude gives the local event-derived alignment estimate
+\begin{equation}
+  \hat a_{i,j}
+  \approx
+  \widehat{|g_{i,j}|}.
+\end{equation}
+A first event-derived sizing rule is therefore
+\begin{equation}
+  q_{i,j}^{\mathrm{event}}
+  =
+  \eta\frac{\hat a_{i,j}}{\widehat L_{i,j}}.
+  \label{eq:11a-event-q}
+\end{equation}
+A more conservative heterogeneity-aware version introduces an estimation-error margin $\epsilon_{i,j}$ and disagreement bound $\zeta_{i,j}$,
+\begin{equation}
+  \underline a_{i,j}^{\mathrm{event}}
+  =
+  [\hat a_{i,j}-\zeta_{i,j}-\epsilon_{i,j}]_+,
+\end{equation}
+followed by
+\begin{equation}
+  q_{i,j}^{\mathrm{event,cert}}
+  =
+  \eta\frac{\underline a_{i,j}^{\mathrm{event}}}{\widehat L_j}.
+  \label{eq:11a-event-certified-q}
+\end{equation}
+This last rule is the conceptually strongest target because the server already observes event time, client identity, coordinate index, and sign. If the remaining quantities can be configured or conservatively estimated, jump sizing can use richer information without adding a floating-point gradient magnitude to the event payload.
+
+\subsection{Experiment 11A hierarchy}
+
+The numerical study should be deliberately staged.
+
+\paragraph{11A.1: global descent oracle.}
+Use the exact global gradient and aggregate Hessian of the diagonal quadratic benchmark. Compare the exact coordinate minimizer and conservative $\eta$-scaled versions against fixed $q$ and the best global $q(t)$ schedule from Experiment~10C.
+
+\paragraph{11A.2: local descent oracle.}
+Replace the global gradient/curvature by exact client-local quantities. Measure optimization performance and the frequency of locally descending but globally harmful events. This isolates the price of federated objective heterogeneity.
+
+\paragraph{11A.3: heterogeneity-aware certificate.}
+Use a controlled bound $\zeta_{i,j}$ to determine whether conservative event rejection/sizing can recover global descent. Start with an oracle-valid benchmark bound; only later consider estimators suitable for real learning problems.
+
+\paragraph{11A.4: event-derived rule.}
+Estimate gradient magnitude from first-passage time using \cref{eq:11a-timing-gradient-estimator}. Compare the inferred magnitude and jump size with the exact local/global oracle values. If useful, combine the timing estimate with the heterogeneity margin as in \cref{eq:11a-event-certified-q}.
+
+\subsection{Primary comparisons}
+
+All variants should use the same Experiment~10A diagonal ensemble, asynchronous client periods, normalized thresholds, and communication accounting. The core comparison should contain:
+\begin{enumerate}
+  \item normalized full-reset Coord-LIF with constant $q$;
+  \item normalized full-reset Coord-LIF with the best global $q(t)$ schedule from Experiment~10C;
+  \item global-oracle descent sizing;
+  \item exact local-client descent sizing;
+  \item heterogeneity-aware certified sizing;
+  \item timing/state-derived descent sizing;
+  \item timing/state-derived certified sizing if the preceding estimator is sufficiently accurate.
+\end{enumerate}
+Because the event trigger itself is initially unchanged, the main comparison isolates \emph{event amplitude and acceptance} rather than simultaneously modifying the membrane dynamics.
+
+\subsection{Metrics and diagnostics}
+
+The primary metrics remain
+\begin{equation}
+  F(w)-F(w^\star),\qquad
+  \frac{1}{T}\sum_k(F(w_k)-F(w^\star)),\qquad
+  B_{\mathrm{payload}},\qquad
+  B_{\mathrm{packetized}}.
+\end{equation}
+Experiment~11A additionally requires:
+\begin{itemize}
+  \item fraction of candidate events rejected because no descent certificate exists;
+  \item fraction of applied events with $\Delta F>0$;
+  \item fraction with $\Delta F_i<0$ but $\Delta F>0$;
+  \item distribution of applied jump amplitudes $q_{i,j}$ over training;
+  \item correlation and calibration error between event-derived $\widehat{|g_{i,j}|}$ and exact $|\nabla_jF_i|$;
+  \item ratio $q_{i,j}^{\mathrm{event}}/q_{j,\mathrm{glob}}^\star$;
+  \item event acceptance rate by client compute period and coordinate scale, to detect hidden client or coordinate starvation;
+  \item convergence performance versus transmitted bits and versus accepted events.
+\end{itemize}
+
+\subsection{Hypotheses and stop/go logic}
+
+Experiment~11A is designed to resolve the branch quickly.
+
+\paragraph{H11A-1: value of descent-aware sizing.}
+The global oracle should improve upon the best conventional $q(t)$ reference in transient cost, tail error, or both without requiring additional event payload. If it does not, the descent-sizing branch should be deprioritized and Experiment~10D should proceed with $q(t)$.
+
+\paragraph{H11A-2: cost of local information.}
+A local-client rule is expected to lose some of the oracle benefit under heterogeneous objectives. The magnitude and mechanism of this loss determine whether a federated descent certificate is a substantive research problem.
+
+\paragraph{H11A-3: value of neuromorphic timing/state information.}
+If the first-passage estimator predicts the useful local gradient magnitude sufficiently well, event-derived sizing should approach the local-oracle rule more closely than the heuristic $q(\tau)$ rule from Experiment~10C.
+
+\paragraph{Strong positive outcome.}
+The most interesting result would be
+\begin{equation}
+  \boxed{\text{event-derived/certified descent sizing approaches oracle behavior with no floating-point magnitude payload}.}
+\end{equation}
+This would provide a coherent connection between neuromorphic temporal coding, hybrid/event-driven communication, and control-style Lyapunov/descent design.
+
+\paragraph{Intermediate outcome.}
+If the global oracle is strong but all local/event-derived variants fail, the project has identified the true missing ingredient: construction of a sparse server-side estimate or certificate of global descent under client heterogeneity.
+
+\paragraph{Negative outcome.}
+If the global oracle itself provides little improvement over $q(t)$, no additional complexity should be invested in descent-aware event sizing. Experiment~10D should then proceed directly with the conventional global schedule.
+
+\subsection{What Experiment 11A does not yet claim}
+
+Experiment~11A is not yet a convergence theorem for general federated neural-network optimization. The first study uses the analytically controlled strongly convex quadratic specifically because it allows exact global objective changes and oracle quantities to be computed. It is an \emph{oracle-to-implementable mechanism test}. Only if the event-derived or certified rules survive this test should the project invest in stochastic convergence analysis, nonconvex extensions, or adaptation of both $q$ and $\Delta$.
