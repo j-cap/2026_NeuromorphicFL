@@ -1,0 +1,34 @@
+\section{Roadmap Update after Experiment 10C}
+\label{sec:roadmap-post-10c}
+
+Experiment~10C closes the heuristic event-time branch for the current scalar/vector benchmark. Coordinate event timing is measurably informative, but direct inverse-time jump scaling does not beat a tuned fixed jump and is consistently weaker than a conventional global jump-decay schedule. The core reference for the next stage is therefore updated to
+\begin{equation}
+  \boxed{\text{curvature/scale-normalized full-reset coordinate LIF + global decreasing }q(t).}
+\end{equation}
+
+The mechanism status is now:
+\begin{enumerate}
+  \item \textbf{Adaptive/homeostatic thresholds:} tested in Experiment~9b; not justified by the scalar benchmark. Revisit only if heterogeneous vector/layer scales create a practical need that fixed normalization cannot solve.
+  \item \textbf{Refractory dynamics:} retained as an engineering/traffic-shaping option, not a current algorithmic contribution.
+  \item \textbf{Event-time-aware aggregation:} timing is informative, but heuristic $q(\tau)$ is not competitive after tuning. Do not include in the core optimizer.
+  \item \textbf{Competitive/lateral-inhibition selection:} tested in Experiment~10B; useful for hard packet-size bounds but not for total communication reduction, and strict caps create client-fairness problems.
+  \item \textbf{Lyapunov/descent-derived threshold and jump dynamics:} remains the strongest algorithmic backlog item. The negative heuristic tests increase rather than decrease its importance because they suggest that adaptation should target optimization usefulness directly.
+\end{enumerate}
+
+\subsection{Immediate next step: Experiment 10D}
+
+Before leaving analytically controlled quadratics, test whether the communication advantage of coordinate LIF survives non-axis-aligned curvature. Replace diagonal client Hessians by
+\begin{equation}
+  H_i=U_i^\top D_iU_i,
+\end{equation}
+with controlled rotations $U_i$. This is an important robustness gate because the present threshold normalization and independent coordinate neurons are aligned with the diagonal benchmark. Experiment~10D should compare the diagonal reference, weak/moderate/full rotations, and conventional sparse baselines while retaining the newly validated global $q(t)$ schedule.
+
+The main decision criterion is whether low-bit coordinate event coding remains competitive when gradient principal directions do not coincide with parameter coordinates. A strong failure would motivate block neurons or learned/preconditioned coordinate systems rather than further scalar timing heuristics.
+
+\subsection{Then: convergence refinement}
+
+If Experiment~10D passes, proceed to the planned convergence-refinement stage. The first reference should be the empirically successful conventional schedule
+\begin{equation}
+  q(t)=q_0\left(1+\frac{t}{T_q}\right)^{-\beta},
+\end{equation}
+which directly addresses the fixed-jump practical neighborhood. The research extension remains a descent-aware event law in which $q$ and/or $\Delta$ are selected from a sufficient-decrease or Lyapunov condition. This should be treated as a separate theoretical development rather than as another heuristic parameter adaptation.
