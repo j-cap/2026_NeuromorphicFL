@@ -1,0 +1,30 @@
+\section{Roadmap Update after Experiment 10A}
+
+Experiment~10A establishes that coordinatewise temporal event coding remains viable after moving from a scalar parameter to a $20$-dimensional heterogeneous asynchronous optimization problem. In particular, coordinate-normalized LIF reaches a tail objective gap comparable to EF-TopK while using roughly two orders of magnitude fewer logical payload bits. This justifies continuing the vector program.
+
+The result also introduces two constraints that change the next steps.
+
+First, a single global threshold is inadequate when coordinate gradient scales differ strongly. Future vector experiments should therefore use either explicit coordinate/block normalization or a practically estimable scale such as running gradient RMS. The oracle curvature normalization used in Experiment~10A is a diagnostic benchmark, not a deployable final mechanism.
+
+Second, the communication advantage is concentrated in the tail rather than the transient. The selected normalized-LIF point has a substantially larger whole-run objective cost than EF-TopK. Future variants should therefore be evaluated on both endpoint error and transient cost; an optimizer that communicates little only because it learns extremely slowly is not sufficient.
+
+The vector full-reset LIF recurrence also remains exactly equivalent to a reset EMA threshold encoder after coordinatewise rescaling. Experiment~10A therefore passes the scalability/communication gate but not the algorithmic-novelty gate.
+
+\subsection{Immediate next step: Experiment 10B}
+
+Experiment~10B should test a genuinely vector-specific mechanism: competition among simultaneously active coordinate neurons under a finite communication budget. For client $i$, define the normalized membrane activation
+\begin{equation}
+  r_{i,j}=\frac{|z_{i,j}|}{\Delta_j}.
+\end{equation}
+When more than $K$ coordinates request transmission in one communication opportunity, only the $K$ largest activations should fire. Non-selected coordinates retain their membrane states and continue integrating evidence. This mechanism is the event-driven analogue of winner-take-all or lateral inhibition.
+
+The key comparison is not independent LIF versus no sparsification. Competitive LIF must be compared against conventional sparse mechanisms at the same packet/event budget, especially EMA-TopK and error-feedback TopK. The main research question is
+\begin{equation}
+  \boxed{\text{Does Top-$K$ selection of temporally accumulated membrane evidence allocate bits better than Top-$K$ selection of conventional updates?}}
+\end{equation}
+
+Primary outputs remain objective error versus payload/packetized bits, whole-run transient cost, coordinate coverage, per-coordinate firing distribution, and slow-client participation. Competition is useful only if it reduces communication without permanently starving low-activity but important coordinates.
+
+Event-time-aware jump scaling from Experiment~9c should remain a secondary diagnostic arm in the vector setting. Its scalar benefit was inconsistent relative to a conventional global jump schedule, but coordinate-specific firing times may contain more useful scale information once different dimensions evolve at different rates.
+
+The Lyapunov/descent-derived adaptive threshold and jump mechanism remains in the backlog. It should become the next major algorithm-design branch if competitive temporal event selection is fully reproduced by EMA/error-feedback TopK or otherwise fails to create a distinct error--communication advantage.
