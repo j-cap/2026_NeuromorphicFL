@@ -1,0 +1,5 @@
+method,tail_excess_objective,tail_parameter_rmse,whole_run_excess_objective,payload_bits,packetized_bits,events,setting
+Coord-LIF normalized,0.006251,0.025744,0.825533,10310.475,50976.475,1718.4125,"rho=.999; Delta0=.25; q=.02"
+EF-TopK k=4,0.006040,0.024023,0.183217,1095200.0,1332000.0,0,"k=4; eta=.01"
+Dense sign,0.025523,0.036395,0.551978,148000.0,384800.0,0,"q=.003"
+Full precision,0.002981,0.022549,0.200929,4736000.0,4972800.0,0,"eta=.008"
