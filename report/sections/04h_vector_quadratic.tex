@@ -1,0 +1,171 @@
+\section{Experiment 10A: Vector Heterogeneous Asynchronous Quadratics}
+\label{sec:exp10a}
+
+\subsection{Purpose}
+
+Experiments~1--9c deliberately remained scalar in order to isolate temporal evidence accumulation, leakage, asynchronous delay, event regularization, mechanism equivalences, adaptive thresholds, and event-time effects. Experiment~10A is the first scaling step in which the communication state is a population of coordinate neurons rather than a single scalar accumulator. The central question is
+\begin{equation}
+  \boxed{\text{Can sparse LIF-style coordinate events remain useful once optimization and communication are genuinely vector-valued?}}
+\end{equation}
+The experiment is still synthetic and strongly convex so that the exact global optimum and objective gap remain available. This allows communication effects to be separated from model-identification or nonconvex-learning effects.
+
+\subsection{Federated vector quadratic}
+
+There are $N=10$ clients and $d=20$ model coordinates. Client $i$ minimizes
+\begin{equation}
+  F_i(w)=\frac{1}{2}(w-\theta_i)^\top H_i(w-\theta_i),
+\end{equation}
+where $H_i$ is diagonal and positive definite. Client weights are uniform, $p_i=0.1$, and the aggregate objective is
+\begin{equation}
+  F(w)=\sum_{i=1}^{10}p_iF_i(w).
+\end{equation}
+The exact optimum is
+\begin{equation}
+  w^\star=\left(\sum_i p_iH_i\right)^{-1}\sum_i p_iH_i\theta_i.
+\end{equation}
+
+The shared coordinate-curvature scale spans more than one order of magnitude,
+\begin{equation}
+  \bar h_j\in[0.2,5],
+\end{equation}
+logarithmically over the $20$ coordinates. Each client receives a multiplicative log-normal curvature perturbation with standard deviation $0.15$, while local optima are sampled with coordinatewise standard deviation $0.25$. The initial model is displaced from the exact aggregate optimum by $0.8$ in every coordinate. Stochastic gradients use additive isotropic Gaussian noise with standard deviation $\sigma_g=0.25$.
+
+Client computation periods are
+\begin{equation}
+  T_i\in[1,1,2,2,5,5,10,10,20,20].
+\end{equation}
+A client starts a computation from a server snapshot and returns only after its period. As in the scalar asynchronous experiments, evidence or update contributions are rate normalized by $p_iT_i$ so that faster hardware does not automatically receive larger optimization weight.
+
+The full reported campaign uses $80$ independently generated heterogeneous problem instances, $2000$ wall-clock ticks, and a $500$-tick tail window. Common stochastic-gradient random seeds are reused across compared parameter configurations.
+
+\subsection{Coordinate LIF and threshold normalization}
+
+The vector full-reset LIF reference is applied coordinatewise,
+\begin{equation}
+  z_{i,j}\leftarrow \rho z_{i,j}-\gamma p_iT_i\hat g_{i,j}.
+\end{equation}
+When
+\begin{equation}
+  |z_{i,j}|\geq\Delta_j,
+\end{equation}
+coordinate $j$ emits
+\begin{equation}
+  s_{i,j}=\sign(z_{i,j}),
+\end{equation}
+which produces the server jump
+\begin{equation}
+  w_j^+=w_j+q s_{i,j},
+\end{equation}
+followed by full membrane reset $z_{i,j}^+=0$.
+
+Two threshold choices are compared. The \emph{global-threshold} variant uses
+\begin{equation}
+  \Delta_j=\Delta_0.
+\end{equation}
+The scale-normalized diagnostic uses
+\begin{equation}
+  \Delta_j=\Delta_0 s_j,
+  \qquad
+  s_j=\frac{\bar h_j}{\operatorname{median}_\ell \bar h_\ell}.
+\end{equation}
+This normalization uses known synthetic curvature scales and is therefore an oracle diagnostic rather than the final practical rule. In a real learning problem, $s_j$ would have to be estimated from gradient statistics or replaced by block/layer normalization.
+
+\subsection{Baselines and communication accounting}
+
+The comparison includes asynchronous full-precision SGD, dense sign updates, coordinate LIF with global and normalized thresholds, and error-feedback Top-$k$ (EF-TopK). A reset exponential-moving-average threshold encoder is not plotted as a separate family because the full-reset coordinate LIF recurrence remains algebraically equivalent to a reset EMA trigger under a coordinatewise change of units. The numerical vector equivalence check produces zero event mismatches and a maximum mapped-state discrepancy of approximately $2.4\times10^{-17}$.
+
+Communication is counted explicitly. For $d=20$, an isolated coordinate event requires
+\begin{equation}
+  \lceil\log_2 20\rceil+1=6
+\end{equation}
+logical payload bits: five address bits and one sign bit. Dense sign communication requires $20$ payload bits per client message, full precision requires $20\times32=640$ bits, and EF-TopK requires
+\begin{equation}
+  k(32+5)
+\end{equation}
+payload bits. A second diagnostic adds an illustrative $32$-bit packet header once per nonempty client packet. This header is not intended as a protocol claim; it tests whether sparse-event gains survive a nonzero packetization cost. Downlink traffic is not yet included.
+
+\subsection{Main result}
+
+Table~\ref{tab:exp10a_selected} compares representative tuned operating points. The normalized coordinate-LIF point is chosen for its minimum tail objective gap in the tested grid. The EF-TopK point with $k=4$ has essentially the same tail accuracy and therefore provides a useful communication comparison.
+
+\begin{table}[ht]
+  \centering
+  \small
+  \caption{Representative Experiment~10A results. ``Whole'' denotes the mean aggregate excess objective over the complete run, while ``Tail'' is averaged over the final $500$ ticks.}
+  \label{tab:exp10a_selected}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Method & Tail gap & Tail RMSE & Whole gap & Payload bits & Packetized bits \\
+    \midrule
+    Coord-LIF, normalized & $0.00625$ & $0.02574$ & $0.8255$ & $1.031\times10^4$ & $5.098\times10^4$ \\
+    EF-TopK, $k=4$ & $0.00604$ & $0.02402$ & $0.1832$ & $1.095\times10^6$ & $1.332\times10^6$ \\
+    Dense sign & $0.02552$ & $0.03640$ & $0.5520$ & $1.480\times10^5$ & $3.848\times10^5$ \\
+    Full precision & $0.00298$ & $0.02255$ & $0.2009$ & $4.736\times10^6$ & $4.973\times10^6$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+At nearly matched tail objective gap, normalized Coord-LIF therefore uses approximately
+\begin{equation}
+  \boxed{106\times\ \text{fewer payload bits than EF-TopK}}
+\end{equation}
+and approximately
+\begin{equation}
+  \boxed{26\times\ \text{fewer bits with the illustrative packet headers included}.}
+\end{equation}
+Relative to dense sign communication it uses about $14.4\times$ fewer payload bits while also achieving a substantially smaller tail objective gap. Full precision reaches the best absolute tail objective but requires roughly $459\times$ more payload bits than the selected normalized Coord-LIF point.
+
+This result must not be interpreted as uniform optimization superiority. The normalized Coord-LIF point has a whole-run objective cost approximately $4.5\times$ larger than the comparable EF-TopK point. Its event representation is therefore best described, at this stage, as \emph{very low-rate eventual optimization}: it can approach a good final neighborhood with extremely sparse communication, but the transient is substantially slower.
+
+\IfFileExists{../experiments/results/10a_vector_quadratic/tail_gap_vs_bits.png}{
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.82\linewidth]{../experiments/results/10a_vector_quadratic/tail_gap_vs_bits.png}
+  \caption{Tail aggregate objective gap versus logical payload bits for Experiment~10A.}
+\end{figure}
+}{}
+
+\subsection{Why coordinate normalization matters}
+
+The global-threshold encoder strongly favors high-curvature coordinates. For the representative global-threshold setting, the correlation between base curvature and mean event count is
+\begin{equation}
+  r\approx0.999,
+\end{equation}
+and the coefficient of variation of coordinate event counts is approximately $0.79$. All coordinates do eventually fire, but high-curvature coordinates dominate the event stream.
+
+With curvature-normalized thresholds, the event-count coefficient of variation falls to approximately
+\begin{equation}
+  \boxed{0.092},
+\end{equation}
+and the curvature--event correlation becomes weakly negative rather than strongly positive. Coordinate coverage remains $100\%$. The two slowest clients, whose intended combined aggregation weight is $20\%$, produce approximately $20.9\%$ of events in the representative normalized setting. The corresponding global-threshold setting gives about $17.3\%$. Although event share is not identical to optimization weight, this diagnostic indicates that normalization avoids an obvious starvation or hardware-speed bias.
+
+\IfFileExists{../experiments/results/10a_vector_quadratic/coordinate_firing.png}{
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.82\linewidth]{../experiments/results/10a_vector_quadratic/coordinate_firing.png}
+  \caption{Mean firing count by coordinate curvature for a global versus curvature-normalized threshold.}
+\end{figure}
+}{}
+
+\subsection{Interpretation and novelty boundary}
+
+Experiment~10A passes the first \emph{vector viability} gate. Sparse coordinate events retain a large communication advantage after coordinate addresses are counted, and coordinate-specific scaling is clearly necessary when gradient/curvature scales vary strongly. The result also shows that simply extending a scalar global threshold to every model coordinate is inadequate.
+
+However, the experiment does not resolve the algorithmic novelty problem identified in Experiment~9. Full-reset vector LIF remains exactly equivalent to a reset EMA threshold encoder after rescaling. The communication advantage demonstrated here is therefore evidence for the usefulness of \emph{temporally filtered sparse event coding}, but not evidence that the basic LIF recurrence itself is a new optimization primitive.
+
+Three limitations should be carried forward explicitly:
+\begin{enumerate}
+  \item the strongest LIF point has a slow transient despite a good tail error;
+  \item the threshold normalization uses oracle synthetic curvature information;
+  \item only diagonal Hessians are used, so parameter coordinates coincide with the natural curvature axes.
+\end{enumerate}
+
+\subsection{Decision after Experiment 10A}
+
+The result is strong enough to proceed to the vector-specific mechanism test rather than returning to further scalar tuning. Experiment~10B should impose a per-packet event budget and compare independent coordinate firing against competitive selection based on normalized membrane excursion,
+\begin{equation}
+  r_{i,j}=\frac{|z_{i,j}|}{\Delta_j}.
+\end{equation}
+Only the strongest $K$ candidate events should be transmitted when multiple coordinates request communication simultaneously. The relevant conventional comparators are EMA-TopK and error-feedback TopK. This is the first setting in which lateral-inhibition or winner-take-all language corresponds to a real communication-allocation problem rather than a scalar metaphor.
+
+Event-time-aware jump scaling from Experiment~9c should remain a secondary variant, not the main Experiment~10B mechanism. The Lyapunov/descent-derived adaptive threshold and jump design remains in the backlog as the larger theoretical extension if competitive temporal event selection does not create a meaningful distinction from conventional sparse optimization.
