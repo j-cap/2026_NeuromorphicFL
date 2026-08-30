@@ -1,0 +1,122 @@
+\section{Experiment 12B: Selective Coordinate/Block Calibration}
+\label{sec:exp12b}
+
+Experiment~12A showed that calibrated descent certificates remain valid on nonlinear logistic regression, but the useful safe operating points were too communication-heavy. The sparse event stream itself was already cheap. The dominant costs were the one-time curvature summary and, more importantly, repeated dense gradient calibrations. Experiment~12B therefore asks whether the certificate can keep different coordinates at different calibration ages and refresh only the information that is currently needed.
+
+\subsection{Per-coordinate calibration states}
+
+For coordinate $j$, the server stores a calibrated global-gradient component $g_j^{\mathrm{cal}}$ together with the full model state $w_j^{\mathrm{cal}}$ at which that component was obtained. Different coordinates may therefore have different calibration times. The full current server model is already known and storing $w_j^{\mathrm{cal}}$ is local server state, so this adds no communication.
+
+For the logistic-regression curvature bound $\bar M$ from Experiment~12A,
+\begin{equation}
+ \abs{\nabla_jF(w)-g_j^{\mathrm{cal}}}
+ \leq
+ \sum_k \bar M_{jk}\abs{w_k-w_{j,k}^{\mathrm{cal}}}.
+ \label{eq:12b-per-coordinate-radius}
+\end{equation}
+Thus asynchronous calibration ages do not invalidate the certificate. For a candidate event of sign $s$, define
+\begin{equation}
+ \underline a_j
+ =
+ -s g_j^{\mathrm{cal}}-r_j,
+\end{equation}
+where $r_j$ is a conservative bound on the right-hand side of \eqref{eq:12b-per-coordinate-radius}. The event is accepted only if $\underline a_j>0$, with jump
+\begin{equation}
+ q_j=\frac{\underline a_j}{\bar M_{jj}}.
+\end{equation}
+Candidate coordinates are processed sequentially, so every accepted event is certified at the actual current model.
+
+When a candidate cannot be certified, the server may request a refresh only for the corresponding coordinate block. Refreshing a block $B$ costs
+\begin{equation}
+ B_{\mathrm{refresh}}=N\abs{B}\,32
+\end{equation}
+payload bits. With $N=10$, a single-coordinate refresh costs only $320$ bits, compared with $6400$ bits for the full 20-dimensional gradient calibration used in Experiment~12A.
+
+\subsection{Compressed coupling summary}
+
+A full $M_i\in\R^{d\times d}$ summary is no longer necessary. For a partition into blocks $B$, coordinate $j$ retains exact curvature-bound entries within its block and a single residual row sum for all coordinates outside the block. The resulting valid radius is
+\begin{equation}
+ r_j
+ =
+ \sum_{k\in B(j)}\bar M_{jk}\abs{\Delta w_k}
+ +
+ \left(\sum_{k\notin B(j)}\bar M_{jk}\right)
+ \max_{k\notin B(j)}\abs{\Delta w_k}.
+ \label{eq:12b-block-residual}
+\end{equation}
+For one-coordinate blocks this reduces to a diagonal entry plus an off-diagonal residual row sum. This is the safe counterpart of the cheap but unsafe diagonal-only rule from Experiment~12A.
+
+We also tested coupling-aware greedy blocks using normalized entries of $\bar M$. On the present synthetic logistic data this provides essentially no reduction in cross-block residual coupling relative to contiguous blocks. For example, at block size five the residual coupling fraction is approximately $0.720$ under either partition. This is unsurprising because the feature covariance used in the benchmark is already ordered so that the strongest couplings are predominantly local. The experiment therefore does not obtain a favorable result from artificial reordering or clustering.
+
+\subsection{Main strong non-IID result}
+
+The final validation uses the same strong non-IID setup as Experiment~12A: eight problem realizations, ten asynchronous clients, $d=20$, 300 training and 150 test samples per client, 1200 wall-clock ticks, and the same stochastic mini-batch stream. The centralized reference test loss is approximately $0.505780$.
+
+\begin{table}[t]
+\centering
+\caption{Selected Experiment~12B results on the strong non-IID logistic benchmark. All communication values are mean logical uplink payload bits and include event, curvature-summary, and calibration/refresh payloads.}
+\label{tab:exp12b-main}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test loss & Accuracy & Whole-run train loss & Payload bits \\
+\midrule
+Scheduled events & 0.506347 & 0.7741 & 0.520575 & 11,355 \\
+Global descent oracle & 0.505780 & 0.7754 & 0.506349 & 9,539 \\
+12A full certificate, $C=25$ & 0.505787 & 0.7745 & 0.514510 & 452,369 \\
+12B selective coordinate, gap 50 & \textbf{0.505779} & 0.7756 & \textbf{0.511403} & \textbf{149,612} \\
+12B selective coordinate, gap 100 & 0.505814 & 0.7748 & 0.521016 & 96,370 \\
+EF-TopK, $k=1$ & 0.508132 & 0.7746 & 0.514678 & 164,280 \\
+Full precision & 0.506114 & 0.7773 & 0.510250 & 2,841,600 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The gap-50 selective-coordinate rule is the important point. It reduces payload by approximately $66.9\%$ relative to the full Experiment~12A certificate while slightly improving its transient objective. More importantly, it uses approximately $8.9\%$ fewer payload bits than EF-TopK $k=1$, reaches a lower test loss, and improves the whole-run training objective by approximately $0.64\%$. Thus the practical valid certificate finally produces a Pareto-relevant point against the conventional sparse baseline.
+
+The method does not dominate the extremely cheap scheduled-event baseline. It uses roughly $13.2\times$ more payload. Instead, the two methods occupy different parts of the communication--accuracy frontier: scheduled events are the ultra-low-communication option, while selective certification buys essentially centralized final performance and stronger transient descent while retaining much lower communication than conventional full-precision optimization.
+
+\subsection{Why coordinate-wise refresh wins}
+
+The design sweep tested block sizes $1$, $2$, $5$, and $10$. The best practical result is the finest possible partition: one coordinate per block. Larger blocks tighten the uncertainty radius because more cross-couplings are treated exactly, but every refresh becomes proportionally more expensive. On this $d=20$ problem the lower refresh cost dominates the benefit of the tighter block certificate.
+
+For the selected gap-50 point, total payload decomposes approximately into
+\begin{equation}
+ \boxed{
+ B_{\mathrm{total}}
+ \approx
+ 12.9\text{ kbit curvature}
+ +126.6\text{ kbit refresh}
+ +10.2\text{ kbit events}.}
+\end{equation}
+Thus refresh information still accounts for roughly $84.6\%$ of the payload, but this is a substantial improvement over Experiment~12A, where dense calibration plus the full curvature matrix dominated an approximately $452$ kbit certificate budget.
+
+Using the full curvature matrix together with the same coordinate-selective refresh policy gives essentially the same final performance but about $264.5$ kbit payload. Therefore the diagonal-plus-residual summary is not merely a cosmetic compression: it removes roughly $115$ kbit of metadata without losing the useful operating point.
+
+\subsection{On-demand refresh versus round robin}
+
+A matched systems control refreshes one coordinate in round-robin order every three wall-clock ticks. It uses approximately $158.0$ kbit, close to the $149.6$ kbit selective rule, but reaches test loss $0.505931$ and whole-run training loss $0.516334$. The on-demand rule is therefore modestly but consistently better at similar communication. The gain comes from placing calibration effort where an actual candidate event has become uncertifiable rather than refreshing coordinates solely according to a clock.
+
+\subsection{Safety and robustness}
+
+The selected gap-50 rule was re-run with explicit objective evaluation before and after every accepted event. The measured harmful-event fraction is
+\begin{equation}
+ \boxed{0.}
+\end{equation}
+The gap-100 and coupling-block controls also produce zero measured harmful accepted events. This agrees with the deterministic certificate construction.
+
+The leading rule was then tested on IID, moderate non-IID, and three independently generated strong non-IID partitions. In every case its final test loss is within approximately $10^{-5}$ of the corresponding centralized L-BFGS reference. Mean payload ranges from roughly $118$ kbit in the IID case to $150$ kbit in the strongest partitions. The result therefore does not rely on one favorable non-IID realization.
+
+Slow-client participation remains somewhat distorted: the two slowest clients account for approximately $15.9\%$ of accepted events at the strong gap-50 point instead of their nominal combined $20\%$ federation weight. This is substantially milder than the winner-take-all failure in Experiment~10B, but it remains a diagnostic to retain in future scaling experiments.
+
+\subsection{Interpretation and decision}
+
+Experiment~12B changes the scaling conclusion from Experiment~12A. The main findings are:
+\begin{enumerate}
+ \item \textbf{Selective calibration is the decisive improvement.} The server does not need to refresh the full gradient vector whenever one certificate becomes stale.
+ \item \textbf{A very small valid coupling summary is sufficient on this problem.} One diagonal bound and one residual row-sum per coordinate preserve safety while reducing the one-time curvature payload from approximately $128$ kbit to $12.9$ kbit.
+ \item \textbf{Fine calibration granularity beats larger blocks here.} The cheapest single-coordinate refresh is more valuable than the tighter uncertainty interval obtained from larger blocks.
+ \item \textbf{Coupling-aware clustering provides no measurable benefit on the current feature geometry.} This is a negative result and prevents us from attributing the gain to a favorable partition.
+ \item \textbf{The practical Pareto gate now passes.} A valid zero-harmful-event configuration improves both final and transient optimization relative to EF-TopK while using slightly fewer payload bits.
+\end{enumerate}
+
+The correct conclusion is therefore not that calibration overhead has disappeared. It remains the dominant cost. Rather, Experiment~12B demonstrates that the side-information bottleneck can be reduced enough to make the descent-certified event architecture competitive on a nonlinear non-IID learning problem. This satisfies the pre-specified condition for attempting the small-neural-network scaling study.
