@@ -1,0 +1,88 @@
+\section{Roadmap Update after Experiment 12A}
+\label{sec:roadmap-post-12a}
+
+Experiment~12A clears the nonlinear-learning viability gate but does \emph{not} clear the practical-certificate scaling gate. This distinction is important.
+
+The supported conclusions are now:
+\begin{enumerate}
+  \item \textbf{Sparse temporal event communication survives a nonlinear convex learning objective.} With an appropriately rescaled trigger, scheduled coordinate events approach the centralized logistic-regression test loss using only a few thousand logical payload bits.
+  \item \textbf{The descent-aware oracle remains valuable outside quadratics.} The exact global descent oracle again reaches the centralized reference with very low communication and substantially better transient optimization than the heuristic jump schedule.
+  \item \textbf{Valid curvature certificates remain safe.} Full, block, and diagonal-plus-residual summaries produced zero measured harmful accepted events in the strong non-IID safety audit.
+  \item \textbf{The present practical summaries are too expensive or too conservative.} Full and large-block certificates spend most of their communication on dense gradient calibration and curvature metadata. Small summaries reject too many useful events.
+  \item \textbf{The diagonal-only control identifies the remaining opportunity.} It is numerically strong and much cheaper, but is not a valid certificate because cross-coordinate drift is ignored. Its harmful-event rate shows that the missing coupling information matters.
+\end{enumerate}
+
+Therefore the project should \textbf{not} proceed directly to the small-neural-network Experiment~13. Doing so would reproduce the same unresolved certificate-information bottleneck at much larger dimension and make the failure harder to diagnose.
+
+\subsection{Recommended next step: Experiment 12B}
+
+The next study should be \textbf{Experiment~12B: selective block calibration and compressed coupling certificates}. Its purpose is to close the gap between the safe but expensive full/block certificates and the cheap but unsafe diagonal-only rule.
+
+Two communication costs must be attacked simultaneously:
+\begin{enumerate}
+  \item the one-time curvature/coupling summary;
+  \item the recurring dense gradient calibration.
+\end{enumerate}
+Experiment~12A shows that reducing only the first is insufficient because recurring calibration already dominates the total payload for the useful safe operating points.
+
+\subsection{12B.1: selective coordinate/block calibration}
+
+The most direct extension is to let different coordinates or blocks maintain different calibration ages. For block $B$, the server stores the calibrated gradient components $g_B^{\rm cal}$ and the model state $w_B^{\rm cal,model}$ at which those gradient components were refreshed. The full current model is already known at the server, so storing the calibration model incurs no communication.
+
+When an event in block $B$ cannot be certified, clients should refresh only the gradient components required by that block rather than sending all $d$ components. If $b=\abs{B}$, one such refresh costs approximately
+\begin{equation}
+  B_{\rm block\,cal}=N b\times32
+\end{equation}
+bits instead of $Nd\times32$. For the current $N=10$, $d=20$ problem, a five-coordinate block costs $1600$ payload bits rather than $6400$.
+
+The certificate remains valid because each coordinate $j$ can maintain its own calibration snapshot $w_j^{\rm cal}$ and use
+\begin{equation}
+  \abs{\nabla_jF(w)-g_j^{\rm cal}}
+  \leq
+  \sum_k\bar M_{jk}\abs{w_k-w_{j,k}^{\rm cal}}.
+\end{equation}
+Thus asynchronous calibration ages are not a theoretical obstacle.
+
+\subsection{12B.2: coupling-aware blocks}
+
+The contiguous blocks used in Experiment~12A are only a neutral baseline. A better block partition should group strongly coupled coordinates, for example using the weighted graph
+\begin{equation}
+  A_{jk}=\bar M_{jk}
+\end{equation}
+or a normalized variant. Blocks can then be chosen to minimize the residual cross-block coupling that makes the uncertainty envelope conservative.
+
+The key comparison should be
+\begin{equation}
+  \text{contiguous blocks}
+  \quad\text{vs}\quad
+  \text{coupling-clustered blocks}.
+\end{equation}
+This is the practical counterpart of the basis-alignment lesson from Experiments~10D and~11B.
+
+\subsection{12B.3: compressed residual coupling}
+
+If block summaries remain too conservative, a low-rank-plus-residual representation should be tested. Let $A_i\geq0$ be a compressed approximation of $M_i$. A valid bound can always be restored by defining the nonnegative residual
+\begin{equation}
+  R_i=\max(M_i-A_i,0)
+\end{equation}
+componentwise. Then
+\begin{equation}
+  M_i\leq A_i+R_i.
+\end{equation}
+The structured part $A_i$ can be represented by low-rank factors or block factors, while only a residual row-sum bound needs to be retained for the unresolved coupling. This creates an explicit communication--certificate-tightness trade-off.
+
+\subsection{Experiment 12B success criterion}
+
+Experiment~12B should be considered successful only if a \emph{valid} selective/block certificate produces a useful Pareto point relative to both:
+\begin{enumerate}
+  \item the very cheap scheduled-event baseline;
+  \item EF-TopK.
+\end{enumerate}
+In particular, the method should preserve the zero-harmful-event behavior of the valid Experiment~12A certificates while reducing calibration/curvature payload enough that improved transient or final performance is not purchased by an order-of-magnitude communication increase.
+
+If selective block calibration succeeds, the project can proceed to Experiment~13 with layer/block certificates. If it fails, the safest scientific conclusion is that sparse temporal event communication itself is useful, but rigorous global-descent certification requires too much side information to scale in its current form.
+
+The updated progression is therefore
+\begin{equation}
+  \boxed{12\mathrm{B}\;\text{selective/block certificate}\;\rightarrow\;13\;\text{small neural network only if the Pareto gate passes}.}
+\end{equation}
