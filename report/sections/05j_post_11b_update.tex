@@ -1,0 +1,97 @@
+\section{Roadmap Update after Experiment 11B}
+\label{sec:roadmap-post-11b}
+
+Experiment~11B passes the practical-certificate gate sufficiently strongly that the project should now leave the quadratic family. The calibrated rule is no longer only an oracle construction: on the strongly rotated benchmark a native-coordinate certificate with sufficiently frequent dense calibration achieves zero measured harmful applied events, substantially improves the tuned no-certificate event optimizer, and includes a point that dominates the selected EF-TopK reference in tail error, whole-run objective, and total payload bits.
+
+At the same time, the experiment identifies two limitations that must be carried forward rather than hidden:
+\begin{enumerate}
+  \item \textbf{Calibration is the dominant communication cost.} At the strongest native rotated operating point ($C=25$), roughly 97\% of payload bits come from dense calibration gradients rather than the sparse event stream.
+  \item \textbf{Certificate tightness depends strongly on representation geometry.} Sparse calibration is almost ideal in the diagonal/basis-aligned problem but must be much more frequent in raw rotated coordinates.
+\end{enumerate}
+The next experiment should therefore test whether the complete mechanism survives on a nonquadratic learning objective where smoothness bounds can be constructed from real data statistics and where model quality, rather than distance to a known quadratic optimum, is the primary metric.
+
+\subsection{Recommended next step: Experiment 12A -- federated logistic regression}
+
+The next study should be \textbf{Experiment~12A: non-IID federated logistic regression with calibrated sparse descent events}. Logistic regression is the correct intermediate benchmark because it introduces a genuine nonlinear loss while retaining convexity and usable global curvature bounds. It is substantially more informative than another synthetic quadratic but still simple enough that failures can be diagnosed mathematically.
+
+For client $i$, use the regularized binary logistic objective
+\begin{equation}
+  F_i(w)
+  =
+  \frac{1}{n_i}\sum_{m=1}^{n_i}
+  \log\!\left(1+\exp(-y_{im}x_{im}^\top w)\right)
+  +\frac{\lambda}{2}\norm{w}^2.
+\end{equation}
+The Hessian satisfies
+\begin{equation}
+  \nabla^2F_i(w)
+  =
+  \frac{1}{n_i}X_i^\top D_i(w)X_i+\lambda I,
+  \qquad
+  0\preceq D_i(w)\preceq\frac14 I.
+\end{equation}
+Therefore clients can construct a state-independent componentwise bound
+\begin{equation}
+  M_{i,jk}
+  =
+  \frac{1}{4n_i}\sum_m\abs{x_{im,j}x_{im,k}}
+  +\lambda\mathbf 1_{j=k},
+\end{equation}
+which guarantees
+\begin{equation}
+  \abs{[\nabla^2F_i(w)]_{jk}}
+  \leq M_{i,jk}.
+\end{equation}
+This is the direct nonquadratic analogue of the Experiment~11B componentwise drift envelope and makes logistic regression an unusually clean next test.
+
+\subsection{The new communication question}
+
+Experiment~12A must count not only event and recurring gradient-calibration bits, but also any curvature-summary information required to build the certificate. A full $d\times d$ matrix $M_i$ is acceptable as an oracle/upper-information reference for small $d$, but it is not a scalable solution. The experiment should therefore compare at least:
+\begin{enumerate}
+  \item a full componentwise curvature matrix $M_i$;
+  \item a diagonal-only curvature bound;
+  \item a row-norm or block-diagonal bound;
+  \item the no-certificate global $q(t)$ event baseline;
+  \item EF-TopK/error-feedback sparsification;
+  \item full-precision asynchronous SGD.
+\end{enumerate}
+The one-time bits required to transmit or configure these curvature summaries must be reported explicitly. This turns the dominant limitation discovered in 11B into a measurable systems-design trade-off rather than postponing it.
+
+\subsection{Data heterogeneity}
+
+The first logistic experiment should remain controlled. Use a public or synthetic binary-classification dataset partitioned across approximately 10--20 clients with tunable label/feature heterogeneity. At minimum include:
+\begin{itemize}
+  \item an approximately IID split;
+  \item moderate Dirichlet label skew;
+  \item a stronger non-IID split that produces meaningful local/global gradient disagreement.
+\end{itemize}
+The primary comparison should not rely on a single favorable partition. Fixed seeds and common stochastic mini-batch draws should be used where possible.
+
+\subsection{Primary metrics}
+
+The main plots should now become learning-system plots rather than quadratic-only diagnostics:
+\begin{equation}
+  \boxed{\text{test loss / test accuracy vs cumulative transmitted bits}.}
+\end{equation}
+Also report training objective, calibration count, accepted/candidate event ratio, harmful-event fraction whenever the full objective can be evaluated, client participation, and wall-clock/local-gradient evaluations. Communication should be decomposed into
+\begin{equation}
+  B_{\rm total}
+  =
+  B_{\rm events}
+  +B_{\rm gradient\;calibration}
+  +B_{\rm curvature\;summary}.
+\end{equation}
+This decomposition is essential because 11B showed that the event stream can look extremely efficient while calibration silently dominates the total budget.
+
+\subsection{Experiment 12A decision gate}
+
+The calibrated-event approach should proceed toward a neural network only if a practical curvature-summary variant produces a useful test-performance--bits Pareto point relative to EF-TopK and full-precision training. A full-matrix oracle certificate alone is not sufficient justification for scaling.
+
+If the full componentwise certificate works but diagonal/block summaries fail, the next step should be a representation/preconditioning study before neural networks. This would connect directly to the Experiment~10D basis result. If even the full componentwise logistic certificate fails, the descent-certificate branch should be reconsidered before further scaling.
+
+If a diagonal or small-block certificate succeeds, the project can proceed to the originally planned small-neural-network experiment, where certificates would be formed per layer/block rather than per raw parameter.
+
+The updated progression is therefore
+\begin{equation}
+  \boxed{12\mathrm{A}\;\text{logistic regression + practical certificate}\;\rightarrow\;12\mathrm{B}\;\text{representation/block refinement if needed}\;\rightarrow\;13\;\text{small neural network}.}
+\end{equation}
