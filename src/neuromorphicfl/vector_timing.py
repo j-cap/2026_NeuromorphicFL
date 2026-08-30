@@ -155,7 +155,9 @@ def run_vector_timing_batch(
                         -config.schedule_exponent
                     )
                 elif config.method == "coordinate_jump":
-                    jump_scale = coordinate_jump_scale[None, :]
+                    jump_scale = np.broadcast_to(
+                        coordinate_jump_scale, (n_runs, dimension)
+                    )
                 else:
                     raise ValueError(f"unknown method {config.method}")
 
@@ -237,7 +239,9 @@ def run_vector_timing_batch(
     }
 
 
-def timing_calibration(event_log: pd.DataFrame, n_clients: int, dimension: int) -> tuple[dict[tuple[int, int], np.ndarray], np.ndarray]:
+def timing_calibration(
+    event_log: pd.DataFrame, n_clients: int, dimension: int
+) -> tuple[dict[tuple[int, int], np.ndarray], np.ndarray]:
     """Build per-client/coordinate timing pools and medians from a calibration run."""
 
     pools: dict[tuple[int, int], np.ndarray] = {}
