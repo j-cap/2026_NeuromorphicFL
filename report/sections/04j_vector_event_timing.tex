@@ -1,0 +1,194 @@
+\section{Experiment 10C: Coordinate Event-Time-Aware Jump Resolution}
+\label{sec:exp10c}
+
+\subsection{Purpose}
+
+Experiment~9c provided a partial positive result for event-time-aware aggregation in the scalar problem: event intervals contained useful state information, but a simple timing-dependent jump did not consistently dominate a conventional global step-size schedule. Experiment~10C revisits this question in the vector setting, where every client--coordinate pair $(i,j)$ has its own event stream and therefore its own inter-event timescale.
+
+The central questions are
+\begin{equation}
+  \boxed{\text{Does coordinate-level inter-event timing contain useful optimization information beyond event sign?}}
+\end{equation}
+and, more importantly,
+\begin{equation}
+  \boxed{\text{Can that information be decoded into a better jump rule than fixed $q$ or conventional global jump decay?}}
+\end{equation}
+
+The distinction between these questions is essential. A timing variable may be statistically informative without the chosen timing-to-jump mapping being a good optimizer.
+
+\subsection{Benchmark and reference encoder}
+
+The experiment inherits the heterogeneous asynchronous vector quadratic from Experiment~10A: $N=10$ clients, $d=20$ coordinates, compute periods
+\begin{equation}
+  T_i\in\{1,1,2,2,5,5,10,10,20,20\},
+\end{equation}
+curvature-normalized thresholds, rate normalization by $p_iT_i$, and stochastic gradients. The primary held-out campaign uses $80$ problem realizations, $2000$ wall-clock ticks, a $500$-tick tail window, and $\sigma_g=0.25$. A separate calibration ensemble is used only to estimate per-client/coordinate timing distributions for the shuffled and relative-timing controls.
+
+The communication state remains the full-reset normalized coordinate LIF reference,
+\begin{equation}
+  z_{i,j}\leftarrow\rho z_{i,j}-\gamma p_iT_i\hat g_{i,j},
+  \qquad
+  \Delta_j=\Delta_0s_j,
+\end{equation}
+with $\rho=0.999$ and $\Delta_0=0.25$. Whenever $|z_{i,j}|\geq\Delta_j$, the coordinate emits a signed event and is reset to zero. Experiment~10C changes only the parameter jump amplitude after an event.
+
+For every client--coordinate pair we record two times:
+\begin{align}
+  \tau^{\mathrm{local}}_{i,j} &= \text{number of completed gradients of client $i$ since the previous event in coordinate $j$},\\
+  \tau^{\mathrm{wall}}_{i,j} &= \text{wall-clock ticks since that event}.
+\end{align}
+A calibration-normalized interval is also defined as
+\begin{equation}
+  \bar\tau_{i,j}=\frac{\tau^{\mathrm{local}}_{i,j}}{\operatorname{median}(\tau^{\mathrm{local}}_{i,j})_{\mathrm{cal}}}.
+\end{equation}
+
+\subsection{Candidate timing decoders and controls}
+
+The direct event-time rule uses an inverse-power attenuation
+\begin{equation}
+  q_e=q_0c(\tau_e),
+  \qquad
+  c(\tau)=\min\left\{1,\left(\frac{\tau_c}{\tau}\right)^\alpha\right\}.
+\end{equation}
+It is evaluated using local time, wall time, and the calibration-normalized local interval. No additional payload bits are required because the server already observes event arrival times.
+
+Three controls are important.
+\begin{enumerate}
+  \item \textbf{Shuffled timing:} inter-event intervals are sampled from the calibration distribution of the same client and coordinate, preserving marginal timescales while destroying the relation between the current event and its actual interval.
+  \item \textbf{Global jump schedule:}
+  \begin{equation}
+    q(t)=q_0\left(1+\frac{t}{T_q}\right)^{-\beta},
+  \end{equation}
+  which tests whether any timing benefit is merely ordinary late-stage step-size reduction.
+  \item \textbf{Coordinate-normalized jump:} $q_j\propto1/\sqrt{s_j}$, which tests whether timing merely proxies the known coordinate curvature scale.
+\end{enumerate}
+
+\subsection{Result 1: coordinate timing is genuinely informative}
+
+The first diagnostic uses a fixed-jump event stream and asks whether inter-event time predicts the current coordinate state and the quality of a fixed event. For diagonal quadratics the objective change of an individual coordinate event is available exactly,
+\begin{equation}
+  \Delta F_{i,j}
+  =\bar h_j\left(e_j\,\Delta w_j+\frac{1}{2}\Delta w_j^2\right),
+  \qquad e_j=w_j-w_j^\star.
+\end{equation}
+An event is called harmful when $\Delta F_{i,j}>0$.
+
+Pooled across all clients and coordinates, the Spearman correlation between $\tau^{\mathrm{local}}$ and $|e_j|$ is approximately $-0.29$, while its correlation with the harmful-event indicator is about $+0.15$. Wall-clock timing gives stronger pooled correlations, approximately $-0.63$ with $|e_j|$ and $+0.32$ with harmfulness.
+
+The signal becomes clearer after conditioning on client and coordinate. Across the $200$ client--coordinate streams, the median within-stream Spearman correlation between local interval and $|e_j|$ is approximately $-0.66$, and the median correlation with harmfulness is approximately $+0.35$. Thus timing is not merely a curvature or client-speed label: within the same communication neuron, longer intervals tend to occur when the coordinate is closer to its optimum and a fixed jump has become more likely to overshoot.
+
+A calibration-normalized interval gives the particularly interpretable result in Table~\ref{tab:exp10c_timing_quality}.
+
+\begin{table}[ht]
+  \centering
+  \small
+  \caption{Experiment~10C event quality versus inter-event interval normalized by the calibration median of the same client and coordinate.}
+  \label{tab:exp10c_timing_quality}
+  \begin{tabular}{lrrr}
+    \toprule
+    $\tau/\tau_{\mathrm{median}}$ & Events & Mean $|w_j-w_j^\star|$ & Harmful-event fraction \\
+    \midrule
+    $\leq0.5$ & $15972$ & $0.568$ & $4.85\%$ \\
+    $0.5$--$1$ & $55952$ & $0.355$ & $12.12\%$ \\
+    $1$--$2$ & $49058$ & $0.136$ & $27.99\%$ \\
+    $2$--$4$ & $19578$ & $0.063$ & $33.98\%$ \\
+    $>4$ & $9253$ & $0.038$ & $58.45\%$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+This strongly supports the descriptive statement
+\begin{equation}
+  \boxed{\text{coordinate event timing carries state/resolution information.}}
+\end{equation}
+However, it does not yet imply that inverse-time jump scaling is the correct decoder.
+
+\subsection{Result 2: direct local timing does not improve the tuned optimizer}
+
+Table~\ref{tab:exp10c_primary} summarizes the main held-out comparison. Each family is locally tuned over the tested parameter range.
+
+\begin{table}[ht]
+  \centering
+  \small
+  \caption{Experiment~10C selected held-out results for $\sigma_g=0.25$. Logical payload uses the same event accounting as Experiment~10A.}
+  \label{tab:exp10c_primary}
+  \begin{tabular}{lrrrr}
+    \toprule
+    Method & Tail gap & Whole-run gap & Payload bits & Events \\
+    \midrule
+    Fixed $q$, $q=0.015$ & $0.00440$ & $1.0481$ & $11236$ & $1873$ \\
+    Local timing & $0.00525$ & $1.0701$ & $11328$ & $1888$ \\
+    Shuffled local timing & $0.00480$ & $1.1124$ & $11452$ & $1909$ \\
+    Relative local timing & $0.00460$ & $1.0477$ & $11240$ & $1873$ \\
+    Wall timing & $0.00440$ & $1.0478$ & $11234$ & $1872$ \\
+    Global $q(t)$ schedule & $\mathbf{0.00380}$ & $\mathbf{0.8735}$ & $\mathbf{10644}$ & $1774$ \\
+    Coordinate-normalized $q_j$ & $0.00911$ & $1.0118$ & $10247$ & $1708$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The most direct timing rule is therefore a negative result. The best tested local-timing point is worse than the tuned fixed-jump reference in both final error and transient cost. More importantly, the shuffled-timing control is better than the true local-timing rule for the same basic decoder family. This shows that the information contained in the actual local interval is not being converted into useful parameter motion by the simple inverse-power rule.
+
+Calibration-normalized local timing closes most of the gap but still does not beat the fixed reference. Wall-clock timing is essentially indistinguishable from the best fixed-$q$ point after tuning. Finally, the oracle curvature-scaled jump $q_j\propto1/\sqrt{s_j}$ is substantially worse, so the global-schedule advantage described next is not explained by a trivial coordinate preconditioner.
+
+\subsection{A partial positive at aggressive jumps, but global decay is stronger}
+
+Timing is not completely useless. At the faster-transient setting $q_0=0.04$, fixed jumps give tail gap $0.02009$ and whole-run gap $0.5062$. Wall-time attenuation with $\tau_c=100$ reduces the tail gap to $0.01525$ (about $24\%$ lower) while leaving the whole-run gap essentially unchanged at $0.5047$ and changing payload by less than $0.4\%$.
+
+However, a conventional global schedule at the same base jump reduces the tail gap further to $0.01071$ (about $47\%$ below fixed $q$) with whole-run gap $0.5139$ and similarly negligible communication change. Thus event timing can provide local resolution correction when $q$ is intentionally aggressive, but it does not beat the simpler conventional schedule.
+
+The globally scheduled family is the strongest result of Experiment~10C. One selected setting,
+\begin{equation}
+  q(t)=0.02\left(1+\frac{t}{500}\right)^{-0.25},
+\end{equation}
+reaches tail gap $0.00380$, compared with $0.00440$ for the best tested constant jump. It also uses fewer payload bits and has a lower whole-run cost than that accuracy-tuned fixed point. Relative to the faster fixed setting $q=0.02$, the same schedule roughly halves the final gap at the price of a modest transient penalty.
+
+\subsection{Noise robustness}
+
+The mechanism comparison was repeated for $\sigma_g\in\{0,0.25,0.5\}$ on the held-out ensemble. Table~\ref{tab:exp10c_noise} reports the best tested tail point in each family.
+
+\begin{table}[ht]
+  \centering
+  \small
+  \caption{Experiment~10C robustness to stochastic-gradient noise.}
+  \label{tab:exp10c_noise}
+  \begin{tabular}{crrrr}
+    \toprule
+    $\sigma_g$ & Fixed $q$ & Local timing & Wall timing & Global schedule \\
+    \midrule
+    $0$ & $0.00344$ & $0.00438$ & $0.00371$ & $\mathbf{0.00297}$ \\
+    $0.25$ & $0.00433$ & $0.00521$ & $0.00455$ & $\mathbf{0.00378}$ \\
+    $0.50$ & $0.00696$ & $0.00783$ & $0.00705$ & $\mathbf{0.00612}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The qualitative ordering is stable. Local timing is consistently worse than fixed $q$, wall timing is close to but not better than the tuned fixed family, and global jump decay gives the smallest final error at all three noise levels. This makes it unlikely that the primary result is a particular-noise tuning artifact.
+
+\subsection{Interpretation: informative timing is not sufficient}
+
+Experiment~10C exposes an important conceptual distinction. Long event intervals strongly indicate that a coordinate has entered a fine-resolution regime. Nevertheless, immediately shrinking every long-latency event is not automatically optimal. The interval is endogenous: it depends on the coordinate state, client trajectory, threshold, stochastic-gradient sequence, and previous jump amplitudes. A simple inverse-power decoder can therefore attenuate events that are statistically more likely to overshoot but are still necessary to remove the remaining bias.
+
+The global schedule avoids this coordinate-local feedback loop. It reduces the jump resolution coherently as training progresses and thereby addresses the fixed-$q$ practical-neighborhood problem identified in the scalar experiments. In the present benchmark this simple conventional mechanism is both easier to interpret and more effective than the event-time decoder.
+
+The result also sharpens the role of timing. The useful statement is not that inter-event time is irrelevant. On the contrary, the timing-quality table shows a strong signal. The supported conclusion is instead
+\begin{equation}
+  \boxed{\text{timing is informative, but the tested timing-to-jump decoder is not competitive.}}
+\end{equation}
+A more principled decoder would need to account for expected descent or posterior event reliability rather than use an ad-hoc inverse interval.
+
+\subsection{Decision after Experiment 10C}
+
+Experiment~10C does not justify carrying event-time-aware jump scaling into the core optimizer. The current conclusions are:
+\begin{enumerate}
+  \item coordinate inter-event intervals contain substantial information about current optimization resolution and fixed-jump harmfulness;
+  \item direct local and calibration-normalized inverse-time jump rules do not improve the tuned fixed-jump reference;
+  \item wall-time scaling can improve an intentionally aggressive fixed jump, but a conventional global schedule improves it more;
+  \item a simple decaying global jump schedule is robustly beneficial and should become part of the reference optimizer in subsequent experiments;
+  \item coordinate curvature normalization of the jump does not explain the schedule gain;
+  \item the remaining opportunity for event timing is a \emph{principled} usefulness/descent decoder rather than another heuristic timing law.
+\end{enumerate}
+
+The scalar/vector mechanism search has therefore resolved three proposed additions---homeostatic thresholds, naive competition, and heuristic event-time jump scaling---without finding a new core primitive. At the same time, it has identified a conventional but important refinement: decreasing $q$ materially improves the final optimization neighborhood while preserving the sparse event representation.
+
+The next robustness experiment should test the coordinate encoder under non-axis-aligned/full Hessians, because Experiments~10A--10C all exploit diagonal quadratics and coordinatewise thresholds. After that robustness gate, the project should move to the convergence-refinement stage with global $q(t)$ as the reference and retain the stronger backlog item---Lyapunov/descent-derived threshold and jump dynamics---as the most promising route to a genuinely new event rule. Such a rule would use the same information that timing is shown here to contain, but would decode it through optimization usefulness rather than an arbitrary function of inter-event interval.
