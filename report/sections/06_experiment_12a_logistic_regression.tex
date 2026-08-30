@@ -1,0 +1,167 @@
+\section{Experiment 12A: Non-IID Federated Logistic Regression}
+\label{sec:experiment-12a-logistic}
+
+Experiment~12A is the first test outside the quadratic family. Its purpose is not yet to demonstrate neural-network training. Instead, it asks whether the sparse event mechanism and the calibrated descent certificate from Experiments~11A--11B survive on a genuinely nonlinear learning objective while retaining enough analytical structure to understand failures.
+
+\subsection{Nonlinear federated objective}
+
+Client $i$ minimizes the regularized binary logistic objective
+\begin{equation}
+  F_i(w)
+  =
+  \frac{1}{n_i}\sum_{m=1}^{n_i}
+  \left[\log(1+\exp(x_{im}^\top w))-y_{im}x_{im}^\top w\right]
+  +\frac{\lambda}{2}\norm{w}^2,
+\end{equation}
+with $y_{im}\in\{0,1\}$ and $w\in\R^{20}$. The final coordinate is an intercept. The global objective is $F(w)=\sum_i p_iF_i(w)$ with ten equally weighted clients and asynchronous computation periods
+\begin{equation}
+  T_i\in\{1,1,2,2,5,5,10,10,20,20\}.
+\end{equation}
+We use $300$ training and $150$ test samples per client, mini-batches of size $64$, $\lambda=0.05$, and eight independent data realizations per heterogeneity regime. Client features have a shared correlated Gaussian geometry with correlation coefficient $0.45$. Non-IID structure is introduced by client-specific feature means and latent label biases. The resulting mean standard deviation of the client positive-class rates is approximately $0.031$, $0.098$, and $0.190$ for the IID, moderate, and strong regimes, respectively.
+
+A centralized L-BFGS solve is used only as an offline analysis reference. The mean centralized test losses are approximately
+\begin{equation}
+  0.52989,\qquad 0.52744,\qquad 0.50578
+\end{equation}
+for the IID, moderate, and strong regimes.
+
+\subsection{Curvature certificate}
+
+The logistic Hessian is
+\begin{equation}
+  \nabla^2F_i(w)
+  =
+  \frac{1}{n_i}X_i^\top D_i(w)X_i+\lambda I,
+  \qquad
+  0\preceq D_i(w)\preceq\frac14 I.
+\end{equation}
+Hence the state-independent componentwise matrix
+\begin{equation}
+  M_{i,jk}
+  =
+  \frac{1}{4n_i}\sum_m\abs{x_{im,j}x_{im,k}}
+  +\lambda\mathbf 1_{j=k}
+\end{equation}
+satisfies
+\begin{equation}
+  \abs{[\nabla^2F_i(w)]_{jk}}\leq M_{i,jk}
+\end{equation}
+for all $w$. After a dense calibration at model $w^{\rm cal}$, the server stores the exact aggregate gradient
+\begin{equation}
+  g^{\rm cal}=\sum_i p_i\nabla F_i(w^{\rm cal}).
+\end{equation}
+Writing $\bar M=\sum_i p_iM_i$, a valid coordinate drift envelope is
+\begin{equation}
+  \abs{\nabla_jF(w)-g_j^{\rm cal}}
+  \leq
+  r_j(w)
+  :=
+  \sum_k\bar M_{jk}\abs{w_k-w_k^{\rm cal}}.
+\end{equation}
+For a signed event $s\in\{-1,+1\}$, the conservative alignment is
+\begin{equation}
+  \underline a_j=-s g_j^{\rm cal}-r_j(w).
+\end{equation}
+If $\underline a_j>0$, the event is accepted with
+\begin{equation}
+  q_j=\frac{\underline a_j}{\bar M_{jj}}.
+\end{equation}
+The accepted coordinates are processed sequentially, because after one coordinate changes the uncertainty radius for the next candidate must be recomputed.
+
+\subsection{Curvature-summary variants and bit accounting}
+
+The full $M_i$ matrix is a useful information-rich reference but costs $Nd^2\times32=128000$ bits once for $N=10$ and $d=20$. We therefore test progressively cheaper summaries:
+\begin{itemize}
+  \item \textbf{full:} the complete componentwise matrix $M_i$;
+  \item \textbf{block:} exact entries inside a block plus a residual cross-block row-sum bound;
+  \item \textbf{diagonal+residual:} $M_{jj}$ plus the sum of all off-diagonal row entries;
+  \item \textbf{spectral:} one scalar smoothness bound per client;
+  \item \textbf{diagonal-only:} an intentionally unsafe control that ignores cross-coordinate drift.
+\end{itemize}
+For block size ten, the one-time summary costs $70400$ bits; for block size four, $32000$ bits; the diagonal+residual summary costs $12800$ bits; and the spectral summary costs only $320$ bits. A full gradient calibration costs
+\begin{equation}
+  B_{\rm cal}=Nd\times32=6400\text{ bits}.
+\end{equation}
+Sparse events cost $\lceil\log_2d\rceil+1=6$ payload bits each. All reported certificate communication includes
+\begin{equation}
+  B_{\rm total}=B_{\rm event}+B_{\rm calibration}+B_{\rm curvature}.
+\end{equation}
+
+\paragraph{Why the diagonal-only rule is not a certificate.}
+A diagonal Hessian summary alone cannot bound $\nabla_jF(w)-\nabla_jF(w^{\rm cal})$ when other coordinates change. We retain this variant only as a diagnostic showing what could be gained if coupling uncertainty were ignored. It must not be interpreted as a safe method.
+
+\subsection{Trigger-scale audit}
+
+The quadratic-era trigger $(\gamma,\Delta)=(0.05,0.25)$ produces too few logistic events. This is detected immediately because even the exact global descent oracle cannot reach the centralized reference within the run. A trigger-scale audit shows that $(\gamma,\Delta)=(0.1,0.05)$ produces a useful event rate. With this trigger, the global oracle reaches the centralized test loss using only a few thousand event bits. The subsequent Experiment~12A comparisons use this trigger rather than retaining an inappropriate quadratic scale.
+
+\subsection{Main strong-non-IID result}
+
+The strongest non-IID split is the most discriminating case. The selected $1200$-tick results are summarized below.
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test loss & Test acc. & Mean train loss & Payload bits\\
+\midrule
+Scheduled events & 0.50635 & 0.7741 & 0.5206 & 11355\\
+Global descent oracle & 0.50578 & 0.7754 & 0.5063 & 9539\\
+Full certificate, $C=25$ & 0.50579 & 0.7745 & 0.5145 & 452369\\
+Block-10 certificate, $C=25$ & 0.50582 & 0.7742 & 0.5175 & 395093\\
+EF-TopK, $k=1$ & 0.50813 & 0.7746 & 0.5147 & 164280\\
+Full precision & 0.50611 & 0.7773 & 0.5103 & 2841600\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Several observations are important.
+
+First, sparse scheduled events remain remarkably competitive after leaving the quadratic family. They approach the centralized test loss with only about $1.1\times10^4$ payload bits, roughly two orders of magnitude below EF-TopK and more than two orders below full precision.
+
+Second, the exact global descent oracle again performs extremely well. It reaches the centralized reference with roughly $9.5\times10^3$ event bits and substantially lower transient training loss than the heuristic schedule. Thus the descent-aware principle from Experiment~11A survives the nonlinear objective.
+
+Third, the valid calibrated certificates recover most of the oracle final accuracy and remove harmful accepted events, but they do not provide a favorable total-bit Pareto point. The full $C=25$ certificate spends $128000$ one-time curvature bits and $313600$ calibration bits; the actual sparse event stream is only a small remainder. Block size ten reduces the static curvature cost to $70400$ bits, but calibration still dominates.
+
+Fourth, the selected EF-TopK point uses fewer bits than the valid block/full certificates. The certificate provides slightly better final test loss, but not enough transient or communication improvement to dominate EF-TopK. Therefore the practical-certificate gate defined after Experiment~11B is not passed by the present summaries.
+
+\subsection{Effect of heterogeneity}
+
+The same qualitative picture holds across all three data regimes. Scheduled events, the global oracle, full precision, and EF-TopK all remain close in final test performance. The full certificate approaches the oracle when calibrated frequently, while block and diagonal-residual certificates become progressively more conservative. Increasing non-IID heterogeneity does not create a regime in which the current valid certificate suddenly becomes communication-efficient. This is an important negative result: the calibration/curvature overhead is structural rather than an artifact of a single easy partition.
+
+\subsection{Safety audit}
+
+On the strong non-IID split, event-level objective checks give
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Method & Acceptance & Harmful/accepted & Payload bits\\
+\midrule
+Scheduled events & 1.000 & 0.337 & 11355\\
+Full certificate, $C=25$ & 0.140 & 0.000 & 452369\\
+Block-10 certificate, $C=25$ & 0.098 & 0.000 & 395093\\
+Diagonal+residual, $C=25$ & 0.031 & 0.000 & 339236\\
+Unsafe diagonal-only, $C=50$ & 0.379 & 0.047 & 175994\\
+\bottomrule
+\end{tabular}
+\end{center}
+The valid summaries behave exactly as intended: no accepted event was observed to increase the full training objective. The cheap diagonal-only control is much less conservative and nearly matches the oracle final loss, but about $4.7\%$ of its accepted events are globally harmful. This is precisely why its strong numerical result cannot be used as evidence for a safe certificate.
+
+The diagonal-only control nevertheless provides a useful target. It shows that there is substantial performance available between the conservative safe summaries and the full information oracle if the cross-coordinate uncertainty can be represented more efficiently.
+
+\subsection{Experiment 12A verdict}
+
+Experiment~12A gives the following gates:
+\begin{equation}
+  \boxed{\text{nonlinear sparse-event viability: PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{nonlinear global descent oracle: PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{valid calibrated certificate safety: PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{practical certificate performance--bits Pareto gate: FAIL}}.
+\end{equation}
+The failure is informative. It is no longer the event stream that dominates communication. The sparse event mechanism is already extremely cheap. The bottleneck is maintaining sufficiently tight trusted gradient/curvature information. Consequently, proceeding directly to a neural network would hide rather than solve the remaining systems problem.
+
+The reproducible implementation is in \texttt{src/neuromorphicfl/logistic\_certificate.py} and \texttt{experiments/12a\_logistic\_regression.py}. The experiment driver writes campaign, centralized-reference, safety, and history CSV files together with test-loss/test-accuracy versus cumulative-bit plots.
