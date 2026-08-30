@@ -1,7 +1,7 @@
 \section{Roadmap Update after Experiment 10C}
 \label{sec:roadmap-post-10c}
 
-Experiment~10C closes the heuristic event-time branch for the current scalar/vector benchmark. Coordinate event timing is measurably informative, but direct inverse-time jump scaling does not beat a tuned fixed jump and is consistently weaker than a conventional global jump-decay schedule. The core reference for the next stage is therefore updated to
+Experiment~10C closes the heuristic event-time branch for the current scalar/vector benchmark. Coordinate event timing is measurably informative, but direct inverse-time jump scaling does not beat a tuned fixed jump and is consistently weaker than a conventional global jump-decay schedule. The core empirical reference is therefore updated to
 \begin{equation}
   \boxed{\text{curvature/scale-normalized full-reset coordinate LIF + global decreasing }q(t).}
 \end{equation}
@@ -10,25 +10,43 @@ The mechanism status is now:
 \begin{enumerate}
   \item \textbf{Adaptive/homeostatic thresholds:} tested in Experiment~9b; not justified by the scalar benchmark. Revisit only if heterogeneous vector/layer scales create a practical need that fixed normalization cannot solve.
   \item \textbf{Refractory dynamics:} retained as an engineering/traffic-shaping option, not a current algorithmic contribution.
-  \item \textbf{Event-time-aware aggregation:} timing is informative, but heuristic $q(\tau)$ is not competitive after tuning. Do not include in the core optimizer.
+  \item \textbf{Event-time-aware aggregation:} timing is informative, but heuristic $q(\tau)$ is not competitive after tuning. Do not include it in the core optimizer as a heuristic decoder.
   \item \textbf{Competitive/lateral-inhibition selection:} tested in Experiment~10B; useful for hard packet-size bounds but not for total communication reduction, and strict caps create client-fairness problems.
-  \item \textbf{Lyapunov/descent-derived threshold and jump dynamics:} remains the strongest algorithmic backlog item. The negative heuristic tests increase rather than decrease its importance because they suggest that adaptation should target optimization usefulness directly.
+  \item \textbf{Lyapunov/descent-derived threshold and jump dynamics:} promoted from the backlog to the immediate next design study. The negative heuristic tests increase its importance because they suggest that adaptation should target optimization usefulness directly.
 \end{enumerate}
 
-\subsection{Immediate next step: Experiment 10D}
+\subsection{Numbering and chronology note}
+\label{sec:numbering-chronology-note}
 
-Before leaving analytically controlled quadratics, test whether the communication advantage of coordinate LIF survives non-axis-aligned curvature. Replace diagonal client Hessians by
+The experiment identifiers in this report encode \emph{logical experiment families}, not a strict execution timestamp. Experiments~10A--10D form the vector-geometry and vector-mechanism family. Experiment~11 starts a distinct design-principle family concerned with convergence refinement and principled event sizing. After Experiment~10C, the evidence motivated formulating and testing Experiment~11A \emph{before} executing Experiment~10D. We therefore intentionally use the narrative/execution order
+\begin{equation}
+  \boxed{10\mathrm{A}\rightarrow10\mathrm{B}\rightarrow10\mathrm{C}\rightarrow11\mathrm{A}\rightarrow10\mathrm{D}.}
+\end{equation}
+A first-time reader should not interpret the appearance of Experiment~11A before Experiment~10D as a missing Experiment~10D result. Experiment~10D retains its number because it remains the final geometry-robustness member of the Experiment~10 family; Experiment~11A retains its number because it introduces a qualitatively new optimizer-design principle rather than another vector robustness variant.
+
+\subsection{Immediate next step: Experiment 11A}
+
+Before rotating the Hessians in Experiment~10D, work out and test a descent-aware event-sizing law. Experiment~10C showed that long coordinate inter-event intervals reliably identify regimes in which a fixed update quantum is often too coarse, but a heuristic inverse-time decoder is inferior to a simple global $q(t)$ schedule. This suggests that the relevant object is not elapsed time itself but the predicted decrease of the optimization objective produced by a candidate spike.
+
+Experiment~11A therefore asks whether the spike amplitude can be selected from a sufficient-descent condition. The study should proceed from an exact global oracle, through an exact local-client rule, to an event-state/timing-derived approximation. This ordering separates three questions that must not be conflated:
+\begin{enumerate}
+  \item Is descent-aware event sizing fundamentally better than the conventional global $q(t)$ reference?
+  \item If yes, how much is lost when only a client's local objective is available under federated heterogeneity?
+  \item Can the LIF state and event timing recover enough gradient-magnitude information to approximate the useful descent-aware rule without transmitting a full gradient magnitude?
+\end{enumerate}
+The detailed formulation and experiment skeleton are given in the following Experiment~11A design section.
+
+\subsection{Experiment 10D after the 11A gate}
+
+Experiment~10D remains necessary. It tests whether low-bit coordinate event coding survives non-axis-aligned curvature by replacing diagonal client Hessians with
 \begin{equation}
   H_i=U_i^\top D_iU_i,
 \end{equation}
-with controlled rotations $U_i$. This is an important robustness gate because the present threshold normalization and independent coordinate neurons are aligned with the diagonal benchmark. Experiment~10D should compare the diagonal reference, weak/moderate/full rotations, and conventional sparse baselines while retaining the newly validated global $q(t)$ schedule.
+for controlled rotations $U_i$. The result of Experiment~11A determines which optimizer variant enters this geometry stress test:
+\begin{itemize}
+  \item if even the global descent oracle offers little benefit over $q(t)$, Experiment~10D uses the conventional global schedule as the reference and the descent branch is deprioritized;
+  \item if descent-aware sizing is useful but only with global oracle information, Experiment~10D still uses $q(t)$ while the federated-information gap becomes a separate research problem;
+  \item if a local or event-derived descent rule approaches oracle performance, that rule is carried into Experiment~10D alongside the $q(t)$ reference.
+\end{itemize}
 
-The main decision criterion is whether low-bit coordinate event coding remains competitive when gradient principal directions do not coincide with parameter coordinates. A strong failure would motivate block neurons or learned/preconditioned coordinate systems rather than further scalar timing heuristics.
-
-\subsection{Then: convergence refinement}
-
-If Experiment~10D passes, proceed to the planned convergence-refinement stage. The first reference should be the empirically successful conventional schedule
-\begin{equation}
-  q(t)=q_0\left(1+\frac{t}{T_q}\right)^{-\beta},
-\end{equation}
-which directly addresses the fixed-jump practical neighborhood. The research extension remains a descent-aware event law in which $q$ and/or $\Delta$ are selected from a sufficient-decrease or Lyapunov condition. This should be treated as a separate theoretical development rather than as another heuristic parameter adaptation.
+The main Experiment~10D decision criterion remains whether the communication advantage of coordinate event coding survives when gradient principal directions do not coincide with parameter coordinates. A strong failure would motivate block neurons, preconditioned event coordinates, or learned communication bases rather than additional scalar timing heuristics.
