@@ -1,0 +1,5 @@
+data_seed,method,final_test_loss,final_test_accuracy,whole_train_loss,payload_bits,accepted_events,acceptance
+1500,on_demand_gap50,0.496068,0.787583,0.504035,148689.50,252.875,0.154357
+1500,periodic_absR_K1_C10,0.497873,0.784833,0.521849,69212.50,83.250,0.043388
+1700,on_demand_gap50,0.477691,0.799167,0.487948,150376.75,255.750,0.143187
+1700,periodic_absR_K1_C10,0.478235,0.795250,0.513274,70507.00,87.000,0.040759
