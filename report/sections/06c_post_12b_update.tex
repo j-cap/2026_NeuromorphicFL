@@ -11,6 +11,8 @@ The selected nonlinear logistic configuration now combines all three properties 
 \end{enumerate}
 The leading selective-coordinate rule uses approximately $149.6$ kbit, compared with $164.3$ kbit for EF-TopK $k=1$, while reaching lower final test loss and a slightly lower whole-run training objective. It also reduces communication by approximately $67\%$ relative to the full Experiment~12A certificate.
 
+The selector-transfer audit in \cref{sec:exp12b-audit} adds an important qualification. The winning nonlinear rule is \emph{candidate-driven}: a coordinate is refreshed when an actual event cannot be certified and the minimum refresh gap has elapsed. Periodically refreshing the largest absolute uncertainty radii, which worked well in the controlled Experiment~11C quadratic geometry, does not recover the same nonlinear performance. Hence the transferable principle is selective certificate maintenance, not a universal periodic Top-$K$ uncertainty scheduler. On nonlinear problems the event stream itself provides an important relevance signal for deciding which certificate information is worth refreshing.
+
 The remaining limitation is equally clear: about $85\%$ of the selected payload is still calibration/refresh information. Hence Experiment~12B does not prove that a rigorous certificate will scale to a large network. It proves that selective information refresh can close the gap at $d=20$ and gives us a concrete architecture to test at the next scale.
 
 \subsection{Recommended next step: Experiment 13A -- small neural network}
