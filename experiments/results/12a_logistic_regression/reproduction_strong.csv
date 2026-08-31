@@ -1,0 +1,8 @@
+configuration,final_test_loss,final_test_accuracy,whole_train_loss,payload_bits,curvature_bits,calibration_bits,acceptance_fraction,harmful_fraction
+schedule,0.506347,0.774083,0.520575,11355.0,0.0,0.0,1.0,0.337252
+global_oracle,0.505780,0.775417,0.506349,9538.5,0.0,0.0,0.532867,
+full,0.506114,0.777333,0.510250,2841600.0,0.0,0.0,,
+ef_topk,0.508132,0.774583,0.514678,164280.0,0.0,0.0,,
+certificate_full_C25,0.505787,0.774500,0.514510,452368.5,128000.0,313600.0,0.140131,0.0
+certificate_block10_C25,0.505815,0.774167,0.517548,395092.5,70400.0,313600.0,0.097566,0.0
+centralized_reference,0.505780,0.775417,,,,,,
