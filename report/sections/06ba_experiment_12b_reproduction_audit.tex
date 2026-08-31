@@ -1,0 +1,124 @@
+\section{Experiment 12B Reproduction and Selector-Transfer Audit}
+\label{sec:exp12b-audit}
+
+After Experiment~11C established absolute uncertainty as a useful periodic calibration selector on the controlled rotated quadratic problem, the existing Experiment~12B implementation was audited before proceeding further. The audit had two purposes. First, it independently reproduced the published selective-coordinate/block results. Second, it tested whether the later Experiment~11C rule
+\begin{equation}
+  \mathcal C=\operatorname{TopK}_j R_j
+\end{equation}
+should replace the original Experiment~12B candidate-driven refresh mechanism on nonlinear logistic regression.
+
+\subsection{Reproduction of the existing 12B result}
+
+The original Experiment~12B implementation was reconstructed from the committed source and rerun on the canonical strong non-IID ensemble using the same eight problem realizations, $1200$ ticks, client periods, stochastic mini-batch stream, trigger parameters, curvature summary, and communication accounting. The reproduced values agree with the report to numerical precision.
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test loss & Accuracy & Whole-run loss & Payload bits\\
+\midrule
+Selective coordinate, gap 25 & 0.505780 & 0.7754 & 0.507279 & 225708\\
+Selective coordinate, gap 50 & \textbf{0.505779} & 0.7756 & 0.511403 & \textbf{149612}\\
+Selective coordinate, gap 100 & 0.505814 & 0.7748 & 0.521017 & 96370\\
+Contiguous block 5, gap 25 & 0.505815 & 0.7748 & 0.511413 & 329124\\
+Contiguous block 10, gap 25 & 0.505803 & 0.7749 & 0.513350 & 378945\\
+Coupling block 5, gap 25 & 0.505789 & 0.7757 & 0.511698 & 329257\\
+Round-robin coordinate, every 3 & 0.505931 & 0.7758 & 0.516334 & 158042\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The safety rerun also reproduces the original result: the selected gap-50 rule, the gap-100 rule, and the coupling-block control each produced zero measured harmful accepted events. The residual cross-block coupling fractions also reproduce the original geometry diagnosis. Singleton blocks retain approximately $0.915$ residual coupling, block size five reduces this to approximately $0.719$, and block size ten to approximately $0.479$. Nevertheless, the additional refresh cost of larger blocks outweighs their tighter uncertainty radius on this problem.
+
+The selected gap-50 point therefore remains the valid practical reference:
+\begin{equation}
+  F_{\rm test}\approx0.505779,
+  \qquad
+  B\approx149.6\text{ kbit},
+  \qquad
+  P_{\rm harmful}=0.
+\end{equation}
+It still compares favorably with EF-TopK $k=1$, which uses approximately $164.3$ kbit and reaches test loss $0.508132$.
+
+\subsection{Does the Experiment-11C absolute-radius selector transfer?}
+
+Experiment~11C used periodic calibration opportunities and refreshed the coordinates with the largest current absolute certificate radius $R_j$. To test whether that rule should replace candidate-driven Experiment~12B refresh, we implemented a matched nonlinear audit. Each coordinate retains exactly the same valid one-coordinate block-plus-residual certificate used by the winning 12B method. At every $C$ ticks, only $K$ gradient components are refreshed. The selectors are
+\begin{align}
+  \text{absolute:}\quad &R_j,\\
+  \text{relative:}\quad &\frac{R_j}{\abs{g_j^{\rm cal}}+R_j+\epsilon},
+\end{align}
+with random and round-robin controls. The refresh payload is still $NK\times32$ bits, and all candidate events remain subject to the same conservative descent test.
+
+The transfer result is negative. Selected strong non-IID points are
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Selector & $K$ & $C$ & Test loss & Payload bits\\
+\midrule
+Absolute radius & 1 & 10 & \textbf{0.507667} & 70045\\
+Absolute radius & 2 & 25 & 0.512549 & 63969\\
+Absolute radius & 4 & 25 & 0.512438 & 94394\\
+Absolute radius & 8 & 25 & 0.511562 & 155934\\
+Absolute radius & 8 & 50 & 0.527178 & 97156\\
+Random & 4 & 25 & 0.509645 & 94264\\
+Round robin & 4 & 25 & 0.508731 & 93520\\
+Relative radius & 4 & 25 & 0.596666 & 101532\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Even at a payload slightly above the canonical on-demand gap-50 point, periodic absolute-radius refresh with $K=8,C=25$ reaches only $0.511562$ rather than $0.505779$. The best targeted periodic absolute-radius point is $K=1,C=10$. It is communication-efficient at approximately $70.0$ kbit and remains safe, but reaches only $0.507667$ and accepts approximately $4.0\%$ of candidate events. The on-demand gap-50 rule accepts approximately $15.0\%$ of candidates while retaining the same hard certificate.
+
+The normalized relative-radius selector fails especially strongly, reproducing the qualitative warning from Experiment~11C that dividing by a small estimated gradient can over-prioritize nearly solved coordinates. On the nonlinear problem the effect is amplified: $K=4,C=25$ reaches test loss only $0.596666$.
+
+\subsection{Why candidate-driven refresh is better here}
+
+The negative transfer clarifies the difference between the controlled quadratic and nonlinear logistic settings. Absolute uncertainty $R_j$ measures how stale the stored certificate information has become, but it does not measure whether refreshing coordinate $j$ is currently useful to the event process. A periodic Top-$K$ scheduler can therefore spend calibration bandwidth on coordinates that have large uncertainty but are not currently producing actionable threshold crossings.
+
+The original 12B rule uses a stronger composite trigger. A coordinate is refreshed only when
+\begin{enumerate}
+  \item an actual sparse event proposes an update in that coordinate,
+  \item the current certificate cannot establish global descent, and
+  \item the minimum refresh gap has elapsed.
+\end{enumerate}
+Thus the rule implicitly combines \emph{uncertainty} with \emph{communication demand}. The candidate event acts as an endogenous relevance signal. The practical lesson is
+\begin{equation}
+  \boxed{
+  \text{refresh where uncertainty blocks an actual event, not where uncertainty is merely largest.}
+  }
+\end{equation}
+
+\subsection{Independent strong-partition check}
+
+The distinction survives independent strong non-IID data seeds. For seeds $1500$ and $1700$, respectively, the on-demand gap-50 rule gives
+\begin{equation}
+  0.496068,\qquad0.477691
+\end{equation}
+final test loss with approximately $149$--$150$ kbit. The best low-budget periodic absolute-radius control $K=1,C=10$ gives
+\begin{equation}
+  0.497873,\qquad0.478235
+\end{equation}
+using roughly $69$--$71$ kbit. It therefore remains a useful lower-communication point, but it does not recover centralized-level final performance or the transient quality of the on-demand certificate.
+
+An explicit event-level safety rerun of periodic absolute-radius $K=1,C=10$ again gives zero measured harmful accepted events. Its weakness is therefore not invalid certification. It is excessive conservatism caused by refreshing information that is not synchronized with actual event demand.
+
+\subsection{Audit verdict}
+
+The Experiment~12B audit gives the following conclusions:
+\begin{equation}
+  \boxed{\text{existing 12B numerical result: REPRODUCED}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{candidate-driven selective refresh: PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{periodic absolute-radius Top-$K$ transfer from 11C: FAIL}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{periodic relative-radius selector: STRONG FAIL}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{certificate safety of tested periodic controls: PASS}}.
+\end{equation}
+The correct nonlinear mechanism is therefore the original Experiment~12B candidate-driven architecture. Experiment~11C remains important because it established selective calibration as a useful principle on controlled coupled geometry, but the more general lesson is not a universal Top-$K$ uncertainty scheduler. It is that trustworthy certificate information should be refreshed selectively, with the refresh trigger adapted to the actual optimization/event process.
+
+The transfer-audit implementation is in \texttt{experiments/12b\_periodic\_selector\_audit.py}. The canonical Experiment~12B implementation remains unchanged.
