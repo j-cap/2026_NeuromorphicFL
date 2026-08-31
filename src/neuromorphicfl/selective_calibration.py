@@ -283,13 +283,15 @@ def run_selective_calibration_batch(
                             jump = lower_alignment / max(
                                 float(aggregate_diag[run, coord]), 1e-12
                             )
-                            before = rotated_excess_objective(
-                                w[run : run + 1], ensemble
-                            )[0]
+                            error_before = w[run] - ensemble.wstar[run]
+                            before = 0.5 * float(
+                                error_before @ Hbar[run] @ error_before
+                            )
                             w[run, coord] += sign * jump
-                            after = rotated_excess_objective(
-                                w[run : run + 1], ensemble
-                            )[0]
+                            error_after = w[run] - ensemble.wstar[run]
+                            after = 0.5 * float(
+                                error_after @ Hbar[run] @ error_after
+                            )
                             accepted_events[run] += 1
                             if after > before + 1e-12:
                                 harmful_events[run] += 1
