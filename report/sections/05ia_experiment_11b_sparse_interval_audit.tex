@@ -1,0 +1,135 @@
+\section{Supplementary Experiment 11B Audit: Timing-Only Sparse Interval Beliefs}
+\label{sec:exp11b-sparse-interval}
+
+\subsection{Why this audit was added}
+
+The primary Experiment~11B in \cref{sec:exp11b} shows that periodic trustworthy full-gradient calibration can make descent-certified sparse events practical. A stricter question remains: \emph{can dense refresh be removed entirely and replaced by uncertainty-calibrated information extracted only from the sparse LIF event stream?} This supplementary audit answers that question on the diagonal $N=10$, $d=20$ quadratic benchmark before any further mechanism is promoted.
+
+The audit is intentionally trained/evaluated in a held-out manner. A separate 80-problem calibration fleet is used to estimate first-passage errors, priors, and smoothness bounds. All reported optimization results use different 80-problem evaluation fleets.
+
+\subsection{Server belief from sparse event metadata}
+
+For a firing client-coordinate $(i,j)$, the server observes the sign $s$ and local inter-event interval $\tau$. The first-passage model gives the signed estimate
+\begin{equation}
+  \hat g_{i,j}
+  =-s\,\frac{\Delta_j(1-r_i)}{\gamma_i(1-r_i^\tau)},
+  \qquad r_i=\rho^{T_i},
+\end{equation}
+with the usual non-leaky limit $\hat g_{i,j}=-s\Delta_j/(\gamma_i\tau)$.
+
+On the separate calibration fleet, empirical signed-gradient errors
+\begin{equation}
+  e_{i,j}=\abs{\hat g_{i,j}-\nabla_jF_i(w)}
+\end{equation}
+are grouped by client compute period, first-passage-time bin, and coarse coordinate-curvature class. For a chosen calibration quantile $c$, the corresponding conditional error quantile becomes the base event radius $\epsilon_{i,j}$. Unseen client-coordinate pairs start from a zero-centered prior whose radius is calibrated from the corresponding local-gradient magnitude distribution rather than initialized from oracle evaluation gradients.
+
+Between events, the stored belief is inflated according to server-model displacement,
+\begin{equation}
+  r_{i,j}(w)
+  =\epsilon_{i,j}+\bar L_j\abs{w_j-w_{i,j}^{\rm ref}},
+\end{equation}
+where $\bar L_j$ is a configured smoothness upper quantile from the calibration fleet. The aggregate server belief is
+\begin{equation}
+  \hat G_j=\sum_i p_i\hat g_{i,j},
+  \qquad
+  R_j=\sum_i p_i r_{i,j},
+\end{equation}
+so that a candidate sign $s$ is certified only if
+\begin{equation}
+  \underline a_j=[-s\hat G_j-R_j]_+>0.
+\end{equation}
+The applied jump is
+\begin{equation}
+  q_j=\frac{\underline a_j}{\bar L_j^F},
+\end{equation}
+with a calibrated aggregate coordinate-curvature upper bound $\bar L_j^F$. No dense gradient calibration is used during evaluation. Candidate spikes that are rejected still count as transmitted event bits.
+
+\subsection{Held-out confidence sweep}
+
+The main 2000-tick campaign gives the following representative results:
+\begin{center}
+\begin{tabular}{lrrrrr}
+\toprule
+Method & Tail gap & Whole-run gap & Payload bits & Accept. & Harmful/accepted \\
+\midrule
+Global $q(t)$ & $3.81\times10^{-3}$ & 0.874 & 10529 & 1.000 & 0.250 \\
+Global descent oracle & $\approx0$ & 0.211 & 7983 & 0.015 & 0 \\
+Sparse interval, $c=0.80$ & 0.159 & 0.691 & 10078 & 0.180 & 0.0140 \\
+Sparse interval, $c=0.90$ & 0.305 & 0.894 & 11257 & 0.163 & 0.00192 \\
+Sparse interval, $c=0.95$ & 0.483 & 1.124 & 12640 & 0.148 & 0.00032 \\
+Sparse interval, $c=0.99$ & 1.015 & 1.703 & 16109 & 0.105 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The uncertainty intervals are not merely conservative on paper. At $c=0.80$, local belief coverage is approximately 80.1\% while the weighted aggregate interval covers the true global gradient approximately 95.9\% of the time. At $c=0.95$, local coverage is 94.6\% and global coverage is 99.8\%. The corresponding harmful accepted-event rate falls from 1.4\% to $3.2\times10^{-4}$.
+
+Thus the statistical certificate can be made genuinely safe. The problem is utility: safety is purchased by a large permanent region in which the aggregate interval contains zero and no globally useful sign can be certified.
+
+\subsection{Safety--accuracy trade-off}
+
+The most useful operating point for the original target of roughly 1--2\% false certificates is near $c=0.80$. It improves whole-run cost relative to $q(t)$,
+\begin{equation}
+  0.874\rightarrow0.691,
+\end{equation}
+and uses slightly fewer event bits, but its tail gap is more than forty times larger,
+\begin{equation}
+  3.81\times10^{-3}\rightarrow1.59\times10^{-1}.
+\end{equation}
+Increasing confidence makes the certificate safer but enlarges the unresolved-gradient deadzone and worsens optimization further.
+
+Ablations confirm that the staleness-aware radius itself is not the main cause. Ignoring uncertainty and using only the sparse point estimate produces roughly 31\% globally harmful accepted events and poor final error. Using calibrated intervals without model-displacement inflation is also poor. The staleness-aware interval is the strongest tested sparse-only construction, but it still cannot approach the $q(t)$ tail accuracy.
+
+\subsection{Long-horizon and independent-fleet checks}
+
+The result is not a short-horizon artifact. At 4000 ticks, the $c=0.80$ sparse certificate improves to
+\begin{equation}
+  J_{\rm tail}=0.104,
+  \qquad
+  J_{\rm whole}=0.404,
+\end{equation}
+with a harmful accepted-event fraction of about 1.46\%. The matched $q(t)$ reference reaches
+\begin{equation}
+  J_{\rm tail}=2.78\times10^{-3},
+  \qquad
+  J_{\rm whole}=0.439.
+\end{equation}
+The sparse certificate can therefore move efficiently early, but it stalls at a much coarser asymptotic resolution.
+
+A second independently generated 80-problem evaluation fleet reproduces the same conclusion. At $c=0.80$ it gives approximately
+\begin{equation}
+  J_{\rm tail}=0.167,
+  \qquad
+  J_{\rm whole}=0.691,
+  \qquad
+  P(\Delta F>0\mid\text{accepted})=1.53\%.
+\end{equation}
+The failure is therefore not tied to one favorable or unfavorable evaluation seed.
+
+\subsection{Interpretation relative to the primary Experiment 11B}
+
+This audit sharpens rather than contradicts the primary periodic-calibration result. The event stream contains useful temporal gradient information, and statistically calibrated uncertainty can suppress almost all harmful updates. However, sparse first-passage observations alone do not refresh the global-gradient belief with enough precision to support fine convergence. The certificate develops an uncertainty-induced practical neighborhood.
+
+The primary periodic-gradient calibration in \cref{sec:exp11b} succeeds precisely because it periodically collapses this uncertainty set. On the diagonal benchmark, only a few dense calibrations are enough to recover oracle-like behavior; under rotated geometry the required refresh rate becomes much higher. The two studies therefore identify the same bottleneck from opposite sides:
+\begin{equation}
+  \boxed{\textbf{the missing resource is trustworthy global magnitude information, not another timing heuristic.}}
+\end{equation}
+
+The sparse-only route should not replace periodic calibration in the current reference algorithm. Future communication reductions should instead target selective/block/low-rank refresh of the certificate or a representation in which uncertainty grows more slowly.
+
+\subsection{Supplementary verdict}
+
+\begin{equation}
+  \boxed{\text{Timing-only held-out global interval calibration: statistically valid}}
+\end{equation}
+\begin{equation}
+  \boxed{\text{Safety at approximately 1--2\% harmful accepted events: PASS}}
+\end{equation}
+\begin{equation}
+  \boxed{\text{Fine optimization accuracy without dense refresh: FAIL}}
+\end{equation}
+\begin{equation}
+  \boxed{\text{Replace periodic calibration with first-passage beliefs: NO}}
+\end{equation}
+
+The practical conclusion is that Experiment~11B should retain its periodic calibrated certificate as the working mechanism. The timing-only audit is a useful negative control establishing why some trustworthy refresh channel remains necessary.
