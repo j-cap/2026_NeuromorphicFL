@@ -1,0 +1,221 @@
+\section{Experiment 11C: Selective Calibration of Sparse Descent Certificates}
+\label{sec:exp11c}
+
+\subsection{Purpose}
+
+Experiment~11B established that periodically calibrated descent certificates can make sparse coordinate events both safe and highly accurate, but it also moved the dominant communication cost into calibration. On the strongly rotated benchmark, between roughly 92\% and 97\% of payload at the useful operating points is spent on dense calibration gradients rather than on the sparse event stream. Experiment~11C therefore asks the next systems question:
+\begin{equation}
+  \boxed{\text{Must every calibration refresh all }d\text{ gradient coordinates, or can only the uncertain components be refreshed?}}
+\end{equation}
+The descent certificate itself is not changed. The experiment changes only how its stale local-gradient information is maintained.
+
+\subsection{Selective calibration state}
+
+Every run begins with the same full trustworthy calibration as Experiment~11B. For each coordinate $j$, the server then stores the local gradient components from the most recent calibration of that coordinate,
+\begin{equation}
+  g^c_{i,j}=\nabla_jF_i(w_j^c),
+\end{equation}
+together with the full server model $w_j^c$ at which coordinate $j$ was refreshed. Different gradient coordinates may therefore have different calibration ages.
+
+At the current model $w$, the aggregate stale center is
+\begin{equation}
+  c_j=\sum_i p_i g^c_{i,j},
+\end{equation}
+and the same deterministic componentwise drift bound as Experiment~11B gives
+\begin{equation}
+  R_j
+  =
+  \sum_i p_i
+  \sum_k \abs{[H_i]_{jk}}\abs{w_k-[w_j^c]_k}.
+  \label{eq:11c-radius}
+\end{equation}
+An arriving sign $s\in\{-1,+1\}$ is accepted only when
+\begin{equation}
+  \underline a_j=-s c_j-R_j>0,
+\end{equation}
+with the safe one-coordinate jump
+\begin{equation}
+  q_j=\frac{\underline a_j}{[\bar H]_{jj}}.
+\end{equation}
+As in Experiment~11B, coordinate events from one received packet are processed sequentially under coupled geometry, so Hessian cross-terms cannot invalidate the individual descent certificates.
+
+\subsection{Selective refresh policies}
+
+At a calibration opportunity, all clients are asked to send only the selected $K$ gradient components. Since the selected indices are assumed known from the server request, the uplink calibration payload is
+\begin{equation}
+  B_{\rm cal}^{(K)}=N K\,32,
+\end{equation}
+compared with $Nd\,32$ for a full refresh. This matches the uplink accounting convention used in Experiment~11B; downlink request bits are not included.
+
+The experiment compares four selective policies:
+\begin{enumerate}
+  \item \textbf{absolute uncertainty:}
+  \begin{equation}
+    \mathcal C=\operatorname{TopK}_j R_j;
+  \end{equation}
+  \item \textbf{relative uncertainty}, the originally proposed ambiguity score,
+  \begin{equation}
+    u_j=\frac{R_j}{\abs{c_j}+R_j+\epsilon},
+    \qquad
+    \mathcal C=\operatorname{TopK}_j u_j;
+  \end{equation}
+  \item \textbf{round robin}, which refreshes coordinates uniformly over time;
+  \item \textbf{random-$K$}, a matched-budget control.
+\end{enumerate}
+Full periodic calibration remains the reference.
+
+\subsection{Why the diagonal problem is degenerate for Experiment 11C}
+
+The first smoke test produced an important structural result. On the diagonal quadratic,
+\begin{equation}
+  H_i=\operatorname{diag}(h_{i,1},\ldots,h_{i,d}),
+\end{equation}
+movement in coordinate $k\neq j$ cannot change gradient component $j$. After the initial full calibration, the componentwise radius in \cref{eq:11c-radius} therefore tracks the only possible change in $\nabla_jF$ exactly as $w_j$ moves. The initial calibrated certificate remains sufficient to drive every coordinate to the optimum without meaningful maintenance calibration.
+
+Thus a diagonal $K$-selection comparison is not informative: all sensible maintenance policies can appear equally successful because the certificate does not need refreshing. Experiment~11C consequently uses the strongly rotated, isospectral Experiment~10D geometry as its primary discriminating benchmark. This is not an arbitrary harder problem; it is precisely the geometry in which one coordinate update changes many gradient components and certificate maintenance becomes necessary.
+
+\subsection{Primary campaign}
+
+The primary campaign uses the canonical Experiment~10D generator with $N=10$, $d=20$, strong common rotation, stochastic-gradient noise $\sigma_g=0.25$, 20 Monte-Carlo problems, 2000 wall-clock ticks, and a 500-tick tail. Two additional independent ensembles with 10 runs each are used as robustness checks. Every method receives the same initial full calibration at $t=0$.
+
+The most informative full and selective operating points are
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Tail gap & Whole-run gap & Total payload & Calibration payload \\
+\midrule
+Full, $C=25$ & $4.6\times10^{-5}$ & 0.163 & 533502 & 518400 \\
+Full, $C=50$ & $1.47\times10^{-3}$ & 0.232 & 277682 & 262400 \\
+Full, $C=75$ & $8.09\times10^{-3}$ & 0.314 & 188284 & 172800 \\
+Abs-$R$, $K=4,C=25$ & $2.36\times10^{-3}$ & 0.271 & 124228 & 108800 \\
+Abs-$R$, $K=8,C=25$ & $5.58\times10^{-4}$ & 0.209 & 226437 & 211200 \\
+Abs-$R$, $K=12,C=25$ & $1.95\times10^{-4}$ & 0.184 & 328769 & 313600 \\
+Abs-$R$, $K=8,C=50$ & $5.76\times10^{-3}$ & 0.311 & 124323 & 108800 \\
+\bottomrule
+\end{tabular}
+\end{center}
+All accepted events in the selective deterministic-certificate campaign have measured objective change $\Delta F\leq0$; the harmful accepted-event fraction is zero.
+
+\subsection{Selective refresh creates genuinely better Pareto points}
+
+The central Experiment~11C result is that frequent partial refresh can dominate less-frequent full refresh at lower communication cost.
+
+With $K=8$ every 25 ticks,
+\begin{equation}
+  J_{\rm tail}=5.58\times10^{-4},
+  \qquad
+  J_{\rm whole}=0.209,
+  \qquad
+  B=2.264\times10^5.
+\end{equation}
+Compared with full calibration every 50 ticks,
+\begin{equation}
+  J_{\rm tail}=1.47\times10^{-3},
+  \qquad
+  J_{\rm whole}=0.232,
+  \qquad
+  B=2.777\times10^5,
+\end{equation}
+the selective method uses about 18\% fewer bits, lowers whole-run cost by about 10\%, and lowers the final objective gap by roughly 62\%. Hence this is a strict improvement on all three primary metrics.
+
+A more aggressive communication-saving point is $K=4,C=25$:
+\begin{equation}
+  J_{\rm tail}=2.36\times10^{-3},
+  \qquad
+  J_{\rm whole}=0.271,
+  \qquad
+  B=1.242\times10^5.
+\end{equation}
+Compared with full $C=75$, it uses roughly 34\% fewer bits, improves whole-run cost by about 14\%, and reduces tail error by about 71\%.
+
+This resolves the main Experiment~11C feasibility question positively:
+\begin{equation}
+  \boxed{\textbf{refreshing a small uncertain subset more often can be better than refreshing the whole gradient less often.}}
+\end{equation}
+
+\subsection{Which selection score works?}
+
+At matched $K=8,C=25$, the refresh-policy comparison is
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Policy & Tail gap & Whole-run gap & Payload bits \\
+\midrule
+Absolute radius $R_j$ & $5.58\times10^{-4}$ & 0.209 & 226437 \\
+Round robin & $7.23\times10^{-4}$ & 0.203 & 226394 \\
+Random & $1.83\times10^{-3}$ & 0.246 & 226492 \\
+Relative ambiguity $R_j/(|c_j|+R_j)$ & $4.86\times10^{-2}$ & 0.342 & 226754 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Absolute uncertainty is the best final-accuracy selector, improving tail error by about 23\% relative to round robin and by about 70\% relative to random at essentially identical communication. Round robin has a slightly smaller whole-run cost than absolute uncertainty at this operating point, so the advantage of uncertainty selection is mainly finer final resolution rather than uniformly faster transients.
+
+The originally proposed \emph{relative} uncertainty score fails badly. It is approximately two orders of magnitude worse in tail error than the absolute-radius rule at the same nominal refresh budget. The mechanism is understandable: normalizing by $|c_j|$ strongly prioritizes coordinates whose estimated gradient is already near zero, even when their absolute certificate uncertainty is small. In this benchmark, the useful resource-allocation signal is therefore the absolute growth of the stale certificate radius, not sign ambiguity alone.
+
+\subsection{No coordinate starvation}
+
+The performance of absolute uncertainty is not obtained by repeatedly refreshing a small fixed subset. In the primary campaign, every coordinate is selected at least once after initialization. The maintenance-selection coefficient of variation is approximately 0.086 for $K=4,C=25$ and 0.083 for $K=8,C=25$. Thus the uncertainty policy redistributes refresh effort moderately while retaining complete coordinate coverage.
+
+This is qualitatively different from the hard winner-take-all communication budget in Experiment~10B, which disproportionately clipped slow clients. Experiment~11C changes the maintenance rate of certificate coordinates, not the event-generation opportunities of individual clients.
+
+\subsection{Independent-ensemble robustness}
+
+The main selective comparisons reproduce on two independent strong-rotation ensembles. For $K=8,C=25$, the tail gaps are approximately $2.6\times10^{-4}$ and $3.5\times10^{-4}$; the corresponding full-$C=50$ references are approximately $6.5\times10^{-4}$ and $1.22\times10^{-3}$. For $K=4,C=25$, tail gaps remain approximately $1.07\times10^{-3}$ and $1.83\times10^{-3}$, still below the matched full-$C=75$ references ($4.22\times10^{-3}$ and $6.31\times10^{-3}$).
+
+All accepted selective-certificate events remain non-harmful in these independent runs. The selective advantage is therefore not a single-seed artifact.
+
+\subsection{Relation to the conventional sparse baseline}
+
+Experiment~11B reported the selected EF-TopK ($k=4$) reference on the same canonical strong-rotation family at approximately
+\begin{equation}
+  J_{\rm tail}=7.89\times10^{-3},
+  \qquad
+  J_{\rm whole}=0.183,
+  \qquad
+  B=1.0952\times10^6.
+\end{equation}
+The $K=4,C=25$ selective certificate uses nearly nine times fewer bits and reaches a substantially smaller tail gap, although its transient cost remains higher. The $K=8,C=25$ point uses roughly five times fewer bits and has a tail gap more than an order of magnitude smaller, while approaching the EF-TopK whole-run cost much more closely.
+
+Thus selective calibration strengthens rather than weakens the communication-aware result from Experiment~11B. The certified event method can spend considerably less than the full-calibration variants while preserving the very high final accuracy enabled by descent-aware jumps.
+
+\subsection{Calibration remains the dominant payload}
+
+Experiment~11C reduces calibration cost, but it does not eliminate it. Calibration still contributes approximately 88\% of total payload for $K=4,C=25$ and 93\% for $K=8,C=25$. The event stream remains only about $1.5\times10^4$ bits over the complete run.
+
+The bottleneck has therefore been reduced but not removed:
+\begin{equation}
+  \boxed{\text{selective calibration works, but trustworthy magnitude refresh still dominates total communication.}}
+\end{equation}
+This motivates later block, low-rank, or learned-basis certificate summaries rather than a return to more elaborate LIF threshold heuristics.
+
+\subsection{Experiment 11C verdict}
+
+\begin{equation}
+  \boxed{\text{Selective calibration feasibility: PASS}}
+\end{equation}
+There are strict Pareto improvements over less-frequent full calibration.
+
+\begin{equation}
+  \boxed{\text{Absolute uncertainty selection: PASS}}
+\end{equation}
+The propagated certificate radius provides useful information for allocating refresh bandwidth.
+
+\begin{equation}
+  \boxed{\text{Relative uncertainty selection: FAIL}}
+\end{equation}
+Normalizing uncertainty by the stale center magnitude allocates calibration effort poorly in this benchmark.
+
+\begin{equation}
+  \boxed{\text{Coordinate starvation: NOT OBSERVED}}
+\end{equation}
+All coordinates receive maintenance refreshes and the selection distribution remains reasonably balanced.
+
+\begin{equation}
+  \boxed{\text{Calibration bottleneck eliminated: NO}}
+\end{equation}
+Even after selective refresh, calibration still dominates payload.
+
+The principal conclusion is
+\begin{equation}
+  \boxed{\textbf{certificate maintenance should be sparse and uncertainty driven: frequent partial refresh is more efficient than infrequent dense refresh, but the next scaling problem is to replace coordinate-wise float calibration by structured block or low-dimensional information.}}
+\end{equation}
