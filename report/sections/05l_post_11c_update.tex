@@ -1,0 +1,28 @@
+\section{Post-11C Roadmap Update}
+\label{sec:post11c}
+
+Experiment~11C resolves the immediate calibration-maintenance question from Experiment~11B. The project should no longer treat full-vector periodic calibration as the default certificate-maintenance primitive. On the strong rotated quadratic family, selective refresh based on the absolute propagated certificate radius produces strict error--communication improvements over less-frequent full calibration.
+
+The practical reference moving forward is therefore:
+\begin{equation}
+  \boxed{\text{normalized coordinate LIF} + \text{descent certificate} + \text{selective uncertainty-driven calibration}.}
+\end{equation}
+For the controlled $d=20$ benchmark, $K=4$ and $K=8$ with frequent calibration opportunities provide useful low- and medium-communication operating points. The exact $(K,C)$ pair should not be treated as universal; the supported principle is that refresh frequency and refresh dimension should be traded jointly.
+
+Three conclusions constrain the next scaling step.
+
+\paragraph{First, diagonal calibration is not a meaningful stress test.}
+The diagonal family allows an old calibration plus the deterministic drift radius to track every coordinate essentially exactly. Future calibration experiments should therefore use coupled geometry or nonlinear objectives when testing whether a maintenance rule is genuinely useful.
+
+\paragraph{Second, absolute uncertainty is preferable to normalized ambiguity.}
+The failed relative score $R_j/(|c_j|+R_j)$ shows that a plausible uncertainty heuristic can allocate bandwidth badly. Future selectors should be derived from expected certificate improvement, reduction in uncertainty width, or block-level descent usefulness rather than from relative uncertainty alone.
+
+\paragraph{Third, float-valued calibration remains expensive.}
+Even the successful selective points still spend roughly 88--93\% of total payload on calibration. Hence another coordinate-selection sweep is unlikely to change the scaling story qualitatively. The next useful abstraction is structured calibration: blocks, low-rank summaries, preconditioned/shared bases, or another representation in which one trustworthy message refreshes several coupled descent directions at once.
+
+This observation also connects Experiment~11C back to Experiment~10D. A poor native coordinate basis simultaneously increases event traffic and makes certificate uncertainty grow rapidly. The longer-term design problem is therefore not only ``which coordinates should be refreshed?'' but
+\begin{equation}
+  \boxed{\text{in which communication basis can both sparse events and sparse certificate maintenance remain informative?}}
+\end{equation}
+
+Accordingly, the next nonlinear/learning-scale experiments should carry the selective-certificate principle as the default calibration baseline and test whether coordinate-wise calibration remains sufficient or must be replaced by block/structured summaries.
