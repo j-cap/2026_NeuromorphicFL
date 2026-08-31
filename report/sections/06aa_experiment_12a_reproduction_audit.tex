@@ -1,0 +1,64 @@
+\section{Experiment 12A Reproduction and Post-11C Audit}
+\label{sec:experiment-12a-audit}
+
+\paragraph{Chronology note.}
+The experiment numbering in this report denotes logical experiment families rather than strict execution order. Experiment~12A was originally implemented before the later controlled-problem refinement in Experiment~11C. After Experiment~11C established that absolute-uncertainty selective calibration can improve the certified-event Pareto frontier on coupled quadratics, Experiment~12A was revisited rather than rewritten. The correct interpretation is therefore: Experiment~12A remains the nonlinear viability baseline, while Experiment~12B tests whether the selective/structured certificate ideas motivated by Experiments~11C and~12A transfer to nonlinear learning. A first-time reader should not infer from the numbering that the dense-calibration design in Experiment~12A supersedes the selective-calibration result of Experiment~11C.
+
+\subsection{Independent numerical reproduction}
+
+The core Experiment~12A configurations were independently reconstructed from the committed implementation and rerun using the same strong-non-IID data seed, optimization seed, eight Monte Carlo data realizations, and $1200$ wall-clock ticks. The reproduced values agree with the originally reported numbers to the displayed precision. The central comparison is
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test loss & Test acc. & Whole-run train loss & Payload bits\\
+\midrule
+Scheduled events & 0.506347 & 0.774083 & 0.520575 & 11355\\
+Global descent oracle & 0.505780 & 0.775417 & 0.506349 & 9538.5\\
+Full precision & 0.506114 & 0.777333 & 0.510250 & 2841600\\
+EF-TopK, $k=1$ & 0.508132 & 0.774583 & 0.514678 & 164280\\
+Full certificate, $C=25$ & 0.505787 & 0.774500 & 0.514510 & 452368.5\\
+Block-10 certificate, $C=25$ & 0.505815 & 0.774167 & 0.517548 & 395092.5\\
+Centralized reference & 0.505780 & 0.775417 & -- & --\\
+\bottomrule
+\end{tabular}
+\end{center}
+For the strong split, the scheduled-event safety audit again gives a harmful packet/event diagnostic of approximately $0.337$, whereas both valid $C=25$ certificates produce zero harmful accepted events. The full certificate again spends $128000$ bits on the static curvature matrix and $313600$ bits on dense gradient calibration; the block-10 variant reduces the curvature contribution to $70400$ bits but retains the same recurring calibration cost.
+
+\subsection{Reproduced heterogeneity trend}
+
+The selected methods were also rerun on the IID, moderate, and strong client partitions. The mean standard deviation of client positive-class rates is approximately $0.031$, $0.098$, and $0.190$, respectively. The reproduced final test losses are
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Method & IID & Moderate & Strong\\
+\midrule
+Scheduled events & 0.530540 & 0.527957 & 0.506347\\
+Global descent oracle & 0.529886 & 0.527443 & 0.505780\\
+EF-TopK, $k=1$ & 0.531368 & 0.528338 & 0.508132\\
+Full certificate, $C=25$ & 0.529960 & 0.527464 & 0.505787\\
+Block-10 certificate, $C=25$ & 0.529983 & 0.527576 & 0.505815\\
+\bottomrule
+\end{tabular}
+\end{center}
+The qualitative conclusion is unchanged across heterogeneity regimes: sparse scheduled events and the global descent oracle remain communication-efficient; valid calibrated certificates remain accurate and conservative; but dense calibration and curvature metadata prevent the original practical certificate from reaching a favorable total-bit Pareto point. Increasing non-IID heterogeneity does not remove this bottleneck.
+
+\subsection{Interpretation after Experiment 11C}
+
+The reproduction confirms that Experiment~12A should \emph{not} be retroactively replaced by the Experiment~11C mechanism. Its scientific role is different. Experiment~12A answers whether sparse event communication and descent-aware certification survive a nonlinear convex learning objective. They do. Experiment~11C answers how recurring certificate information should be refreshed efficiently on a controlled coupled problem. Its positive result---frequent selective refresh of the largest absolute uncertainty radii---directly explains what is missing from the original dense-calibration 12A certificate.
+
+Thus the combined conclusion is sharper than either experiment alone:
+\begin{equation}
+  \boxed{\text{nonlinear event viability: reproduced PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{nonlinear global descent principle: reproduced PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{dense calibrated-certificate safety: reproduced PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{dense calibration as a scalable communication design: FAIL}}.
+\end{equation}
+The natural continuation is therefore not a second version of Experiment~12A. It is Experiment~12B, where selective coordinate/block refresh and compressed coupling information are tested directly on the logistic-regression problem.
+
+The reproduced numerical tables are stored under \texttt{experiments/results/12a\_logistic\_regression/reproduction\_strong.csv} and \texttt{reproduction\_heterogeneity.csv}.
