@@ -1,0 +1,10 @@
+regime,seed,method,test_ce,test_accuracy,worst_class_accuracy,total_completions,event_share_cv,events_per_completion_cv
+iid,2400,events,0.538856,0.8088,0.528,2400,0.025498,0.025498
+iid,2400,full,0.575257,0.7965,0.335,2400,,
+iid,2400,ef_topk,0.528901,0.8151,0.432,2400,,
+strong,2400,events,0.567549,0.8045,0.443,2400,0.215017,0.215017
+strong,2400,full,0.591138,0.7844,0.344,2400,,
+strong,2400,ef_topk,0.597293,0.7845,0.470,2400,,
+strong,2500,events,0.586037,0.8034,0.508,2400,0.210133,0.210133
+strong,2500,full,0.566810,0.7947,0.571,2400,,
+strong,2500,ef_topk,0.570523,0.7951,0.436,2400,,
