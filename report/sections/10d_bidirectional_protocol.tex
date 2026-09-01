@@ -1,107 +1,206 @@
 \section{Consolidation Question Q2: End-to-End Bidirectional FL Protocol}
 \label{sec:consolidation-q2}
 
-The strongest communication results in Part~I are primarily uplink results. A complete communication-efficient FL algorithm must also specify how clients receive the evolving global model. This section defines the protocol question that must be closed before making an end-to-end communication claim.
+The strongest communication results in Part~I are primarily uplink results. A complete communication-efficient FL algorithm must also specify how clients receive the evolving global model. Q2 therefore asks
+\begin{equation}
+\boxed{
+\text{Does the communication advantage survive explicit server--client synchronization?}
+}
+\end{equation}
+The answer is not automatic. If every sparse client upload is followed by a dense float32 global-model download, the downlink can dominate the total traffic and erase most of the distinction between sparse uplink methods.
+
+The original consolidation roadmap placed Q2 after the FedAvg compatibility study. The protocol question was instead executed first. This does not change the learning rule: Q2 operates on the server-update stream produced by a frozen compressor and is agnostic to whether the client-side input was one stochastic gradient or, later, a multi-step FedAvg delta. The present study should therefore be regarded as the protocol-feasibility result for frozen V1. Q3 must verify that the same packet semantics remain valid when the encoder input changes to a local model delta.
 
 \subsection{Sparse server evolution and event-log synchronization}
 
-The server model changes only through sparse coordinate events,
+Frozen V1 changes the server model only through sparse coordinate events,
 \begin{equation}
-    w_j^+=w_j+q_r s,
+    w_j^+=w_j+q_k s,
     \qquad s\in\{-1,+1\}.
 \end{equation}
-If the resolution schedule $q_r$ is globally known, a server event can be represented by
-\begin{equation}
-    e_\ell=(\ell,r,j,s),
-\end{equation}
-where $\ell$ is a monotonically increasing server-event sequence number. A client that stores a synchronized copy of the global model can reconstruct subsequent server states by replaying these events in order.
+If the resolution schedule $q_k$ is globally known, a server update packet needs to identify the event ordering or time index and then carry only coordinate addresses and signs. A client that stores a synchronized model copy can reconstruct subsequent server states by replaying those packets in order.
 
-Client $i$ therefore stores its last received server-event index $\ell_i^{\mathrm{last}}$. When it becomes active, it requests or receives
+Let $\ell_i^{\mathrm{last}}$ denote the last server packet known by client $i$. At its next synchronization point, it requests
 \begin{equation}
     e_{\ell_i^{\mathrm{last}}+1},\ldots,e_{\ell_{\mathrm{server}}}
 \end{equation}
-and applies each corresponding signed jump locally. In exact arithmetic and with identical event ordering,
-\begin{equation}
-    w_i=w_{\mathrm{server}}
-\end{equation}
-after replay.
+and applies the recorded sparse jumps. The model used for an already-running local computation remains its start-of-computation snapshot, exactly as in the asynchronous simulator. Catch-up occurs only before the client starts its next computation. Thus the synchronization layer reproduces the original asynchronous learning semantics rather than converting the system into a continuously updated local model.
 
-\subsection{Checkpoint fallback for long-offline clients}
+\subsection{A fair sparse-downlink baseline}
 
-Event replay is not always cheaper than sending a dense model. Let $B_e$ denote the encoded cost of one downlink event and let $M_i$ be the number of server events missed by client $i$. Replay costs approximately
+It would be unfair to allow V1 to replay its sparse server event stream while forcing EF-TopK to receive a dense model. EF-TopK also changes the server through sparse coordinate/value updates. Q2 therefore grants both methods the same protocol choices:
+\begin{enumerate}
+    \item dense synchronization at every client completion,
+    \item logical sparse broadcast,
+    \item conservative pull-based sparse unicast replay,
+    \item sparse replay with dense-checkpoint fallback.
+\end{enumerate}
+The difference is the packet representation. For the compact CNN, $d=14538$ and therefore a coordinate address requires
 \begin{equation}
-    B_{\mathrm{replay},i}=M_iB_e,
+    \left\lceil\log_2 14538\right\rceil=14
 \end{equation}
-whereas a float32 dense checkpoint costs
+bits. A V1 coordinate event requires
 \begin{equation}
-    B_{\mathrm{checkpoint}}=32d
+    B_{\mathrm{coord}}^{\mathrm{V1}}=14+1=15\ \text{bits},
 \end{equation}
-bits before transport overhead. The protocol should therefore use event replay only when
+whereas an EF-TopK coordinate/value update requires
 \begin{equation}
-    M_iB_e<32d,
+    B_{\mathrm{coord}}^{\mathrm{EF}}=14+32=46\ \text{bits}.
 \end{equation}
-and otherwise transmit a dense checkpoint together with the current event index. This gives the hybrid synchronization policy
+The protocol audit uses a conservative 64-bit packet header. Pull-based synchronization additionally charges a 32-bit catch-up request. A dense float32 checkpoint has logical payload
+\begin{equation}
+    B_{\mathrm{cp,payload}}=32d=465216\ \text{bits},
+\end{equation}
+and a 64-bit checkpoint header.
+
+The unicast implementation is deliberately conservative in one further respect: a source client is allowed to request the server packet containing its own accepted update rather than receiving an implicit zero-cost echo. Consequently the sparse totals should not be read as relying on hidden source-side synchronization.
+
+\subsection{Replay/checkpoint crossover}
+
+For a client that missed packets $\ell=a,\ldots,b$, sparse replay costs
+\begin{equation}
+B_{\mathrm{replay}}=
+\sum_{\ell=a}^{b}
+\left(B_{\mathrm{payload},\ell}+B_{\mathrm{header}}\right).
+\end{equation}
+The hybrid protocol replays only if this packetized cost is no larger than a checkpoint. Otherwise it sends the current dense model and the current server index. Ignoring packet headers for intuition, the V1 crossover corresponds to roughly
+\begin{equation}
+\frac{32d}{15}\approx3.10\times10^4
+\end{equation}
+missed coordinate events. EF-TopK reaches the same checkpoint cost after only
+\begin{equation}
+\frac{32d}{46}\approx1.01\times10^4
+\end{equation}
+missed sparse coordinate/value entries. Thus V1's smaller event alphabet should extend the absence window over which exact replay remains economical.
+
+\subsection{Experimental setup}
+
+The protocol study uses the established 10-class Fashion-MNIST compact CNN, the strong non-IID partition with seed 2400, and the heterogeneous compute periods
+\begin{equation}
+T_i=[1,1,2,2,5,5,10,10,20,20].
+\end{equation}
+The 1200-tick V1 configuration is frozen at
+\begin{equation}
+\rho=0.999,
+\qquad
+\gamma=1,
+\qquad
+\Delta=0.025,
+\qquad
+q_k=0.01(1+k/500)^{-0.5}.
+\end{equation}
+The comparison uses EF-TopK with 2.5\% sparsity and step size $0.08$, and dense asynchronous SGD with step size $0.08$.
+
+The learning trajectory is separated from the protocol simulation. First, the exact sparse server packets and client synchronization opportunities are recorded while reproducing the original 15A learning loop. The downlink policies are then evaluated on this fixed packet trace. A same-run shadow implementation of the original learner confirms that adding trace instrumentation changes neither test CE nor accuracy for V1 or EF-TopK: both differences are exactly zero in the fixed numerical environment.
+
+The absolute neural-network trajectory remains subject to the hybrid numerical sensitivity discussed earlier in the report. The Q2 V1 run obtains test CE $0.56649$ and accuracy $79.83\%$, while EF-TopK obtains $0.54137$ and $79.43\%$. These values should be interpreted as a same-run protocol comparison rather than as a replacement for the earlier cross-run 15A benchmark values.
+
+\subsection{End-to-end communication results}
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Q2 end-to-end packetized communication on the 1200-tick compact-CNN run. ``Broadcast'' counts one logical server transmission per sparse packet. ``Unicast'' counts pull-based replay independently for each client. ``Hybrid'' selects replay or a dense checkpoint at every catch-up.}
+\label{tab:q2-end-to-end}
+\begin{tabular}{llrrrr}
+\toprule
+Uplink method & Downlink & Test CE & Acc. [\%] & $B_\uparrow$ [Mbit] & $B_\downarrow$ [Mbit] & $B_{\mathrm{tot}}$ [Mbit]\\
+\midrule
+V1 & Dense sync & 0.5665 & 79.83 & 30.62 & 2070.17 & 2100.79\\
+V1 & Broadcast & 0.5665 & 79.83 & 30.62 & 30.62 & 61.24\\
+V1 & Unicast replay & 0.5665 & 79.83 & 30.62 & 306.35 & 336.98\\
+\textbf{V1} & \textbf{Hybrid} & \textbf{0.5665} & \textbf{79.83} & \textbf{30.62} & \textbf{300.25} & \textbf{330.87}\\
+\midrule
+EF-TopK & Dense sync & 0.5414 & 79.43 & 74.42 & 2070.17 & 2144.60\\
+EF-TopK & Broadcast & 0.5414 & 79.43 & 74.42 & 74.42 & 148.85\\
+EF-TopK & Unicast replay & 0.5414 & 79.43 & 74.42 & 744.38 & 818.80\\
+EF-TopK & Hybrid & 0.5414 & 79.43 & 74.42 & 614.28 & 688.71\\
+\midrule
+Dense & Dense sync & 0.5785 & 77.99 & 2065.84 & 2070.17 & 4136.02\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dense-downlink rows expose the central systems issue. V1's uplink is less than half the EF-TopK uplink, but their complete traffic is
+\begin{equation}
+2100.79\ \text{Mbit}
+\quad\text{vs.}\quad
+2144.60\ \text{Mbit}.
+\end{equation}
+The total difference is only about 2\%. Therefore
 \begin{equation}
 \boxed{
-\text{sparse event replay for short absence}
-+\text{dense checkpoint for long absence}.
+\text{uplink compression alone is insufficient for a strong end-to-end claim.}
 }
 \end{equation}
+A sparse global-model synchronization mechanism is essential.
 
-\subsection{Communication accounting}
-
-The final evaluation must report
+Once both methods are allowed to reuse their sparse server-update streams, V1 retains the advantage. Under logical broadcast,
 \begin{equation}
-    B_{\uparrow},\qquad
-    B_{\downarrow},\qquad
-    B_{\mathrm{total}}=B_{\uparrow}+B_{\downarrow}.
+\frac{B_{\mathrm{EF,broadcast}}}{B_{\mathrm{V1,broadcast}}}
+=2.43.
 \end{equation}
-Two downlink accounting models should be distinguished:
-\begin{enumerate}
-    \item \textbf{Logical broadcast:} one server event transmitted once and received by all relevant active clients.
-    \item \textbf{Conservative unicast:} the same event cost counted separately for every receiving client.
-\end{enumerate}
-For both models, the report should distinguish ideal logical payload from packetized communication. Packetized accounting should include coordinate address, sign, event or round index when required, packet header, checkpoint metadata, and any acknowledgement/request fields that materially affect the total.
+Under conservative unicast replay without checkpoints the ratio is again approximately $2.43$. Most importantly, under the practical hybrid replay/checkpoint policy,
+\begin{equation}
+\frac{688.71}{330.87}=2.08.
+\end{equation}
+Thus V1 uses about 48\% of the complete packetized traffic of the matched EF-TopK sparse protocol while obtaining slightly higher aggregate accuracy in this same run. Relative to dense bidirectional training,
+\begin{equation}
+\frac{4136.02}{330.87}=12.50.
+\end{equation}
 
-\subsection{Protocol experiment}
+\subsection{Why the hybrid protocol favors the compact event stream}
 
-The first end-to-end protocol study should use the already-established compact Fashion-MNIST CNN. The minimum methods are
-\begin{enumerate}
-    \item dense FL with dense downlink,
-    \item EF-TopK uplink with dense downlink,
-    \item event uplink with dense downlink,
-    \item event uplink with event-log downlink,
-    \item event uplink with event-log downlink and checkpoint fallback.
-\end{enumerate}
-Client inactivity should be introduced explicitly so that event replay and checkpoint crossover are exercised rather than merely defined on paper. The experiment should include short, moderate, and long absence windows or an equivalent stochastic availability model.
+The client-level breakdown confirms the expected crossover mechanism. For V1, clients with periods $T_i\leq10$ use sparse replay throughout the experiment. Only the two $T_i=20$ clients switch to checkpoints, each doing so 55 times, for
+\begin{equation}
+N_{\mathrm{cp}}^{\mathrm{V1}}=110.
+\end{equation}
+EF-TopK reaches the dense-checkpoint crossover earlier. Its two $T_i=10$ clients each require 120 checkpoints and the two $T_i=20$ clients each require 60, giving
+\begin{equation}
+N_{\mathrm{cp}}^{\mathrm{EF}}=360.
+\end{equation}
+Consequently the smaller V1 packet does more than save uplink bits. It extends the period over which an inactive or computing client can economically reconstruct the exact server trajectory from sparse updates.
 
-Mandatory metrics are
+The hybrid policy reduces V1's unicast total only modestly, from $336.98$ to $330.87$ Mbit, because replay remains cheap for most clients. For EF-TopK the checkpoint policy matters much more, reducing $818.80$ to $688.71$ Mbit because the float-valued sparse packets cross the dense-model threshold more frequently.
+
+\subsection{Synchronization correctness}
+
+At every measured catch-up point, the reconstructed client model matches the corresponding replayed server model exactly in the fixed float32 execution environment:
 \begin{equation}
 \boxed{
-\text{test loss},\quad
-\text{accuracy},\quad
-B_{\uparrow},\quad
-B_{\downarrow},\quad
-B_{\mathrm{total}},\quad
-\norm{w_i-w_s}.
+\max_{i,k}\norm{w_{i,k}^{\mathrm{sync}}-w_{s,k}}_2=0.
 }
 \end{equation}
-The synchronization error should be measured immediately after client catch-up. Within a fixed deterministic numerical environment, active synchronized clients should reproduce the server state to numerical precision.
+The same zero error is obtained after final catch-up. This is expected because the server itself evolves through the same ordered sparse packets that are replayed by the clients. The result nevertheless matters operationally: the communication savings do not require approximate or stale model reconstruction after synchronization.
 
-\subsection{Decision gates}
+\subsection{Q2 decision}
 
-A strong end-to-end communication claim requires that the event protocol retain a substantial total-traffic advantage after downlink costs are included. As an initial practical gate, the target is
+The pre-registered strong-pass gate requires
 \begin{equation}
-    B_{\mathrm{ours,total}}
-    <\frac{1}{2}B_{\mathrm{closest,total}}
+B_{\mathrm{ours,total}}
+<\frac12B_{\mathrm{closest,total}}
 \end{equation}
-at comparable predictive performance. The factor two is not a theoretical requirement, but it ensures that the final systems claim remains meaningful after conservative protocol accounting.
+at comparable predictive performance. Using the conservative hybrid sparse protocol,
+\begin{equation}
+330.87\ \text{Mbit}
+<
+\frac12(688.71\ \text{Mbit})
+=344.36\ \text{Mbit}.
+\end{equation}
+The gate is therefore passed, although not by an enormous margin against EF-TopK. The logical-broadcast case passes more comfortably.
 
-The possible outcomes are
-\begin{description}
-    \item[Strong pass.] Sparse replay plus checkpoints preserves a large total communication advantage and synchronized clients reconstruct the global model reliably.
-    \item[Qualified pass.] Uplink gains remain large, but downlink replay or checkpoint cost materially reduces the total advantage. The paper must report the asymmetric uplink/downlink result rather than a broad communication claim.
-    \item[Fail.] Downlink synchronization eliminates most of the observed savings. The present method should then be framed explicitly as an uplink compressor unless a different synchronization mechanism is developed.
-\end{description}
+The Q2 verdict is
+\begin{equation}
+\boxed{\text{Q2 bidirectional protocol: STRONG PASS}.}
+\end{equation}
+This verdict has an important qualification. The strong end-to-end claim is supported by the \emph{combined} architecture
+\begin{equation}
+\boxed{
+\text{sparse V1 uplink}
++\text{sparse ordered server-update log}
++\text{checkpoint fallback}.
+}
+\end{equation}
+It is not supported by sparse uplink plus dense global-model downloads. The final paper should make this systems dependency explicit rather than quoting uplink bit ratios as if they were complete FL communication costs.
 
-This protocol study should use the final client-update definition established by the FedAvg compatibility study in Section~\ref{sec:consolidation-q3}; otherwise the systems evaluation would be attached to an algorithm definition that may still change.
+Q1 identified Strom-style residual pulses as the closest historical compressor. The present Q2 study uses EF-TopK as the matched modern sparse protocol because it already served as the principal scalable baseline in Part~I. A final publication-level baseline campaign should attach the same bidirectional accounting to the closest Q1 predecessor after Q3 freezes the client-update semantics. That additional comparison is a baseline-completeness task, not a reason to keep Q2 open.
