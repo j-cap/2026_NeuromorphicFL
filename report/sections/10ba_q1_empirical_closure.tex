@@ -1,0 +1,30 @@
+\section{Q1 Empirical Closure: Nearest-Neighbor Baseline Result}
+\label{sec:q1-empirical-closure}
+
+The final subsection of Section~\ref{sec:consolidation-q1} records the nearest-neighbor experiment as it was preregistered before execution. That forward-looking text is intentionally retained as part of the research record. The experiment has now been completed, first through the focused Strom bridge and subsequently through the publication-level matched baseline campaign of Section~\ref{sec:final-baseline-campaign}. This section records the resulting Q1 closure.
+
+The closest historical comparator remains the residual-conserving Strom pulse encoder. In the final FedAvg campaign, the baseline is given the same local model delta representation,
+\begin{equation}
+    r_i^{r+1}=r_i^r+\frac{p_i}{\eta}\Delta_i^r,
+\end{equation}
+and only its tied pulse threshold $\tau$ is tuned. Event-FedAvg remains frozen at the Q3 operating point.
+
+Two complementary comparisons are decisive.
+
+\paragraph{Quality-selected nearest neighbor.}
+On the compact CNN, Strom can obtain slightly better predictive performance than V1 when allowed to move substantially toward the high-traffic side of the frontier. Across the three held-out partitions, quality-selected Strom reaches mean test CE 0.4993 and mean accuracy 82.24\%, compared with 0.5116 and 81.34\% for Event-FedAvg. Its conservative bidirectional traffic is 359.5~Mbit, however, compared with 72.8~Mbit for V1, a factor of approximately 4.94. Thus the final evidence does not support a claim of uniform predictive dominance by V1.
+
+\paragraph{Traffic-matched nearest neighbor.}
+At comparable communication, the result reverses cleanly. On the MLP, traffic-matched Strom uses 181.0~Mbit versus 183.5~Mbit for V1 but reaches only 79.51\% mean accuracy and test CE 0.6035, compared with 83.14\% and 0.4784 for Event-FedAvg. On the CNN, traffic-matched Strom uses 82.0~Mbit, slightly more than V1's 72.8~Mbit, while reaching 79.88\% mean accuracy and test CE 0.5592, compared with 81.34\% and 0.5116 for V1.
+
+The empirical nearest-neighbor gate is therefore
+\begin{equation}
+    \boxed{\text{Q1 empirical nearest-neighbor comparison: PASS}.}
+\end{equation}
+The combined Q1 conclusion remains deliberately narrower:
+\begin{equation}
+    \boxed{\text{Q1 overall novelty/equivalence verdict: QUALIFIED PASS}.}
+\end{equation}
+The pass is qualified because Strom and related residual-pulse methods remain close conceptual predecessors. The empirical result does not establish that the broad accumulate--threshold--pulse principle is new. It establishes that the specific V1 design---leaky evidence, lossy full reset, and a model quantum decoupled from the trigger threshold---produces a materially different and useful communication--performance operating point that is not reproduced by the tuned residual-conserving sibling at the same communication budget.
+
+This distinction is the appropriate novelty boundary for the manuscript. Section~\ref{sec:final-baseline-campaign} provides the full tuning protocol, held-out statistics, end-to-end accounting, and traffic-matched controls.
