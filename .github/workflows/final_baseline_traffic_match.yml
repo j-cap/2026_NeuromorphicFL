@@ -1,0 +1,72 @@
+name: Final Baseline Traffic-Matched Controls
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/final_baseline_traffic_match.yml'
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture: [mlp, cnn]
+        method: [strom, ef_topk]
+        partition_seed: [2500, 2600, 2700]
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5
+      - name: Run traffic-matched point
+        shell: bash
+        run: |
+          if [ "${{ matrix.method }}" = "strom" ]; then
+            VALUE=0.02
+          else
+            VALUE=0.01
+          fi
+          TRAIN_SEED=$((70000 + ${{ matrix.partition_seed }}))
+          PYTHONPATH=src python experiments/final_baseline_point.py \
+            --architecture "${{ matrix.architecture }}" \
+            --method "${{ matrix.method }}" \
+            --value "$VALUE" \
+            --partition-seed "${{ matrix.partition_seed }}" \
+            --train-seed "$TRAIN_SEED" \
+            --tag traffic
+      - uses: actions/upload-artifact@v4
+        with:
+          name: traffic-${{ matrix.architecture }}-${{ matrix.method }}-${{ matrix.partition_seed }}
+          path: experiments/results/final_baseline_campaign/*_traffic.csv
+
+  aggregate:
+    needs: evaluate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install pandas==3.0.5
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: traffic-*
+          merge-multiple: true
+          path: experiments/results/final_baseline_campaign
+      - name: Aggregate traffic-matched controls
+        run: python experiments/final_baseline_aggregate.py --tag traffic
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final-baseline-traffic-combined
+          path: experiments/results/final_baseline_campaign/combined_traffic.csv
