@@ -1,0 +1,93 @@
+name: Final Baseline Tuning
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/neuromorphicfl/final_baseline_campaign.py'
+      - 'experiments/final_baseline_point.py'
+      - 'experiments/final_baseline_aggregate.py'
+      - '.github/workflows/final_baseline_tuning.yml'
+
+jobs:
+  tune:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {arch: mlp, method: event, value: '', name: mlp-event}
+          - {arch: mlp, method: dense, value: '', name: mlp-dense}
+          - {arch: mlp, method: sign_ef, value: '', name: mlp-sign}
+          - {arch: mlp, method: ef_topk, value: '0.005', name: mlp-ef005}
+          - {arch: mlp, method: ef_topk, value: '0.01', name: mlp-ef01}
+          - {arch: mlp, method: ef_topk, value: '0.025', name: mlp-ef025}
+          - {arch: mlp, method: ef_topk, value: '0.05', name: mlp-ef05}
+          - {arch: mlp, method: strom, value: '0.00125', name: mlp-strom00125}
+          - {arch: mlp, method: strom, value: '0.0025', name: mlp-strom0025}
+          - {arch: mlp, method: strom, value: '0.005', name: mlp-strom005}
+          - {arch: mlp, method: strom, value: '0.01', name: mlp-strom01}
+          - {arch: mlp, method: strom, value: '0.02', name: mlp-strom02}
+          - {arch: cnn, method: event, value: '', name: cnn-event}
+          - {arch: cnn, method: dense, value: '', name: cnn-dense}
+          - {arch: cnn, method: sign_ef, value: '', name: cnn-sign}
+          - {arch: cnn, method: ef_topk, value: '0.005', name: cnn-ef005}
+          - {arch: cnn, method: ef_topk, value: '0.01', name: cnn-ef01}
+          - {arch: cnn, method: ef_topk, value: '0.025', name: cnn-ef025}
+          - {arch: cnn, method: ef_topk, value: '0.05', name: cnn-ef05}
+          - {arch: cnn, method: strom, value: '0.00125', name: cnn-strom00125}
+          - {arch: cnn, method: strom, value: '0.0025', name: cnn-strom0025}
+          - {arch: cnn, method: strom, value: '0.005', name: cnn-strom005}
+          - {arch: cnn, method: strom, value: '0.01', name: cnn-strom01}
+          - {arch: cnn, method: strom, value: '0.02', name: cnn-strom02}
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5
+      - name: Run tuning point
+        shell: bash
+        run: |
+          VALUE_ARGS=()
+          if [ -n "${{ matrix.value }}" ]; then VALUE_ARGS=(--value "${{ matrix.value }}"); fi
+          PYTHONPATH=src python experiments/final_baseline_point.py \
+            --architecture "${{ matrix.arch }}" \
+            --method "${{ matrix.method }}" \
+            "${VALUE_ARGS[@]}" \
+            --partition-seed 2400 \
+            --train-seed 70707 \
+            --tag tune
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tune-${{ matrix.name }}
+          path: experiments/results/final_baseline_campaign/*_tune.csv
+
+  aggregate:
+    needs: tune
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install pandas==3.0.5
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: tune-*
+          merge-multiple: true
+          path: experiments/results/final_baseline_campaign
+      - name: Aggregate tuning results
+        run: python experiments/final_baseline_aggregate.py --tag tune
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final-baseline-tuning-combined
+          path: experiments/results/final_baseline_campaign/combined_tune.csv
