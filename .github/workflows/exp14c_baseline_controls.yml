@@ -1,0 +1,37 @@
+name: Experiment 14C Baseline Period Controls
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp14c_baseline_controls.yml'
+      - 'experiments/14c_baseline_period_controls.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exp14c-baselines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5
+      - name: Run Experiment 14C baseline controls
+        run: PYTHONPATH=src python experiments/14c_baseline_period_controls.py
+      - name: Upload Experiment 14C baseline results
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp14c-baseline-results
+          path: experiments/results/14c_event_share_fairness/baseline_period_controls.csv
