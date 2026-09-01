@@ -1,0 +1,54 @@
+\section{Roadmap Update after Experiment 14B}
+\label{sec:roadmap-post-14b}
+
+Experiment~14B clears the basic multiclass scalability gate but identifies a more specific limitation than ``the event method does not work on multiclass data.'' A ten-class Fashion-MNIST model with $25818$ parameters can be optimized by the same raw-threshold temporal-event mechanism, and on the default strong-skew partition it reaches competitive or better aggregate predictive performance with tens of Mbits rather than the Gbit-scale cost of dense communication. At $1200$ ticks, the event model uses roughly half the payload of the tested EF-TopK $2.5\%$ point while remaining in the same predictive regime.
+
+The unresolved issue is \emph{transient class-wise convergence}. Aggregate cross-entropy and accuracy can look healthy while one class remains severely undertrained. This phenomenon is partition-sensitive and becomes especially visible when label skew is coupled to heterogeneous client compute periods. Importantly, the extreme-skew long-horizon audit shows that the failure is not necessarily permanent: worst-class accuracy can recover from nearly zero to a useful level when the run is extended. Therefore clustering or personalization is still not the most direct response. The global model is capable of learning all ten classes; the immediate question is why some classes receive useful global progress much later than others.
+
+\subsection{Recommended Experiment 14C: label skew, compute heterogeneity, and event-share fairness}
+
+The next experiment should be a mechanism audit of the class-wise transient rather than another architecture jump. A suitable Experiment~14C should separate three effects:
+\begin{enumerate}
+    \item label skew alone;
+    \item heterogeneous compute periods alone;
+    \item their interaction under the nonlinear threshold/reset event encoder.
+\end{enumerate}
+
+The central hypothesis is that the nominal rate normalization
+\begin{equation}
+\gamma_i\propto p_iT_i
+\end{equation}
+corrects the expected frequency of local gradient evaluations, but thresholding, full reset, stochastic first passage, and model drift may still produce unequal \emph{effective global update shares}. In a multiclass non-IID problem, such an imbalance could translate into delayed learning of classes associated with particular clients or gradient subspaces.
+
+Experiment~14C should instrument, for every client and every class-associated output block,
+\begin{itemize}
+    \item number of local completions;
+    \item candidate and transmitted coordinate events;
+    \item event share per unit wall-clock time;
+    \item signed and absolute applied update mass;
+    \item per-layer and output-logit event shares;
+    \item class-wise test accuracy as a function of wall-clock tick and cumulative bits.
+\end{itemize}
+
+The controlled comparisons should include equal client periods versus the current heterogeneous periods, IID versus strong/extreme label skew, and several permutations of dominant class versus compute period. The current full-reset event rule remains the primary method. A subtractive-reset/decayed-error-feedback variant may be included only as a diagnostic, with the established equivalence stated explicitly rather than presented as a new algorithm. Client-specific thresholds or amplitude normalization should not be introduced until the audit shows which quantity is actually mis-normalized.
+
+A useful success criterion is not that every class has identical learning curves. Instead, the experiment should establish whether the large worst-class transients can be predicted from measurable event-share imbalance and whether a simple normalization removes that dependence without sacrificing the sparse-bit advantage. If no event-specific imbalance appears and dense/EF methods show comparable class-order sensitivity, the result would support moving on to an architectural scaling gate such as a compact convolutional network.
+
+\subsection{Why clustering remains deferred}
+
+Experiment~14B does not provide evidence of incompatible client optima or persistent latent groups requiring separate models. Even the $85\%$ dominant-client setting eventually produces a useful single global event-trained classifier. Therefore clustering would currently confound the mechanism study: it could improve difficult class transients while solving a stronger problem than the observed failure requires.
+
+A later clustering experiment should deliberately create multimodal clients, for example through incompatible class subsets, domain transformations, sensor/device domains, or label semantics. At that point event-sign, event-time, or co-firing statistics can be tested as a low-communication similarity signal. That is a distinct research question from the finite-horizon fairness issue discovered in 14B.
+
+The updated progression is
+\begin{equation}
+\boxed{
+14\mathrm{A}\;\text{binary real-data PASS}
+\rightarrow
+14\mathrm{B}\;\text{multiclass PASS with transient-fairness limitation}
+\rightarrow
+14\mathrm{C}\;\text{label-skew $\times$ compute-rate mechanism audit}
+\rightarrow
+\text{compact CNN if the event mechanism survives the audit}.
+}
+\end{equation}
