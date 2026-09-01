@@ -1,0 +1,212 @@
+\section{Final Matched Closest-Baseline Campaign}
+\label{sec:final-baseline-campaign}
+
+The consolidation questions establish that the frozen method is empirically viable, compatible with multi-step FedAvg updates, and implementable as a complete bidirectional protocol. The remaining empirical closure task is stricter: compare the final method against the closest relevant alternatives under a matched local-learning protocol, a controlled tuning budget, independent held-out partitions, and the same end-to-end communication accounting. This section therefore does not introduce another mechanism. It asks whether the frozen Event-FedAvg operating point remains competitive after the strongest nearby baselines are given a fair opportunity to tune their own compression parameters.
+
+\subsection{Frozen learning protocol and comparator set}
+
+All methods use synchronous full-participation FedAvg on the strong non-IID Fashion-MNIST federation from Section~\ref{sec:consolidation-q3}. Every client performs
+\begin{equation}
+    E=5
+\end{equation}
+local SGD steps with
+\begin{equation}
+    \eta=0.1,
+\end{equation}
+the same minibatch size, initialization, data partition, and stochastic minibatch stream for a given seed. The two architectures are the ten-class MLP with $d=25818$ parameters and the compact CNN with $d=14538$ parameters.
+
+The comparator set is intentionally small and difficult:
+\begin{enumerate}
+    \item \textbf{Event-FedAvg V1}, frozen at the Q3 setting and not retuned in this campaign;
+    \item \textbf{Strom-style residual pulses}, the closest historical predecessor identified by Q1;
+    \item \textbf{EF-TopK}, a strong residual-conserving sparse FedAvg baseline;
+    \item \textbf{Sign-EF}, dense sign compression with a transmitted scale and error feedback;
+    \item \textbf{dense FedAvg}.
+\end{enumerate}
+
+For Event-FedAvg, the MLP uses
+\begin{equation}
+    \rho=0.999,\quad \Delta=0.025,\quad
+    q_r=0.005(1+r/100)^{-0.1},
+\end{equation}
+and the CNN uses
+\begin{equation}
+    \rho=0.999,\quad \Delta=0.025,\quad
+    q_r=0.01(1+r/100)^{-0.3}.
+\end{equation}
+The MLP runs for 150 rounds and the CNN for 80 rounds, matching Q3.
+
+The Strom-style FedAvg comparator receives exactly the same local delta representation as V1,
+\begin{equation}
+    r_i^{r+1}=r_i^r+\frac{p_i}{\eta}\Delta_i^r.
+\end{equation}
+If $|r_{ij}^{r+1}|\geq\tau$, it sends one coordinate/sign pulse of magnitude $\tau$, the server applies that pulse, and the residual is updated subtractively,
+\begin{equation}
+    r_{ij}^{r+1}\leftarrow
+    r_{ij}^{r+1}-\tau\sign(r_{ij}^{r+1}).
+\end{equation}
+Thus the comparison isolates the distinction identified by Q1: residual-conserving tied-resolution pulses versus V1's leaky, full-reset, independently resolved pulses.
+
+\subsection{Matched tuning protocol}
+
+Compression settings are selected only on the development partition with partition seed 2400 and training seed 70707. Event-FedAvg remains frozen. EF-TopK is allowed the retained-fraction grid
+\begin{equation}
+    \kappa\in\{0.005,0.01,0.025,0.05\},
+\end{equation}
+while Strom is allowed
+\begin{equation}
+    \tau\in\{0.00125,0.0025,0.005,0.01,0.02\}.
+\end{equation}
+Each family selects the setting with the smallest final training objective. Sign-EF and dense FedAvg have no compression grid in this campaign.
+
+This procedure deliberately favors predictive quality rather than selecting a low-traffic baseline. It yields
+\begin{equation}
+\begin{aligned}
+\text{MLP:}\qquad &\kappa_{\rm EF}=0.05,\qquad \tau_{\rm Strom}=0.00125,\\
+\text{CNN:}\qquad &\kappa_{\rm EF}=0.05,\qquad \tau_{\rm Strom}=0.005.
+\end{aligned}
+\end{equation}
+These settings are then frozen and evaluated on independent partition seeds
+\begin{equation}
+    2500,\qquad2600,\qquad2700,
+\end{equation}
+with independent but method-matched training seeds.
+
+The development sweep also exposes a communication--quality trade-off that matters for interpreting Strom. On the CNN, the quality-selected $\tau=0.005$ Strom setting reaches 82.99\% accuracy on the development partition but requires 357.24~Mbit under conservative end-to-end unicast accounting, versus 81.10\% and 71.24~Mbit for V1. Conversely, $\tau=0.02$ reduces Strom traffic to 77.85~Mbit, close to V1, but drops to 80.75\% accuracy. On the MLP, $\tau=0.02$ is almost exactly traffic matched to V1 (182.27 versus 182.17~Mbit on the development partition) but reaches only 76.73\% accuracy versus 82.90\% for V1. These observations motivate the explicit held-out traffic-matched control below.
+
+\subsection{Symmetric end-to-end communication accounting}
+
+The communication model extends Q2 to every baseline symmetrically. Each method exposes the exact server-update representation induced by its uplink:
+\begin{itemize}
+    \item Event-FedAvg and Strom replay coordinate/sign pulses;
+    \item EF-TopK replays coordinate/float32 values;
+    \item Sign-EF replays its sign vector and floating-point scale;
+    \item dense FedAvg uses the dense model state.
+\end{itemize}
+Every nonempty packet receives the same 64-bit packet header. A dense float32 checkpoint is always available. For each synchronization round, the protocol uses the cheaper of exact server-update replay and a dense checkpoint. The conservative unicast metric additionally charges a 32-bit catch-up request from every client every round and sends the selected synchronization representation independently to each of the ten clients. The initial dense model synchronization is charged explicitly.
+
+Therefore the primary communication metric in this section is
+\begin{equation}
+    B_{\rm total}^{\rm unicast}
+    =B_{\uparrow}^{\rm packetized}+B_{\downarrow}^{\rm hybrid,unicast}.
+\end{equation}
+Logical-broadcast totals are also recorded in the result files, but the unicast value is used for the conservative headline comparison.
+
+\subsection{Held-out quality-selected comparison}
+
+Table~\ref{tab:final-baseline-mlp} gives the three-seed MLP result. Values are mean $\pm$ sample standard deviation.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Final matched MLP comparison over three held-out partitions. Communication is conservative bidirectional unicast traffic with replay/checkpoint fallback.}
+\label{tab:final-baseline-mlp}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test CE & Acc. [\%] & Worst [\%] & Total [Mbit]\\
+\midrule
+\textbf{Event-FedAvg} & \textbf{0.4784$\pm$0.0022} & \textbf{83.14$\pm$0.14} & \textbf{56.5$\pm$3.3} & \textbf{183.5$\pm$2.0}\\
+EF-TopK 5\% & 0.4950$\pm$0.0019 & 82.45$\pm$0.19 & 51.9$\pm$2.6 & 1010.5$\pm$0.0\\
+Sign-EF & 0.5259$\pm$0.0018 & 81.11$\pm$0.25 & 51.4$\pm$3.8 & 435.9$\pm$0.0\\
+Strom, $\tau=0.00125$ & 0.5206$\pm$0.0086 & 81.81$\pm$0.10 & 50.3$\pm$3.4 & 1610.9$\pm$6.1\\
+Dense FedAvg & 0.4967$\pm$0.0015 & 82.23$\pm$0.15 & 52.2$\pm$1.0 & 2487.0$\pm$0.0\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The MLP result is a particularly strong closure. V1 has the lowest mean test cross entropy, highest mean accuracy, and highest mean worst-class accuracy of the tested methods. At the same time, its conservative end-to-end traffic is approximately
+\begin{equation}
+    5.51\times
+\end{equation}
+lower than quality-selected EF-TopK,
+\begin{equation}
+    8.78\times
+\end{equation}
+lower than quality-selected Strom, and
+\begin{equation}
+    13.55\times
+\end{equation}
+lower than dense FedAvg.
+
+Table~\ref{tab:final-baseline-cnn} gives the corresponding CNN result.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Final matched compact-CNN comparison over three held-out partitions.}
+\label{tab:final-baseline-cnn}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test CE & Acc. [\%] & Worst [\%] & Total [Mbit]\\
+\midrule
+Event-FedAvg & 0.5116$\pm$0.0119 & 81.34$\pm$0.46 & \textbf{38.9$\pm$3.4} & \textbf{72.8$\pm$1.2}\\
+\textbf{Strom, $\tau=0.005$} & \textbf{0.4993$\pm$0.0100} & \textbf{82.24$\pm$0.27} & 36.4$\pm$11.5 & 359.5$\pm$4.3\\
+EF-TopK 5\% & 0.6165$\pm$0.0018 & 77.06$\pm$0.11 & 23.5$\pm$2.6 & 299.5$\pm$0.0\\
+Sign-EF & 0.6694$\pm$0.0022 & 76.07$\pm$0.24 & 16.9$\pm$1.3 & 133.5$\pm$0.0\\
+Dense FedAvg & 0.6046$\pm$0.0017 & 77.55$\pm$0.08 & 23.1$\pm$0.6 & 749.1$\pm$0.0\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The CNN result is intentionally not summarized as uniform dominance. The quality-selected Strom setting achieves approximately 0.90 percentage points higher mean accuracy and 0.0123 lower mean CE than V1. It pays for that improvement with
+\begin{equation}
+    \frac{359.5}{72.8}\approx4.94
+\end{equation}
+times more conservative end-to-end communication. V1 simultaneously has slightly higher mean worst-class accuracy, though the Strom worst-class statistic has substantial seed variability. Thus the relevant conclusion is a Pareto trade-off rather than a claim that V1 always minimizes predictive error.
+
+\subsection{Held-out traffic-matched nearest-neighbor control}
+
+To test the algorithmic distinction from Q1 more directly, the closest sparse baselines are also evaluated at approximately V1-scale communication. Strom uses $\tau=0.02$ for both architectures. EF-TopK uses 1\% sparsity. These settings were identified from the development sweep before the held-out seeds were inspected.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Traffic-matched held-out comparison. Values are mean $\pm$ standard deviation over the same three partitions.}
+\label{tab:final-baseline-traffic}
+\begin{tabular}{llrrrr}
+\toprule
+Architecture & Method & Test CE & Acc. [\%] & Worst [\%] & Total [Mbit]\\
+\midrule
+MLP & \textbf{Event-FedAvg} & \textbf{0.4784$\pm$0.0022} & \textbf{83.14$\pm$0.14} & \textbf{56.5$\pm$3.3} & 183.5$\pm$2.0\\
+MLP & Strom, $\tau=0.02$ & 0.6035$\pm$0.0367 & 79.51$\pm$0.86 & 43.5$\pm$7.4 & \textbf{181.0$\pm$6.7}\\
+MLP & EF-TopK 1\% & 0.5278$\pm$0.0025 & 81.07$\pm$0.26 & 49.4$\pm$1.4 & 209.4$\pm$0.0\\
+\midrule
+CNN & \textbf{Event-FedAvg} & \textbf{0.5116$\pm$0.0119} & \textbf{81.34$\pm$0.46} & \textbf{38.9$\pm$3.4} & 72.8$\pm$1.2\\
+CNN & Strom, $\tau=0.02$ & 0.5592$\pm$0.0485 & 79.88$\pm$1.56 & 19.2$\pm$10.8 & 82.0$\pm$1.7\\
+CNN & EF-TopK 1\% & 0.6590$\pm$0.0031 & 75.83$\pm$0.26 & 19.4$\pm$1.6 & \textbf{63.9$\pm$0.0}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This control is the most direct empirical support for the Q1 distinction. On the MLP, Strom is almost perfectly traffic matched to V1, with 181.0 versus 183.5~Mbit, but loses 3.63 percentage points of mean accuracy and increases CE from 0.4784 to 0.6035. On the CNN, traffic-matched Strom actually uses about 12.5\% more communication than V1 but remains 1.46 percentage points lower in mean accuracy and has higher CE. EF-TopK can move slightly below V1's CNN traffic at 1\% sparsity, but its predictive degradation is considerably larger.
+
+The quality-selected and traffic-matched Strom results together therefore expose a clear trade-off:
+\begin{equation}
+\boxed{
+\begin{array}{c}
+\text{residual-conserving tied pulses can buy slightly better CNN accuracy}\
+\text{only by moving far toward the high-traffic side of the frontier,}\
+\text{whereas at comparable traffic V1 gives the stronger predictive operating point.}
+\end{array}}
+\end{equation}
+This is precisely the empirical behavior expected if decoupling the communication threshold from the applied model quantum is functionally important rather than merely notational.
+
+\subsection{Interpretation and publication-level verdict}
+
+The campaign supports four conclusions.
+
+First, the Event-FedAvg result is not an artifact of comparison against EF-TopK alone. It remains competitive against the much closer Strom residual-pulse construction identified by Q1.
+
+Second, V1 should not be described as uniformly superior to every Strom operating point. The CNN demonstrates a real quality--communication trade-off: tuned Strom achieves slightly better mean CE and accuracy when allowed nearly five times the end-to-end communication. Preserving this negative qualification strengthens rather than weakens the final claim.
+
+Third, at a matched communication budget the picture is much clearer. V1 is better than the traffic-matched Strom and EF controls on both architectures in mean CE, mean accuracy, and mean worst-class accuracy. This result directly supports the practical value of the lossy full-reset and independently controlled update-resolution design established by Q1.
+
+Fourth, the bidirectional conclusion of Q2 remains essential. The headline ratios above use the complete sparse synchronization protocol. They are not uplink-only compression ratios.
+
+The final empirical baseline gate is therefore
+\begin{equation}
+    \boxed{\text{matched closest-baseline campaign: PASS}.}
+\end{equation}
+This pass does not upgrade the literature-level Q1 verdict from qualified to strong novelty. Strom remains a close conceptual predecessor. It does, however, close the main empirical objection that the apparent benefit could be reproduced by a tuned residual-conserving threshold-pulse compressor at the same communication budget.
+
+The remaining core publication task is therefore theoretical rather than another mechanism or baseline search: characterize the frozen lossy stateful compressor mathematically, then extract the manuscript from the living report.
