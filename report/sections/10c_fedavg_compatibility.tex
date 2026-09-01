@@ -1,0 +1,86 @@
+\section{Consolidation Question Q3: Compatibility with FedAvg-Style Local Training}
+\label{sec:consolidation-q3}
+
+The second experimental consolidation task tests whether V1 is a generic communication layer or is fundamentally tied to the asynchronous FedSGD-like setting used in most of Part~I. The decisive change is to replace the one-step stochastic-gradient input by a conventional local model delta generated after several client-side optimization steps.
+
+\subsection{Synchronous FedAvg starting point}
+
+The first study should use conventional synchronous FedAvg to isolate the effect of local training from asynchrony. At global round $r$, the server provides the current model $w^r$ to the selected clients. Client $i$ initializes
+\begin{equation}
+    w_{i,0}^r=w^r
+\end{equation}
+and performs $E$ local SGD steps,
+\begin{equation}
+    w_{i,e+1}^r
+    =w_{i,e}^r-\eta\nabla\ell_i(w_{i,e}^r;\xi_{i,e}),
+    \qquad e=0,\ldots,E-1.
+\end{equation}
+The conventional local FedAvg update is
+\begin{equation}
+    \Delta_i^r=w_{i,E}^r-w^r.
+\end{equation}
+For Event-FedAvg, the frozen stateful encoder receives
+\begin{equation}
+    \boxed{u_i^r=\Delta_i^r}
+\end{equation}
+rather than a stochastic gradient. The same persistent state, threshold, address/sign event payload, reset rule, and scheduled server jump are then applied.
+
+This formulation directly tests the intended abstraction from Section~\ref{sec:algorithm-consolidation}: the compressor should operate on a local learning update, not on one special optimizer quantity.
+
+\subsection{Local-computation sweep}
+
+The local-work variable should be swept over
+\begin{equation}
+    E\in\{1,5,10\}
+\end{equation}
+with an optional $E=20$ stress test if the first three settings are stable. The $E=1$ case connects back to the existing FedSGD-like regime, while larger $E$ values introduce genuine client drift and test whether persistent event memory remains meaningful when successive deltas are generated around different local trajectories.
+
+The primary hypotheses are:
+\begin{enumerate}
+    \item Event-FedAvg remains trainable and communication-efficient for $E>1$.
+    \item Increasing local work does not cause uncontrolled event-packet growth.
+    \item Persistent event state does not accumulate stale sign information so strongly that local model drift destroys convergence.
+\end{enumerate}
+
+\subsection{Baselines and benchmark sequence}
+
+The initial benchmark should be the ten-class Fashion-MNIST MLP because it is already validated, inexpensive, and easy to instrument. The minimum comparator set is
+\begin{equation}
+\boxed{
+\text{dense FedAvg},
+\quad
+\text{FedAvg + EF-TopK},
+\quad
+\text{FedAvg + sign/EF},
+\quad
+\text{Event-FedAvg}.
+}
+\end{equation}
+The local optimizer, client sampling, number of local steps, batch size, and learning-rate tuning budget must be matched across communication methods. If the MLP study passes, one selected operating point should be repeated with the compact CNN from Experiment~15A. A new dataset is not required.
+
+\subsection{Mandatory diagnostics}
+
+Local training introduces failure modes that were largely absent in the one-gradient-completion setting. The experiment should record
+\begin{itemize}
+    \item $\norm{\Delta_i^r}$ and its distribution across clients and rounds,
+    \item coordinate events and nonempty packets per client per round,
+    \item events per transmitted local delta,
+    \item sign reversals of emitted coordinates across rounds,
+    \item residual membrane norm $\norm{z_i^r}$,
+    \item client-level communication imbalance,
+    \item test loss and accuracy versus both rounds and transmitted bits.
+\end{itemize}
+These diagnostics should establish whether failures, if any, are caused by local client drift, update-scale mismatch, or persistent residual state.
+
+\subsection{Decision gates}
+
+A minimum pass requires that Event-FedAvg at $E=5$ reaches essentially the same predictive regime as dense FedAvg while preserving a clear communication advantage over the closest compressed FedAvg baseline. A stronger pass requires that this conclusion also holds for $E=10$ and transfers to one CNN operating point.
+
+The main outcomes are therefore
+\begin{description}
+    \item[Strong pass.] The stateful event encoder works across multiple local-step counts and one additional architecture. V1 can be described as a generic FL communication layer.
+    \item[Qualified pass.] The method works for modest local training but degrades for large $E$. The algorithm remains viable with an explicit local-work regime or requires a scale normalization that must be justified separately.
+    \item[Fail.] The mechanism only works when the input is approximately an instantaneous stochastic gradient. The contribution should then be framed specifically as an asynchronous FedSGD communication mechanism rather than as a generic FL compressor.
+\end{description}
+
+This question should be resolved before engineering the final bidirectional protocol, because the definition of the client update source determines what the complete FL algorithm actually communicates.
