@@ -5,16 +5,16 @@ Experiment~15A changes the status of the project in two ways. First, it removes 
 
 Second, the long-horizon audit exposes a more precise algorithmic weakness. The evidence accumulator and the applied update quantum should not be assigned the same effective time scale. A persistent membrane with $\rho\approx1$ remains useful for temporal averaging and sparse first-passage communication, but a jump amplitude that is appropriate during coarse early learning can be too large during late-stage refinement. A manually chosen power-law decay fixes the observed CNN failure, but it introduces a horizon- and problem-dependent schedule parameter.
 
-\subsection{Immediate next question: adaptive event resolution}
+\subsection{Deferred mechanism question: adaptive event resolution}
 
-The natural next experiment is therefore not a larger dataset, clustering, or a new compressor. It is a principled mechanism for choosing the event jump resolution online. Denote the event update by
+A natural algorithmic extension is a principled mechanism for choosing the event jump resolution online. Denote the event update by
 \begin{equation}
 w_j^+=w_j+q_j(k)s_j,
 \qquad s_j\in\{-1,+1\}.
 \end{equation}
 Experiment~15A shows that $q_j(k)$ should be treated as an independent design variable rather than a fixed constant attached to the threshold rule.
 
-A useful Experiment~15B should test whether $q_j(k)$ can adapt from information already present in the sparse process, rather than from a hand-selected training horizon. Candidate signals include
+A future Experiment~15B could test whether $q_j(k)$ can adapt from information already present in the sparse process, rather than from a hand-selected training horizon. Candidate signals include
 \begin{itemize}
     \item inter-event time or recent event frequency,
     \item membrane overshoot at threshold crossing,
@@ -22,9 +22,9 @@ A useful Experiment~15B should test whether $q_j(k)$ can adapt from information 
     \item a low-rate server-side progress or loss signal,
     \item periodic coarse calibration of update scale.
 \end{itemize}
-The experiment should begin from the selected CNN configuration and compare any adaptive rule against both the fixed weak decay $p=0.1$ and the successful hand-tuned $p=0.5$ schedule. The central success criterion is not merely a lower final loss. The adaptive rule should remove the need to know the optimization horizon while preserving the communication advantage and avoiding a new dense calibration bottleneck.
+Such an experiment should compare any adaptive rule against both the fixed weak decay $p=0.1$ and the successful hand-tuned $p=0.5$ schedule. The central success criterion would not merely be a lower final loss. The adaptive rule should remove the need to know the optimization horizon while preserving the communication advantage and avoiding a new dense calibration bottleneck.
 
-The control-theoretic interpretation is a variable-resolution hybrid update: threshold crossing determines \emph{when} sufficient directional evidence exists, while a separate adaptation law determines \emph{how large} the resulting jump should be. This is closer to the project origin than simply adding another optimizer learning-rate schedule, but the comparison to conventional adaptive step-size and quantization methods will require an explicit novelty audit.
+The control-theoretic interpretation is a variable-resolution hybrid update: threshold crossing determines \emph{when} sufficient directional evidence exists, while a separate adaptation law determines \emph{how large} the resulting jump should be. This remains scientifically attractive, but after Experiment~15A it is no longer the immediate next task. The accumulated evidence is already broad enough that the project must first determine whether the present simple mechanism constitutes a distinct and complete communication-efficient FL algorithm. Adaptive event resolution is therefore deferred until the consolidation questions in Part~II are resolved.
 
 \subsection{Why filter/block events remain deferred}
 
@@ -42,7 +42,7 @@ A later clustering experiment should intentionally introduce domain or task mult
 
 \subsection{Updated progression}
 
-The main empirical line is now
+The main empirical line completed in Part~I is
 \begin{equation}
 \boxed{
 \begin{aligned}
@@ -52,7 +52,7 @@ The main empirical line is now
 &\rightarrow 13\mathrm{A}\text{--}13\mathrm{B}:\ \text{nonconvex multilayer networks}\\
 &\rightarrow 14\mathrm{A}\text{--}14\mathrm{C}:\ \text{real-data multiclass federated learning}\\
 &\rightarrow 15\mathrm{A}:\ \text{convolutional architecture PASS}\\
-&\rightarrow 15\mathrm{B}:\ \text{adaptive event-resolution control}.
+&\rightarrow \text{Part II}:\ \text{algorithm consolidation}.
 \end{aligned}}
 \end{equation}
 
@@ -64,4 +64,4 @@ The practical reference mechanism after Experiment~15A is therefore
 +\text{strongly annealed event resolution}.
 }
 \end{equation}
-The remaining weakness is that the annealing law is still prescribed manually. Experiment~15B should determine whether that last component can become endogenous to the event process.
+The prescribed annealing law remains a known weakness and motivates the deferred Experiment~15B. Before changing the mechanism further, however, Part~II freezes this reference and asks whether it is mathematically distinct from the nearest existing methods, compatible with FedAvg-style local training, and communication-efficient under a complete bidirectional FL protocol.
