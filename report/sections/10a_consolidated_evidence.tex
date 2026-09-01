@@ -1,0 +1,65 @@
+\section{Consolidated Evidence Supporting Algorithm V1}
+\label{sec:consolidated-evidence}
+
+This section summarizes the empirical and analytical evidence that motivates the frozen V1 mechanism. Its purpose is not to reproduce every result from Part~I, but to identify which conclusions survived repeated testing and which candidate explanations were falsified.
+
+\subsection{Evidence that survived the full sequence}
+
+The most persistent empirical observation is that temporal accumulation can convert dense local learning signals into sparse signed coordinate events while preserving useful optimization behavior. This conclusion survives a sequence of increasingly difficult settings:
+\begin{equation}
+\boxed{
+\text{scalar stochastic optimization}
+\rightarrow
+\text{vector quadratics}
+\rightarrow
+\text{heterogeneous asynchronous clients}
+\rightarrow
+\text{convex nonlinear learning}
+\rightarrow
+\text{nonconvex neural networks}
+\rightarrow
+\text{real-data multiclass FL}
+\rightarrow
+\text{CNNs}.
+}
+\end{equation}
+
+Across this progression, the event stream repeatedly achieves final predictive or optimization performance in the same broad regime as conventional sparse or dense references while substantially reducing logical communication payload. The real-data Fashion-MNIST experiments are particularly important because they show that the phenomenon is not confined to low-dimensional toy problems. Experiment~14A establishes binary real-data viability at roughly $2.6\times10^4$ parameters. Experiment~14B extends this to a ten-class softmax problem. Experiment~15A then introduces convolution and weight sharing while retaining the same basic coordinate-event representation.
+
+A second robust conclusion is that the main benefit of the persistent communication state is not adequately explained by stale-gradient correction alone. The early asynchronous experiments show that mild memory/leak remains useful even when explicit stale-event counts are small. The more consistent interpretation is temporal filtering of stochastic local learning signals together with an event deadzone that suppresses weak, inconsistent evidence.
+
+A third robust conclusion is that fixed event resolution creates practical-convergence behavior. Scalar analysis already shows that fixed signed jumps imply a neighborhood rather than arbitrarily fine convergence. The CNN long-horizon audit confirms the same issue in a realistic nonconvex setting: a jump size that is effective during coarse transient learning can become too large later. Stronger annealing restores long-horizon performance. Therefore persistent evidence accumulation and applied model resolution must be treated as separate time scales.
+
+\subsection{Representative communication evidence}
+
+The strongest current end-stage benchmark is the paired 1200-tick compact-CNN validation from Experiment~15A. Within one fixed numerical environment, the selected event method reaches approximately $79.73\%$ test accuracy and test cross-entropy $0.5648$ using $30.34$~Mbit of logical uplink payload. EF-TopK $2.5\%$ reaches approximately $78.92\%$ accuracy and test cross-entropy $0.5527$ using $74.14$~Mbit. Dense asynchronous SGD reaches approximately $77.99\%$ accuracy and test cross-entropy $0.5785$ using approximately $2.066$~Gbit. The event method therefore does not dominate every scalar performance metric, but it occupies a strong communication--performance operating point and achieves approximately $2.44\times$ less payload than the tested EF-TopK point and approximately $68\times$ less than dense communication.
+
+The same qualitative communication advantage appears earlier in the experimental chain. It is therefore reasonable to regard communication efficiency as an empirical property of the mechanism rather than as a single-benchmark accident. However, all headline payload ratios from Part~I should currently be interpreted primarily as \emph{uplink} results. Full bidirectional protocol accounting is one of the explicit consolidation questions and is not assumed solved here.
+
+\subsection{Mechanisms that were tested and rejected}
+
+The research sequence also produced several negative results that constrain the final method.
+\begin{itemize}
+    \item \textbf{Raw recurrence novelty failed.} Subtractive-reset FedLIF is closely related to decayed error feedback, while full-reset LIF maps to a resetting thresholded exponential moving-average mechanism. The recurrence alone is therefore not a defensible novelty claim.
+    \item \textbf{Homeostatic threshold adaptation did not improve the core operating point.} It is excluded from V1.
+    \item \textbf{Per-packet coordinate competition controlled packet size but did not reduce total communication reliably and could undo compute-rate normalization.}
+    \item \textbf{Event timing is informative but insufficient as a standalone jump decoder.} Timing-derived jump heuristics did not robustly beat a simple global schedule.
+    \item \textbf{Strict local descent is not a valid federated safety criterion.} Local and global objectives can disagree strongly under heterogeneity.
+    \item \textbf{Strict immediate global descent is not a suitable nonconvex training criterion.} In the small-MLP experiment, many useful stochastic updates temporarily increased the full training objective.
+    \item \textbf{Layer and filter starvation are not general failure modes in the tested networks.} Deep MLPs and the compact CNN retained broad parameter participation, so layer- or filter-specific event rules are not currently justified.
+    \item \textbf{Weak classes in multiclass Fashion-MNIST are not event-starved.} Difficult classes often generate more output-event activity, not less. Compute heterogeneity creates class-wise transients for dense and EF baselines as well as for events.
+\end{itemize}
+
+These negative results materially simplify the final method. V1 is therefore not an arbitrary point in a large design space; it is the residue left after multiple candidate mechanisms were tested and rejected.
+
+\subsection{Current limitations that remain open}
+
+Four limitations remain important.
+\begin{enumerate}
+    \item \textbf{Exact novelty is unresolved.} Several components have known equivalents or close relatives, and the complete algorithm must be compared in common notation with the nearest literature.
+    \item \textbf{The present strongest communication results are uplink-centric.} A complete FL claim requires explicit downlink synchronization and total bit accounting.
+    \item \textbf{The empirical implementation is closest to asynchronous FedSGD.} Compatibility with multi-step local training and FedAvg-style client deltas has not yet been demonstrated.
+    \item \textbf{The event-resolution law remains prescribed manually.} This is an algorithmic weakness, but it is deliberately postponed until the more fundamental novelty and protocol questions are answered.
+\end{enumerate}
+
+These limitations define the remainder of the consolidation phase. The next sections are therefore not open-ended architecture experiments. Each is designed to close one specific gap in the claim that V1 constitutes a distinct and complete communication-efficient FL algorithm.
