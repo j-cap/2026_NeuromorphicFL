@@ -1,0 +1,238 @@
+\section{Experiment 14C: Label Skew, Compute Heterogeneity, and Event-Share Fairness}
+\label{sec:exp14c}
+
+Experiment~14B showed that the raw temporal-event mechanism can train a ten-class Fashion-MNIST classifier, but it also exposed a more subtle limitation: aggregate accuracy can be competitive while one semantic class remains poorly learned at a finite wall-clock horizon. Experiment~14C is a mechanism audit of that class-wise transient. It deliberately does not introduce clustering, personalization, class reweighting, client-specific thresholds, or a new compressor. The purpose is first to determine which part of the observed transient is caused by label skew, which part is caused by heterogeneous client compute periods, and which part is specific to the nonlinear threshold/reset communication mechanism.
+
+\subsection{Questions and hypotheses}
+
+The experiment tests four hypotheses.
+\begin{enumerate}
+    \item The existing rate normalization $p_iT_i$ equalizes the expected continuous gradient contribution of clients with different completion periods, but it may not equalize the \emph{first-passage event process} after thresholding and reset.
+    \item If weak classes are delayed because they are starved of event communication, class accuracy should increase with the event share or update mass assigned to the corresponding output block.
+    \item Heterogeneous compute periods may worsen class-wise convergence even when the total amount of local computation is controlled.
+    \item If the class-wise problem is fundamentally event-specific, the equal-versus-heterogeneous compute effect should be substantially larger for the event method than for dense SGD and EF-TopK.
+\end{enumerate}
+
+The first hypothesis is supported. The second and fourth are falsified in their simple form. The third is supported once local work is matched explicitly.
+
+\subsection{Experimental construction}
+
+The model, Fashion-MNIST preprocessing, asynchronous server update ordering, and selected event parameters are inherited from Experiment~14B. The MLP remains
+\begin{equation}
+784\rightarrow32\;\tanh\rightarrow16\;\tanh\rightarrow10,
+\end{equation}
+with $d=25818$ parameters. The event rule is
+\begin{equation}
+z_i^{k+1}=\rho z_i^k-\gamma p_iT_i g_i^k,
+\qquad
+\rho=0.999,
+\end{equation}
+with threshold $\Delta=0.025$, full reset, and jump amplitude
+\begin{equation}
+q(t)=0.0035\left(1+\frac{t}{500}\right)^{-0.1}.
+\end{equation}
+
+Two compute schedules are compared. The heterogeneous schedule is the established
+\begin{equation}
+T^{\mathrm{het}}=[1,1,2,2,5,5,10,10,20,20].
+\end{equation}
+The equal-compute control uses
+\begin{equation}
+T_i^{\mathrm{eq}}=3,\qquad i=1,\ldots,10.
+\end{equation}
+The label distributions are either IID or the $55\%$ dominant-class strong-skew construction from Experiment~14B. For strong skew, the semantic class assigned to each compute slot is additionally permuted using identity, reverse, and mixed assignments.
+
+The main event diagnostic records, for every client,
+\begin{itemize}
+    \item the number of local completions $C_i$,
+    \item the number of transmitted coordinate events $E_i$,
+    \item the event share $s_i^{E}=E_i/\sum_r E_r$,
+    \item events per local completion $\nu_i=E_i/C_i$,
+    \item the accumulated absolute applied update mass and its share,
+    \item the number of nonempty event packets.
+\end{itemize}
+For the final softmax layer, events are also attributed to the ten class-associated output columns. If $E_c^{\mathrm{out}}$ denotes the number of output-layer events associated with class $c$, the output event share is
+\begin{equation}
+s_c^{\mathrm{out}}
+=\frac{E_c^{\mathrm{out}}}{\sum_r E_r^{\mathrm{out}}}.
+\end{equation}
+Class-wise test accuracy is recorded throughout the run.
+
+\subsection{Rate normalization does not equalize event traffic}
+
+The cleanest demonstration comes from IID data. With equal periods, every client has the same data distribution and the same number of local completions. The coefficient of variation of client event shares is only
+\begin{equation}
+\mathrm{CV}(s_i^E)=0.0253.
+\end{equation}
+Changing only the compute periods to $T^{\mathrm{het}}$ increases this to
+\begin{equation}
+\boxed{\mathrm{CV}(s_i^E)=0.4408},
+\end{equation}
+while the coefficient of variation of events per completion becomes
+\begin{equation}
+\boxed{\mathrm{CV}(\nu_i)=1.1874}.
+\end{equation}
+
+The mechanism is visible directly in the client statistics. Under IID heterogeneous compute, period-one clients generate approximately $52$ events per local completion, period-five clients about $450$, period-ten clients roughly $1200$--$1360$, and period-twenty clients more than $3300$--$3600$. Across every heterogeneous-period scenario tested, the ranking of $T_i$ and $\nu_i$ is almost perfectly monotone (Spearman correlation approximately $0.985$).
+
+Hence
+\begin{equation}
+\boxed{
+p_iT_i\ \text{rate normalization does not imply event-rate normalization.}
+}
+\end{equation}
+The factor $T_i$ correctly compensates a first-order continuous gradient contribution for infrequent clients, but it enters a nonlinear integrate--threshold--reset mechanism. A larger increment per local completion changes first-passage times and the number of simultaneous threshold crossings. The resulting communication process is therefore not linearly rate-normalized.
+
+Under strong label skew, semantic differences in the local gradients partially mask this monotone relation in the \emph{total} event shares. For example, in the identity strong-skew assignment, period-one clients account for event shares around $12.7\%$ and $7.5\%$, whereas the period-twenty clients each contribute only about $7.3\%$. Nevertheless, the number of events \emph{per completion} still rises strongly with $T_i$. Label semantics and compute period therefore interact rather than contributing independent fixed multipliers.
+
+\subsection{Weak classes are not communication-starved}
+
+The most important falsified hypothesis is the intuitive starvation explanation. If a class were learned late because too few events reached its output block, one would expect a positive relationship between $s_c^{\mathrm{out}}$ and final class accuracy. The observed relation has the opposite sign in every tested scenario.
+
+The Spearman correlations between output event share and final class accuracy are approximately
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+Scenario & $\rho(s_c^{\mathrm{out}},A_c)$\\
+\midrule
+IID, equal periods & $-0.782$\\
+IID, heterogeneous periods & $-0.758$\\
+Strong, equal periods & $-0.745$\\
+Strong, heterogeneous identity & $-0.588$\\
+Strong, heterogeneous reverse & $-0.285$\\
+Strong, heterogeneous mixed & $-0.298$\\
+Strong seed 2500, equal periods & $-0.851$\\
+Strong seed 2500, heterogeneous periods & $-0.333$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For example, under strong skew with equal periods, class~6 (Shirt) has only $20.9\%$ final accuracy while receiving about $13.4\%$ of all output-block events, one of the largest shares. Under IID/equal compute, where the client event shares are essentially uniform, class~6 still has only $24.3\%$ accuracy and again receives the largest output event share, approximately $14.8\%$. Thus
+\begin{equation}
+\boxed{\text{low class accuracy is not caused by too few output events.}}
+\end{equation}
+A more plausible interpretation is that difficult or lagging classes create persistent corrective gradients and therefore continue to generate \emph{more} event demand. Event count is consequently closer to a measure of unresolved optimization pressure than a direct measure of useful learning progress.
+
+This result is important algorithmically. A naive fairness rule that boosts thresholds or update amplitudes for classes with low event shares targets the wrong observable. The data do not justify such a correction.
+
+\subsection{Class-to-period assignment changes the transient}
+
+Strong-skew runs were repeated while permuting which semantic class is dominant on each compute slot. At the same $650$-tick horizon, the event results within one fixed numerical environment are
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Assignment & Test CE & Accuracy & Worst class\\
+\midrule
+Identity & 0.6322 & 0.7769 & 0.302\\
+Reverse & 0.6521 & 0.7719 & \textbf{0.537}\\
+Mixed & 0.6686 & 0.7524 & 0.264\\
+\bottomrule
+\end{tabular}
+\end{center}
+Thus semantic class and compute period cannot be treated independently. Merely changing which class is associated with a fast or slow client changes the weakest-class result substantially.
+
+However, this sensitivity is not explained by a simple dominant-client event-share rule. The Spearman correlation between the event share of a class's dominant client and that class's final accuracy is approximately $-0.527$ for the identity assignment, $-0.224$ for reverse, and $+0.079$ for mixed. The sign and magnitude are not stable enough to support a scalar event-share predictor of class convergence.
+
+\subsection{Why the first equal-period comparison was insufficient}
+
+At $650$ wall-clock ticks, $T_i=3$ gives $2160$ total local completions, while the heterogeneous schedule produces $2404$. The difference is only about $10\%$, but it is scientifically relevant because the experiment concerns finite-horizon convergence. The equal-period horizon was therefore extended to $722$ ticks, yielding $2400$ total local completions, almost exactly matching the heterogeneous schedule.
+
+The matched-work event results are
+\begin{center}
+\begin{tabular}{llrrr}
+\toprule
+Regime & Compute & Test CE & Accuracy & Worst class\\
+\midrule
+IID, seed 2400 & equal, matched & 0.5389 & 0.8088 & \textbf{0.528}\\
+                 & heterogeneous & 0.6721 & 0.7391 & 0.300\\
+Strong, seed 2400 & equal, matched & 0.5675 & 0.8045 & \textbf{0.443}\\
+                    & heterogeneous & 0.6322 & 0.7769 & 0.302\\
+Strong, seed 2500 & equal, matched & 0.5860 & 0.8034 & \textbf{0.508}\\
+                    & heterogeneous & 0.7491 & 0.7303 & 0.239\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+This resolves an ambiguity in the wall-clock-only comparison. With total local work matched,
+\begin{equation}
+\boxed{\text{heterogeneous compute materially worsens finite-horizon class-wise convergence.}}
+\end{equation}
+For the event method, the worst-class reduction is $22.8$ percentage points on IID seed~2400, $14.1$ points on strong seed~2400, and $26.9$ points on strong seed~2500.
+
+\subsection{The compute effect is not event-specific}
+
+Dense SGD and EF-TopK $2.5\%$ were subjected to the same equal-period and heterogeneous-period controls. With matched local work, they exhibit the same qualitative sensitivity.
+
+For IID seed~2400, dense worst-class accuracy changes from $0.335$ under equal/matched compute to $0.241$ under heterogeneous compute. EF-TopK changes from $0.432$ to $0.336$. For strong seed~2500, dense changes from $0.571$ to $0.343$, while EF-TopK changes from $0.436$ to $0.260$.
+
+Strong seed~2400 is less monotone in the scalar worst-class metric: dense changes from $0.344$ to $0.355$, while EF-TopK changes from $0.470$ to $0.306$. Even there, heterogeneous compute worsens dense and EF aggregate cross-entropy and accuracy. Across the tested cases, the broad conclusion is therefore
+\begin{equation}
+\boxed{\text{the asynchronous class-wise transient is a general FL effect, not an event-only failure.}}
+\end{equation}
+
+The event encoder contributes an additional, specific phenomenon: its communication traffic becomes strongly unequal because the $p_iT_i$ increments pass through thresholding and reset. But the data do not show that this traffic imbalance is itself the sole or dominant cause of the weak-class transient.
+
+\subsection{Problematic seed 2500}
+
+Experiment~14B identified strong-skew partition seed~2500 as a difficult finite-horizon case. Experiment~14C clarifies its mechanism. With matched equal compute, the event model reaches test CE $0.5860$, mean accuracy $80.34\%$, and worst-class accuracy $50.8\%$. Under heterogeneous compute, the same selected event rule reaches CE $0.7491$, mean accuracy $73.03\%$, and worst-class accuracy $23.9\%$ in the instrumented trajectory.
+
+The class-wise history shows that Shirt (class~6) remains near zero for a long portion of the heterogeneous-period run and only recovers partially late in the horizon, whereas the equal-period trajectory makes useful progress earlier. Dense and EF controls also degrade under heterogeneous periods on this partition. The severe 14B transient should therefore not be interpreted as evidence that sparse events permanently lose one class. It is an interaction between a difficult class, non-IID local objectives, and asynchronous update timing.
+
+\subsection{Numerical reproducibility of thresholded trajectories}
+
+Experiment~14B already documented sensitivity to multithreaded BLAS. Experiment~14C adds a further qualification. On a fixed GitHub Actions runner with pinned Python/NumPy versions and single-thread BLAS, the canonical Experiment~14B implementation and the fully instrumented Experiment~14C implementation produce exactly the same strong-skew trajectory, including test CE, accuracy, worst-class accuracy, and all $2{,}166{,}208$ coordinate events. Two instrumented repetitions are also exactly identical.
+
+However, this trajectory differs from an earlier single-thread GitHub Actions run stored in the Experiment~14B reproduction audit, despite nominally identical software versions and random seeds. The likely remaining source is low-level floating-point variation across runner hardware or BLAS execution paths. The integrate--threshold--reset system can amplify an initially tiny arithmetic difference when a coordinate lies close to a threshold: a different crossing tick changes the reset state and subsequently the asynchronous model trajectory.
+
+Accordingly, the strongest defensible reproducibility statement is
+\begin{equation}
+\boxed{\text{exact repeatability within a fixed numerical environment: PASS}},
+\end{equation}
+while
+\begin{equation}
+\boxed{\text{hardware-independent bitwise trajectory reproduction: NOT ESTABLISHED}.}
+\end{equation}
+This does not invalidate controlled within-job contrasts in Experiment~14C. It does mean that publication-grade reproduction should use a fixed container and, where possible, a fixed CPU/BLAS environment or should report distributions over several deterministic environments rather than one nominal event trajectory.
+
+\subsection{Experiment 14C verdict}
+
+The mechanism audit gives the following gates:
+\begin{equation}
+\boxed{p_iT_i\ \text{equalizes nonlinear event traffic: FAIL}},
+\end{equation}
+\begin{equation}
+\boxed{\text{compute period strongly controls events per completion: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{weak classes are starved of output events: FAIL}},
+\end{equation}
+\begin{equation}
+\boxed{\text{simple client event share predicts class failure: FAIL}},
+\end{equation}
+\begin{equation}
+\boxed{\text{matched-work compute heterogeneity delays class-wise convergence: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{this delay is uniquely event-specific: FAIL}},
+\end{equation}
+\begin{equation}
+\boxed{\text{class-to-period assignment matters: PASS}}.
+\end{equation}
+
+The resulting mechanism picture is more precise than the initial fairness hypothesis:
+\begin{equation}
+\boxed{
+\text{compute heterogeneity}
+\;\longrightarrow\;
+\begin{matrix}
+\text{general asynchronous optimization delay}\\
++\\
+\text{event-specific nonlinear traffic reshaping}
+\end{matrix}
+\;\longrightarrow\;
+\text{partition-sensitive class transients}.
+}
+\end{equation}
+Hard classes respond to that delay with increased corrective event activity rather than disappearing from the communication stream. Therefore a client- or class-specific rule that merely equalizes event counts is not scientifically justified by the present evidence.
+
+The reproducible audit drivers are \texttt{experiments/14c\_event\_share\_fairness.py}, \texttt{14c\_baseline\_period\_controls.py}, \texttt{14c\_matched\_completion\_controls.py}, and \texttt{14c\_instrumentation\_repro\_check.py}. Report-ready summary tables are stored under \texttt{experiments/results/14c\_event\_share\_fairness/}.
