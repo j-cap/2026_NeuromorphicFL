@@ -1,0 +1,62 @@
+\section{Roadmap Update after Experiment 13A}
+\label{sec:roadmap-post-13a}
+
+Experiment~13A clears the first neural-network communication gate, but it also changes the theoretical direction of the project.
+
+The supported conclusions are now:
+\begin{enumerate}
+  \item \textbf{Sparse temporal event communication survives ordinary backpropagation.} A 169-parameter nonconvex MLP can be trained with sign-plus-address events at a communication cost far below dense SGD and below the tested EF-TopK operating points.
+  \item \textbf{The event mechanism remains Pareto-relevant.} On the canonical strong non-IID benchmark, the selected event rule slightly improves final test loss and whole-run training loss relative to EF-TopK $k=4$ while using only about $21\%$ of its payload.
+  \item \textbf{The quadratic-era normalization lesson is not universal.} A single raw threshold performs better than the tested tensor-wise and coordinate-wise RMS normalizers. Representation scaling must therefore be diagnosed rather than assumed.
+  \item \textbf{Strict immediate descent is no longer the right default certificate target.} The exact packet-level monotone-descent diagnostic is worse than unconstrained scheduled events in the short nonconvex test even though it eliminates immediate objective-increasing packets by construction.
+  \item \textbf{The remaining theory problem is now specifically nonconvex.} Experiment~12B showed that rigorous conservative descent certification can be practical for structured convex objectives. Experiment~13A shows that preserving such a hard monotonic property is neither obviously necessary nor obviously desirable for neural-network training.
+\end{enumerate}
+
+\subsection{Recommended next step: Experiment 13B}
+
+The next study should therefore not attempt to scale the Experiment~12B hard certificate directly. Instead, Experiment~13B should investigate \textbf{nonconvex event representation and soft trust-region information}. The goal is to preserve the communication advantage found in Experiment~13A while introducing only enough server-side information to control clearly harmful event bursts without demanding monotone descent after every packet.
+
+Three questions should be separated.
+
+\paragraph{13B.1: coordinate versus microblock representation.}
+The current $d=169$ experiment still sends one address and one sign per parameter event. Before moving to a substantially larger network, compare raw coordinate events against small parameter blocks or tensor-local microblocks. Candidate constructions include fixed contiguous blocks within $W_1$, $b_1$, $W_2$, and $b_2$, and norm-based block firing where one local evidence state summarizes a small parameter subset. The primary gate is whether block representation reduces address/event overhead without materially degrading final performance.
+
+\paragraph{13B.2: soft alignment rather than hard descent.}
+A useful nonconvex server rule should distinguish between ``strongly contradictory'' and merely ``uncertain'' events. Possible diagnostics include a slowly refreshed block-gradient direction, cosine/sign agreement over a short history, or a trust ratio comparing event magnitude with a block-level gradient scale. These are not hard certificates unless a valid nonconvex bound is derived. The experiment should therefore label them explicitly as empirical gates or trust-region surrogates.
+
+A generic form is
+\begin{equation}
+  \text{accept event/block }B
+  \quad\text{if}\quad
+  \mathcal A_B(w,\text{history})\geq -\tau_B,
+\end{equation}
+where $\tau_B>0$ permits limited disagreement rather than enforcing strictly positive instantaneous alignment. The strict Experiment~13A packet-descent oracle corresponds qualitatively to the limiting case $\tau_B=0$ together with exact objective evaluation, which the present evidence suggests is too restrictive.
+
+\paragraph{13B.3: communication-aware side information.}
+Any gradient-direction, trust, or calibration information must be charged explicitly. Experiment~12B taught that side information can dominate a sparse event stream. Experiment~13B should therefore compare the extra bits used by a soft gate with the events it suppresses and the resulting change in test-loss/bit Pareto performance.
+
+\subsection{What should not be done next}
+
+Several tempting branches are not yet justified:
+\begin{itemize}
+  \item deriving a very loose global Hessian bound for the MLP solely to preserve the word ``certificate'';
+  \item scaling immediately to a deep network before understanding block/event representation;
+  \item assuming layer normalization is necessary because it is conventional in neural-network compression;
+  \item interpreting the short packet-descent diagnostic as evidence that descent information is useless in general.
+\end{itemize}
+The supported statement is narrower: \emph{hard per-packet monotone descent is not a suitable default design objective for this nonconvex stochastic setting.}
+
+\subsection{Gate toward public data and larger networks}
+
+If Experiment~13B finds a block representation that preserves the Experiment~13A Pareto advantage and either no gate or a low-overhead soft gate remains useful, the next robustness step should move to a public binary or small multiclass dataset. Only after that should the project increase network depth substantially.
+
+The updated sequence is therefore
+\begin{equation}
+  \boxed{
+  13\mathrm{B}\;\text{microblock/soft-trust event design}
+  \rightarrow
+  13\mathrm{C}\;\text{public-data robustness}
+  \rightarrow
+  14\;\text{larger network if justified}.
+  }
+\end{equation}
