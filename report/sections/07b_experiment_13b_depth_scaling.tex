@@ -1,0 +1,150 @@
+\section{Experiment 13B: Controlled Neural-Network Depth and Dimension Scaling}
+\label{sec:experiment-13b-depth}
+
+Experiment~13A established that sparse LIF-style parameter events remain competitive on a nonconvex one-hidden-layer network. Experiment~13B asks the next narrower question: is that result a small-network curiosity, or does the same temporal-evidence mechanism survive additional depth and several-fold growth in parameter dimension?
+
+The experiment deliberately does not introduce a new event gate, clustering method, or layer-specific normalization. The event rule remains the successful raw-threshold rule from Experiment~13A. This is important: Experiment~13B is a scaling/falsification gate for the existing mechanism rather than an opportunity to rescue it with architecture-specific communication heuristics.
+
+\subsection{Paired architecture design}
+
+We retain exactly the same federated binary-classification family, asynchronous client periods, strong non-IID partition, mini-batch size, and event parameters as in Experiment~13A. Only the network architecture changes. The primary architectures are
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Label & Architecture & Parameters\\
+\midrule
+13A reference & $19$--$8$--$1$ & 169\\
+Shallow-small & $19$--$12$--$1$ & 253\\
+Deep-small & $19$--$8$--$8$--$1$ & 241\\
+Shallow-large & $19$--$32$--$1$ & 673\\
+Deep-large & $19$--$16$--$16$--$1$ & 609\\
+\bottomrule
+\end{tabular}
+\end{center}
+The pairs $(253,241)$ and $(673,609)$ separate depth from raw parameter count approximately. EF-TopK uses
+\begin{equation}
+ k=\left\lceil0.025d\right\rceil,
+\end{equation}
+so the conventional sparse baseline maintains approximately the same coordinate sparsity fraction as dimension grows.
+
+The LIF parameters are frozen at
+\begin{equation}
+ \rho=0.999,\qquad \gamma=0.2,\qquad \Delta=0.025,
+\end{equation}
+with
+\begin{equation}
+ q(t)=0.015\left(1+\frac{t}{500}\right)^{-0.1}.
+\end{equation}
+No layer-wise or coordinate-wise threshold normalization is added.
+
+\subsection{Initialization audit: a method-independent depth failure}
+
+A literal architectural extension of Experiment~13A initially fails. Experiment~13A initializes each weight tensor with standard deviation $0.18/\sqrt{n_{\rm in}}$. When this same small scale is inserted into a second $\tanh$ layer, the deep networks exhibit weak activity and poor learning under \emph{all} optimization methods. For the $19$--$8$--$8$--$1$ network after 500 ticks, event training, EF-TopK, and full-precision SGD all remain near test loss $0.68$ with accuracy approximately $0.56$. The event stream covers only about $36\%$ of parameters. The failure is therefore not specific to sparse communication; it is a vanishing-signal initialization problem.
+
+A method-independent initialization audit over scales $0.18$, $0.5$, and $1.0$ shows that the common scale $0.5/\sqrt{n_{\rm in}}$ makes both two-hidden-layer architectures trainable for LIF, EF-TopK, and dense SGD. We therefore use the historical $0.18$ scale for one-hidden-layer networks and the common $0.5$ scale for both two-hidden-layer networks. This is architecture calibration, not event-method tuning.
+
+\subsection{Metric correction for cross-architecture comparison}
+
+The Experiment~13A test-loss metric included the $L_2$ regularization penalty. That is appropriate when comparing algorithms on the same architecture, but it is not a fair primary metric across models with 169 to 673 parameters because the parameter norm and number of weights change with architecture. Experiment~13B therefore reports
+\begin{equation}
+ \mathcal L_{\rm CE}^{\rm test}
+ =\frac{1}{n_{\rm test}}\sum_m
+ \left[\log(1+e^{f_w(x_m)})-y_m f_w(x_m)\right]
+\end{equation}
+as the primary predictive metric. The regularized objective is retained for optimization/transient comparisons.
+
+\subsection{Primary strong non-IID campaign}
+
+The primary campaign uses eight independent problem realizations and 1200 wall-clock ticks. The main results are
+\begin{center}
+\begin{tabular}{llrrrr}
+\toprule
+Architecture & Method & Test CE & Accuracy & Whole obj. & Payload bits\\
+\midrule
+$19$--$8$--$1$ & Events & 0.45920 & 0.7805 & 0.51517 & 151,498\\
+ & EF-TopK & 0.46041 & 0.7773 & 0.53108 & 888,000\\
+ & Full & 0.45824 & 0.7807 & 0.52173 & 24,011,520\\[1mm]
+$19$--$12$--$1$ & Events & 0.45898 & 0.7808 & 0.51489 & 169,237\\
+ & EF-TopK & 0.45894 & 0.7792 & 0.52953 & 1,243,200\\
+ & Full & 0.45756 & 0.7813 & 0.52092 & 35,946,240\\[1mm]
+$19$--$8$--$8$--$1$ & Events & 0.46223 & 0.7806 & 0.54191 & 191,448\\
+ & EF-TopK & 0.46248 & 0.7796 & 0.56721 & 1,243,200\\
+ & Full & 0.46133 & 0.7813 & 0.55485 & 34,241,280\\[1mm]
+$19$--$32$--$1$ & Events & 0.45760 & 0.7814 & 0.51285 & 316,936\\
+ & EF-TopK & 0.45657 & 0.7794 & 0.52272 & 3,170,160\\
+ & Full & 0.45599 & 0.7808 & 0.51597 & 95,619,840\\[1mm]
+$19$--$16$--$16$--$1$ & Events & 0.46074 & 0.7803 & 0.54830 & 321,559\\
+ & EF-TopK & 0.45936 & 0.7785 & 0.57093 & 2,983,680\\
+ & Full & 0.45825 & 0.7818 & 0.55862 & 86,526,720\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The first conclusion is that depth does not create a LIF-specific collapse. On the 241-parameter deep network, events use about $6.5\times$ fewer payload bits than EF-TopK and about $179\times$ fewer than dense SGD, while their predictive cross-entropy is slightly \emph{better} than EF-TopK and only $9.0\times10^{-4}$ above full precision. On the 609-parameter deep network, events use about $9.3\times$ fewer bits than EF-TopK and about $269\times$ fewer than dense SGD. The predictive CE gap is approximately $1.38\times10^{-3}$ to EF-TopK and $2.50\times10^{-3}$ to full precision.
+
+The second conclusion is that the deeper architectures themselves are not better on this controlled task. At similar parameter counts, the event-trained deep models have test-CE gaps of approximately
+\begin{equation}
+ 0.46223-0.45898\approx3.25\times10^{-3}
+\end{equation}
+and
+\begin{equation}
+ 0.46074-0.45760\approx3.14\times10^{-3}
+\end{equation}
+relative to their shallow counterparts. Accuracy is nevertheless almost unchanged. This is an architecture/task result, not evidence against event communication, because EF-TopK and full precision show the same qualitative deep-vs-shallow behavior.
+
+\subsection{Layer-wise firing diagnostics}
+
+A central failure hypothesis was that later or intermediate tensors might starve as depth increases. The data reject that hypothesis. Overall parameter firing coverage is approximately $99.4\%$ for the $19$--$8$--$8$--$1$ network and $95.6\%$ for the $19$--$16$--$16$--$1$ network.
+
+For the small deep model, the mean events per parameter are approximately
+\begin{equation}
+ (W_1,b_1,W_2,b_2,W_3,b_3)
+ =
+ (104.6,175.1,23.6,181.0,62.7,506.6).
+\end{equation}
+Only about $2.15\%$ of middle-layer $W_2$ parameters never fire. For the larger deep model, the corresponding rates are
+\begin{equation}
+ (69.2,119.6,12.4,117.6,45.4,489.5),
+\end{equation}
+with about $9.08\%$ of $W_2$ parameters never firing. The middle matrix is clearly the least active tensor, but it is not communication-starved. Every tensor participates substantially without explicit layer normalization.
+
+This result matters because it removes the most immediate motivation for a layer-normalized or block-normalized LIF mechanism. The raw common threshold remains viable through two hidden layers.
+
+\subsection{Independent-partition robustness}
+
+The paired shallow/deep comparison was repeated on independent strong-non-IID data seeds 1500 and 1700. The event method remains close to the matched EF-TopK predictive performance in every architecture while requiring far less communication. For example, on seed 1500 the $19$--$8$--$8$--$1$ event method obtains test CE $0.44555$ versus $0.44448$ for EF-TopK with about $0.205$ Mbit versus $1.243$ Mbit. On seed 1700 the corresponding values are $0.45643$ versus $0.45713$, so events are slightly better. The large deep model shows the same qualitative pattern.
+
+\subsection{Long-horizon diagnostic}
+
+At 2400 ticks, the deep methods remain close rather than diverging. For $19$--$8$--$8$--$1$,
+\begin{equation}
+ \mathcal L_{\rm CE}^{\rm event}=0.46333,\quad
+ \mathcal L_{\rm CE}^{\rm EF}=0.46317,\quad
+ \mathcal L_{\rm CE}^{\rm full}=0.46201,
+\end{equation}
+with payloads $0.419$ Mbit, $2.486$ Mbit, and $68.48$ Mbit. For $19$--$16$--$16$--$1$, the values are $0.46132$, $0.45921$, and $0.45927$ with $0.696$ Mbit, $5.967$ Mbit, and $173.05$ Mbit, respectively.
+
+The slight deterioration in predictive CE relative to the 1200-tick point occurs for multiple optimizers and is consistent with a generalization/continued-training effect rather than a sparse-event convergence floor. The event method remains in the same predictive regime as the dense and EF baselines.
+
+\subsection{Experiment 13B verdict}
+
+Experiment~13B gives the following gates:
+\begin{equation}
+ \boxed{\text{naive frozen 13A initialization through extra depth: FAIL}},
+\end{equation}
+\begin{equation}
+ \boxed{\text{two-hidden-layer LIF viability after method-independent initialization: PASS}},
+\end{equation}
+\begin{equation}
+ \boxed{\text{scaling from 169 to 609 parameters: PASS}},
+\end{equation}
+\begin{equation}
+ \boxed{\text{layer/parameter starvation: NOT OBSERVED}},
+\end{equation}
+\begin{equation}
+ \boxed{\text{communication--performance Pareto relevance vs EF-TopK: STRONG PASS}}.
+\end{equation}
+
+The main scientific conclusion is therefore narrower but stronger than simply ``deeper networks work.'' Sparse temporal evidence continues to train all layers of a two-hidden-layer nonconvex network and remains communication-efficient relative to conventional sparsification. The residual deep-vs-shallow predictive gap is shared by dense and EF optimization and should not be attributed to the neuromorphic communication mechanism.
+
+The reusable implementation is in \texttt{src/neuromorphicfl/mlp\_depth\_scaling.py} and the campaign driver in \texttt{experiments/13b\_depth\_scaling.py}.
