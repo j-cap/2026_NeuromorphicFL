@@ -27,5 +27,5 @@ jobs:
           python-version: '3.11'
       - name: Install pinned dependencies
         run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5
-      - name: Run deterministic multiclass campaign
-        run: PYTHONPATH=src python experiments/14b_deterministic_campaign.py
+      - name: Reproduce selected multiclass event point
+        run: PYTHONPATH=src python experiments/14b_layer_diagnostic.py
