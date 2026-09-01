@@ -1,0 +1,33 @@
+name: Experiment 15A CNN Schedule Refinement
+
+on:
+  push:
+    paths:
+      - 'experiments/15a_cnn_schedule_refinement.py'
+      - '.github/workflows/exp15a_cnn_schedule_refinement.yml'
+  workflow_dispatch:
+
+jobs:
+  exp15a-schedule:
+    runs-on: ubuntu-24.04
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5
+      - name: Run Experiment 15A schedule refinement
+        run: PYTHONPATH=src python experiments/15a_cnn_schedule_refinement.py
+      - name: Upload Experiment 15A schedule refinement
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp15a-schedule-refinement
+          path: experiments/results/15a_fmnist_cnn/
