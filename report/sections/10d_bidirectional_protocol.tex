@@ -1,0 +1,107 @@
+\section{Consolidation Question Q2: End-to-End Bidirectional FL Protocol}
+\label{sec:consolidation-q2}
+
+The strongest communication results in Part~I are primarily uplink results. A complete communication-efficient FL algorithm must also specify how clients receive the evolving global model. This section defines the protocol question that must be closed before making an end-to-end communication claim.
+
+\subsection{Sparse server evolution and event-log synchronization}
+
+The server model changes only through sparse coordinate events,
+\begin{equation}
+    w_j^+=w_j+q_r s,
+    \qquad s\in\{-1,+1\}.
+\end{equation}
+If the resolution schedule $q_r$ is globally known, a server event can be represented by
+\begin{equation}
+    e_\ell=(\ell,r,j,s),
+\end{equation}
+where $\ell$ is a monotonically increasing server-event sequence number. A client that stores a synchronized copy of the global model can reconstruct subsequent server states by replaying these events in order.
+
+Client $i$ therefore stores its last received server-event index $\ell_i^{\mathrm{last}}$. When it becomes active, it requests or receives
+\begin{equation}
+    e_{\ell_i^{\mathrm{last}}+1},\ldots,e_{\ell_{\mathrm{server}}}
+\end{equation}
+and applies each corresponding signed jump locally. In exact arithmetic and with identical event ordering,
+\begin{equation}
+    w_i=w_{\mathrm{server}}
+\end{equation}
+after replay.
+
+\subsection{Checkpoint fallback for long-offline clients}
+
+Event replay is not always cheaper than sending a dense model. Let $B_e$ denote the encoded cost of one downlink event and let $M_i$ be the number of server events missed by client $i$. Replay costs approximately
+\begin{equation}
+    B_{\mathrm{replay},i}=M_iB_e,
+\end{equation}
+whereas a float32 dense checkpoint costs
+\begin{equation}
+    B_{\mathrm{checkpoint}}=32d
+\end{equation}
+bits before transport overhead. The protocol should therefore use event replay only when
+\begin{equation}
+    M_iB_e<32d,
+\end{equation}
+and otherwise transmit a dense checkpoint together with the current event index. This gives the hybrid synchronization policy
+\begin{equation}
+\boxed{
+\text{sparse event replay for short absence}
++\text{dense checkpoint for long absence}.
+}
+\end{equation}
+
+\subsection{Communication accounting}
+
+The final evaluation must report
+\begin{equation}
+    B_{\uparrow},\qquad
+    B_{\downarrow},\qquad
+    B_{\mathrm{total}}=B_{\uparrow}+B_{\downarrow}.
+\end{equation}
+Two downlink accounting models should be distinguished:
+\begin{enumerate}
+    \item \textbf{Logical broadcast:} one server event transmitted once and received by all relevant active clients.
+    \item \textbf{Conservative unicast:} the same event cost counted separately for every receiving client.
+\end{enumerate}
+For both models, the report should distinguish ideal logical payload from packetized communication. Packetized accounting should include coordinate address, sign, event or round index when required, packet header, checkpoint metadata, and any acknowledgement/request fields that materially affect the total.
+
+\subsection{Protocol experiment}
+
+The first end-to-end protocol study should use the already-established compact Fashion-MNIST CNN. The minimum methods are
+\begin{enumerate}
+    \item dense FL with dense downlink,
+    \item EF-TopK uplink with dense downlink,
+    \item event uplink with dense downlink,
+    \item event uplink with event-log downlink,
+    \item event uplink with event-log downlink and checkpoint fallback.
+\end{enumerate}
+Client inactivity should be introduced explicitly so that event replay and checkpoint crossover are exercised rather than merely defined on paper. The experiment should include short, moderate, and long absence windows or an equivalent stochastic availability model.
+
+Mandatory metrics are
+\begin{equation}
+\boxed{
+\text{test loss},\quad
+\text{accuracy},\quad
+B_{\uparrow},\quad
+B_{\downarrow},\quad
+B_{\mathrm{total}},\quad
+\norm{w_i-w_s}.
+}
+\end{equation}
+The synchronization error should be measured immediately after client catch-up. Within a fixed deterministic numerical environment, active synchronized clients should reproduce the server state to numerical precision.
+
+\subsection{Decision gates}
+
+A strong end-to-end communication claim requires that the event protocol retain a substantial total-traffic advantage after downlink costs are included. As an initial practical gate, the target is
+\begin{equation}
+    B_{\mathrm{ours,total}}
+    <\frac{1}{2}B_{\mathrm{closest,total}}
+\end{equation}
+at comparable predictive performance. The factor two is not a theoretical requirement, but it ensures that the final systems claim remains meaningful after conservative protocol accounting.
+
+The possible outcomes are
+\begin{description}
+    \item[Strong pass.] Sparse replay plus checkpoints preserves a large total communication advantage and synchronized clients reconstruct the global model reliably.
+    \item[Qualified pass.] Uplink gains remain large, but downlink replay or checkpoint cost materially reduces the total advantage. The paper must report the asymmetric uplink/downlink result rather than a broad communication claim.
+    \item[Fail.] Downlink synchronization eliminates most of the observed savings. The present method should then be framed explicitly as an uplink compressor unless a different synchronization mechanism is developed.
+\end{description}
+
+This protocol study should use the final client-update definition established by the FedAvg compatibility study in Section~\ref{sec:consolidation-q3}; otherwise the systems evaluation would be attached to an algorithm definition that may still change.
