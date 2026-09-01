@@ -1,0 +1,184 @@
+\section{Experiment 13A: Small Nonconvex Neural-Network Communication Gate}
+\label{sec:exp13a}
+
+Experiments~12A--12B established that sparse temporal events and a conservative descent certificate can be made competitive for a nonlinear but convex logistic objective. Experiment~13A is the first genuinely nonconvex scaling gate. Its purpose is deliberately narrower than ``train a neural network with the full Experiment~12B algorithm.'' We separate two questions:
+\begin{enumerate}
+  \item does sparse LIF-style gradient communication survive ordinary backpropagation at all;
+  \item does the strict immediate-descent logic that was useful in the convex experiments remain a sensible design principle after nonconvexity is introduced?
+\end{enumerate}
+The second question is treated as a diagnostic rather than as a theorem claim. No practical global nonconvex certificate is asserted in this experiment.
+
+\subsection{Controlled neural-network benchmark}
+
+The data generator is exactly the binary-classification family used in Experiment~12, so the optimization model changes while the statistical problem remains controlled. Each realization has ten equally weighted clients with asynchronous computation periods
+\begin{equation}
+  T_i\in\{1,1,2,2,5,5,10,10,20,20\}.
+\end{equation}
+Each client has $300$ training and $150$ test samples. The IID, moderate, and strong non-IID regimes retain the same client-specific feature-mean and latent-label-bias construction as Experiment~12. The explicit intercept feature used by logistic regression is removed because the MLP has trainable biases.
+
+The network is
+\begin{equation}
+  19\;\text{inputs}\rightarrow 8\;\tanh\;\text{hidden units}\rightarrow1\;\text{logit},
+\end{equation}
+with parameter vector
+\begin{equation}
+  w=\operatorname{vec}(W_1,b_1,W_2,b_2)\in\mathbb R^{169}.
+\end{equation}
+The regularized objective is
+\begin{equation}
+  F(w)
+  =\frac{1}{N}\sum_{i=1}^{N}\frac{1}{n_i}\sum_{m=1}^{n_i}
+  \left[\log(1+\exp(f_w(x_{im})))-y_{im}f_w(x_{im})\right]
+  +\frac{\lambda}{2}\norm{w}^2,
+\end{equation}
+with $\lambda=0.02$. All distributed methods start from the same random initialization. Local stochastic gradients use mini-batches of size $64$.
+
+A centralized L-BFGS solve from the same initialization is retained only as an offline performance reference. On the eight strong-non-IID realizations its mean train loss, test loss, and test accuracy are approximately
+\begin{equation}
+  0.48472,\qquad 0.49238,\qquad 0.7812.
+\end{equation}
+The small but nonzero gap between this reference and finite-horizon asynchronous full-precision SGD should therefore not be interpreted as a communication effect.
+
+\subsection{Sparse event encoder and communication accounting}
+
+For client $i$, the full backpropagation gradient drives one membrane state per trainable parameter,
+\begin{equation}
+  z_i^{k+1}=\rho z_i^k-\gamma p_iT_i g_i^k,
+\end{equation}
+with $\rho=0.999$ and $\gamma=0.2$. A coordinate fires when
+\begin{equation}
+  \abs{z_{i,j}}\geq\Delta_j.
+\end{equation}
+Unless stated otherwise, Experiment~13A uses the simple shared threshold
+\begin{equation}
+  \Delta_j=0.025.
+\end{equation}
+The transmitted event contains the parameter address and sign. Since $d=169$, one coordinate event therefore costs
+\begin{equation}
+  \lceil\log_2 169\rceil+1=9\ \text{payload bits}.
+\end{equation}
+The server applies
+\begin{equation}
+  w^+=w+q(t)s e_j,
+  \qquad
+  q(t)=q_0\left(1+\frac{t}{500}\right)^{-0.1}.
+\end{equation}
+Two nearby jump settings, $q_0=0.015$ and $q_0=0.020$, are retained because they expose the final-accuracy versus transient-resolution trade-off rather than hiding it behind one tuned number.
+
+For EF-TopK, every selected coordinate costs a $32$-bit value plus the $8$-bit address. Full precision communicates all $169$ float-valued gradient components after every client completion. As in the preceding experiments, the reported payload is uplink logical payload; model downlink/synchronization is outside the present accounting convention.
+
+\subsection{Trigger audit}
+
+The first smoke test shows that the conservative logistic-era scale is too quiet for the MLP. With $(\gamma,\Delta)=(0.1,0.05)$ only about a dozen events are generated in a short run and learning is negligible. Reducing the threshold and increasing the membrane gain to
+\begin{equation}
+  \boxed{(\gamma,\Delta)=(0.2,0.025)}
+\end{equation}
+produces a healthy event stream. This trigger is fixed before the main campaign.
+
+\subsection{Main strong-non-IID campaign}
+
+The primary campaign uses eight independent strong-non-IID realizations, $1200$ wall-clock ticks, and the same stochastic mini-batch seed for all methods. The selected results are
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test loss & Test acc. & Whole-run train loss & Payload bits\\
+\midrule
+Scheduled events, $q_0=0.015$ & 0.49693 & 0.7805 & \textbf{0.51517} & \textbf{151,498}\\
+Scheduled events, $q_0=0.020$ & 0.49841 & 0.7767 & 0.51363 & 152,191\\
+EF-TopK, $k=1$ & 0.51081 & 0.7763 & 0.55065 & 177,600\\
+EF-TopK, $k=4$ & 0.49871 & 0.7793 & 0.53315 & 710,400\\
+EF-TopK, $k=8$ & 0.49651 & 0.7803 & 0.52806 & 1,420,800\\
+EF-TopK, $k=16$ & 0.49588 & 0.7793 & 0.52483 & 2,841,600\\
+Full precision & 0.49527 & 0.7807 & 0.52173 & 24,011,520\\
+Centralized L-BFGS reference & 0.49238 & 0.7812 & -- & --\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The communication result is strong. The $q_0=0.015$ event method uses approximately $78.7\%$ fewer payload bits than EF-TopK $k=4$ while reaching a slightly lower test loss and a clearly lower integrated training loss. Relative to EF-TopK $k=8$, its test loss differs by only about $4.2\times10^{-4}$ while using approximately $89.3\%$ fewer bits. Relative to full precision, the event method uses roughly $158\times$ fewer bits and gives only about $1.7\times10^{-3}$ higher final test loss.
+
+The result should nevertheless not be overstated. The event method does not reach the centralized reference at the finite horizon. The experiment therefore supports a useful performance--communication Pareto point, not lossless compression of dense training.
+
+\subsection{Threshold-normalization audit}
+
+Experiments~10A and~10D made scale normalization essential for heterogeneous quadratic coordinates. It is therefore important not to assume that the same is automatically true for a neural network. We compare three trigger variants at $q_0=0.015$:
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Threshold scheme & Test loss & Whole-run loss & Payload bits & Scale metadata\\
+\midrule
+Raw shared threshold & \textbf{0.49693} & 0.51517 & \textbf{151,498} & 0\\
+Four tensor/layer scales & 0.50013 & \textbf{0.51265} & 268,626 & 1,280\\
+Per-coordinate RMS scales & 0.49916 & 0.52540 & 209,590 & 54,080\\
+\bottomrule
+\end{tabular}
+\end{center}
+The detailed normalizers do not improve the useful operating point. Layer scaling almost doubles the number of transmitted events. Coordinate scaling adds substantial metadata and also worsens final test loss. Consequently, the primary Experiment~13A result uses the raw threshold.
+
+This is not caused by hidden-layer starvation. Under the raw threshold, the event shares for $(W_1,b_1,W_2,b_2)$ are approximately
+\begin{equation}
+  (0.859,\ 0.077,\ 0.034,\ 0.030),
+\end{equation}
+while the corresponding parameter-count shares are approximately
+\begin{equation}
+  (0.899,\ 0.047,\ 0.047,\ 0.006).
+\end{equation}
+Every tensor participates. In fact, the output bias is overrepresented rather than starved. The simple network therefore does not reproduce the scale pathology from the diagonal quadratic benchmark.
+
+\subsection{Heterogeneity robustness}
+
+For the selected raw-threshold event rule, the mean final test-loss excess over the corresponding centralized MLP reference is
+\begin{equation}
+  6.02\times10^{-3},\qquad
+  5.74\times10^{-3},\qquad
+  4.55\times10^{-3}
+\end{equation}
+for IID, moderate, and strong non-IID data, respectively. The payload increases from roughly $75$ kbit in the IID case to $151$ kbit in the strong case because heterogeneous clients generate more event activity, but the method remains on the low-communication end of the Pareto front.
+
+Two additional strong-non-IID generators confirm the main comparison. For data seed $1500$, scheduled events reach test loss $0.48596$ versus $0.48752$ for EF-TopK $k=4$ with roughly one fifth of the communication. For seed $1700$, the methods are nearly tied ($0.46712$ versus $0.46665$), again with the large event-communication advantage. Thus the canonical result is not a single-partition accident.
+
+\subsection{Longer-horizon diagnostic}
+
+A $2400$-tick strong-non-IID run distinguishes slow sparse convergence from a hard event-induced accuracy floor. The selected event method gives
+\begin{equation}
+  J_{\mathrm{test}}=0.49829,
+  \qquad
+  B=0.333\ \text{Mbit},
+\end{equation}
+while EF-TopK $k=4$ gives $0.49810$ at $1.421$ Mbit. Thus the two are essentially tied in final test loss while the event method uses about $4.3\times$ fewer bits. Its whole-run training loss is also lower ($0.50445$ versus $0.51416$). EF-TopK $k=8$ and full precision retain somewhat better final test loss at substantially larger communication.
+
+The nonmonotone test loss between $1200$ and $2400$ ticks also warns against treating longer optimization as guaranteed generalization improvement. The training objective continues to improve even when the held-out loss fluctuates.
+
+\subsection{Why the convex descent certificate should not be copied blindly}
+
+The most important mechanism audit in Experiment~13A is a short exact packet-level descent diagnostic. For each received event packet, the sparse direction is retained, but the server uses the exact full training objective and backtracking to accept only a jump that immediately decreases the aggregate objective. This is intentionally an expensive oracle and is not a proposed algorithm.
+
+On a two-realization, $250$-tick strong-non-IID diagnostic, the ordinary scheduled event rule gives test loss $0.53855$ and whole-run training loss $0.64669$ with about $12.1$ kbit. The strict packet-descent oracle accepts about $92\%$ of candidate event coordinates, guarantees immediate packet-level descent by construction, but gives worse test loss $0.55112$ and whole-run loss $0.65026$ with about $11.0$ kbit.
+
+A separate $600$-tick four-realization audit finds that roughly $40\%$ of event coordinates belong to packets that increase the full training objective immediately. Nevertheless, the unconstrained event optimizer learns successfully. These two observations imply
+\begin{equation}
+  \boxed{\text{immediate monotone descent is not a necessary condition for useful nonconvex event training}.}
+\end{equation}
+This is a genuine conceptual break from Experiments~11A--12B. In a nonconvex stochastic problem, temporarily uphill or noisy updates may be useful, and a hard per-event descent certificate can suppress that behavior. The result does not prove that all forms of descent-aware information are harmful. It shows that the specific convex-style monotonic certificate should not be transferred unchanged.
+
+\subsection{Experiment 13A verdict}
+
+The gates are
+\begin{equation}
+  \boxed{\text{nonconvex sparse-event/backpropagation viability: STRONG PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{performance--communication Pareto relevance vs EF-TopK: PASS}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{layer/per-coordinate trigger normalization required: FAIL}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{strict convex-style immediate-descent transfer: FAIL}},
+\end{equation}
+\begin{equation}
+  \boxed{\text{rigorous useful nonconvex certificate: OPEN}}.
+\end{equation}
+The central positive result is therefore simpler than the Experiment~12 mechanism: temporal LIF evidence and sparse signed parameter events remain effective under ordinary nonconvex backpropagation. The central negative result is equally important: the strongest theoretical mechanism from the convex branch, hard immediate global descent certification, is no longer automatically aligned with good learning dynamics.
+
+The reproducible implementation is in \texttt{src/neuromorphicfl/mlp\_event\_gate.py} and \texttt{experiments/13a\_small\_mlp.py}.
