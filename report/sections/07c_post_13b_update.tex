@@ -1,0 +1,21 @@
+\section{Roadmap Update after Experiment 13B}
+\label{sec:roadmap-post-13b}
+
+Experiment~13B removes the immediate need for another synthetic-network communication mechanism. The raw-threshold LIF rule survives two hidden layers, covers essentially all parameter tensors, scales from 169 to more than 600 parameters, and remains strongly communication-efficient relative to EF-TopK and dense asynchronous SGD. The experiment also shows that the apparent deep-network loss gap must be interpreted carefully: most of the large gap in the regularized test metric was caused by comparing different parameter norms and dimensions. Predictive cross-entropy reveals only a small depth penalty, shared by all optimizers.
+
+Two negative findings should shape the next phase. First, simply inserting Experiment~13A's very small initialization into an extra $\tanh$ layer causes a method-independent vanishing-signal failure. Future neural-network experiments must therefore use standard trainability checks before interpreting communication failures. Second, there is no evidence that layer starvation currently requires layer-wise thresholds, block competition, or microblock event coding. Adding such mechanisms now would increase algorithmic complexity without addressing an observed limitation.
+
+The next scientific gate should therefore move away from increasingly elaborate synthetic MLPs and test whether the event mechanism survives a more realistic data/model setting. A suitable Experiment~14A is a real-image federated classification benchmark with deliberately controlled non-IID client partitions. A small MLP or compact convolutional network should be used first, with full precision and EF-TopK retained as communication references. The primary metrics should be predictive test loss/accuracy versus cumulative bits, event density per layer, parameter coverage, and robustness across label-skew strengths.
+
+Clustering/personalization should remain a later branch unless the real-data experiment exhibits a clear multimodal-client failure. If a single global event-trained model remains competitive under ordinary label skew, adding clustering would solve no demonstrated problem. If instead client groups exhibit incompatible optima or strongly different event-sign/co-firing statistics, a later experiment can ask whether the event stream itself provides a useful low-communication similarity signal for clustered or personalized FL.
+
+The resulting progression is
+\begin{equation}
+ \boxed{
+ 13\mathrm{B}\;\text{depth/dimension PASS}
+ \;\rightarrow\;
+ 14\mathrm{A}\;\text{real-data scaling}
+ \;\rightarrow\;
+ \text{mechanism or clustering only if a concrete failure appears}.
+ }
+\end{equation}
