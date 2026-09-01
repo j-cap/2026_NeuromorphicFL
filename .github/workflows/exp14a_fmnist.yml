@@ -24,5 +24,5 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: python -m pip install --upgrade pip numpy pandas
-      - name: Run robustness refinement
-        run: PYTHONPATH=src python experiments/14a_robustness_refine.py
+      - name: Run baseline tuning audit
+        run: PYTHONPATH=src python experiments/14a_baseline_refine.py
