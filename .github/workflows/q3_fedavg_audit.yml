@@ -1,0 +1,37 @@
+name: Q3 FedAvg Compatibility Audit
+
+on:
+  push:
+    paths:
+      - 'src/neuromorphicfl/fedavg_event_compatibility.py'
+      - 'experiments/q3_fedavg_audit.py'
+      - '.github/workflows/q3_fedavg_audit.yml'
+
+jobs:
+  q3-audit:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        local_steps: [1, 5, 10]
+    env:
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      MKL_NUM_THREADS: 1
+      BLIS_NUM_THREADS: 1
+      NUMEXPR_NUM_THREADS: 1
+      PYTHONHASHSEED: 0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5
+      - name: Run Q3 audit
+        run: PYTHONPATH=src python experiments/q3_fedavg_audit.py --local-steps ${{ matrix.local_steps }}
+      - name: Upload Q3 audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: q3-fedavg-E${{ matrix.local_steps }}
+          path: experiments/results/q3_fedavg_compatibility/audit_E${{ matrix.local_steps }}.csv
