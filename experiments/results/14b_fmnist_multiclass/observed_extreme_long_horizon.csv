@@ -1,0 +1,4 @@
+configuration,test_ce,test_accuracy,worst_class_accuracy,payload_bits,whole_train_objective,class_0_accuracy,class_1_accuracy,class_2_accuracy,class_3_accuracy,class_4_accuracy,class_5_accuracy,class_6_accuracy,class_7_accuracy,class_8_accuracy,class_9_accuracy
+full_0p04,0.602558,0.7872,0.538,3668221440,0.993553,0.538,0.921,0.630,0.855,0.699,0.914,0.664,0.788,0.952,0.911
+ef_2p5_0p08,0.962935,0.6919,0.390,134598600,1.139865,0.390,0.934,0.703,0.698,0.553,0.886,0.421,0.803,0.748,0.783
+events_selected,0.682021,0.7849,0.476,101489600,1.018631,0.690,0.931,0.820,0.837,0.476,0.848,0.569,0.837,0.895,0.946
