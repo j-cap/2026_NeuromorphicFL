@@ -1,0 +1,66 @@
+\section{Final Consolidation Decision Framework}
+\label{sec:final-consolidation-decision}
+
+The consolidation phase ends only when the three core questions have explicit answers. The purpose of this section is to prevent the project from drifting back into open-ended experimentation before those answers are available.
+
+\subsection{Execution order}
+
+The recommended order is
+\begin{equation}
+\boxed{
+\text{freeze V1}
+\rightarrow
+Q1\ \text{novelty/equivalence audit}
+\rightarrow
+Q3\ \text{FedAvg compatibility}
+\rightarrow
+Q2\ \text{bidirectional protocol}
+\rightarrow
+\text{final closest-baseline campaign}.
+}
+\end{equation}
+Q1 comes first because an exact equivalence to an existing method would change the contribution statement. Q3 precedes Q2 because the complete protocol should be engineered around the final definition of the client update source. The last empirical campaign should then use only the final method and its nearest literature competitors.
+
+\subsection{Decision table}
+
+The final report should populate the following table with evidence rather than qualitative impressions:
+\begin{center}
+\begin{tabular}{p{0.38\linewidth}p{0.22\linewidth}p{0.30\linewidth}}
+\toprule
+Question & Outcome & Evidence / consequence\\
+\midrule
+Is the complete stateful event encoder mathematically distinct from the closest known methods? & OPEN & Q1 audit\\
+Does the encoder work with multi-step FedAvg-style local updates? & OPEN & Q3 experiment\\
+Does the total uplink+downlink protocol retain a substantial communication advantage? & OPEN & Q2 protocol study\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+If all three outcomes are positive, the project should stop mechanism discovery and transition to manuscript construction around the frozen algorithm. Further experiments should then be selected only to strengthen reviewer confidence, for example an additional dataset, a larger client count, or a theoretical convergence result. They should no longer be used to redefine the algorithm.
+
+If one question receives only a qualified pass, the paper claim should be narrowed explicitly. For example, a failure of FedAvg compatibility would support an asynchronous FedSGD communication method rather than a generic FL compressor. A failure of bidirectional efficiency would support an uplink-compression claim rather than an end-to-end communication claim. A novelty failure would require repositioning around analysis, interpretation, or empirical characterization.
+
+\subsection{Work deliberately paused during consolidation}
+
+Until Q1--Q3 are resolved, the following directions are paused:
+\begin{itemize}
+    \item adaptive event-resolution control beyond the already validated prescribed schedule,
+    \item larger datasets and larger CNNs,
+    \item clustering and personalization,
+    \item filter/block event representations,
+    \item new descent certificates,
+    \item large fleet/client-count scaling studies.
+\end{itemize}
+These directions remain scientifically interesting, but none is required to answer whether the present evidence already supports a distinct and complete communication-efficient FL algorithm.
+
+\subsection{Transition to a separate manuscript}
+
+The current report remains the single source of truth during consolidation. A separate manuscript LaTeX root should be created only after Q1--Q3 are resolved and the final algorithm definition is frozen. The manuscript can then extract the concise problem--method--analysis--experiment story from this living report without duplicating an evolving research record.
+
+The desired end state of Part~II is therefore a defensible answer to one question:
+\begin{equation}
+\boxed{
+\text{Do the accumulated results support a distinct, complete, communication-efficient federated-learning algorithm?}
+}
+\end{equation}
+The remainder of the project should be organized around answering that question directly.
