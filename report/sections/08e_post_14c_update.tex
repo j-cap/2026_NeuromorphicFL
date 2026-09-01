@@ -1,0 +1,70 @@
+\section{Roadmap Update after Experiment 14C}
+\label{sec:roadmap-post-14c}
+
+Experiment~14C resolves the main ambiguity left by the multiclass Experiment~14B. The weak-class transient is real, but its simplest event-specific explanation is false. Underlearned classes are not starved of output events. In fact, they typically generate more class-associated event traffic. Heterogeneous compute periods materially delay finite-horizon class-wise convergence when total local work is matched, but dense SGD and EF-TopK exhibit the same qualitative sensitivity. The event method adds a distinct systems effect: the nominal $p_iT_i$ compensation does not equalize the nonlinear first-passage traffic after thresholding and reset.
+
+This distinction matters for the roadmap. It would be premature to add client-specific thresholds, class-dependent jump amplitudes, or an explicit fairness controller merely to equalize event counts. Such a method would optimize a quantity that Experiment~14C does not identify as the cause of weak-class performance. It could also destroy the spontaneous communication adaptation that has repeatedly been useful in the project.
+
+\subsection{What remains open from the fairness audit}
+
+Two questions should be retained as secondary research directions.
+
+First, event-rate normalization remains a systems question even if it is not the immediate class-convergence solution. Slow clients can transmit thousands of coordinates per completion because the $T_i$ compensation enters before the nonlinear threshold. If a deployment has per-client bandwidth, energy, or packet-size constraints, one may later seek a period-aware threshold or jump normalization that controls communication fairness while preserving the desired expected optimization contribution. That future experiment should optimize an explicit communication objective rather than being presented as a cure for class starvation.
+
+Second, the hybrid trajectory is unusually sensitive to very small floating-point perturbations near threshold surfaces. A paper-quality benchmark should therefore use a containerized numerical environment and report multiple seeds or hardware-stable aggregate statistics. This is a reproducibility requirement, not a reason to abandon the mechanism.
+
+\subsection{Recommended next gate: compact CNN}
+
+The main optimization mechanism has now survived
+\begin{equation}
+\text{quadratics}
+\rightarrow
+\text{convex logistic regression}
+\rightarrow
+\text{synthetic MLPs}
+\rightarrow
+\text{deep MLPs}
+\rightarrow
+\text{binary Fashion-MNIST}
+\rightarrow
+\text{ten-class Fashion-MNIST}.
+\end{equation}
+Experiment~14C does not expose an event-specific failure severe enough to justify another compensating mechanism before changing architecture. The natural next gate is therefore a compact convolutional network on Fashion-MNIST.
+
+A suitable Experiment~15A should compare the existing event optimizer, EF-TopK, and dense asynchronous SGD on a small architecture such as
+\begin{equation}
+\mathrm{Conv}(1,16,3)
+\rightarrow
+\mathrm{ReLU/tanh}
+\rightarrow
+\mathrm{pool}
+\rightarrow
+\mathrm{Conv}(16,32,3)
+\rightarrow
+\mathrm{pool}
+\rightarrow
+\mathrm{FC}
+\rightarrow10.
+\end{equation}
+The exact activation choice should be audited rather than inherited blindly from the MLP experiments. The first goal is not state-of-the-art Fashion-MNIST accuracy. It is to test whether temporal coordinate events remain effective when parameters are embedded in convolutional filters with strong weight sharing and spatially structured gradients.
+
+Mandatory diagnostics should include event rate and parameter coverage separately for convolution kernels, convolution biases, and dense output tensors. If convolutional kernels show severe imbalance, a filter- or block-event representation becomes scientifically motivated. If the raw coordinate mechanism remains competitive, additional block machinery should again be deferred.
+
+\subsection{Why clustering remains deferred}
+
+Experiments~14B--14C still do not establish incompatible client optima or persistent latent client groups. A single global model can learn the full ten-class task even under severe label skew. The finite-horizon class problem is strongly influenced by asynchronous compute and class difficulty and is also visible in conventional optimizers. Clustering would therefore solve a stronger problem than the evidence currently requires.
+
+A later clustered/personalized experiment should deliberately introduce multimodal tasks or domains, for example incompatible class subsets, client-specific image transformations, device domains, or different label semantics. Only then is it meaningful to ask whether event-sign agreement, firing rates, co-firing statistics, or event timing can serve as a low-communication similarity signal.
+
+The updated main progression is
+\begin{equation}
+\boxed{
+14\mathrm{A}\;\text{binary real-data PASS}
+\rightarrow
+14\mathrm{B}\;\text{multiclass PASS with class-transient limitation}
+\rightarrow
+14\mathrm{C}\;\text{compute/event-fairness mechanism audit}
+\rightarrow
+15\mathrm{A}\;\text{compact CNN architecture gate}.
+}
+\end{equation}
