@@ -1,0 +1,193 @@
+\section{Experiment 14A: Real-Data Federated Fashion-MNIST Scaling}
+\label{sec:exp14a}
+
+Experiment~14A is the first real-data scaling test of the sparse temporal-event optimizer. Experiments~13A--13B established that the mechanism survives nonconvex backpropagation, two hidden layers, and several hundred parameters on a controlled synthetic classification family. The present experiment changes the data source and model scale while deliberately retaining the same asynchronous federation mechanics. The goal is to test whether the communication advantage survives a real image-classification problem rather than to introduce clustering, convolutional architectures, or a new event mechanism.
+
+\subsection{Questions and gates}
+
+The experiment was designed around four pre-specified questions:
+\begin{enumerate}
+    \item Can thresholded temporal accumulation of stochastic backpropagation gradients train a real Fashion-MNIST classifier?
+    \item At comparable predictive performance, does the event method remain communication-efficient relative to error-feedback Top-$K$ and dense asynchronous SGD?
+    \item Does ordinary label-skew non-IID heterogeneity create a new event-specific failure?
+    \item Does the increase from hundreds to tens of thousands of parameters create dead layers or severe parameter-coverage failure?
+\end{enumerate}
+
+The experiment uses Fashion-MNIST~\cite{xiao2017fashionmnist}. The primary binary problem is Pullover (class 2) versus Coat (class 4). Each class contributes all $6000$ official training images, giving $12000$ training samples, and the corresponding official test classes provide $2000$ held-out test images. The harder T-shirt/top (class 0) versus Shirt (class 6) pair is retained as a challenge test. Images are flattened from $28\times 28$ to $784$ inputs and mapped from $[0,255]$ to approximately $[-1,1]$.
+
+\subsection{Federation and non-IID construction}
+
+We retain ten clients with asynchronous completion periods
+\begin{equation}
+T_i\in\{1,1,2,2,5,5,10,10,20,20\},
+\end{equation}
+and uniform objective weights $p_i=0.1$. Every client receives exactly $1200$ training samples, so heterogeneity is changed without changing client data volume. The positive-class fractions are
+\begin{align}
+\text{IID: }&[0.5,\ldots,0.5],\\
+\text{moderate: }&[0.25,0.30,0.35,0.40,0.45,0.55,0.60,0.65,0.70,0.75],\\
+\text{strong: }&[0.05,0.10,0.20,0.30,0.40,0.60,0.70,0.80,0.90,0.95].
+\end{align}
+The construction preserves exact global class balance. Partition seeds change which concrete Fashion-MNIST images are assigned to the clients while retaining these class proportions.
+
+\subsection{Model and communication rules}
+
+The classifier is a two-hidden-layer MLP
+\begin{equation}
+784\rightarrow 32\;\tanh\rightarrow16\;\tanh\rightarrow1,
+\end{equation}
+with
+\begin{equation}
+\boxed{d=25665}
+\end{equation}
+trainable parameters. The output uses binary cross-entropy and the training objective adds an $\ell_2$ penalty with coefficient $10^{-4}$. Mini-batches contain $32$ samples. A trainability audit selected the initialization scale $0.5/\sqrt{n_{\mathrm{in}}}$ and dense step size $\eta=0.02$.
+
+The event mechanism remains
+\begin{equation}
+z_i^{k+1}=\rho z_i^k-\gamma p_iT_i g_i^k,
+\end{equation}
+with full reset of fired coordinates and signed fixed-amplitude jumps
+\begin{equation}
+w_j^+=w_j+q(t)\sign(z_{i,j}),\qquad
+q(t)=q_0\left(1+\frac{t}{500}\right)^{-0.1}.
+\end{equation}
+No descent certificate, dense calibration, clustering, layer normalization, or learned compressor is used in Experiment~14A.
+
+At $d=25665$, one coordinate event requires
+\begin{equation}
+B_{\mathrm{event}}=\lceil\log_2d\rceil+1=16\ \text{bits},
+\end{equation}
+whereas one dense float32 vector requires
+\begin{equation}
+B_{\mathrm{dense}}=32d=821280\ \text{bits}.
+\end{equation}
+EF-TopK communicates coordinate addresses and float32 residual values. The primary comparison includes fractions $K/d\in\{0.1\%,0.25\%,0.5\%,1\%,2.5\%\}$.
+
+\subsection{Audit and operating-point selection}
+
+A short 160-tick audit was used only to establish trainability and a nondegenerate firing regime. The quadratic/13B trigger scale was initially too conservative at $d\approx2.6\times10^4$: only a small fraction of parameters fired and optimization lagged dense SGD. Increasing evidence gain and/or lowering the threshold restored useful event traffic.
+
+A first short-horizon choice $(\gamma,\Delta,q_0)=(0.4,0.0125,0.0025)$ reached approximately $75.8\%$ accuracy after 160 ticks using about $4.44$ Mbit, compared with $75.9\%$ for dense SGD. However, the subsequent 450-tick Pareto sweep showed that this aggressive firing regime was not the best long-horizon operating point. The selected configuration is instead
+\begin{equation}
+\boxed{
+\rho=0.999,\qquad
+\gamma=0.3,\qquad
+\Delta=0.025,\qquad
+q_0=0.0025.
+}
+\end{equation}
+This selection is supported by the training objective: among the tested event configurations it has both the lowest final training objective and the best whole-run training objective. Hence the choice does not rely on selecting by held-out test accuracy.
+
+A matched baseline audit swept dense and EF-TopK step sizes in $\{0.005,0.01,0.02,0.04,0.08\}$. Step $0.02$ gives the lowest final training objective for dense SGD, EF-TopK $0.5\%$, and EF-TopK $2.5\%$ among the tested values. This confirms that the reported event advantage is not caused by carrying an obviously poor baseline step into the real-data experiment.
+
+\subsection{Primary strong-non-IID Pareto result}
+
+Table~\ref{tab:exp14a-pareto} summarizes the most important 450-tick operating points on the strong Pullover-versus-Coat partition.
+
+\begin{table}[t]
+\centering
+\caption{Experiment~14A strong-non-IID Fashion-MNIST comparison. Communication is logical uplink payload.}
+\label{tab:exp14a-pareto}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test BCE & Accuracy & Whole train obj. & Payload bits\\
+\midrule
+Event, low-rate & 0.49502 & 0.7690 & 0.60592 & 2.88 M\\
+Event, $\gamma=.3,\Delta=.025,q_0=.005$ & 0.47783 & 0.7950 & 0.63641 & 2.98 M\\
+\textbf{Event, selected} & \textbf{0.39317} & \textbf{0.8265} & \textbf{0.52815} & \textbf{7.41 M}\\
+EF-TopK $0.25\%$ & 0.58597 & 0.7830 & 0.65929 & 5.01 M\\
+EF-TopK $0.5\%$ & 0.48489 & 0.8090 & 0.62624 & 10.01 M\\
+EF-TopK $2.5\%$ & 0.42059 & 0.8090 & 0.57579 & 50.21 M\\
+Dense SGD & 0.40033 & 0.8265 & 0.53366 & 1366.61 M\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The selected event point strictly improves the tested EF Pareto frontier. Relative to EF-TopK $0.5\%$, it uses approximately $26\%$ fewer payload bits while reducing test BCE from $0.48489$ to $0.39317$ and increasing accuracy from $80.9\%$ to $82.65\%$. Relative to EF-TopK $2.5\%$, the event method uses approximately $6.77\times$ fewer bits while also attaining lower test BCE. Relative to dense SGD, the payload reduction is approximately
+\begin{equation}
+\boxed{184\times}.
+\end{equation}
+On this particular partition the event method also gives a slightly lower test BCE than dense SGD and the same accuracy. This should not be interpreted as a universal superiority claim: the stochastic optimizers and fixed horizon can produce small generalization differences. The robust conclusion is that the event method reaches the same predictive regime at vastly lower communication.
+
+The extremely sparse EF control at $0.1\%$ fails to learn ($49.9\%$ accuracy), while EF $0.25\%$ remains far from the best test BCE. Thus the comparison also shows that conventional Top-$K$ compression has a minimum useful communication density on this problem.
+
+\subsection{Robustness across strong client partitions}
+
+The selected event configuration was frozen and repeated for three independent strong-non-IID client assignments. The mean test BCE is
+\begin{equation}
+0.40105\pm0.01458,
+\end{equation}
+with mean accuracy $82.28\%$ and mean payload $7.58$ Mbit. The corresponding mean test BCE values are $0.49179$ for EF-TopK $0.5\%$, $0.42869$ for EF-TopK $2.5\%$, and $0.40796$ for dense SGD. The event method therefore beats both tested EF points on every strong partition. Against dense SGD it is slightly better on two partitions and slightly worse on one, supporting a ``same predictive regime'' conclusion rather than a claim of consistent dense-SGD superiority.
+
+\subsection{Effect of label heterogeneity}
+
+The selected event rule remains trainable from IID to strong label skew. Its logical payload increases with heterogeneity because heterogeneous local gradients generate more threshold crossings:
+\begin{equation}
+0.736\ \text{Mbit (IID)}
+\rightarrow
+3.91\ \text{Mbit (moderate)}
+\rightarrow
+7.41\ \text{Mbit (strong)}.
+\end{equation}
+The final test BCE values are $0.39014$, $0.40873$, and $0.39317$, respectively. Hence the growing communication demand is visible, but there is no event-specific collapse under stronger label skew. In fact, the event method is most clearly favorable relative to EF-TopK on the moderate and strong partitions. This result does not imply that non-IID data improves the optimizer; it only shows that the mechanism remains viable as client objectives become more different.
+
+\subsection{Harder class-pair challenge}
+
+The selected operating point was transferred without retuning to T-shirt/top versus Shirt, a more visually ambiguous binary task. Across two independent strong-non-IID assignments, the event method obtains test BCE $0.39006$ and $0.39828$ with roughly $7.3$--$7.7$ Mbit. EF-TopK $2.5\%$ obtains $0.40356$ and $0.39620$ with $50.21$ Mbit. Thus one partition favors events and the other is essentially tied/slightly favors EF, while the event method uses about $6.5$--$6.9\times$ less payload. This challenge therefore supports transfer of the communication advantage without claiming universal predictive dominance.
+
+\subsection{Event density and parameter coverage at scale}
+
+The selected strong-partition run transmits $463263$ coordinate events in $1627$ nonempty messages. A nonempty packet therefore contains approximately
+\begin{equation}
+284.7
+\end{equation}
+coordinate events on average, corresponding to only about $1.1\%$ of the $25665$ model parameters. The mean logical packet payload is about $4556$ bits, still roughly two orders of magnitude below a dense $821280$-bit float32 vector.
+
+The fraction of parameters that fire at least once is approximately $65.1\%$. This is lower than in Experiment~13B and is mainly caused by the large first-layer matrix. Tensor-wise activity is
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Tensor & Events/parameter & Never-fired fraction\\
+\midrule
+$W_1$ & 17.49 & 0.355\\
+$b_1$ & 39.16 & 0.156\\
+$W_2$ & 36.25 & 0.072\\
+$b_2$ & 122.56 & 0\\
+$W_3$ & 134.81 & 0\\
+$b_3$ & 573.0 & 0\\
+\bottomrule
+\end{tabular}
+\end{center}
+There is therefore no evidence of a dead upper layer: all later tensors are highly active and every parameter in $b_2,W_3,b_3$ fires. The result instead suggests that high-dimensional event learning naturally leaves a substantial subset of first-layer coordinates silent when the accumulated evidence never reaches threshold. Whether this is beneficial implicit pruning or unused capacity remains an open question.
+
+\subsection{Negative findings and interpretation}
+
+Several negative results are important for the mechanism story.
+\begin{enumerate}
+    \item \textbf{Short-horizon tuning can be misleading.} The aggressive event setting that looked best after 160 ticks is clearly inferior after 450 ticks. Event rate and jump resolution must therefore be evaluated over the relevant optimization horizon.
+    \item \textbf{More events are not automatically better.} The aggressive setting transmits roughly $719000$ events and about $434$ coordinates per nonempty packet yet ends at test BCE $0.48715$. The selected configuration uses fewer events and reaches $0.39317$.
+    \item \textbf{Parameter coverage need not approach one.} Only about $65\%$ of all parameters ever fire in the selected run, yet predictive performance matches dense SGD. This weakens any assumption that successful event training requires uniform coordinate coverage.
+    \item \textbf{Dense SGD is not a universal test-loss ceiling at a finite stochastic horizon.} Small differences in held-out BCE can favor either method across partition seeds. Claims should therefore focus on communication versus comparable predictive performance rather than on isolated wins over dense SGD.
+\end{enumerate}
+
+\subsection{Experiment 14A verdict}
+
+The gates are
+\begin{equation}
+\boxed{\text{real-data sparse-event viability: STRONG PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{communication Pareto vs EF-TopK: STRONG PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{robustness to ordinary label-skew non-IID data: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{harder binary Fashion-MNIST pair: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{complete parameter coverage: NOT REQUIRED / NOT OBSERVED}}.
+\end{equation}
+
+The central result is that the temporal evidence--threshold--signed-event mechanism scales from the controlled 609-parameter networks of Experiment~13B to a $25665$-parameter real-image classifier without adding layer-specific normalization, descent certification, clustering, or a learned compressor. The sparse representation is no longer a handful of isolated coordinate events per packet, but the event packets still update only about one percent of the model on average and remain vastly cheaper than dense communication.
+
+The reproducible implementation is in \texttt{src/neuromorphicfl/fmnist\_event\_benchmark.py} and \texttt{experiments/14a\_fmnist\_binary.py}, with the event, baseline, Pareto, and robustness refinements in the companion Experiment~14A drivers. Observed report-ready results are stored under \texttt{experiments/results/14a\_fmnist\_binary/}.
