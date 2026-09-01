@@ -1,0 +1,67 @@
+\section{Roadmap Update after Experiment 15A}
+\label{sec:roadmap-post-15a}
+
+Experiment~15A changes the status of the project in two ways. First, it removes a major architecture-level concern. Sparse temporal coordinate events remain effective after moving from fully connected networks to a compact convolutional neural network with weight sharing and spatially structured gradients. The convolutional filters are not starved, all parameters participate in the event stream, and a structured filter/block representation is therefore not required by the present evidence.
+
+Second, the long-horizon audit exposes a more precise algorithmic weakness. The evidence accumulator and the applied update quantum should not be assigned the same effective time scale. A persistent membrane with $\rho\approx1$ remains useful for temporal averaging and sparse first-passage communication, but a jump amplitude that is appropriate during coarse early learning can be too large during late-stage refinement. A manually chosen power-law decay fixes the observed CNN failure, but it introduces a horizon- and problem-dependent schedule parameter.
+
+\subsection{Immediate next question: adaptive event resolution}
+
+The natural next experiment is therefore not a larger dataset, clustering, or a new compressor. It is a principled mechanism for choosing the event jump resolution online. Denote the event update by
+\begin{equation}
+w_j^+=w_j+q_j(k)s_j,
+\qquad s_j\in\{-1,+1\}.
+\end{equation}
+Experiment~15A shows that $q_j(k)$ should be treated as an independent design variable rather than a fixed constant attached to the threshold rule.
+
+A useful Experiment~15B should test whether $q_j(k)$ can adapt from information already present in the sparse process, rather than from a hand-selected training horizon. Candidate signals include
+\begin{itemize}
+    \item inter-event time or recent event frequency,
+    \item membrane overshoot at threshold crossing,
+    \item recent sign reversals or local event disagreement,
+    \item a low-rate server-side progress or loss signal,
+    \item periodic coarse calibration of update scale.
+\end{itemize}
+The experiment should begin from the selected CNN configuration and compare any adaptive rule against both the fixed weak decay $p=0.1$ and the successful hand-tuned $p=0.5$ schedule. The central success criterion is not merely a lower final loss. The adaptive rule should remove the need to know the optimization horizon while preserving the communication advantage and avoiding a new dense calibration bottleneck.
+
+The control-theoretic interpretation is a variable-resolution hybrid update: threshold crossing determines \emph{when} sufficient directional evidence exists, while a separate adaptation law determines \emph{how large} the resulting jump should be. This is closer to the project origin than simply adding another optimizer learning-rate schedule, but the comparison to conventional adaptive step-size and quantization methods will require an explicit novelty audit.
+
+\subsection{Why filter/block events remain deferred}
+
+Experiment~15A records nonzero activity for every convolutional parameter and no filter-level starvation. Conv1 exhibits larger filter-to-filter event-rate variation than Conv2, but this variation does not prevent competitive optimization. Therefore a filter event such as
+\begin{equation}
+W_f^+=W_f+q_f S_f
+\end{equation}
+would currently add representation complexity without solving an observed failure. Structured events should be revisited only if a deeper/wider CNN creates a clear block-level bottleneck, or if packet/header accounting makes grouped transmission advantageous even when coordinate-level optimization remains sound.
+
+\subsection{Why clustering and personalization remain deferred}
+
+The Fashion-MNIST experiments still use one globally compatible classification objective. Label skew and heterogeneous compute create difficult transients, but the global model can learn all ten classes. Experiments~14C and 15A therefore do not establish persistent multimodal client optima that would justify clustering or personalization.
+
+A later clustering experiment should intentionally introduce domain or task multimodality, for example client-specific image transformations, sensor domains, incompatible label semantics, or distinct local tasks. At that point the event process itself may become useful as a low-communication similarity signal through sign agreement, firing-rate profiles, co-firing structure, or timing statistics. That is a separate research question and should not be mixed into the current optimizer-scaling sequence prematurely.
+
+\subsection{Updated progression}
+
+The main empirical line is now
+\begin{equation}
+\boxed{
+\begin{aligned}
+&10\mathrm{A}\text{--}10\mathrm{D}:\ \text{vector quadratic mechanism and geometry}\\
+&\rightarrow 11\mathrm{A}\text{--}11\mathrm{C}:\ \text{descent certificates and calibration}\\
+&\rightarrow 12\mathrm{A}\text{--}12\mathrm{B}:\ \text{convex nonlinear objectives}\\
+&\rightarrow 13\mathrm{A}\text{--}13\mathrm{B}:\ \text{nonconvex multilayer networks}\\
+&\rightarrow 14\mathrm{A}\text{--}14\mathrm{C}:\ \text{real-data multiclass federated learning}\\
+&\rightarrow 15\mathrm{A}:\ \text{convolutional architecture PASS}\\
+&\rightarrow 15\mathrm{B}:\ \text{adaptive event-resolution control}.
+\end{aligned}}
+\end{equation}
+
+The practical reference mechanism after Experiment~15A is therefore
+\begin{equation}
+\boxed{
+\text{persistent LIF evidence}
++\text{sparse signed coordinate events}
++\text{strongly annealed event resolution}.
+}
+\end{equation}
+The remaining weakness is that the annealing law is still prescribed manually. Experiment~15B should determine whether that last component can become endogenous to the event process.
