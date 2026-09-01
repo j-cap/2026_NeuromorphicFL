@@ -1,0 +1,30 @@
+name: Experiment 14B Fashion-MNIST Multiclass
+
+on:
+  push:
+    paths:
+      - '.github/workflows/exp14b_fmnist_multiclass.yml'
+      - 'src/neuromorphicfl/fmnist_multiclass_benchmark.py'
+      - 'experiments/14b_fmnist_multiclass.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exp14b:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      OPENBLAS_NUM_THREADS: '2'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy pandas
+      - name: Run multiclass audit
+        run: PYTHONPATH=src python experiments/14b_fmnist_multiclass.py --phase audit
