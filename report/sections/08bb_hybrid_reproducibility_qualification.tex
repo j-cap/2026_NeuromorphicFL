@@ -1,0 +1,18 @@
+\section{Qualification of the Experiment 14B Reproducibility Claim}
+\label{sec:exp14b-repro-qualification}
+
+The deterministic audit in Section~\ref{sec:exp14b-deterministic} successfully established that removing multithreaded BLAS nondeterminism can make repeated event trajectories exactly reproducible within a controlled execution environment. Experiment~14C provides an additional qualification that supersedes the stronger interpretation that the pinned software configuration is automatically bitwise reproducible on arbitrary GitHub Actions runners.
+
+On the Experiment~14C runner, the canonical Experiment~14B implementation and a separately instrumented event implementation produce exactly the same $650$-tick strong-skew trajectory when run with the same data, random seed, hyperparameters, software versions, and single-thread environment. Two instrumented repetitions are also exactly identical. Their common result on that runner is test CE $0.632197$, accuracy $77.69\%$, worst-class accuracy $30.2\%$, and $2{,}166{,}208$ coordinate events.
+
+An earlier standardized single-thread runner produced a different selected trajectory, reported in Section~\ref{sec:exp14b-deterministic} as CE $0.616792$, accuracy $79.34\%$, worst-class accuracy $51.7\%$, and $2{,}170{,}236$ events. Since the high-level software configuration and seeds are nominally identical, the remaining sensitivity is attributed to lower-level numerical differences such as CPU microarchitecture or BLAS floating-point execution details. For coordinates close to the firing surface, an initially negligible arithmetic difference can change the threshold-crossing tick. Reset then creates a discrete state difference that is amplified by subsequent asynchronous updates.
+
+The revised reproducibility statement is therefore
+\begin{equation}
+\boxed{\text{exact repeatability within a fixed numerical environment: established}},
+\end{equation}
+while
+\begin{equation}
+\boxed{\text{hardware-independent bitwise event-trajectory reproducibility: not established}.}
+\end{equation}
+The controlled comparisons within each Experiment~14B/14C campaign remain valid because all methods or scenario contrasts used for a given causal comparison are executed inside one fixed numerical environment. For publication-grade replication, the preferred protocol is a containerized software stack on a fixed CPU/BLAS environment together with multi-seed or multi-environment aggregate statistics, rather than relying on one exact threshold trajectory as a universal reference.
