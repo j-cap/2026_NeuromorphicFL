@@ -1,0 +1,34 @@
+name: Experiment 15A Fashion-MNIST CNN
+
+on:
+  push:
+    paths:
+      - 'src/neuromorphicfl/fmnist_cnn_benchmark.py'
+      - 'experiments/15a_cnn_audit.py'
+      - '.github/workflows/exp15a_cnn.yml'
+  workflow_dispatch:
+
+jobs:
+  exp15a:
+    runs-on: ubuntu-24.04
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5
+      - name: Run Experiment 15A audit
+        run: PYTHONPATH=src python experiments/15a_cnn_audit.py
+      - name: Upload Experiment 15A audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp15a-audit
+          path: experiments/results/15a_fmnist_cnn/
