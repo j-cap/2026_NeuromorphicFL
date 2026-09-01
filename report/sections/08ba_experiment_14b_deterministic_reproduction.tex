@@ -1,0 +1,106 @@
+\section{Experiment 14B Deterministic Reproduction Update}
+\label{sec:exp14b-deterministic}
+
+A late reproducibility audit of Experiment~14B exposed an important numerical property of the thresholded hybrid optimizer. Nominally identical multiclass event runs could diverge slightly when NumPy/BLAS used multiple linear-algebra threads. The floating-point differences were initially tiny, but coordinates close to the threshold could cross at different ticks, after which the reset and asynchronous model trajectory amplified the discrepancy. This is a hybrid-system sensitivity rather than a data-partition change.
+
+The report-ready Experiment~14B campaign is therefore standardized to Python~3.11, NumPy~2.4.6, pandas~3.0.5, single-thread BLAS/OpenMP execution, and \texttt{PYTHONHASHSEED=0}. Under this environment, repeated calls and a second GitHub Actions runner reproduced the selected strong-skew event point exactly. The numerical values in this section \emph{supersede} preliminary multithreaded Experiment~14B values quoted earlier in Section~\ref{sec:exp14b}. The qualitative conclusions of that section are unchanged, while several quantitative comparisons become stronger.
+
+\subsection{Corrected 650-tick strong-skew result}
+
+The deterministic selected event point remains
+\begin{equation}
+\rho=0.999,\qquad \gamma=1.0,\qquad \Delta=0.025,\qquad q_0=0.0035.
+\end{equation}
+It gives
+\begin{equation}
+\boxed{
+\mathrm{CE}=0.61679,\qquad
+A=79.34\%,\qquad
+A_{\min}=51.7\%,\qquad
+B=34.72\ \mathrm{Mbit}.
+}
+\end{equation}
+The corresponding deterministic baseline points are
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test CE & Accuracy & Worst class & Payload\\
+\midrule
+EF-TopK $0.5\%$ & 0.74734 & 0.7094 & 0.092 & 14.58 M\\
+EF-TopK $2.5\%$ & 0.68857 & 0.7364 & 0.345 & 72.88 M\\
+Dense SGD & 0.67332 & 0.7497 & 0.355 & 1986.13 M\\
+\textbf{Events} & \textbf{0.61679} & \textbf{0.7934} & \textbf{0.517} & \textbf{34.72 M}\\
+\bottomrule
+\end{tabular}
+\end{center}
+Thus the selected event run uses approximately $57.2\times$ fewer payload bits than dense SGD and $2.10\times$ fewer than EF-TopK $2.5\%$, while outperforming both in cross-entropy, mean accuracy, and worst-class accuracy on this partition.
+
+The event stream contains $2{,}170{,}236$ coordinate events in $2404$ nonempty messages, corresponding to approximately $902.76$ events per message. All model parameters fire at least once. Hence the multiclass problem remains sparse at the packet level, but unlike binary Experiment~14A it no longer leaves a substantial permanently silent parameter subset.
+
+\subsection{Corrected independent-partition summary}
+
+With the selected event hyperparameters frozen over strong-skew partition seeds $2400$, $2500$, and $2600$, the deterministic event results are
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Seed & Test CE & Accuracy & Worst class\\
+\midrule
+2400 & 0.61679 & 0.7934 & 0.517\\
+2500 & 0.74248 & 0.7232 & 0.123\\
+2600 & 0.63630 & 0.7860 & 0.410\\
+\bottomrule
+\end{tabular}
+\end{center}
+Their mean values are
+\begin{equation}
+\mathrm{CE}=0.6652\pm0.0676,\qquad
+A=0.7675\pm0.0386,\qquad
+A_{\min}=0.350\pm0.204.
+\end{equation}
+For EF-TopK $2.5\%$, the corresponding means are CE $0.6750\pm0.0132$, accuracy $0.7410\pm0.0066$, and worst-class accuracy $0.349\pm0.059$. Dense SGD gives CE $0.6779\pm0.0536$, accuracy $0.7458\pm0.0264$, and worst-class accuracy $0.347\pm0.0068$.
+
+The scientific interpretation remains deliberately qualified. The event method has the best mean CE and mean accuracy of these three methods while using much less communication, but its worst-class variance is large. Seed $2500$ still exhibits a severe finite-horizon class transient with only $12.3\%$ worst-class accuracy. Therefore aggregate performance is strong, while uniform class-wise robustness is not established.
+
+\subsection{Corrected heterogeneity transfer results}
+
+With event parameters frozen from the strong-skew operating point, deterministic payload and test behavior are
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Regime & Event test CE & Event accuracy & Event payload\\
+\midrule
+IID & 0.69265 & 0.7396 & 10.39 M\\
+Moderate & 0.63014 & 0.7790 & 25.06 M\\
+Strong & 0.61679 & 0.7934 & 34.72 M\\
+Extreme & 0.88987 & 0.6672 & 56.11 M\\
+\bottomrule
+\end{tabular}
+\end{center}
+The main mechanism observation is unchanged: stronger client disagreement produces more endogenous event traffic. The frozen strong-skew event configuration is not a universal IID optimum. EF-TopK is better on the IID transfer test, while events are especially competitive on moderate and strong skew. Under extreme skew the $650$-tick class-wise transient is severe.
+
+\subsection{Corrected long-horizon results}
+
+At $1200$ ticks on the default strong split, the deterministic event run reaches test CE $0.68261$, accuracy $76.48\%$, worst-class accuracy $41.4\%$, and payload $66.96$ Mbit. EF-TopK $2.5\%$ with step $0.08$ reaches CE $0.59709$, accuracy $78.55\%$, worst-class accuracy $49.3\%$, and payload $134.60$ Mbit. Thus the event method remains approximately $2.01\times$ cheaper, but the best tested EF point is stronger on all three predictive metrics at this horizon. The appropriate conclusion is communication efficiency, not strict long-horizon Pareto dominance.
+
+Under extreme $85\%$ dominant-class skew at $1200$ ticks, deterministic events reach CE $0.71680$, accuracy $76.51\%$, worst-class accuracy $34.4\%$, and payload $102.71$ Mbit. Dense SGD reaches CE $0.60255$, accuracy $78.72\%$, and worst-class accuracy $53.8\%$ at $3.668$ Gbit. EF-TopK $2.5\%$ reaches CE $0.76138$, accuracy $74.13\%$, and worst-class accuracy $38.8\%$ at $134.60$ Mbit. Hence the extreme-skew event transient substantially recovers with time and remains communication-efficient, but dense SGD retains a clear class-wise robustness advantage.
+
+\subsection{Revised 14B verdict}
+
+The deterministic reproduction strengthens confidence in the existence of the multiclass event-learning effect while sharpening its limitation:
+\begin{equation}
+\boxed{\text{ten-class event-learning viability: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{strong-skew communication efficiency: STRONG PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{deterministic reproducibility under standardized execution: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{uniform finite-horizon class-wise robustness: OPEN / FAIL}},
+\end{equation}
+\begin{equation}
+\boxed{\text{uniform Pareto dominance over EF-TopK: NOT ESTABLISHED}}.
+\end{equation}
+
+The main next question is therefore unchanged: Experiment~14C should explain the interaction between label skew, heterogeneous compute periods, threshold/reset dynamics, and effective class-wise update share before introducing a larger architecture or clustering mechanism.
