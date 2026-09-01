@@ -1,7 +1,7 @@
 \section{Final Consolidation Decision Framework}
 \label{sec:final-consolidation-decision}
 
-The consolidation phase was introduced to answer whether the accumulated experimental program already supports a distinct and complete communication-efficient federated-learning method. The three core questions now have explicit answers.
+The consolidation phase was introduced to determine whether the accumulated experimental program already supports a distinct and complete communication-efficient federated-learning method. The three core questions and the final closest-baseline gate now have explicit answers.
 
 \subsection{Completed consolidation sequence}
 
@@ -14,68 +14,86 @@ Q1\ \text{novelty/equivalence}
 \rightarrow
 Q2\ \text{bidirectional protocol}
 \rightarrow
-Q3\ \text{FedAvg compatibility}.
+Q3\ \text{FedAvg compatibility}
+\rightarrow
+\text{matched closest-baseline campaign}.
 }
 \end{equation}
-The next step is no longer another mechanism-discovery experiment. It is a final publication-level closest-baseline campaign using the now-frozen client-update semantics and bidirectional communication accounting.
+The project should therefore no longer return to open-ended mechanism discovery unless later theory or manuscript review exposes a specific unresolved failure mode. The remaining core scientific task is theoretical characterization of the frozen communication operator, followed by manuscript extraction from this living report.
 
-\subsection{Final core decision table}
+\subsection{Final consolidation decision table}
 
 \begin{center}
-\begin{tabular}{p{0.38\linewidth}p{0.22\linewidth}p{0.30\linewidth}}
+\begin{tabular}{p{0.35\linewidth}p{0.20\linewidth}p{0.35\linewidth}}
 \toprule
-Question & Outcome & Evidence / consequence\\
+Question / gate & Outcome & Evidence / consequence\\
 \midrule
 Is the complete stateful event encoder mathematically distinct from the closest known methods? & \textbf{QUALIFIED PASS} & Q1 identifies Strom-style residual pulses as a very close predecessor. V1 is not an exact equivalent. The defensible distinction is the leaky, lossy full-reset pulse encoder with the model quantum decoupled from the trigger threshold.\\
-Does the encoder work with multi-step FedAvg-style local updates? & \textbf{STRONG PASS} & Q3: Event-FedAvg passes at $E=5$ and $E=10$ on the 10-class MLP and transfers to the compact CNN. At $E=5$, the MLP uses 15.71 Mbit versus 45.47 Mbit for EF-TopK 2.5\% and 1239.26 Mbit for dense FedAvg. The CNN uses 6.00 Mbit versus 13.36 and 372.17 Mbit.\\
-Does the total uplink+downlink protocol retain a substantial communication advantage? & \textbf{STRONG PASS} & Q2: V1 hybrid replay/checkpoint traffic is 330.87 Mbit versus 688.71 Mbit for matched EF-TopK sparse synchronization and 4136.02 Mbit for dense bidirectional training. Exact post-catch-up synchronization is observed.\\
+Does the encoder work with multi-step FedAvg-style local updates? & \textbf{STRONG PASS} & Q3: Event-FedAvg passes at $E=5$ and $E=10$ on the ten-class MLP and transfers to the compact CNN without pathological event-state growth.\\
+Does the total uplink+downlink protocol retain a substantial communication advantage? & \textbf{STRONG PASS} & Q2: sparse replay plus checkpoint fallback preserves an end-to-end advantage and exact post-catch-up synchronization. Dense downlink largely masks the uplink gain and is therefore not the final protocol.\\
+Does the result survive a tuned closest-baseline campaign? & \textbf{PASS} & Section~\ref{sec:final-baseline-campaign}: V1 dominates the final MLP comparison and remains on a strong CNN communication--performance frontier. Traffic-matched Strom is worse predictively on both architectures.\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The three answers support a positive, but deliberately qualified, overall conclusion:
+The combined evidence supports the following overall conclusion:
 \begin{equation}
 \boxed{
 \text{The present evidence supports a complete communication-efficient FL algorithm candidate.}
 }
 \end{equation}
-The qualification concerns novelty breadth rather than empirical viability or protocol completeness. The method should not be presented as inventing accumulated gradients, threshold sparsification, sign communication, event-triggered learning, or residual memory. The candidate algorithmic contribution is the specific stateful lossy pulse communication layer identified by Q1, together with its demonstrated FedAvg compatibility and sparse bidirectional synchronization protocol.
+The qualification concerns novelty breadth, not empirical viability, FedAvg compatibility, or protocol completeness. The method should not be presented as inventing accumulated gradients, threshold sparsification, sign communication, event-triggered learning, residual memory, or the generic accumulate--threshold--pulse motif. The candidate contribution is the specific stateful lossy pulse communication layer identified by Q1, together with its demonstrated compatibility with conventional local FedAvg training and its sparse bidirectional synchronization protocol.
 
-\subsection{What Q3 changes in the final method definition}
+\subsection{Final standard FL form}
 
-Q3 removes the largest remaining ambiguity in the client-side input. The standard FL form now uses
+Q3 removes the largest ambiguity in the client-side input. The standard FL form uses the local model delta
 \begin{equation}
     \Delta_i^r=w_{i,E}^r-w^r
 \end{equation}
-and
+and updates the client communication state according to
 \begin{equation}
     z_i^{r+1}
     =\rho z_i^r
     +\frac{p_i}{\eta}\Delta_i^r.
 \end{equation}
-The earlier gradient-driven asynchronous formulation remains a special case and an important analysis tool, but the final method is no longer restricted to FedSGD-like updates.
+A coordinate fires when its evidence magnitude crosses $\Delta$, transmits its coordinate address and sign, is fully reset, and the server applies the independently scheduled quantum $q_r$. The earlier gradient-driven asynchronous formulation remains a supported special case and an important mechanism-analysis setting, but it is no longer the defining FL interface.
 
-The strongest Q3 evidence appears at genuine multi-step local training. At $E=5$ and $E=10$, Event-FedAvg reaches the same predictive regime as dense FedAvg and the strongest tested compressed baselines while using substantially fewer uplink bits. The $E=1$ bridge is weaker, which prevents an unnecessary claim of uniform dominance for every local-work setting, but does not weaken the central FedAvg-compatibility conclusion.
+The final systems interpretation additionally includes the Q2 synchronization layer: the server's ordered sparse update stream can be replayed exactly by clients, with a dense float32 checkpoint used whenever replay becomes more expensive than resynchronization. This makes the communication claim bidirectional rather than uplink-only.
 
-\subsection{Remaining tasks are paper-closing tasks, not algorithm-discovery tasks}
+\subsection{What the final baseline campaign establishes}
 
-The core consolidation questions are now resolved. The remaining work should be selected to make the final claim publication-ready rather than to redefine V1. The highest-priority tasks are:
+The publication-level baseline campaign uses the frozen Event-FedAvg semantics, a matched local optimizer, a development-only compression tuning budget for the comparator families, three independent held-out partitions, and symmetric end-to-end communication accounting.
+
+On the MLP, Event-FedAvg has mean test CE 0.4784 and mean accuracy 83.14\% at 183.5~Mbit conservative bidirectional traffic. Quality-selected EF-TopK requires 1010.5~Mbit, quality-selected Strom 1610.9~Mbit, and dense FedAvg 2487.0~Mbit, while none improves the mean predictive result.
+
+The CNN preserves an important negative qualification. Quality-selected Strom reaches 82.24\% mean accuracy versus 81.34\% for V1, but requires 359.5~Mbit versus 72.8~Mbit. Thus V1 does not uniformly dominate every high-traffic residual-pulse operating point. The traffic-matched control is more directly relevant to the Q1 mechanism distinction: Strom at $\tau=0.02$ uses 82.0~Mbit and reaches 79.88\% on the CNN, while V1 uses 72.8~Mbit and reaches 81.34\%. On the MLP, Strom and V1 are almost exactly traffic matched at 181.0 and 183.5~Mbit, while V1 improves mean accuracy from 79.51\% to 83.14\%.
+
+The correct final empirical claim is therefore a communication--performance claim, not uniform predictive dominance:
+\begin{equation}
+\boxed{
+\text{At comparable communication, V1 provides a stronger predictive operating point than its closest tested residual-pulse sibling.}
+}
+\end{equation}
+A tuned Strom configuration can buy slightly better CNN accuracy only by moving substantially toward the high-traffic side of the frontier.
+
+\subsection{Remaining tasks are theory and manuscript closure}
+
+The core algorithmic and empirical consolidation tasks are now complete. The highest-priority remaining work is:
 \begin{enumerate}
-    \item run the final closest-baseline campaign with the frozen Event-FedAvg semantics, including the Strom-style Q1 predecessor, EF-TopK, sign/error-feedback compression, and dense FedAvg;
-    \item attach Q2-style bidirectional accounting to those final baselines so that all communication claims use the same end-to-end protocol model;
-    \item formulate the strongest theory that is appropriate for the frozen stateful lossy compressor, preferably a convergence or compression-error characterization that does not reintroduce the rejected hard-descent machinery;
-    \item then create the separate manuscript LaTeX root and extract the concise method--analysis--experiment story from this living report.
+    \item derive the strongest appropriate mathematical characterization of the frozen lossy stateful compressor, preferably a convergence, perturbation, or compression-error result that respects full reset and the independent $q_r$ schedule rather than reintroducing the rejected hard-descent machinery;
+    \item use that analysis to identify only genuinely necessary additional reviewer-facing checks, if any, instead of reopening broad mechanism exploration;
+    \item create a separate manuscript LaTeX root and extract the concise problem--method--analysis--experiment story from this living report.
 \end{enumerate}
 
-Further datasets, larger CNNs, adaptive resolution, clustering, personalization, filter/block events, and larger client fleets remain optional paper-strengthening directions. None is required to determine what the algorithm is.
+Further datasets, larger CNNs, adaptive resolution, clustering, personalization, filter/block events, and larger client fleets remain optional strengthening directions. None is currently required to determine what the algorithm is or whether the communication mechanism is empirically viable.
 
 \subsection{Transition criterion}
 
-The research program should therefore transition from mechanism discovery to manuscript construction after the final baseline/theory closure. The report remains the single source of truth until that point.
+The project has now passed the transition criterion from discovery to paper construction. The living report remains the single source of truth while the theory is developed. Once the theoretical statement and assumptions are frozen, a separate manuscript can be created without creating a second evolving research record.
 
 The consolidated answer to the motivating question of Part~II is:
 \begin{center}
 \fbox{\parbox{0.86\linewidth}{
-The accumulated results support a complete communication-efficient federated-learning algorithm candidate based on persistent local evidence, sparse first-passage coordinate pulses, full reset, and an independently controlled model-update quantum. Its novelty claim must remain narrow because closely related residual-pulse compressors already exist, but its FedAvg compatibility and end-to-end communication advantage are strongly supported by the present experiments.
+The accumulated results support a complete communication-efficient federated-learning algorithm candidate based on persistent local evidence, sparse first-passage coordinate pulses, full reset, and an independently controlled model-update quantum. Its novelty claim must remain narrow because closely related residual-pulse compressors already exist. However, FedAvg compatibility, exact sparse bidirectional synchronization, and the communication--performance advantage against tuned and traffic-matched closest baselines are now directly supported by the completed consolidation campaign.
 }}
 \end{center}
