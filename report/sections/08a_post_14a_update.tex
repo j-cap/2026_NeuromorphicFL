@@ -1,0 +1,40 @@
+\section{Roadmap Update after Experiment 14A}
+\label{sec:roadmap-post-14a}
+
+Experiment~14A clears the real-data scaling gate. A two-hidden-layer MLP with $25665$ trainable parameters can be trained on binary Fashion-MNIST through sparse temporal events with predictive performance in the same regime as dense asynchronous SGD and materially better communication--performance trade-offs than the tested EF-TopK baselines. This result is robust across independent strong-non-IID client assignments and transfers to a second, harder binary class pair.
+
+The experiment also removes two immediate motivations for adding algorithmic machinery. First, ordinary label-skew heterogeneity does not cause a clear global-model failure, so clustering is not yet solving an observed problem. Second, upper neural-network layers remain active without layer-specific thresholds, despite incomplete first-layer parameter coverage. Layer normalization, competition, and block-specific event thresholds should therefore remain secondary diagnostics rather than become default components.
+
+The most important new scaling observation is that event packets are no longer single-coordinate messages. At $d=25665$, a useful operating point contains roughly $285$ coordinate events per nonempty packet, or about $1.1\%$ of the model. This is still highly sparse relative to dense communication, but it suggests that the natural scalable object may eventually be an event packet or structured support rather than an isolated neuron. The fact that the more aggressive $434$-events-per-packet regime performs worse also shows that event density itself is an optimization variable, not merely a communication statistic.
+
+\subsection{Recommended next gate: multiclass Fashion-MNIST}
+
+The next experiment should increase task complexity before introducing clustering. A natural Experiment~14B is full ten-class Fashion-MNIST with a softmax MLP, for example
+\begin{equation}
+784\rightarrow64\rightarrow32\rightarrow10,
+\end{equation}
+which roughly doubles the present parameter dimension while replacing the binary objective by multiclass cross-entropy. The same ten-client asynchronous federation and controlled label-skew construction should be retained. The primary question is whether the event mechanism continues to produce a favorable accuracy--communication Pareto when useful gradients must coordinate ten output classes rather than one binary separator.
+
+Experiment~14B should preserve the lessons from 14A:
+\begin{enumerate}
+    \item verify dense trainability before interpreting event failures;
+    \item tune event rate/jump resolution using training metrics, not the held-out test set;
+    \item include a matched EF-TopK step-size and sparsity audit;
+    \item report payload and packetized communication, events per message, and tensor-wise parameter coverage;
+    \item retain several client-partition seeds because finite-horizon stochastic test differences can change sign.
+\end{enumerate}
+
+If multiclass Fashion-MNIST also passes, the next meaningful scaling change would be architectural rather than merely dimensional: a compact convolutional network or another structured feature extractor. Clustering/personalization should become a separate later experiment in which the federation is deliberately made multimodal, for example by assigning client groups incompatible class subsets, label semantics, or domain shifts. Only then is there a concrete question of whether event-sign, event-time, or co-firing statistics can reveal latent client groups at low communication cost.
+
+The updated progression is therefore
+\begin{equation}
+\boxed{
+13\mathrm{B}\;\text{synthetic depth/dimension PASS}
+\rightarrow
+14\mathrm{A}\;\text{binary real-data PASS}
+\rightarrow
+14\mathrm{B}\;\text{ten-class Fashion-MNIST}
+\rightarrow
+\text{structured model or clustering once a specific failure is identified}.
+}
+\end{equation}
