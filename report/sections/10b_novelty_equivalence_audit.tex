@@ -1,0 +1,91 @@
+\section{Consolidation Question Q1: Novelty and Equivalence Audit}
+\label{sec:consolidation-q1}
+
+The first consolidation question is whether the frozen stateful event encoder is mathematically distinct from the closest existing communication-efficient optimization and FL methods. This question is intentionally separated from empirical performance. A method can work well without being algorithmically new, and several components of V1 already have known relatives.
+
+\subsection{Primary question}
+
+The audit asks
+\begin{equation}
+\boxed{
+\text{Does there exist a reparameterization under which the complete V1 recursion and protocol reduce to an existing method?}
+}
+\end{equation}
+The word \emph{complete} is essential. Experiment~9 already established that individual recurrences can map to error-feedback-like or thresholded-memory mechanisms. The novelty question concerns the combined object consisting of persistent coordinate state, first-passage communication, address/sign-only events, reset, and a separately scheduled event quantum.
+
+\subsection{Methods that must be compared in common notation}
+
+At minimum, the final audit should include the following families:
+\begin{enumerate}
+    \item signSGD and stochastic sign compressors,
+    \item classical error-feedback SGD and related EF methods,
+    \item Top-$K$ with error feedback,
+    \item Deep Gradient Compression or equivalent residual-accumulation sparsification,
+    \item memory-decayed error feedback such as CO3,
+    \item accumulated-threshold or quantized-update methods such as TLAQC,
+    \item recent event-triggered federated-learning methods that trigger on model or update changes,
+    \item sigma--delta or integrate-and-fire-inspired gradient/update compression if an exact nearest neighbor exists outside the FL literature.
+\end{enumerate}
+
+For every comparator, the report should rewrite the method using the same six objects:
+\begin{equation}
+\boxed{
+\text{state},\quad
+\text{input},\quad
+\text{trigger},\quad
+\text{message},\quad
+\text{reset/memory update},\quad
+\text{server action}.
+}
+\end{equation}
+This avoids superficial distinctions caused only by terminology.
+
+\subsection{Equivalence matrix}
+
+The audit should populate a table of structural properties rather than relying only on prose. The intended template is
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+Property & V1 & EF & EF-TopK & signSGD & event-triggered FL\\
+\midrule
+Persistent coordinate state &  &  &  &  & \\
+Threshold on accumulated learning evidence &  &  &  &  & \\
+Endogenous coordinate event time &  &  &  &  & \\
+Address/sign-only payload &  &  &  &  & \\
+Full reset after coordinate transmission &  &  &  &  & \\
+Magnitude represented partly by event rate &  &  &  &  & \\
+Independent scheduled update quantum &  &  &  &  & \\
+Asynchronous client compatibility &  &  &  &  & \\
+\bottomrule
+\end{tabular}
+\end{center}
+The final version should replace the broad family columns by the exact nearest methods identified in the literature search.
+
+\subsection{Matched closest-baseline experiment}
+
+Once the analytical nearest neighbors are known, only the closest three or four should be carried into a final empirical comparison. The current planned benchmark set is deliberately small:
+\begin{equation}
+\boxed{
+\text{V1}
+\quad\text{vs.}\quad
+\text{dense}
+\quad\text{vs.}\quad
+\text{EF-TopK}
+\quad\text{vs.}\quad
+\text{sign/EF}
+\quad\text{vs.}\quad
+\text{closest threshold/event method}.
+}
+\end{equation}
+The primary benchmarks should be the already-established ten-class Fashion-MNIST MLP and compact CNN. No new dataset is required to answer Q1. The comparison metric is predictive performance versus communication payload under matched local optimization and matched client participation.
+
+\subsection{Decision gates}
+
+The audit has three possible outcomes.
+\begin{description}
+    \item[Strong pass.] No exact equivalent is found, and the distinction can be stated mathematically rather than only through neuromorphic interpretation. The algorithm-paper claim remains viable.
+    \item[Qualified pass.] The encoder has a close or exact ancestor outside FL, but the complete asynchronous FL protocol, update interpretation, or event-rate representation remains meaningfully distinct. The paper must narrow the novelty claim accordingly.
+    \item[Fail.] The complete V1 recurrence and protocol already exist under another name. The work should then be reframed around analysis, control-theoretic interpretation, empirical characterization, or application rather than presented as a new compressor.
+\end{description}
+
+No ``first'' or ``novel'' statement should be used in the eventual manuscript before this audit is complete.
