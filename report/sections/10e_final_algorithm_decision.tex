@@ -3,46 +3,47 @@
 
 The consolidation phase ends only when the three core questions have explicit answers. The purpose of this section is to prevent the project from drifting back into open-ended experimentation before those answers are available.
 
-\subsection{Execution order}
+\subsection{Execution state}
 
-The recommended order is
+The initially recommended order was Q1 $\rightarrow$ Q3 $\rightarrow$ Q2. After Q1, the protocol question Q2 was deliberately brought forward. This is valid because Q2 operates on the ordered sparse server-update stream and does not depend on whether the encoder input is one stochastic-gradient contribution or a later FedAvg model delta. The actual consolidation sequence is therefore
 \begin{equation}
 \boxed{
 \text{freeze V1}
 \rightarrow
-Q1\ \text{novelty/equivalence audit}
-\rightarrow
-Q3\ \text{FedAvg compatibility}
+Q1\ \text{novelty/equivalence}
 \rightarrow
 Q2\ \text{bidirectional protocol}
+\rightarrow
+Q3\ \text{FedAvg compatibility}
 \rightarrow
 \text{final closest-baseline campaign}.
 }
 \end{equation}
-Q1 comes first because an exact equivalence to an existing method would change the contribution statement. Q3 precedes Q2 because the complete protocol should be engineered around the final definition of the client update source. The last empirical campaign should then use only the final method and its nearest literature competitors.
+Q3 is now the only unresolved core compatibility question. Once it is settled, the final baseline campaign should use the frozen client-update semantics together with the bidirectional accounting established in Q2.
 
-\subsection{Decision table}
+\subsection{Current decision table}
 
-The final report should populate the following table with evidence rather than qualitative impressions:
 \begin{center}
 \begin{tabular}{p{0.38\linewidth}p{0.22\linewidth}p{0.30\linewidth}}
 \toprule
 Question & Outcome & Evidence / consequence\\
 \midrule
-Is the complete stateful event encoder mathematically distinct from the closest known methods? & OPEN & Q1 audit\\
-Does the encoder work with multi-step FedAvg-style local updates? & OPEN & Q3 experiment\\
-Does the total uplink+downlink protocol retain a substantial communication advantage? & OPEN & Q2 protocol study\\
+Is the complete stateful event encoder mathematically distinct from the closest known methods? & \textbf{QUALIFIED PASS} & Q1 identifies Strom-style residual pulses as a very close predecessor. V1 is not an exact equivalent; the defensible distinction is the leaky, lossy full-reset pulse encoder with model quantum decoupled from the trigger threshold.\\
+Does the encoder work with multi-step FedAvg-style local updates? & \textbf{OPEN} & Q3 remains the next core experiment.\\
+Does the total uplink+downlink protocol retain a substantial communication advantage? & \textbf{STRONG PASS} & Q2: V1 hybrid replay/checkpoint traffic is 330.87 Mbit versus 688.71 Mbit for matched EF-TopK sparse synchronization and 4136.02 Mbit for dense bidirectional training. Exact post-catch-up synchronization is observed.\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-If all three outcomes are positive, the project should stop mechanism discovery and transition to manuscript construction around the frozen algorithm. Further experiments should then be selected only to strengthen reviewer confidence, for example an additional dataset, a larger client count, or a theoretical convergence result. They should no longer be used to redefine the algorithm.
+Two conclusions already follow. First, a broad novelty claim based on accumulation, thresholding, sign communication, or event triggering is not defensible; the contribution statement must remain narrow and mathematical. Second, an end-to-end communication claim is defensible only when sparse uplink is paired with sparse server-update replay and checkpoint fallback. Sparse uplink followed by dense model download largely hides the difference between V1 and EF-TopK.
 
-If one question receives only a qualified pass, the paper claim should be narrowed explicitly. For example, a failure of FedAvg compatibility would support an asynchronous FedSGD communication method rather than a generic FL compressor. A failure of bidirectional efficiency would support an uplink-compression claim rather than an end-to-end communication claim. A novelty failure would require repositioning around analysis, interpretation, or empirical characterization.
+If Q3 also passes, the project should stop mechanism discovery and transition to manuscript construction around the frozen algorithm. Further experiments should then be selected only to strengthen reviewer confidence, for example an additional dataset, a larger client count, or a theoretical convergence result. They should no longer be used to redefine the algorithm.
+
+If Q3 fails, the present evidence would still support a complete asynchronous FedSGD-style communication method, but not a generic communication layer for conventional multi-step FL. The final claim would then need to be narrowed accordingly.
 
 \subsection{Work deliberately paused during consolidation}
 
-Until Q1--Q3 are resolved, the following directions are paused:
+Until Q3 and the final baseline comparison are resolved, the following directions remain paused:
 \begin{itemize}
     \item adaptive event-resolution control beyond the already validated prescribed schedule,
     \item larger datasets and larger CNNs,
@@ -63,4 +64,4 @@ The desired end state of Part~II is therefore a defensible answer to one questio
 \text{Do the accumulated results support a distinct, complete, communication-efficient federated-learning algorithm?}
 }
 \end{equation}
-The remainder of the project should be organized around answering that question directly.
+At the present stage, distinctiveness is a qualified pass, protocol completeness is a strong pass, and FedAvg compatibility remains open.
