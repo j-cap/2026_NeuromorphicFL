@@ -24,5 +24,12 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: python -m pip install --upgrade pip numpy pandas
-      - name: Run event refinement
-        run: PYTHONPATH=src python experiments/14a_event_refine.py
+      - name: Run full campaign
+        run: >-
+          PYTHONPATH=src python experiments/14a_fmnist_binary.py
+          --phase full
+          --init-scale 0.5
+          --dense-step 0.02
+          --event-gamma 0.4
+          --event-threshold 0.0125
+          --event-jump 0.0025
