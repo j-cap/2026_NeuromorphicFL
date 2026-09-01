@@ -1,0 +1,7 @@
+architecture,method,final_test_cross_entropy,final_test_accuracy,whole_train_objective,payload_bits
+ deep_8x8,events,0.463332,0.776917,0.525927,419340.375
+ deep_8x8,ef_topk,0.463167,0.776750,0.539335,2486400.0
+ deep_8x8,full,0.462013,0.777667,0.532190,68482560.0
+ deep_16x16,events,0.461318,0.776583,0.528120,695965.9
+ deep_16x16,ef_topk,0.459214,0.778917,0.540105,5967360.0
+ deep_16x16,full,0.459267,0.777583,0.533282,173053440.0
