@@ -1,0 +1,356 @@
+\section{Experiment 14B: Ten-Class Fashion-MNIST and Multiclass Event Learning}
+\label{sec:exp14b}
+
+Experiment~14A established that sparse temporal gradient events can train a $25665$-parameter binary Fashion-MNIST classifier under asynchronous label-skew heterogeneity. Experiment~14B increases the task complexity from one binary separator to the complete ten-class Fashion-MNIST problem~\cite{xiao2017fashionmnist}. The purpose is to test whether the same event mechanism survives multiclass softmax competition and class-dependent client objectives before introducing convolutional architectures, clustering, personalization, or a new communication rule.
+
+A deliberate design choice is to keep the hidden architecture almost unchanged from Experiment~14A. Rather than simultaneously increasing hidden width and the number of classes, we use
+\begin{equation}
+784\rightarrow32\;\tanh\rightarrow16\;\tanh\rightarrow10,
+\end{equation}
+with
+\begin{equation}
+\boxed{d=25818}
+\end{equation}
+trainable parameters. Hence the principal experimental change is the binary-to-multiclass transition rather than another large increase in parameter dimension. This isolates the effect of ten coupled output logits and ten-way label heterogeneity.
+
+\subsection{Questions and scientific gates}
+
+Experiment~14B asks five questions.
+\begin{enumerate}
+    \item Can raw-threshold LIF gradient communication optimize a ten-class softmax network without a class-specific or layer-specific communication mechanism?
+    \item At useful multiclass accuracy, does the event representation remain substantially cheaper than dense float32 communication and competitive with EF-TopK?
+    \item Does stronger label skew produce a permanent multiclass failure, or mainly change the communication demand and convergence transient?
+    \item Are aggregate accuracy and cross-entropy sufficient to characterize success, or does the sparse event process create class-wise convergence failures that are hidden by the mean metric?
+    \item Does coupling a class-dominant client to a particular asynchronous compute period create a new fairness sensitivity despite the existing $p_iT_i$ rate normalization?
+\end{enumerate}
+
+The experiment is explicitly not a clustering test. Every client still participates in one common globally balanced ten-class objective. Clustering is justified only if a genuinely multimodal or incompatible-client failure appears, not merely because individual clients have different label frequencies.
+
+\subsection{Exact multiclass federation}
+
+Fashion-MNIST contains $6000$ training examples for each of ten classes. All $60000$ official training images and all $10000$ official test images are used. Each of the ten clients receives exactly $6000$ training images, and each class contributes exactly $6000$ images globally. This lets label skew vary without changing client sample count or global class balance.
+
+The client completion periods remain
+\begin{equation}
+T=[1,1,2,2,5,5,10,10,20,20],
+\end{equation}
+with objective weights $p_i=0.1$. In the default construction, client $i$ is dominant in Fashion-MNIST class $i$. Four label-skew regimes are defined:
+\begin{itemize}
+    \item \textbf{IID:} $600$ examples of every class per client;
+    \item \textbf{moderate:} $2400$ examples of one dominant class and $400$ of each other class, so the dominant fraction is $40\%$;
+    \item \textbf{strong:} $3300$ dominant-class examples and $300$ of each other class, so the dominant fraction is $55\%$;
+    \item \textbf{extreme:} $5100$ dominant-class examples and $100$ of each other class, so the dominant fraction is $85\%$.
+\end{itemize}
+Each count matrix has row and column sums equal to $6000$. Therefore the global empirical class distribution remains exactly uniform in every regime.
+
+Partition seeds change the concrete images assigned to clients while preserving the count matrix. A separate permutation audit changes which semantic class is dominant on each compute period. This isolates label-skew severity from the accidental pairing between a particular Fashion-MNIST class and a fast or slow client.
+
+\subsection{Multiclass objective and gradient}
+
+For sample $(x,y)$ with $y\in\{0,\ldots,9\}$, the MLP produces logits
+\begin{equation}
+\ell(x;w)\in\mathbb{R}^{10}.
+\end{equation}
+The class probabilities are
+\begin{equation}
+\pi_c(x;w)=
+\frac{\exp(\ell_c(x;w))}
+{\sum_{r=0}^{9}\exp(\ell_r(x;w))},
+\end{equation}
+and the predictive loss is the standard softmax cross-entropy
+\begin{equation}
+\mathcal{L}_{\mathrm{CE}}(w)
+=-\frac{1}{B}\sum_{b=1}^{B}
+\log \pi_{y_b}(x_b;w).
+\end{equation}
+The local stochastic objective includes the same $\ell_2$ regularization as Experiment~14A,
+\begin{equation}
+F_i(w)=\mathcal{L}_{\mathrm{CE},i}(w)+\frac{\lambda}{2}\norm{w}^2,
+\qquad \lambda=10^{-4},
+\end{equation}
+with mini-batch size $B=32$. Hidden layers use $\tanh$ activations. All reported model-selection sweeps use training objective values rather than held-out test accuracy.
+
+In addition to test cross-entropy and overall accuracy, Experiment~14B reports the worst class accuracy
+\begin{equation}
+A_{\min}=\min_{c\in\{0,\ldots,9\}} A_c.
+\end{equation}
+Because the official test set is exactly balanced across classes, macro accuracy equals overall accuracy. The minimum class accuracy is nevertheless essential: the early audits show that a model can exceed $70\%$ mean accuracy while one class is still almost completely unlearned.
+
+\subsection{Communication rules and accounting}
+
+The event rule is unchanged in structure:
+\begin{equation}
+z_i^{k+1}=\rho z_i^k-\gamma p_iT_i g_i^k,
+\end{equation}
+followed by a full reset of coordinates satisfying
+\begin{equation}
+|z_{i,j}^{k+1}|\ge\Delta.
+\end{equation}
+For a fired coordinate,
+\begin{equation}
+w_j^+=w_j+q(t)\sign(z_{i,j}),
+\end{equation}
+with
+\begin{equation}
+q(t)=q_0\left(1+\frac{t}{500}\right)^{-0.1}.
+\end{equation}
+No descent certificate, local personalization, client clustering, class reweighting, layer-wise threshold, or learned compressor is used.
+
+Since $d=25818$,
+\begin{equation}
+B_{\mathrm{event}}
+=\lceil\log_2 25818\rceil+1
+=16\ \text{bits}
+\end{equation}
+are charged for every coordinate event: $15$ address bits and one sign bit. A dense float32 vector requires
+\begin{equation}
+B_{\mathrm{dense}}=32d=826176\ \text{bits}.
+\end{equation}
+EF-TopK sends a float32 residual value and address for every selected coordinate. As before, the $32$-bit illustrative packet header is tracked separately from the logical payload. The comparisons below use logical uplink payload unless stated otherwise.
+
+\subsection{Why the 250-tick audit was not a valid endpoint}
+
+A first 250-tick strong-skew audit verified that all three optimizer families were trainable but also exposed a multiclass validity problem. Dense SGD with the best tested short-audit step reached $69.99\%$ overall accuracy, yet its worst-class accuracy was only $27.8\%$. EF-TopK and the initial event points were more class-starved, with several configurations still near zero worst-class accuracy. The best initial event gain, $\gamma=0.4$, reached $58.73\%$ mean accuracy but still had an unlearned class.
+
+This means that a short multiclass run can give a superficially reasonable average accuracy while hiding a severe class failure. Experiment~14B therefore does not use the 250-tick result as a performance comparison. The horizon was extended and class-wise accuracy became a formal gate.
+
+\subsection{650-tick optimizer and event-scale refinement}
+
+At $650$ ticks, dense and EF-TopK step sizes were refined. Dense SGD with step $0.08$ gives the lowest final training objective among $\{0.02,0.04,0.08\}$ at this horizon. EF-TopK with fractions $0.5\%$ and $2.5\%$ is also best by final training objective at step $0.08$ among the tested $\{0.04,0.08\}$ values.
+
+The first event refinement showed a monotone benefit from increasing evidence gain beyond the binary Experiment~14A value. A focused sweep then used
+\begin{equation}
+\gamma\in\{0.6,0.8,1.0\},
+\qquad
+q_0\in\{0.0035,0.005,0.0075\},
+\qquad
+\Delta=0.025.
+\end{equation}
+The selected configuration is
+\begin{equation}
+\boxed{
+\rho=0.999,\qquad
+\gamma=1.0,\qquad
+\Delta=0.025,\qquad
+q_0=0.0035.
+}
+\end{equation}
+It has the lowest final training objective in this focused event sweep. At the same $\gamma=1$, increasing the jump to $q_0=0.0075$ degrades test cross-entropy to approximately $0.883$ and accuracy to $64.45\%$. Thus the positive result is not obtained by simply maximizing firing rate or event amplitude. Evidence accumulation and jump resolution remain coupled optimization parameters.
+
+\subsection{Primary strong-skew result at 650 ticks}
+
+For the default strong partition with seed $2400$, the selected event model reaches
+\begin{equation}
+\boxed{
+\text{test CE}=0.64007,\quad
+A=78.23\%,\quad
+A_{\min}=35.3\%,\quad
+B=34.75\ \text{Mbit}.
+}
+\end{equation}
+The matched references are summarized in Table~\ref{tab:exp14b-primary}.
+
+\begin{table}[t]
+\centering
+\caption{Experiment~14B at $650$ ticks on the default strong label-skew partition. Baseline steps are selected from the stated training-objective sweeps.}
+\label{tab:exp14b-primary}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test CE & Accuracy & Worst class & Payload\\
+\midrule
+EF-TopK $0.5\%$ & 0.74371 & 0.7219 & 0.198 & 14.58 M\\
+EF-TopK $2.5\%$ & 0.69286 & 0.7246 & \textbf{0.378} & 72.88 M\\
+Dense SGD & 0.67331 & 0.7496 & 0.355 & 1986.13 M\\
+\textbf{Events} & \textbf{0.64007} & \textbf{0.7823} & 0.353 & \textbf{34.75 M}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On this partition, event communication uses about
+\begin{equation}
+57.2\times
+\end{equation}
+fewer bits than dense SGD and about
+\begin{equation}
+2.10\times
+\end{equation}
+fewer bits than EF-TopK $2.5\%$. It also has lower cross-entropy and higher mean accuracy than both references. Its worst-class accuracy is essentially equal to dense SGD and $2.5$ percentage points below EF-TopK $2.5\%$.
+
+This single partition is a strong result, but the independent-partition audit below prevents it from being promoted to a uniform Pareto-dominance claim.
+
+\subsection{Independent strong-partition robustness}
+
+The selected event hyperparameters are frozen and repeated for partition seeds $2400$, $2500$, and $2600$. Table~\ref{tab:exp14b-seeds} reports the observed results.
+
+\begin{table}[t]
+\centering
+\caption{Experiment~14B robustness across independent strong label-skew partitions.}
+\label{tab:exp14b-seeds}
+\begin{tabular}{llrrr}
+\toprule
+Seed & Method & Test CE & Accuracy & Worst class\\
+\midrule
+2400 & Dense & 0.6733 & 0.7496 & 0.355\\
+     & EF $2.5\%$ & 0.6929 & 0.7246 & 0.378\\
+     & Events & \textbf{0.6401} & \textbf{0.7823} & 0.353\\
+\midrule
+2500 & Dense & \textbf{0.7339} & 0.7175 & \textbf{0.343}\\
+     & EF $2.5\%$ & 0.7375 & \textbf{0.7271} & 0.331\\
+     & Events & 0.7915 & 0.6977 & 0.082\\
+\midrule
+2600 & Dense & \textbf{0.6265} & \textbf{0.7706} & 0.345\\
+     & EF $2.5\%$ & 0.6454 & 0.7492 & 0.174\\
+     & Events & 0.6593 & 0.7654 & \textbf{0.361}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The event means over these three partitions are
+\begin{equation}
+\text{CE}=0.6970\pm0.0825,
+\qquad
+A=0.7485\pm0.0448,
+\qquad
+A_{\min}=0.265\pm0.159,
+\end{equation}
+with approximately $34.3$ Mbit mean payload. EF-TopK $2.5\%$ has mean CE $0.6919\pm0.0461$, accuracy $0.7336\pm0.0135$, and worst-class accuracy $0.294\pm0.107$ at $72.88$ Mbit. Dense SGD has mean CE $0.6779\pm0.0538$, accuracy $0.7459\pm0.0267$, and a much more stable worst-class accuracy $0.348\pm0.006$ at $1.986$ Gbit.
+
+This is a central negative result. The event method remains communication-efficient and its mean multiclass performance is competitive, but the worst-class convergence is more variable. Seed $2500$ is an explicit failure at the fixed $650$-tick horizon: overall accuracy is still about $69.8\%$, while the weakest class reaches only $8.2\%$. Therefore
+\begin{equation}
+\boxed{\text{uniform finite-horizon class-wise robustness: NOT ESTABLISHED}.}
+\end{equation}
+Aggregate accuracy alone would hide this failure.
+
+\subsection{Long-horizon strong-skew audit}
+
+A $1200$-tick audit distinguishes persistent class failure from slow convergence. It also reveals that the constant baseline step selected at $650$ ticks is not automatically suitable at the longer horizon. Dense step $0.08$, for example, degrades by $1200$ ticks, whereas steps $0.02$--$0.04$ remain stable. The long-horizon result must therefore be compared against a separate baseline step audit rather than mechanically reusing the short-horizon optimum.
+
+Table~\ref{tab:exp14b-long} summarizes the important long-horizon points on seed $2400$.
+
+\begin{table}[t]
+\centering
+\caption{Experiment~14B strong-skew result at $1200$ ticks.}
+\label{tab:exp14b-long}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test CE & Accuracy & Worst class & Payload\\
+\midrule
+Dense, step $0.02$ & 0.70803 & 0.7462 & 0.491 & 3668.22 M\\
+Dense, step $0.04$ & 0.70197 & 0.7363 & 0.440 & 3668.22 M\\
+EF $0.5\%$, step $0.04$ & 0.68752 & 0.7323 & 0.305 & 26.92 M\\
+EF $2.5\%$, step $0.04$ & 0.62352 & 0.7712 & 0.457 & 134.60 M\\
+EF $2.5\%$, step $0.08$ & \textbf{0.61715} & 0.7685 & \textbf{0.560} & 134.60 M\\
+\textbf{Events} & 0.62883 & \textbf{0.7824} & 0.416 & \textbf{66.99 M}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The event model now uses about $54.8\times$ fewer payload bits than dense communication and approximately $2.01\times$ fewer than EF-TopK $2.5\%$. Its final training objective $0.6201$ is essentially the same as EF-TopK $2.5\%$ at $0.6155$, while its mean test accuracy is $1.39$ percentage points higher. EF-TopK retains a clear worst-class advantage, $56.0\%$ versus $41.6\%$, and a slightly lower test cross-entropy. Hence the long-horizon result is a communication-efficiency pass, but not a strict domination of the complete EF performance vector.
+
+The event per-class accuracies are
+\begin{equation}
+[0.416,0.898,0.795,0.877,0.720,0.835,0.557,0.836,0.941,0.949].
+\end{equation}
+The weakest classes are class~0 (T-shirt/top) and class~6 (Shirt), which are also visually confusable Fashion-MNIST categories. This observation is descriptive rather than a proof that visual ambiguity causes the event transient.
+
+\subsection{Label-skew severity and endogenous communication}
+
+With the selected strong-skew event hyperparameters frozen, logical event payload increases markedly with label skew:
+\begin{equation}
+10.54\ \text{Mbit (IID)}
+\rightarrow
+25.06\ \text{Mbit (moderate)}
+\rightarrow
+34.75\ \text{Mbit (strong)}
+\rightarrow
+55.53\ \text{Mbit (extreme)}.
+\end{equation}
+Thus client disagreement again appears as increased endogenous event traffic rather than as a fixed communication budget.
+
+The predictive comparison is not uniformly favorable to events. Under IID data, EF-TopK $0.5\%$ and $2.5\%$ reach test CE $0.5938$ and $0.5698$, respectively, while the frozen event rule reaches $0.6723$. Under moderate skew, events reach CE $0.6636$ and $76.1\%$ accuracy. Under strong skew, the event point becomes especially competitive. This gives an important qualification:
+\begin{equation}
+\boxed{\text{the event advantage is regime-dependent, not a universal sparse-optimizer dominance}.}
+\end{equation}
+The event parameters were selected on the strong regime, so this sweep is a transfer test rather than an IID retuning campaign.
+
+\subsection{Extreme skew: transient failure versus persistent failure}
+
+At the fixed $650$-tick horizon with $85\%$ dominant clients, the default event run gives $69.61\%$ mean accuracy but only $2.4\%$ worst-class accuracy. A naive interpretation would be that extreme label skew breaks the multiclass event mechanism. Two audits show that this conclusion is too strong.
+
+First, permuting which semantic class is dominant on each compute period changes the $650$-tick event worst-class accuracy from $2.4\%$ in the identity assignment to $36.2\%$ in the reverse assignment and $0\%$ in one mixed assignment. Dense and EF-TopK also show substantial sensitivity under these extreme rotations. The effect therefore involves the interaction of label skew, class difficulty, asynchronous compute periods, and optimizer dynamics rather than a simple event-only failure.
+
+Second, extending the default extreme split to $1200$ ticks gives the results in Table~\ref{tab:exp14b-extreme-long}.
+
+\begin{table}[t]
+\centering
+\caption{Experiment~14B extreme $85\%$ label skew at $1200$ ticks.}
+\label{tab:exp14b-extreme-long}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test CE & Accuracy & Worst class & Payload\\
+\midrule
+Dense, step $0.04$ & \textbf{0.60256} & \textbf{0.7872} & \textbf{0.538} & 3668.22 M\\
+EF $2.5\%$, step $0.08$ & 0.96294 & 0.6919 & 0.390 & 134.60 M\\
+Events & 0.68202 & 0.7849 & 0.476 & \textbf{101.49 M}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The event worst class recovers from $2.4\%$ to $47.6\%$, while overall accuracy rises to $78.49\%$, essentially matching dense accuracy at about $36.1\times$ lower payload. The event model also substantially outperforms the tested EF-TopK $2.5\%$ point in cross-entropy, mean accuracy, and worst-class accuracy while using fewer bits. Thus extreme skew produces a serious finite-horizon class imbalance, but it does not establish a permanent inability to learn the ten-class objective.
+
+\subsection{Packet density and tensor activity}
+
+Multiclass learning requires a denser event stream than the binary Experiment~14A. On the selected strong $650$-tick run, $2171991$ coordinate events are transmitted in $2404$ nonempty messages, or approximately
+\begin{equation}
+903.5
+\end{equation}
+coordinates per packet. This is about $3.50\%$ of the $25818$-parameter model. The representation therefore remains sparse, but the natural scalable communication object is now clearly a sparse event packet rather than an isolated coordinate spike.
+
+The selected configuration reaches essentially complete parameter coverage by $650$ ticks. This contrasts with binary Experiment~14A, where only about $65\%$ of parameters ever fired. The multiclass objective creates enough diverse gradient evidence that nearly every coordinate participates at least once. Tensor-wise firing statistics are reported in the reproducible diagnostic driver and are used to check for output-layer or hidden-layer starvation. No class-specific output threshold is introduced in this experiment.
+
+\subsection{Negative results and what they mean}
+
+The most informative Experiment~14B negative findings are:
+\begin{enumerate}
+    \item \textbf{Average accuracy can hide class collapse.} At short horizons, models with apparently respectable mean accuracy may have near-zero accuracy on at least one class. Worst-class accuracy must therefore remain a primary metric.
+    \item \textbf{The binary event scale does not transfer directly.} Multiclass learning requires substantially larger evidence gain. The selected $\gamma=1.0$ is more than three times the binary 14A value $0.3$.
+    \item \textbf{Larger event jumps can destabilize the multiclass model.} At $\gamma=1.0$, $q_0=0.0075$ performs far worse than $q_0=0.0035$.
+    \item \textbf{Strong-partition robustness is not uniform.} One independent partition has only $8.2\%$ worst-class accuracy at $650$ ticks despite reasonable aggregate performance.
+    \item \textbf{The event rule does not dominate EF-TopK under every regime.} The frozen strong-skew configuration is weaker than EF on IID data.
+    \item \textbf{Extreme-skew class collapse is largely transient, but the transient is important.} The weakest class can be almost absent at $650$ ticks and recover strongly by $1200$ ticks.
+    \item \textbf{The best constant dense step depends on horizon.} A step that is favorable at $650$ ticks can degrade by $1200$ ticks. Baseline fairness therefore requires horizon-specific trainability checks.
+\end{enumerate}
+
+These findings shift the main scaling concern. The question is no longer whether sparse temporal events can train a multiclass real-data network. They can. The open issue is whether the event architecture provides sufficiently predictable \emph{class-wise convergence transients} under the combination of label skew and asynchronous compute.
+
+\subsection{Experiment 14B verdict}
+
+The resulting gates are
+\begin{equation}
+\boxed{\text{ten-class Fashion-MNIST event-learning viability: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{strong-skew communication efficiency: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{long-horizon performance at substantially reduced bits: PASS}},
+\end{equation}
+\begin{equation}
+\boxed{\text{uniform Pareto dominance across regimes and partitions: FAIL / NOT ESTABLISHED}},
+\end{equation}
+\begin{equation}
+\boxed{\text{finite-horizon worst-class robustness: QUALIFIED / OPEN}},
+\end{equation}
+\begin{equation}
+\boxed{\text{permanent failure under extreme label skew: NOT OBSERVED}}.
+\end{equation}
+
+The central empirical result is therefore more nuanced than Experiment~14A:
+\begin{equation}
+\boxed{
+\text{multiclass sparse-event learning scales, but class-wise convergence is more fragile than aggregate convergence.}
+}
+\end{equation}
+The mechanism remains highly communication-efficient on the strong and long-horizon tests, yet a paper-quality argument must explicitly include its partition-sensitive transient behavior rather than report only mean test accuracy.
+
+The reusable implementation is in \texttt{src/neuromorphicfl/fmnist\_multiclass\_benchmark.py}. The Experiment~14B audit, refinement, fairness, final robustness, and layer-diagnostic drivers are in \texttt{experiments/14b\_*.py}. Report-ready observed tables are stored under \texttt{experiments/results/14b\_fmnist\_multiclass/}.
