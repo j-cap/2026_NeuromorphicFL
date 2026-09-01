@@ -1,86 +1,259 @@
 \section{Consolidation Question Q3: Compatibility with FedAvg-Style Local Training}
 \label{sec:consolidation-q3}
 
-The second experimental consolidation task tests whether V1 is a generic communication layer or is fundamentally tied to the asynchronous FedSGD-like setting used in most of Part~I. The decisive change is to replace the one-step stochastic-gradient input by a conventional local model delta generated after several client-side optimization steps.
+Q3 asks whether frozen V1 is a communication layer for federated learning or whether it is tied to the asynchronous FedSGD-like setting used in most of Part~I. The decisive change is to replace the one-step stochastic-gradient signal by a conventional local model delta generated after several client-side SGD steps. This is the compatibility test required before describing the method as a general FL communication mechanism.
 
-\subsection{Synchronous FedAvg starting point}
+\subsection{Event-FedAvg formulation}
 
-The first study should use conventional synchronous FedAvg to isolate the effect of local training from asynchrony. At global round $r$, the server provides the current model $w^r$ to the selected clients. Client $i$ initializes
+The study starts from synchronous full-participation FedAvg~\cite{mcmahan2017fedavg} so that local training is the only new variable. At round $r$, all clients receive the same server model $w^r$. Client $i$ initializes
 \begin{equation}
     w_{i,0}^r=w^r
 \end{equation}
-and performs $E$ local SGD steps,
+and performs $E$ local stochastic-gradient steps,
 \begin{equation}
     w_{i,e+1}^r
     =w_{i,e}^r-\eta\nabla\ell_i(w_{i,e}^r;\xi_{i,e}),
     \qquad e=0,\ldots,E-1.
 \end{equation}
-The conventional local FedAvg update is
+The local FedAvg update is
 \begin{equation}
     \Delta_i^r=w_{i,E}^r-w^r.
+    \label{eq:q3-local-delta}
 \end{equation}
-For Event-FedAvg, the frozen stateful encoder receives
+For Event-FedAvg, the encoder input is exactly this model delta rather than a separately recomputed gradient.
+
+A deterministic scale conversion connects the delta representation to the gradient-evidence interpretation used in Part~I. For equal-size clients with aggregation weight $p_i$,
 \begin{equation}
-    \boxed{u_i^r=\Delta_i^r}
+    \boxed{
+    z_i^{r+1}
+    =\rho z_i^r
+    +\frac{p_i}{\eta}\Delta_i^r.
+    }
+    \label{eq:q3-event-fedavg-state}
 \end{equation}
-rather than a stochastic gradient. The same persistent state, threshold, address/sign event payload, reset rule, and scheduled server jump are then applied.
-
-This formulation directly tests the intended abstraction from Section~\ref{sec:algorithm-consolidation}: the compressor should operate on a local learning update, not on one special optimizer quantity.
-
-\subsection{Local-computation sweep}
-
-The local-work variable should be swept over
+Since
 \begin{equation}
-    E\in\{1,5,10\}
+    \Delta_i^r
+    \approx
+    -\eta\sum_{e=0}^{E-1}g_{i,e}^r,
 \end{equation}
-with an optional $E=20$ stress test if the first three settings are stable. The $E=1$ case connects back to the existing FedSGD-like regime, while larger $E$ values introduce genuine client drift and test whether persistent event memory remains meaningful when successive deltas are generated around different local trajectories.
+Equation~\eqref{eq:q3-event-fedavg-state} approximately accumulates
+\begin{equation}
+    -p_i\sum_{e=0}^{E-1}g_{i,e}^r.
+\end{equation}
+The factor $1/\eta$ is therefore a unit conversion, not an $E$-specific rescue parameter. In particular, the signal is not divided by $E$. Increasing local work is allowed to produce more accumulated evidence.
 
-The primary hypotheses are:
+The communication rule is unchanged. Coordinate $j$ fires when
+\begin{equation}
+    |z_{ij}^{r+1}|\geq\Delta,
+\end{equation}
+transmits its coordinate address and sign,
+\begin{equation}
+    (j,s_{ij}),\qquad s_{ij}=\operatorname{sign}(z_{ij}^{r+1}),
+\end{equation}
+then undergoes full reset,
+\begin{equation}
+    z_{ij}^{r+1}\leftarrow0.
+\end{equation}
+The server applies
+\begin{equation}
+    w_j^+=w_j+q_r s_{ij}.
+\end{equation}
+Thus Q3 changes only the source of the learning signal. The stateful threshold/reset communication operator identified in Q1 remains intact.
+
+\subsection{Experimental design and fair local-optimizer selection}
+
+The primary benchmark is the ten-class Fashion-MNIST MLP from Experiment~14B with architecture
+\begin{equation}
+    784\rightarrow32\rightarrow16\rightarrow10,
+\end{equation}
+and $d=25818$ trainable parameters. The same strong non-IID partition with seed 2400 is used. All ten clients participate in every synchronous round.
+
+The local-work sweep is
+\begin{equation}
+    E\in\{1,5,10\}.
+\end{equation}
+For each $E$, dense FedAvg first audits
+\begin{equation}
+    \eta\in\{0.01,0.02,0.05,0.1\}
+\end{equation}
+using the final training objective. The selected value is
+\begin{equation}
+    \boxed{\eta=0.1}
+\end{equation}
+for all three settings. This value is then frozen for every communication method.
+
+A short communication-side event audit tests only a small neighborhood of the established V1 scale. The selected MLP configuration is
+\begin{equation}
+    \rho=0.999,
+    \qquad
+    \Delta=0.025,
+    \qquad
+    q_r=0.005(1+r/100)^{-0.1}.
+    \label{eq:q3-selected-v1}
+\end{equation}
+It is used without $E$-dependent retuning in the final 150-round comparison.
+
+The matched baselines are
 \begin{enumerate}
-    \item Event-FedAvg remains trainable and communication-efficient for $E>1$.
-    \item Increasing local work does not cause uncontrolled event-packet growth.
-    \item Persistent event state does not accumulate stale sign information so strongly that local model drift destroys convergence.
+    \item dense FedAvg,
+    \item FedAvg with EF-TopK at 0.5\% sparsity,
+    \item FedAvg with EF-TopK at 2.5\% sparsity,
+    \item dense sign compression with one float32 scale and error feedback,
+    \item Event-FedAvg.
 \end{enumerate}
+All methods use the same client initialization, minibatch size, local SGD step, client data, and number of local steps.
 
-\subsection{Baselines and benchmark sequence}
+\subsection{MLP results across local work}
 
-The initial benchmark should be the ten-class Fashion-MNIST MLP because it is already validated, inexpensive, and easy to instrument. The minimum comparator set is
+Table~\ref{tab:q3-mlp-main} reports the 150-round comparison. The $E=1$ case remains useful as a bridge but is not the central FedAvg regime. The multi-step cases $E=5$ and $E=10$ are the decisive compatibility tests.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Q3 synchronous strong-non-IID Fashion-MNIST MLP results after 150 FedAvg rounds. Communication is uplink logical payload.}
+\label{tab:q3-mlp-main}
+\begin{tabular}{crrrrr}
+\toprule
+$E$ & Method & Test CE & Acc. [\%] & Worst [\%] & Payload [Mbit]\\
+\midrule
+1 & Event-FedAvg & 0.7887 & 71.93 & 9.3 & 8.31\\
+1 & Dense FedAvg & \textbf{0.7756} & \textbf{74.84} & \textbf{15.6} & 1239.26\\
+1 & EF-TopK 2.5\% & 0.8456 & 72.56 & 13.1 & 45.47\\
+1 & Sign-EF & 0.9485 & 73.07 & 10.6 & 38.78\\
+\midrule
+5 & \textbf{Event-FedAvg} & \textbf{0.4798} & \textbf{82.90} & \textbf{59.6} & \textbf{15.71}\\
+5 & Dense FedAvg & 0.4972 & 82.32 & 54.4 & 1239.26\\
+5 & EF-TopK 2.5\% & 0.5027 & 81.98 & 58.3 & 45.47\\
+5 & Sign-EF & 0.5277 & 81.40 & 51.1 & 38.78\\
+\midrule
+10 & \textbf{Event-FedAvg} & \textbf{0.4307} & \textbf{84.54} & \textbf{66.4} & \textbf{17.17}\\
+10 & Dense FedAvg & 0.4457 & 84.07 & 59.3 & 1239.26\\
+10 & EF-TopK 2.5\% & 0.4476 & 84.15 & 61.3 & 45.47\\
+10 & Sign-EF & 0.4690 & 82.80 & 57.2 & 38.78\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The minimum Q3 gate is already passed at $E=5$. Event-FedAvg reaches the same predictive regime as dense FedAvg and the strongest tested sparse baseline while using
+\begin{equation}
+    15.71\ \text{Mbit}
+\end{equation}
+versus
+\begin{equation}
+    45.47\ \text{Mbit}
+\end{equation}
+for EF-TopK 2.5\% and
+\begin{equation}
+    1239.26\ \text{Mbit}
+\end{equation}
+for dense FedAvg. The corresponding payload ratios are approximately
+\begin{equation}
+    \frac{45.47}{15.71}=2.90,
+    \qquad
+    \frac{1239.26}{15.71}=78.9.
+\end{equation}
+
+The $E=10$ setting strengthens the result. Event-FedAvg uses 17.17 Mbit, approximately $2.65\times$ less than EF-TopK 2.5\% and $72.2\times$ less than dense FedAvg, while reaching the same or better predictive regime in this run.
+
+The latter statement should not be interpreted as proof that event compression intrinsically improves FedAvg optimization. Event-FedAvg contains an independently scheduled model quantum $q_r$, while dense FedAvg applies the averaged delta directly. The purpose of Q3 is compatibility and communication efficiency, not a claim that compression must improve generalization. A publication-level comparison should retain matched tuning budgets for all final baselines.
+
+\subsection{The $E=1$ bridge is weaker but not contradictory}
+
+At $E=1$, Event-FedAvg reaches 71.93\% accuracy compared with 74.84\% for dense FedAvg after 150 rounds. It nevertheless gives lower test CE than the 2.5\% EF-TopK baseline while using about $5.5\times$ less payload. This is a qualified rather than dominant result.
+
+The pattern is scientifically useful. V1 does not become unstable as local work increases. Instead, its relative performance improves when the encoder is driven by a genuine multi-step local delta. This is consistent with the intended temporal-evidence interpretation: a local FedAvg update already integrates several stochastic learning signals before entering the persistent communication state.
+
+Consequently the supported claim is
 \begin{equation}
 \boxed{
-\text{dense FedAvg},
-\quad
-\text{FedAvg + EF-TopK},
-\quad
-\text{FedAvg + sign/EF},
-\quad
-\text{Event-FedAvg}.
+\text{V1 is compatible with conventional multi-step FedAvg local updates.}
 }
 \end{equation}
-The local optimizer, client sampling, number of local steps, batch size, and learning-rate tuning budget must be matched across communication methods. If the MLP study passes, one selected operating point should be repeated with the compact CNN from Experiment~15A. A new dataset is not required.
+The evidence does not support a stronger statement that one fixed event setting uniformly dominates dense FedAvg for every $E$ and horizon.
 
-\subsection{Mandatory diagnostics}
+\subsection{Local-drift and event-state diagnostics}
 
-Local training introduces failure modes that were largely absent in the one-gradient-completion setting. The experiment should record
-\begin{itemize}
-    \item $\norm{\Delta_i^r}$ and its distribution across clients and rounds,
-    \item coordinate events and nonempty packets per client per round,
-    \item events per transmitted local delta,
-    \item sign reversals of emitted coordinates across rounds,
-    \item residual membrane norm $\norm{z_i^r}$,
-    \item client-level communication imbalance,
-    \item test loss and accuracy versus both rounds and transmitted bits.
-\end{itemize}
-These diagnostics should establish whether failures, if any, are caused by local client drift, update-scale mismatch, or persistent residual state.
+A central Q3 failure hypothesis was that large local deltas would cause uncontrolled event packets or stale sign accumulation. Table~\ref{tab:q3-diagnostics} rejects this mechanism over the tested range.
 
-\subsection{Decision gates}
+\begin{table}[ht]
+\centering
+\small
+\caption{Event-FedAvg diagnostics for the 150-round MLP campaign.}
+\label{tab:q3-diagnostics}
+\begin{tabular}{crrrrr}
+\toprule
+$E$ & Mean $\|\Delta_i^r\|_2$ & Events & Events/msg & Final $\|z\|_2$ & Sign reversals [\%]\\
+\midrule
+1 & 0.176 & 519253 & 346.2 & 6.55 & 0.51\\
+5 & 0.340 & 981865 & 654.6 & 6.29 & 1.23\\
+10 & 0.411 & 1073330 & 715.6 & 6.23 & 2.93\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-A minimum pass requires that Event-FedAvg at $E=5$ reaches essentially the same predictive regime as dense FedAvg while preserving a clear communication advantage over the closest compressed FedAvg baseline. A stronger pass requires that this conclusion also holds for $E=10$ and transfers to one CNN operating point.
+Mean local-delta magnitude more than doubles from $E=1$ to $E=10$, but communication does not explode proportionally. Payload rises from 8.31 to 17.17 Mbit and then begins to saturate. The final membrane norm also does not grow with $E$. Most importantly, sign reversals of repeatedly fired coordinates remain below 3\% even at $E=10$.
 
-The main outcomes are therefore
-\begin{description}
-    \item[Strong pass.] The stateful event encoder works across multiple local-step counts and one additional architecture. V1 can be described as a generic FL communication layer.
-    \item[Qualified pass.] The method works for modest local training but degrades for large $E$. The algorithm remains viable with an explicit local-work regime or requires a scale normalization that must be justified separately.
-    \item[Fail.] The mechanism only works when the input is approximately an instantaneous stochastic gradient. The contribution should then be framed specifically as an asynchronous FedSGD communication mechanism rather than as a generic FL compressor.
-\end{description}
+Thus
+\begin{equation}
+\boxed{
+\text{multi-step client drift does not create a pathological alternating event stream.}
+}
+\end{equation}
+Persistent event memory remains well behaved in this controlled synchronous FedAvg setting.
 
-This question should be resolved before engineering the final bidirectional protocol, because the definition of the client update source determines what the complete FL algorithm actually communicates.
+\subsection{Compact-CNN transfer}
+
+The strong-pass criterion additionally requires one architecture transfer. The compact CNN from Experiment~15A is therefore tested at $E=5$. A method-neutral dense audit over
+\begin{equation}
+    \eta\in\{0.02,0.05,0.08,0.1\}
+\end{equation}
+again selects $\eta=0.1$. The event audit varies only $q_0\in\{0.005,0.0075,0.01\}$ with $\Delta=0.025$, $\rho=0.999$, and exponent $0.3$. The best training-objective setting uses $q_0=0.01$.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Q3 compact-CNN transfer at $E=5$ after 80 FedAvg rounds.}
+\label{tab:q3-cnn}
+\begin{tabular}{lrrrr}
+\toprule
+Method & Test CE & Acc. [\%] & Worst [\%] & Payload [Mbit]\\
+\midrule
+\textbf{Event-FedAvg} & \textbf{0.5148} & \textbf{81.10} & \textbf{52.4} & \textbf{6.00}\\
+Dense FedAvg & 0.6046 & 77.31 & 35.0 & 372.17\\
+EF-TopK 2.5\% & 0.6269 & 76.71 & 27.3 & 13.36\\
+Sign-EF & 0.6686 & 76.32 & 29.7 & 11.66\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The selected Event-FedAvg CNN uses approximately
+\begin{equation}
+    \frac{13.36}{6.00}=2.23
+\end{equation}
+times less uplink payload than EF-TopK 2.5\% and
+\begin{equation}
+    \frac{372.17}{6.00}=62.0
+\end{equation}
+times less than dense FedAvg. The sign-reversal rate is only 2.47\%, and the final membrane norm is 4.77. Therefore the multi-step-delta formulation transfers cleanly from the MLP to convolutional learning.
+
+\subsection{Q3 decision and impact on the frozen method}
+
+The pre-registered minimum gate requires a clear pass at $E=5$. The strong gate requires the conclusion to persist at $E=10$ and transfer to the compact CNN. All three conditions are satisfied.
+
+The Q3 verdict is therefore
+\begin{equation}
+\boxed{\text{Q3 FedAvg compatibility: STRONG PASS}.}
+\end{equation}
+
+The main algorithmic consequence is that the standard FL presentation of V1 should now use a local model delta as the generic client update source:
+\begin{equation}
+\boxed{
+\Delta_i^r=w_{i,E}^r-w^r,
+\qquad
+z_i^{r+1}=\rho z_i^r+\frac{p_i}{\eta}\Delta_i^r.
+}
+\end{equation}
+The earlier stochastic-gradient formulation remains a special case useful for asynchronous analysis, but the communication layer is not restricted to that setting.
+
+This result also makes Q2 structurally compatible with the final method. Q2 operates on the ordered sparse server-update packets after compression, so the same replay/checkpoint protocol can be attached to Event-FedAvg. A final publication-level baseline campaign should combine the Q3 client-update semantics with Q2 bidirectional accounting and include the closest Q1 predecessor. That is a baseline-completeness task rather than an unresolved compatibility question.
