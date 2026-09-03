@@ -2,6 +2,11 @@ name: T3 Event-FedAvg Alignment Audit
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/neuromorphicfl/final_baseline_campaign.py'
+      - 'experiments/t3_alignment_audit.py'
+      - '.github/workflows/t3_alignment_audit.yml'
   push:
     paths:
       - 'src/neuromorphicfl/final_baseline_campaign.py'
