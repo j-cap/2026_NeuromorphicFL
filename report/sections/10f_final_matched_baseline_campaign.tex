@@ -168,6 +168,7 @@ To test the algorithmic distinction from Q1 more directly, the closest sparse ba
 \caption{Traffic-matched held-out comparison. Values are mean $\pm$ standard deviation over the same three partitions.}
 \label{tab:final-baseline-traffic}
 \begin{adjustbox}{max width=\textwidth}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrr}
 \toprule
 Architecture & Method & Test CE & Acc. [\%] & Worst [\%] & Total [Mbit]\\
@@ -186,15 +187,10 @@ CNN & EF-TopK 1\% & 0.6590$\pm$0.0031 & 75.83$\pm$0.26 & 19.4$\pm$1.6 & \textbf{
 
 This control is the most direct empirical support for the Q1 distinction. On the MLP, Strom is almost perfectly traffic matched to V1, with 181.0 versus 183.5~Mbit, but loses 3.63 percentage points of mean accuracy and increases CE from 0.4784 to 0.6035. On the CNN, traffic-matched Strom actually uses about 12.5\% more communication than V1 but remains 1.46 percentage points lower in mean accuracy and has higher CE. EF-TopK can move slightly below V1's CNN traffic at 1\% sparsity, but its predictive degradation is considerably larger.
 
-The quality-selected and traffic-matched Strom results together therefore expose a clear trade-off:
-\begin{equation}
-\boxed{
-\begin{array}{c}
-\text{residual-conserving tied pulses can buy slightly better CNN accuracy}\
-\text{only by moving far toward the high-traffic side of the frontier,}\
-\text{whereas at comparable traffic V1 gives the stronger predictive operating point.}
-\end{array}}
-\end{equation}
+The quality-selected and traffic-matched Strom results together therefore expose a clear trade-off.
+\begin{takeawaybox}[title={Final nearest-neighbor result}]
+Residual-conserving tied pulses can buy slightly better CNN accuracy only by moving far toward the high-traffic side of the frontier. At comparable communication, V1 gives the stronger predictive operating point on both tested architectures.
+\end{takeawaybox}
 This is precisely the empirical behavior expected if decoupling the communication threshold from the applied model quantum is functionally important rather than merely notational.
 
 \subsection{Interpretation and publication-level verdict}
