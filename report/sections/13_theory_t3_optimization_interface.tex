@@ -445,12 +445,17 @@ run.  The reference set is large enough to provide a stable diagnostic but is
 not identified with the exact population objective in
 \eqref{eq:t3-global-objective}.
 
-The instrumentation consumes no random numbers.  A paired smoke test ran the
-same synthetic federation and seed with the audit disabled and enabled; every
-pre-existing scalar output, including objective, accuracy, message count, and
-coordinate-event count, agreed.  The maximum numerical errors in
-\eqref{eq:t3-audit-net-alignment} and in reconstructing $q_rC^r$ were
-$2.70\times10^{-6}$ and $5.90\times10^{-9}$, respectively.
+The instrumentation consumes no random numbers, but the event trigger makes
+the long trajectory sensitive to otherwise irrelevant floating-point work
+inserted between rounds.  The final audit therefore uses independent
+single-round replays.  To audit round $r$, the uninstrumented method is replayed
+from initialization through the pulse decision at round $r$; only then are the
+model and pulse copied and the reference quantities evaluated.  Final
+performance is taken from a separate uninstrumented run.  A paired smoke test
+confirms exact agreement of all pre-existing outputs.  Across the full audit,
+the maximum numerical errors in \eqref{eq:t3-audit-net-alignment} and in
+reconstructing $q_rC^r$ were $5.54\times10^{-6}$ and
+$5.90\times10^{-9}$, respectively.
 
 Define the trajectory-level weighted alignment ratio
 \begin{equation}
@@ -477,10 +482,10 @@ mass.}
 Seed & Test acc. & $\widehat\kappa_R$ & Net $>0$ & Harmful & $\Delta F<0$ & Cancellation\\
 \midrule
 $2500$ & $82.82\%$ & $33.56$ & $96.77\%$ & $31.52\%$ & $77.42\%$ & $15.37\%$\\
-$2600$ & $83.24\%$ & $34.40$ & $100.00\%$ & $30.73\%$ & $74.19\%$ & $15.72\%$\\
+$2600$ & $83.00\%$ & $33.84$ & $93.55\%$ & $30.91\%$ & $74.19\%$ & $15.78\%$\\
 $2700$ & $83.28\%$ & $32.28$ & $100.00\%$ & $32.30\%$ & $74.19\%$ & $15.31\%$\\
 \midrule
-Mean & $83.11\%$ & $33.41$ & $98.92\%$ & $31.52\%$ & $75.27\%$ & $15.47\%$\\
+Mean & $83.03\%$ & $33.23$ & $96.77\%$ & $31.58\%$ & $75.27\%$ & $15.49\%$\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -538,15 +543,15 @@ Table~\ref{tab:t3a-alignment-summary} and
 Figure~\ref{fig:t3a-alignment-audit} support four conclusions.
 \begin{enumerate}
     \item \emph{Finite-horizon aggregate alignment is strong.}  The net mass
-    $D_r-H_r$ is positive on $92$ of $93$ audited updates.  The cross-seed
-    weighted ratio is $33.41\pm1.07$, and only seed $2500$ has a negative
-    audited update, at round $85$.
+    $D_r-H_r$ is positive on $90$ of $93$ audited updates.  The cross-seed
+    weighted ratio is $33.23\pm0.83$; the three negative snapshots occur at
+    seed/round pairs $(2500,85)$, $(2600,115)$, and $(2600,125)$.
     \item \emph{The margin weakens late in training.}  The mean alignment ratio
-    falls from $44.38$ in rounds $1$--$50$ to $25.29$ in rounds $101$--$150$;
-    the harmful share rises from $29.51\%$ to $39.05\%$.  Thus the finite-run
+    falls from $39.88$ in rounds $1$--$50$ to $23.25$ in rounds $101$--$150$;
+    the harmful share rises from $24.13\%$ to $38.97\%$.  Thus the finite-run
     evidence does not support a uniform pathwise lower bound with zero defect.
     \item \emph{Positive first-order alignment is not monotone descent.}  Of
-    the $92$ positive-alignment updates, $22$ still increase the reference
+    the $90$ positive-alignment updates, $20$ still increase the reference
     objective.  In those cases the observed curvature remainder exceeds the
     first-order improvement.  This is precisely the second-order term retained
     in Proposition~\ref{prop:t3-one-step-descent}; the slowly decaying frozen
@@ -554,20 +559,24 @@ Figure~\ref{fig:t3a-alignment-audit} support four conclusions.
     \item \emph{The worst-case event-energy bound is conservative.}  The pooled
     ratio $\sum_r\|C^r\|_2^2/(M\sum_rN_r)$ is $0.0982$, so the bound
     $\|C^r\|_2^2\leq MN_r$ is roughly one order of magnitude above the observed
-    aggregate energy.  Signed client cancellation removes $15.47\%$ of the
+    aggregate energy.  Signed client cancellation removes $15.49\%$ of the
     event-stream $\ell_1$ mass on average.
 \end{enumerate}
 
-As a scale diagnostic, a fixed $\kappa=8$ is violated on only $1$--$2$ of the
-$31$ audited rounds per seed, but the resulting weighted positive-part defect
-still equals $10.6\%$--$13.0\%$ of the corresponding target alignment budget.
+As a scale diagnostic, a fixed $\kappa=8$ is violated on only a small fraction
+of the $31$ audited rounds per seed, but the resulting weighted positive-part
+defect still equals $13.6\%$--$16.0\%$ of the corresponding target alignment
+budget.
 This supports using an explicit nonzero $\beta_r$ in
 \eqref{eq:t3-alignment-assumption}; it does not establish that the defect is
 summable or that the same $\kappa$ transfers to other architectures, data
 partitions, or schedules.
 
-The audit is deliberately limited to three paths, a $5000$-sample reference
-gradient, and every fifth round.  It therefore provides evidence for the
+The audit is deliberately limited to three numerical paths, a
+$5000$-sample reference gradient, and every fifth round.  Independent replay
+removes the diagnostic observer effect up to each audited pulse, but does not
+remove cross-run floating-point branch sensitivity after threshold decisions.
+It therefore provides evidence for the
 finite-horizon interface, not a proof of the conditional expectation or of the
 asymptotic conditions in Corollary~\ref{cor:t3-diminishing-quantum}.
 

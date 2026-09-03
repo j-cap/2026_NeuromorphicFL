@@ -1,0 +1,321 @@
+\section{Theory Task T4: Alignment-Defect Decomposition and Quantum Schedules}
+\label{sec:theory-t4-defect-schedule}
+
+T3 provides a conditional convergence interface and T3a shows that aggregate
+alignment is usually positive on the frozen MLP.  It does not identify which
+part of the client--encoder--server chain produces the exceptional alignment
+defect, nor whether replacing the empirical quantum schedule by an
+asymptotically admissible one improves the finite run.  T4 addresses these two
+questions without changing the frozen baseline claim.
+
+\begin{takeawaybox}[title={T4 result in one sentence}]
+The defect admits an exact client-pulse decomposition, but its adverse
+heterogeneity term is cancelled by comparably large favorable local-update
+terms, making a termwise absolute bound unusably loose; an admissible
+$r^{-0.6}$ quantum does not repair late-stage descent and either reduces
+accuracy or, after horizon matching, reduces worst-class accuracy.
+\end{takeawaybox}
+
+\subsection{Exact client-pulse decomposition}
+
+Let $\mathcal{S}_i^r$ be the coordinates emitted by client $i$ in round $r$,
+and let $s_{ij}^r\in\{-1,+1\}$ denote an emitted sign.  Write
+\begin{equation}
+    g_i^r=\nabla F_i(w^r),
+    \qquad
+    g^r=\sum_{i=1}^Mp_i g_i^r,
+    \qquad
+    v_i^r=\frac{\delta_i^r}{\eta E}.
+    \label{eq:t4-local-proxy}
+\end{equation}
+The proxy $v_i^r$ has the sign of the current model delta and approximates
+$-g_i^r$ when local drift and stochastic-gradient error are small.  Define
+\begin{align}
+    P_r
+    &=\sum_i\sum_{j\in\mathcal{S}_i^r}|v_{ij}^r|,
+    \label{eq:t4-ideal-local-mass}\\
+    R_r
+    &=2\sum_i\sum_{j\in\mathcal{S}_i^r}|v_{ij}^r|
+      \mathbf{1}_{\{s_{ij}^rv_{ij}^r<0\}},
+    \label{eq:t4-memory-penalty}\\
+    L_r
+    &=\sum_i\sum_{j\in\mathcal{S}_i^r}
+      (-g_{ij}^r-v_{ij}^r)s_{ij}^r,
+    \label{eq:t4-drift-term}\\
+    B_r
+    &=\sum_i\sum_{j\in\mathcal{S}_i^r}
+      (g_{ij}^r-g_j^r)s_{ij}^r.
+    \label{eq:t4-heterogeneity-term}
+\end{align}
+Here $P_r$ is the ideal alignment with the current local-update proxy,
+$R_r$ is the penalty from accumulated state emitting against that current
+proxy, $L_r$ combines local-SGD drift and stochastic-gradient mismatch, and
+$B_r$ is the client-to-global heterogeneity term.  The signs of $L_r$ and
+$B_r$ are not fixed.
+
+\begin{proposition}[Exact T4 alignment decomposition]
+\label{prop:t4-exact-decomposition}
+For the aggregate pulse $C^r=\sum_i c_i^r$, the T3 net alignment satisfies
+\begin{equation}
+    A_r^{\mathrm{net}}
+    =-\langle g^r,C^r\rangle
+    =P_r-R_r+L_r+B_r.
+    \label{eq:t4-exact-decomposition}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+On every emitted client-coordinate pair,
+\begin{equation}
+    -g_j^rs_{ij}^r
+    =v_{ij}^rs_{ij}^r
+     +(-g_{ij}^r-v_{ij}^r)s_{ij}^r
+     +(g_{ij}^r-g_j^r)s_{ij}^r.
+\end{equation}
+Moreover,
+$v_{ij}^rs_{ij}^r=|v_{ij}^r|$ when the signs agree and
+$v_{ij}^rs_{ij}^r=-|v_{ij}^r|$ when they disagree.  Summing gives
+\eqref{eq:t4-exact-decomposition}.
+\end{proof}
+
+For a fixed $\kappa>0$, define the coverage deficit
+\begin{equation}
+    Q_r(\kappa)
+    =\left[\kappa\|g^r\|_2^2-P_r\right]_+.
+    \label{eq:t4-coverage-deficit}
+\end{equation}
+It captures the part of the target that cannot be supplied by the emitted
+current-update mass.  The non-emitted proxy mass
+\begin{equation}
+    V_r^{\mathrm{silent}}
+    =\sum_i\sum_{j\notin\mathcal{S}_i^r}|v_{ij}^r|
+\end{equation}
+is reported separately as a deadzone/silence diagnostic.
+
+\begin{corollary}[Nonnegative defect upper bound]
+\label{cor:t4-defect-upper-bound}
+The realized T3 defect obeys
+\begin{equation}
+    \beta_r(\kappa)
+    \leq
+    Q_r(\kappa)+R_r+[-L_r]_++[-B_r]_+.
+    \label{eq:t4-defect-upper-bound}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Insert \eqref{eq:t4-exact-decomposition} into
+\eqref{eq:t3-audit-defect} and use
+$[a+b+c+d]_+\leq[a]_++[b]_++[c]_++[d]_+$, noting that $R_r\geq0$.
+\end{proof}
+
+The bound is deliberately one-sided.  Its components need not be a causal or
+additive attribution of the observed $\beta_r$, because large signed terms in
+\eqref{eq:t4-exact-decomposition} may cancel before the positive part is
+taken.  T4 measures both the exact signed identity and the conservative bound.
+
+\subsection{Schedule experiment and observer-free protocol}
+
+The experiment uses the same strong non-IID MLP, three held-out partition
+seeds, training seeds, and 31 audit rounds as T3a.  Unlike T3a's
+$5000$-example global diagnostic, T4 evaluates every $g_i^r$ on all $6000$
+examples assigned to client $i$.  Consequently, $g^r$ is the exact gradient of
+the empirical federated training objective for that partition.
+
+The trigger is numerically hybrid: one last-bit change near $\vartheta$ can
+change a pulse and then the later trajectory.  In a pilot sequential audit,
+the additional reference-gradient work changed one seed's first pulse count at
+round $40$.  The final protocol therefore audits each target round by an
+independent replay from initialization.  The pulse decision is completed and
+copied before any reference-gradient evaluation.  Final performance is taken
+from a separate uninstrumented run.  This removes the diagnostic observer
+effect up to every audited pulse.
+
+Three quantum schedules are compared:
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Schedule & $q_0$ & $\alpha$ & $\sum_{r=1}^{150}q_r$ & Asymptotic window\\
+\midrule
+Frozen baseline & $0.005000$ & $0.1$ & $0.711509$ & no\\
+Admissible, raw & $0.005000$ & $0.6$ & $0.552320$ & yes\\
+Admissible, matched & $0.006441$ & $0.6$ & $0.711509$ & yes\\
+\bottomrule
+\end{tabular}
+\end{center}
+The raw schedule tests the direct replacement $\alpha=0.1\mapsto0.6$.  The
+matched schedule rescales $q_0$ to preserve the finite-horizon quantum sum, so
+that a change cannot be attributed merely to a $22.4\%$ smaller update budget.
+
+\subsection{T4 results}
+
+\begin{table}[H]
+\centering
+\caption{T4 schedule comparison over three held-out seeds.  Values are
+mean $\pm$ sample standard deviation.  ``Late'' denotes rounds $101$--$150$;
+alignment and descent fractions use the 31 independent audit snapshots.}
+\label{tab:t4-schedule-summary}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Schedule & Test acc. & Worst class & $\widehat\kappa_R$ & Late align. & $\Delta F<0$ & Late $\Delta F<0$ & Events\\
+\midrule
+Baseline
+& $83.01\!\pm\!0.19\%$ & $59.30\!\pm\!3.61\%$
+& $35.42\!\pm\!1.35$ & $27.66\!\pm\!3.07$
+& $75.27\!\pm\!7.45\%$ & $73.33\!\pm\!15.28\%$
+& $0.990\!\pm\!0.011$ M\\
+Admissible, raw
+& $82.40\!\pm\!0.12\%$ & $54.37\!\pm\!2.74\%$
+& $38.19\!\pm\!0.61$ & $27.67\!\pm\!2.72$
+& $79.57\!\pm\!6.72\%$ & $63.33\!\pm\!15.28\%$
+& $1.004\!\pm\!0.013$ M\\
+Admissible, matched
+& $82.94\!\pm\!0.10\%$ & $54.13\!\pm\!0.76\%$
+& $36.24\!\pm\!3.10$ & $29.05\!\pm\!4.43$
+& $68.82\!\pm\!7.45\%$ & $63.33\!\pm\!15.28\%$
+& $0.971\!\pm\!0.019$ M\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.35cm},
+  width=0.46\linewidth,
+  height=0.31\linewidth,
+  xlabel={Round},
+  grid=major,
+  major grid style={black!12},
+  tick label style={font=\small},
+  label style={font=\small},
+  title style={font=\small},
+]
+\nextgroupplot[
+  title={Mean aggregate alignment},
+  ylabel={$A_r^{\mathrm{net}}/\|g^r\|_2^2$},
+  legend entries={baseline,admissible,matched},
+  legend style={font=\scriptsize, draw=none, at={(0.98,0.98)}, anchor=north east},
+]
+\addplot+[mark=*, mark size=1.1pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t4_schedule_baseline.csv};
+\addplot+[mark=square*, mark size=1.0pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t4_schedule_admissible.csv};
+\addplot+[mark=triangle*, mark size=1.1pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t4_schedule_admissible_matched.csv};
+\addplot[black, thin, forget plot] coordinates {(1,0) (150,0)};
+
+\nextgroupplot[
+  title={Late objective increments},
+  ylabel={$F(w^{r+1})-F(w^r)$},
+  xmin=50,
+  ymin=-0.013,
+  ymax=0.013,
+]
+\addplot+[mark=*, mark size=1.1pt] table[x=round,y=objective_change,col sep=comma]
+  {data/t4_schedule_baseline.csv};
+\addplot+[mark=square*, mark size=1.0pt] table[x=round,y=objective_change,col sep=comma]
+  {data/t4_schedule_admissible.csv};
+\addplot+[mark=triangle*, mark size=1.1pt] table[x=round,y=objective_change,col sep=comma]
+  {data/t4_schedule_admissible_matched.csv};
+\addplot[black, thin, forget plot] coordinates {(50,0) (150,0)};
+\end{groupplot}
+\end{tikzpicture}
+\caption{T4 schedule comparison.  Faster decay raises the full-horizon
+alignment statistic but does not improve late alignment or make late objective
+increments reliably negative.}
+\label{fig:t4-schedule-comparison}
+\end{figure}
+
+Table~\ref{tab:t4-schedule-summary} and
+Figure~\ref{fig:t4-schedule-comparison} show that asymptotic admissibility is
+not a finite-horizon remedy by itself.
+\begin{enumerate}
+    \item The raw $\alpha=0.6$ schedule reduces the quantum sum by $22.4\%$.
+    It loses $0.61$ percentage points of mean test accuracy, raises the final
+    train objective by $0.0182$, and does not change the mean late alignment
+    ratio ($27.67$ versus $27.66$).  Its late descent fraction is lower by ten
+    percentage points.
+    \item Matching the quantum sum restores mean test accuracy to within
+    $0.07$ percentage points and reduces events by $1.9\%$, but it still lowers
+    the late descent fraction by ten percentage points.  More importantly, its
+    worst-class accuracy is lower on all three seeds and falls from $59.30\%$
+    to $54.13\%$ on average.
+    \item The small differences in mean test accuracy between the baseline and
+    matched schedules are below the numerical branch variability exposed by
+    the hybrid trigger.  The consistent worst-class loss and the absence of a
+    late-descent gain are the more reliable conclusions.
+\end{enumerate}
+
+\subsection{What produces the measured defect?}
+
+For comparability with T3a, set $\kappa=8$.  The following quantities pool all
+three seeds and normalize the $q_r$-weighted sums by
+$\sum_rq_r\kappa\|g^r\|_2^2$.
+
+\begin{table}[H]
+\centering
+\caption{Exact signed T4 decomposition and conservative defect bound.  Large
+positive and negative entries demonstrate cancellation; the final two rows
+must not be read as additive attribution shares.}
+\label{tab:t4-defect-decomposition}
+\begin{tabular}{lrrr}
+\toprule
+Normalized quantity & Baseline & Admissible, raw & Admissible, matched\\
+\midrule
+Ideal local mass $P_r$ & $39.002$ & $43.058$ & $36.932$\\
+Memory penalty $R_r$ & $0.000$ & $0.000$ & $0.000$\\
+Local drift/noise $L_r$ & $+49.864$ & $+54.506$ & $+46.717$\\
+Heterogeneity $B_r$ & $-84.445$ & $-92.789$ & $-79.132$\\
+Net alignment $A_r^{\mathrm{net}}$ & $4.420$ & $4.775$ & $4.517$\\
+\midrule
+Realized defect $\beta_r(8)$ & $0.126$ & $0.160$ & $0.144$\\
+Upper bound in \eqref{eq:t4-defect-upper-bound} & $84.738$ & $93.190$ & $79.480$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The exact identity holds to a maximum error below $5\times10^{-14}$.  On the
+baseline, every one of the $93$ snapshots has $R_r=0$: whenever a coordinate
+fires, its state sign agrees with the current local model-delta sign.  Likewise,
+$Q_r(8)=0$ on all $93$ snapshots.  Only about $7.58\%$ of the current local
+proxy $\ell_1$ mass lies on emitted coordinates, but that selected mass still
+exceeds $8\|g^r\|_2^2$ in every snapshot.  Thus neither memory-opposition nor
+insufficient emitted proxy mass explains the observed $\kappa=8$ violations in
+this regime.
+
+The adverse signed term is client-to-global heterogeneity.  However, it is
+almost cancelled by the ideal local mass and the positive realized
+drift/noise term.  Dropping this cancellation produces an upper bound roughly
+$670$ times larger than the realized baseline defect ($84.738/0.126$).  A proof
+that bounds heterogeneity, local drift, and useful local alignment separately
+by absolute values will therefore be far too conservative.  The next analysis
+must preserve their covariance or directly control the combined quantity
+$P_r+L_r+B_r$.
+
+\subsection{T4 conclusions and next theorem target}
+
+T4 closes the requested diagnostic step but not the convergence theorem:
+\begin{enumerate}
+    \item the aggregate alignment defect has an exact, verified decomposition
+    into current local-update mass, memory opposition, local drift/noise, and
+    heterogeneity;
+    \item for the frozen strong non-IID MLP, stale-state sign opposition and
+    the $\kappa=8$ coverage deficit are absent at the audited pulses;
+    \item heterogeneity is the dominant adverse signed contribution, but large
+    cancellation makes the nonnegative componentwise bound vacuous;
+    \item placing $\alpha$ in the Robbins--Monro window is mathematically
+    necessary for the T3 asymptotic corollary but does not improve late descent
+    in the tested finite horizon;
+    \item horizon matching avoids the raw schedule's overall-accuracy loss but
+    exposes a consistent worst-class penalty.
+\end{enumerate}
+
+The next theorem target should therefore be a coupled alignment bound rather
+than four independent worst-case bounds.  Empirically, the smallest decisive
+next experiment is a controlled $2\times2$ decomposition over IID versus
+strong non-IID partitions and $E=1$ versus $E=5$.  That experiment can test
+whether $B_r$ responds to data heterogeneity and whether $L_r$ responds to
+local-update depth before a formal covariance assumption is introduced.
