@@ -1,86 +1,29 @@
-\section{Asynchrony--Memory Regime Map}
+\section{Experiment 7: Asynchrony--Memory Mechanism Map}
+\label{sec:exp7}
 
-Experiment~7 was designed to stress-test the encouraging two-client result from Experiment~6. The central hypothesis was deliberately stronger than the previous pointwise observation: if finite LIF memory is useful primarily because it discounts evidence computed at outdated global models, then the optimal memory horizon should depend systematically on the amount of client asynchrony. In particular, one might expect stronger asynchrony to favor shorter memory.
+Experiment~6 showed that a mildly leaky event memory can outperform both dense asynchronous SGD and the no-leak integrate-and-fire variant in a homogeneous two-client problem. The main unresolved question is whether this benefit is actually caused by asynchronous staleness or whether leakage is simply acting as a stochastic evidence filter. Experiment~7 is designed as a falsification map rather than another performance benchmark.
 
-\subsection{Setup and hypothesis}
+\subsection{Asynchrony sweep}
 
-Two clients optimize the same scalar quadratic
+The setup retains the homogeneous quadratic objective and two clients from Experiment~6. The fast client completes one local step per wall-clock unit, while the slow-client completion period is swept over
 \begin{equation}
-  F_1(w)=F_2(w)=\frac12 w^2,
+  R\in\{1,2,5,10,20\}.
 \end{equation}
-with common optimum $w^\star=0$. Statistical heterogeneity is intentionally excluded so that the experiment isolates compute-rate mismatch, stochastic-gradient noise, temporal accumulation, and server-model drift. The fast client evaluates a stochastic gradient every wall-clock tick, while the slow client evaluates once every
-\begin{equation}
-  R\in\{1,2,5,10,20\}
-\end{equation}
-ticks. The memory-retention sweep is
+The LIF memory factor is swept over
 \begin{equation}
   \rho\in\{1,0.999,0.995,0.99,0.98,0.95\}.
 \end{equation}
-The stochastic-gradient model is
+All other parameters remain fixed. For each setting, the final error, tail RMSE, total number of events, and slow-client event count are measured over repeated stochastic runs.
+
+The strongest empirical regularity is that the best tail-RMSE region remains near
 \begin{equation}
-  g_i=w+\epsilon_i,\qquad \epsilon_i\sim\mathcal N(0,0.5^2),
+  \rho\approx0.99
 \end{equation}
-and the event parameters remain
-\begin{equation}
-  \gamma=0.05,\qquad \Delta=0.5,\qquad q=0.05.
-\end{equation}
-The default run uses 4000 wall-clock ticks and 300 Monte Carlo seeds. Common random numbers are used across all $\rho$ values at a fixed $R$, so differences in the regime map are not caused by different noise realizations.
+across the entire compute-rate sweep. Increasing the slow-client period changes the amount of communication and eventually suppresses slow-client firing, but it does not shift the optimum toward progressively stronger leakage. This is already evidence against a pure ``leak compensates stale slow-client evidence'' explanation.
 
-The working hypothesis was
-\begin{equation}
-  \boxed{R\uparrow\quad\Longrightarrow\quad \rho^\star\downarrow,}
-\end{equation}
-where $\rho^\star$ denotes the memory setting that minimizes a suitable optimization-error criterion. Such a trend would support an asynchronous freshness interpretation: as remote updates make stored evidence obsolete more quickly, shorter evidence memory should become preferable.
+For example, under wall-clock leakage the slow client emits almost no events for sufficiently large $R$ once $\rho$ is substantially below one. Yet the same moderate leakage remains favorable even at $R=1$, where there is no compute-rate asymmetry at all. The finite-memory benefit must therefore contain a mechanism that exists independently of asynchronous staleness.
 
-\subsection{Exact harmful-event metric}
-
-The previous pointwise asynchronous experiment used a sign-based diagnostic. Experiment~7 uses the stronger exact criterion. For an event $s\in\{-1,+1\}$ applied at server state $w$, define
-\begin{equation}
-  \Delta F=F(w+qs)-F(w).
-\end{equation}
-An event is classified as harmful iff
-\begin{equation}
-  \Delta F>0.
-\end{equation}
-For the scalar quadratic this also catches fixed-step overshoot near the optimum, where an event may have the nominal descent sign but still increase the objective. This should be used as the default harmful-event definition whenever the objective is explicitly available.
-
-\subsection{Main stochastic regime map}
-
-The stochastic map does show a strong finite-memory optimum, but not the dependence on asynchrony that was hypothesized. The lowest tail RMSE occurs at approximately
-\begin{equation}
-  \boxed{\rho^\star=0.99}
-\end{equation}
-for every tested value of $R$, including the nominally synchronous case $R=1$.
-
-Representative results are
-\begin{center}
-\begin{tabular}{rrrrrr}
-\toprule
-$R$ & best $\rho$ & best tail RMSE & IF tail RMSE & events at best $\rho$ & slow-client events \\
-\midrule
-1  & 0.99 & 0.0198 & 0.0327 & 23.62 & 11.73 \\
-2  & 0.99 & 0.0206 & 0.0327 & 21.42 & 5.39 \\
-5  & 0.99 & 0.0197 & 0.0310 & 21.37 & 1.05 \\
-10 & 0.99 & 0.0191 & 0.0303 & 21.32 & 0.00 \\
-20 & 0.99 & 0.0195 & 0.0296 & 21.23 & 0.00 \\
-\bottomrule
-\end{tabular}
-\end{center}
-Thus, in the noisy scalar problem, $\rho=0.99$ improves tail RMSE by roughly one third to two fifths relative to IF and also reduces communication. However, this result alone cannot be interpreted as improved asynchronous coordination because the same memory value is also optimal at $R=1$.
-
-The exact objective-increasing event fraction decreases strongly with finite memory. For example, at $R=1$ it decreases from approximately $0.274$ for IF to $0.081$ at $\rho=0.99$; at $R=5$ it decreases from approximately $0.199$ to $0.036$. Stronger leakage, such as $\rho=0.98$, removes almost all objective-increasing events but then enters the known responsiveness/deadzone regime and has worse tail error.
-
-\subsection{Slow-client silencing is a critical failure mode}
-
-The communication reduction cannot automatically be interpreted as useful compression. For wall-clock leakage the slow client's participation collapses as $R$ grows. At the apparent optimum $\rho=0.99$, the slow client emits approximately $11.7$, $5.4$, $1.1$, $0$, and $0$ events for $R=1,2,5,10,20$, respectively. Hence the good tail RMSE at large $R$ is effectively produced by the fast client alone. This is not evidence that finite memory successfully reconciles asynchronous clients; it is evidence that a sufficiently short wall-clock memory can suppress a slow client before it accumulates enough evidence to communicate.
-
-This leads to an important evaluation rule:
-\begin{equation}
-  \boxed{\text{reduced communication must be checked against client participation.}}
-\end{equation}
-A method that reduces communication by silencing slow clients may be undesirable under heterogeneous data even if it works on homogeneous objectives.
-
-\subsection{Leak-clock diagnostic}
+\subsection{Local-step leakage control}
 
 One possible explanation for the preceding result is that wall-clock leakage penalizes the slow client simply because it is idle for longer periods. To test this, the same map was repeated with leakage applied only when a client performs a local gradient evaluation. This preserves much more slow-client evidence. For example, at $R=10$ and $\rho=0.99$ the slow client emits about $1.63$ events rather than zero.
 
@@ -96,46 +39,24 @@ The decisive separation experiment sets
 \begin{equation}
   \sigma=0.
 \end{equation}
-If finite memory were fundamentally advantageous because it handles asynchronous model drift, a benefit should remain in at least some sufficiently asynchronous deterministic cases. Instead, the result is the opposite. IF, $\rho=1$, is optimal for every tested compute-rate ratio and reaches the exact optimum with zero tail error. No harmful slow-client events occur. The finite-memory settings introduce only a deadzone:
-\begin{center}
-\begin{tabular}{rrrrrr}
+If finite memory were fundamentally advantageous because it handles asynchronous model drift, a benefit should remain in at least some sufficiently asynchronous deterministic cases. Instead, the result is the opposite. IF, $\rho=1$, is optimal for every tested compute-rate ratio and reaches the exact optimum with zero tail error. No harmful slow-client events occur. The finite-memory settings introduce only a deadzone, summarized in Table~\ref{tab:exp7-zero-noise}.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~7 zero-noise control: representative tail error as the event-memory factor is reduced.}
+\label{tab:exp7-zero-noise}
+\begin{tabular}{rrrrrrr}
 \toprule
 $\rho$ & 1.0 & 0.999 & 0.995 & 0.99 & 0.98 & 0.95 \\
 \midrule
 representative tail $|w|$ & 0 & 0 & 0.05 & 0.10 & 0.20 & 0.50 \\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
+
 with the same qualitative result for all $R$.
 
-This falsifies the strong working hypothesis for the homogeneous quadratic:
-\begin{equation}
-  \boxed{\text{the finite-memory advantage observed here is not primarily an asynchrony-staleness effect.}}
-\end{equation}
-It is mainly a stochastic evidence-filtering and event-regularization effect. Infinite-memory IF retains noisy residual evidence indefinitely; moderate leakage suppresses part of that stochastic activity. Once gradient noise is removed, the benefit disappears and the cost of the LIF deadzone remains.
-
-\subsection{Reinterpretation of Experiment 6}
-
-Experiment~6 initially suggested that mild leakage might be acting as soft stale-evidence invalidation between the extremes of IF and hard reset. Experiment~7 shows that this interpretation was premature. The pointwise improvement at $R=5$ remains a valid empirical observation, but the regime map and zero-noise control indicate that most of the gain can be explained without invoking an FL-specific freshness mechanism.
-
-The stronger current interpretation is therefore:
-\begin{equation}
-  \boxed{\text{finite LIF memory is a stochastic temporal-evidence regularizer; an FL-specific freshness benefit remains unproven.}}
-\end{equation}
-This is a useful negative result because it prevents the project from building its novelty claim around a mechanism that the homogeneous test does not support.
-
-\subsection{Why statistical heterogeneity is now necessary}
-
-The homogeneous objective is also structurally limited as a stale-gradient test. When both clients optimize $F_i(w)=w^2/2$, old and current deterministic gradients usually retain the same sign until the global parameter crosses the common optimum. Remote model motion therefore changes gradient magnitude much more readily than it creates a genuinely stale sign.
-
-The next asynchronous test must introduce controlled local optima
-\begin{equation}
-  F_i(w)=\frac12(w-\theta_i)^2
-\end{equation}
-so that remote updates can move $w$ across a particular client's local optimum and reverse that client's current descent direction while its membrane still contains evidence from the old side. In that setting, two notions must be measured separately:
-\begin{enumerate}
-  \item \emph{locally stale event}: the event disagrees with the client's current exact local gradient;
-  \item \emph{globally harmful event}: the event increases the intended aggregate objective $F=\sum_i p_iF_i$.
-\end{enumerate}
-
-Unequal client compute rates also create a second problem under heterogeneous objectives: a fast client can implicitly receive greater optimization weight simply because it generates more update opportunities. The heterogeneous experiment must therefore introduce an explicit rate-normalization or client-weighting rule before conclusions about memory and staleness are drawn.
+\begin{takeawaybox}[title={Experiment 7 falsification result}]
+The finite-memory advantage observed in the homogeneous stochastic quadratic is not primarily an asynchrony--staleness effect. It is mainly a stochastic evidence-filtering and event-regularization effect. Infinite-memory IF retains noisy residual evidence indefinitely; moderate leakage suppresses part of that stochastic activity. Once gradient noise is removed, the benefit disappears and only the LIF deadzone remains.
+\end{takeawaybox}
