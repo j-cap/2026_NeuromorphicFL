@@ -377,7 +377,7 @@ def main() -> None:
     parser.add_argument("--partition-seed", type=int, default=2500)
     parser.add_argument("--train-seed", type=int, default=None)
     parser.add_argument("--audit-stride", type=int, default=5)
-    parser.add_argument("--reference-per-client", type=int, default=500)
+    parser.add_argument("--reference-per-client", type=int, default=6000)
     parser.add_argument("--aggregate", action="store_true")
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()

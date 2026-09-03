@@ -68,7 +68,7 @@ jobs:
             --partition-seed "${{ matrix.partition_seed }}" \
             --train-seed "$TRAIN_SEED" \
             --audit-stride 5 \
-            --reference-per-client 500
+            --reference-per-client 6000
       - uses: actions/upload-artifact@v4
         with:
           name: t4-${{ matrix.variant }}-${{ matrix.partition_seed }}
