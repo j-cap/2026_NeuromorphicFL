@@ -64,7 +64,7 @@ Assume $|z_1|<\vartheta$. Then, for every round $r\geq1$,
 Moreover,
 \begin{equation}
     |\widetilde z_r|
-    <
+    \leq
     \rho_r\vartheta+|a_r|
     \leq
     \vartheta+|a_r|.
@@ -77,14 +77,14 @@ If an event occurs, define its threshold overshoot
 It satisfies
 \begin{equation}
     0\leq o_r
-    <
+    \leq
     |a_r|-(1-\rho_r)\vartheta
-    \leq |a_r|.
+    < |a_r|.
     \label{eq:t2-overshoot-bound}
 \end{equation}
 In particular, an event in round $r$ requires
 \begin{equation}
-    |a_r|>(1-\rho_r)\vartheta.
+    |a_r|\geq(1-\rho_r)\vartheta.
     \label{eq:t2-event-necessary-input}
 \end{equation}
 \end{proposition}
@@ -97,18 +97,18 @@ Using the invariant and the triangle inequality,
     |\widetilde z_r|
     \leq
     \rho_r|z_r|+|a_r|
-    <
+    \leq
     \rho_r\vartheta+|a_r|,
 \end{equation}
 which proves \eqref{eq:t2-pretrigger-bound}. On a firing round, subtracting $\vartheta$ yields
 \begin{equation}
     o_r
-    <
+    \leq
     \rho_r\vartheta+|a_r|-\vartheta
     =
     |a_r|-(1-\rho_r)\vartheta.
 \end{equation}
-Because $o_r\geq0$, the strict necessary condition \eqref{eq:t2-event-necessary-input} follows.
+Because $o_r\geq0$, condition \eqref{eq:t2-event-necessary-input} follows. When $\rho_r>0$, the strict state invariant makes both inequalities strict; the non-strict form is needed for the endpoint $\rho_r=0$.
 \end{proof}
 
 \begin{remark}[What the overshoot bound does and does not say]
@@ -184,7 +184,7 @@ Consequently,
 Over a horizon,
 \begin{equation}
     \sum_{r=1}^{R}|d_r-\vartheta c_r|
-    <
+    \leq
     \sum_{r:m_r=1}|a_r|.
     \label{eq:t2-total-overshoot}
 \end{equation}
@@ -259,7 +259,7 @@ The discarded evidence satisfies
     \sum_{r=1}^{R}|d_r|
     =
     N_R\vartheta+\sum_{r:m_r=1}o_r
-    <
+    \leq
     |z_1|+2\sum_{r=1}^{R}|a_r|.
     \label{eq:t2-total-discarded}
 \end{equation}
@@ -542,7 +542,7 @@ To address the event sign itself, assume without loss of generality that $\mu>0$
     &=
     \inf\{h\geq1:V_h\leq-\vartheta\}.
 \end{align}
-The first event is correct if $\tau_+<\tau_-$ and wrong if $\tau_-<\tau_+$. Ties have probability zero for continuous noise and can otherwise be resolved by any fixed convention.
+The first event is correct if $\tau_+<\tau_-$ and wrong if $\tau_-<\tau_+$. The two thresholds cannot be reached simultaneously because $\vartheta>0$.
 
 \begin{proposition}[Finite-horizon wrong-event bound]
 \label{prop:t2-wrong-event}
