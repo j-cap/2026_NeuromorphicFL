@@ -428,10 +428,148 @@ Together with $N_r$, these values separate net alignment, harmful-event share,
 alignment defect, and event energy.  They are diagnostics, not acceptance
 tests: no event is blocked and no extra server update is applied.
 
-The existing campaign records accuracy, objective, and communication totals,
-but it was not designed to retain the full per-round pulse/gradient information
-needed for this audit.  A targeted instrumented rerun is therefore the direct
-empirical test of T3's only method-specific convergence assumption.
+\subsection{T3a: instrumented alignment audit}
+\label{sec:t3a-alignment-audit}
+
+The proposed audit was run on the frozen MLP configuration without modifying
+the Event-FedAvg update.  The experiment used the strong non-IID partition,
+$E=5$, $\eta=0.1$, $150$ rounds, $\rho=0.999$, $\vartheta=0.025$, and
+\begin{equation}
+    q_r=0.005(1+r/100)^{-0.1}.
+\end{equation}
+The held-out partition seeds were $2500$, $2600$, and $2700$, with training
+seed $70000$ plus the partition seed.  Every fifth round, together with rounds
+$1$ and $150$, the audit evaluated the objective and gradient on the fixed
+$5000$-example training-reference set.  This gives $31$ audited updates per
+run.  The reference set is large enough to provide a stable diagnostic but is
+not identified with the exact population objective in
+\eqref{eq:t3-global-objective}.
+
+The instrumentation consumes no random numbers.  A paired smoke test ran the
+same synthetic federation and seed with the audit disabled and enabled; every
+pre-existing scalar output, including objective, accuracy, message count, and
+coordinate-event count, agreed.  The maximum numerical errors in
+\eqref{eq:t3-audit-net-alignment} and in reconstructing $q_rC^r$ were
+$2.70\times10^{-6}$ and $5.90\times10^{-9}$, respectively.
+
+Define the trajectory-level weighted alignment ratio
+\begin{equation}
+    \widehat\kappa_R
+    =
+    \frac{\sum_{r\in\mathcal{R}_{\mathrm{audit}}}
+      q_r(D_r-H_r)}
+    {\sum_{r\in\mathcal{R}_{\mathrm{audit}}}
+      q_r\|\nabla F_{\mathrm{ref}}(w^r)\|_2^2}.
+    \label{eq:t3-empirical-kappa}
+\end{equation}
+This is a descriptive path statistic, not an estimate that by itself proves
+the conditional expectation in \eqref{eq:t3-alignment-assumption}.
+
+\begin{table}[H]
+\centering
+\caption{Frozen-MLP T3a alignment audit.  Percentages are over the $31$
+audited rounds except for the harmful share, which is aggregated by gradient
+mass.}
+\label{tab:t3a-alignment-summary}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Seed & Test acc. & $\widehat\kappa_R$ & Net $>0$ & Harmful & $\Delta F<0$ & Cancellation\\
+\midrule
+$2500$ & $82.82\%$ & $33.56$ & $96.77\%$ & $31.52\%$ & $77.42\%$ & $15.37\%$\\
+$2600$ & $83.24\%$ & $34.40$ & $100.00\%$ & $30.73\%$ & $74.19\%$ & $15.72\%$\\
+$2700$ & $83.28\%$ & $32.28$ & $100.00\%$ & $32.30\%$ & $74.19\%$ & $15.31\%$\\
+\midrule
+Mean & $83.11\%$ & $33.41$ & $98.92\%$ & $31.52\%$ & $75.27\%$ & $15.47\%$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.35cm},
+  width=0.46\linewidth,
+  height=0.31\linewidth,
+  xlabel={Round},
+  grid=major,
+  major grid style={black!12},
+  tick label style={font=\small},
+  label style={font=\small},
+  title style={font=\small},
+]
+\nextgroupplot[
+  title={Aggregate alignment},
+  ylabel={$({D_r-H_r})/{\|\nabla F_{\mathrm{ref}}(w^r)\|_2^2}$},
+]
+\addplot+[mark=*, mark size=1.2pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t3_alignment_audit_seed_2500.csv};
+\addplot+[mark=square*, mark size=1.1pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t3_alignment_audit_seed_2600.csv};
+\addplot+[mark=triangle*, mark size=1.2pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t3_alignment_audit_seed_2700.csv};
+\addplot[black, thin, forget plot] coordinates {(1,0) (150,0)};
+
+\nextgroupplot[
+  title={Harmful gradient-mass share},
+  ylabel={$H_r/(D_r+H_r)$},
+  ymin=0,
+  ymax=0.55,
+  legend entries={$2500$,$2600$,$2700$},
+  legend style={font=\scriptsize, draw=none, at={(0.98,0.98)}, anchor=north east},
+]
+\addplot+[mark=*, mark size=1.2pt] table[x=round,y=harmful_share,col sep=comma]
+  {data/t3_alignment_audit_seed_2500.csv};
+\addplot+[mark=square*, mark size=1.1pt] table[x=round,y=harmful_share,col sep=comma]
+  {data/t3_alignment_audit_seed_2600.csv};
+\addplot+[mark=triangle*, mark size=1.2pt] table[x=round,y=harmful_share,col sep=comma]
+  {data/t3_alignment_audit_seed_2700.csv};
+\addplot[black, dashed, thin, forget plot] coordinates {(1,0.5) (150,0.5)};
+\end{groupplot}
+\end{tikzpicture}
+\caption{T3a alignment diagnostics for the three held-out MLP runs.  Positive
+alignment is dominant, but its normalized margin decreases and the harmful
+share rises as training progresses.}
+\label{fig:t3a-alignment-audit}
+\end{figure}
+
+Table~\ref{tab:t3a-alignment-summary} and
+Figure~\ref{fig:t3a-alignment-audit} support four conclusions.
+\begin{enumerate}
+    \item \emph{Finite-horizon aggregate alignment is strong.}  The net mass
+    $D_r-H_r$ is positive on $92$ of $93$ audited updates.  The cross-seed
+    weighted ratio is $33.41\pm1.07$, and only seed $2500$ has a negative
+    audited update, at round $85$.
+    \item \emph{The margin weakens late in training.}  The mean alignment ratio
+    falls from $44.38$ in rounds $1$--$50$ to $25.29$ in rounds $101$--$150$;
+    the harmful share rises from $29.51\%$ to $39.05\%$.  Thus the finite-run
+    evidence does not support a uniform pathwise lower bound with zero defect.
+    \item \emph{Positive first-order alignment is not monotone descent.}  Of
+    the $92$ positive-alignment updates, $22$ still increase the reference
+    objective.  In those cases the observed curvature remainder exceeds the
+    first-order improvement.  This is precisely the second-order term retained
+    in Proposition~\ref{prop:t3-one-step-descent}; the slowly decaying frozen
+    $q_r$ is not a per-round descent guarantee.
+    \item \emph{The worst-case event-energy bound is conservative.}  The pooled
+    ratio $\sum_r\|C^r\|_2^2/(M\sum_rN_r)$ is $0.0982$, so the bound
+    $\|C^r\|_2^2\leq MN_r$ is roughly one order of magnitude above the observed
+    aggregate energy.  Signed client cancellation removes $15.47\%$ of the
+    event-stream $\ell_1$ mass on average.
+\end{enumerate}
+
+As a scale diagnostic, a fixed $\kappa=8$ is violated on only $1$--$2$ of the
+$31$ audited rounds per seed, but the resulting weighted positive-part defect
+still equals $10.6\%$--$13.0\%$ of the corresponding target alignment budget.
+This supports using an explicit nonzero $\beta_r$ in
+\eqref{eq:t3-alignment-assumption}; it does not establish that the defect is
+summable or that the same $\kappa$ transfers to other architectures, data
+partitions, or schedules.
+
+The audit is deliberately limited to three paths, a $5000$-sample reference
+gradient, and every fifth round.  It therefore provides evidence for the
+finite-horizon interface, not a proof of the conditional expectation or of the
+asymptotic conditions in Corollary~\ref{cor:t3-diminishing-quantum}.
 
 \subsection{T3 conclusions and remaining theorem gap}
 
@@ -451,13 +589,19 @@ T3 establishes the following scoped result:
     \item local first-passage sign reliability does not eliminate the distinct
     client-to-global mismatch caused by heterogeneity and local drift;
     \item the frozen experimental schedules support finite-horizon claims but
-    do not satisfy the stated asymptotic square-summability condition.
+    do not satisfy the stated asymptotic square-summability condition;
+    \item the T3a audit finds strong but nonuniform finite-horizon aggregate
+    alignment, together with a material second-order obstacle to monotone
+    descent.
 \end{enumerate}
 
-The unresolved theoretical task is now precise: bound or empirically calibrate
-$\beta_r$ for model-coupled multi-step FedAvg evidence.  A next proof should
-decompose that quantity into stochastic encoder sign error, local-SGD drift,
-heterogeneity, stale-state error, and silence/deadzone terms.  Until such a
-bound is available, Proposition~\ref{prop:t3-finite-horizon} is a conditional
+The audit changes the priority of the remaining theory work.  The main question
+is no longer whether aggregate alignment exists at all on the frozen MLP; it is
+whether its late-stage deterioration and the curvature remainder can be
+controlled.  A next proof and experiment should decompose $\beta_r$ into
+stochastic encoder sign error, local-SGD drift, heterogeneity, stale-state
+error, and silence/deadzone terms, while separately testing a theoretically
+admissible or event-energy-aware $q_r$ schedule.  Until such bounds are
+available, Proposition~\ref{prop:t3-finite-horizon} remains a conditional
 convergence interface rather than an unconditional convergence theorem for the
 complete frozen method.
