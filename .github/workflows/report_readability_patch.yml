@@ -18,8 +18,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Apply LaTeX readability patch
-        run: python tools/run_report_readability_patch.py
+      - name: Apply report-wide width guards
+        run: python tools/report_width_sanitize.py
       - name: Commit report updates
         run: |
           git config user.name "github-actions[bot]"
@@ -28,6 +28,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No report changes to commit."
           else
-            git commit -m "Finish report readability cleanup"
+            git commit -m "Guard legacy tables and boxed callouts against overflow"
             git push
           fi
