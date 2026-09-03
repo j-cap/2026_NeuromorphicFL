@@ -85,6 +85,7 @@ def run_final_baseline(
     config: FinalBaselineConfig,
     seed: int = 70707,
     alignment_audit_stride: int | None = None,
+    alignment_client_reference_size: int | None = None,
 ) -> dict[str, float | int | str | pd.DataFrame]:
     """Run one frozen FedAvg baseline and account for exact bidirectional replay.
 
@@ -99,6 +100,13 @@ def run_final_baseline(
             raise ValueError("alignment auditing is defined only for method='event'")
         if alignment_audit_stride <= 0:
             raise ValueError("alignment_audit_stride must be positive")
+    if alignment_client_reference_size is not None:
+        if alignment_audit_stride is None:
+            raise ValueError(
+                "alignment_client_reference_size requires alignment_audit_stride"
+            )
+        if alignment_client_reference_size <= 0:
+            raise ValueError("alignment_client_reference_size must be positive")
 
     layout, initialize, loss_grad, metrics = _architecture_ops(architecture)
     rng = np.random.default_rng(seed)
@@ -125,6 +133,14 @@ def run_final_baseline(
     round_replay_packetized: list[int] = []
 
     evidence_gain = 1.0 / config.local_lr
+    alignment_reference_size = (
+        sum(
+            min(alignment_client_reference_size, len(federation.client_y[client]))
+            for client in range(n_clients)
+        )
+        if alignment_client_reference_size is not None
+        else len(federation.y_train_eval)
+    )
 
     for rnd in range(1, config.rounds + 1):
         audit_round = (
@@ -137,19 +153,45 @@ def run_final_baseline(
         )
         reference_objective_before = float("nan")
         reference_gradient: np.ndarray | None = None
+        local_reference_gradients: list[np.ndarray] | None = None
         if audit_round:
-            (
-                reference_objective_before,
-                _,
-                reference_gradient,
-            ) = loss_grad(
-                w,
-                federation.X_train_eval,
-                federation.y_train_eval,
-                layout=layout,
-                regularization=config.regularization,
-                need_gradient=True,
-            )
+            if alignment_client_reference_size is None:
+                (
+                    reference_objective_before,
+                    _,
+                    reference_gradient,
+                ) = loss_grad(
+                    w,
+                    federation.X_train_eval,
+                    federation.y_train_eval,
+                    layout=layout,
+                    regularization=config.regularization,
+                    need_gradient=True,
+                )
+            else:
+                reference_objective_before = 0.0
+                reference_gradient = np.zeros(d, dtype=np.float64)
+                local_reference_gradients = []
+                for client in range(n_clients):
+                    n_reference = min(
+                        alignment_client_reference_size,
+                        len(federation.client_y[client]),
+                    )
+                    local_objective, _, local_gradient = loss_grad(
+                        w,
+                        federation.client_X[client][:n_reference],
+                        federation.client_y[client][:n_reference],
+                        layout=layout,
+                        regularization=config.regularization,
+                        need_gradient=True,
+                    )
+                    local_reference_gradients.append(
+                        local_gradient.astype(np.float64, copy=False)
+                    )
+                    reference_objective_before += (
+                        float(weights[client]) * float(local_objective)
+                    )
+                    reference_gradient += float(weights[client]) * local_gradient
 
         deltas: list[np.ndarray] = []
         for client in range(n_clients):
@@ -170,6 +212,11 @@ def run_final_baseline(
         round_coordinate_events = 0
         descent_mass = 0.0
         harmful_mass = 0.0
+        ideal_local_mass = 0.0
+        memory_opposition_penalty = 0.0
+        local_drift_term = 0.0
+        heterogeneity_term = 0.0
+        silent_local_mass = 0.0
         replay_this_round = 0
 
         if method == "event":
@@ -179,6 +226,15 @@ def run_final_baseline(
                 event_state[client] += evidence_gain * float(weights[client]) * deltas[client]
                 mask = np.abs(event_state[client]) >= config.threshold
                 count = int(np.sum(mask))
+                local_proxy: np.ndarray | None = None
+                if audit_round and local_reference_gradients is not None:
+                    local_proxy = (
+                        deltas[client].astype(np.float64, copy=False)
+                        / (config.local_lr * config.local_steps)
+                    )
+                    silent_local_mass += float(
+                        np.sum(np.abs(local_proxy[~mask]))
+                    )
                 if count:
                     signs = np.sign(event_state[client, mask]).astype(np.int8)
                     aggregate[mask] += jump * signs.astype(np.float32)
@@ -196,6 +252,45 @@ def run_final_baseline(
                         harmful_mass += float(
                             np.sum(absolute_gradient[signed_products > 0])
                         )
+                        if local_reference_gradients is not None:
+                            assert local_proxy is not None
+                            proxy_on_events = local_proxy[mask]
+                            signs_float = signs.astype(np.float64, copy=False)
+                            local_gradient_on_events = local_reference_gradients[
+                                client
+                            ][mask]
+                            global_gradient_on_events = reference_gradient[mask]
+                            ideal_local_mass += float(
+                                np.sum(np.abs(proxy_on_events))
+                            )
+                            memory_opposition_penalty += float(
+                                2.0
+                                * np.sum(
+                                    np.abs(
+                                        proxy_on_events[
+                                            proxy_on_events * signs_float < 0.0
+                                        ]
+                                    )
+                                )
+                            )
+                            local_drift_term += float(
+                                np.sum(
+                                    (
+                                        -local_gradient_on_events
+                                        - proxy_on_events
+                                    )
+                                    * signs_float
+                                )
+                            )
+                            heterogeneity_term += float(
+                                np.sum(
+                                    (
+                                        local_gradient_on_events
+                                        - global_gradient_on_events
+                                    )
+                                    * signs_float
+                                )
+                            )
                     event_state[client, mask] = 0.0
                     bits = count * pulse_bits
                     packet = bits + 64
@@ -271,14 +366,33 @@ def run_final_baseline(
         if audit_round:
             assert raw_aggregate is not None
             assert reference_gradient is not None
-            reference_objective_after, _ = loss_grad(
-                w,
-                federation.X_train_eval,
-                federation.y_train_eval,
-                layout=layout,
-                regularization=config.regularization,
-                need_gradient=False,
-            )
+            if alignment_client_reference_size is None:
+                reference_objective_after, _ = loss_grad(
+                    w,
+                    federation.X_train_eval,
+                    federation.y_train_eval,
+                    layout=layout,
+                    regularization=config.regularization,
+                    need_gradient=False,
+                )
+            else:
+                reference_objective_after = 0.0
+                for client in range(n_clients):
+                    n_reference = min(
+                        alignment_client_reference_size,
+                        len(federation.client_y[client]),
+                    )
+                    local_objective_after, _ = loss_grad(
+                        w,
+                        federation.client_X[client][:n_reference],
+                        federation.client_y[client][:n_reference],
+                        layout=layout,
+                        regularization=config.regularization,
+                        need_gradient=False,
+                    )
+                    reference_objective_after += (
+                        float(weights[client]) * float(local_objective_after)
+                    )
             gradient_sq_norm = float(reference_gradient @ reference_gradient)
             raw_aggregate_float = raw_aggregate.astype(np.float64)
             aggregate_energy = float(
@@ -293,11 +407,10 @@ def run_final_baseline(
                 reference_objective_after - reference_objective_before
             )
             first_order_change = float(-jump * net_alignment)
-            alignment_rows.append(
-                {
+            alignment_row: dict[str, float | int] = {
                     "round": rnd,
                     "jump": float(jump),
-                    "reference_size": int(len(federation.y_train_eval)),
+                    "reference_size": int(alignment_reference_size),
                     "reference_objective_before": float(reference_objective_before),
                     "reference_objective_after": float(reference_objective_after),
                     "objective_change": objective_change,
@@ -345,7 +458,33 @@ def run_final_baseline(
                         )
                     ),
                 }
-            )
+            if local_reference_gradients is not None:
+                decomposition_alignment = (
+                    ideal_local_mass
+                    - memory_opposition_penalty
+                    + local_drift_term
+                    + heterogeneity_term
+                )
+                alignment_row.update(
+                    {
+                        "ideal_local_mass": ideal_local_mass,
+                        "memory_opposition_penalty": memory_opposition_penalty,
+                        "local_drift_term": local_drift_term,
+                        "heterogeneity_term": heterogeneity_term,
+                        "silent_local_mass": silent_local_mass,
+                        "event_local_mass_fraction": (
+                            ideal_local_mass
+                            / (ideal_local_mass + silent_local_mass)
+                            if ideal_local_mass + silent_local_mass > 0.0
+                            else float("nan")
+                        ),
+                        "decomposition_alignment": decomposition_alignment,
+                        "decomposition_identity_error": abs(
+                            net_alignment - decomposition_alignment
+                        ),
+                    }
+                )
+            alignment_rows.append(alignment_row)
 
         if rnd == 1 or rnd % config.eval_stride == 0 or rnd == config.rounds:
             train_obj, train_ce, _, _, _, _ = metrics(
@@ -446,6 +585,10 @@ def run_final_baseline(
         result[f"class_{cls}_accuracy"] = float(acc)
     if alignment_audit_stride is not None:
         result["alignment_audit_stride"] = int(alignment_audit_stride)
-        result["alignment_reference_size"] = int(len(federation.y_train_eval))
+        result["alignment_reference_size"] = int(alignment_reference_size)
+        if alignment_client_reference_size is not None:
+            result["alignment_client_reference_size"] = int(
+                alignment_client_reference_size
+            )
         result["alignment_audit"] = pd.DataFrame(alignment_rows)
     return result
