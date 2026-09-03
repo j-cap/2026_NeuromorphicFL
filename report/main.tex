@@ -6,6 +6,7 @@
 \usepackage{lmodern}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsthm}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{siunitx}
@@ -37,6 +38,12 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\sign}{\operatorname{sign}}
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
 
 % Long conclusions must wrap inside the text width. Reserve \boxed{...} for
 % genuinely short mathematical statements and pass/fail labels.
@@ -142,6 +149,7 @@ This report is a living technical knowledge base for a research direction that t
 \part{Theory Development}
 
 \input{sections/11_theory_t1_formal_semantics}
+\input{sections/12_theory_t2_encoder_properties}
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}
