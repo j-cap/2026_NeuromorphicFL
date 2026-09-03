@@ -11,6 +11,11 @@
 \usepackage{siunitx}
 \usepackage{enumitem}
 \usepackage{xcolor}
+\usepackage{adjustbox}
+\usepackage[most]{tcolorbox}
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=1.18}
 \usepackage{hyperref}
 \usepackage[capitalise,noabbrev]{cleveref}
 \usepackage[numbers,sort&compress]{natbib}
@@ -28,6 +33,29 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\sign}{\operatorname{sign}}
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+% Long conclusions must wrap inside the text width. Reserve \boxed{...} for
+% genuinely short mathematical statements and pass/fail labels.
+\newtcolorbox{takeawaybox}[1][]{
+  enhanced,
+  breakable,
+  colback=black!2,
+  colframe=black!35,
+  boxrule=0.55pt,
+  arc=1mm,
+  left=2mm,
+  right=2mm,
+  top=1.5mm,
+  bottom=1.5mm,
+  before skip=7pt,
+  after skip=7pt,
+  fonttitle=\bfseries,
+  #1
+}
+
+% Reusable report figures. They are defined as macros and inserted only in the
+% sections where they support a specific argument.
+\input{figures/result_figures}
 
 \title{Neuromorphic Federated Learning via Leaky Integrate-and-Fire Gradient Communication\\
 \large Living Technical Report and Project Knowledge Base}
