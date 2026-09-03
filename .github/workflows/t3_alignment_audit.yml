@@ -1,0 +1,92 @@
+name: T3 Event-FedAvg Alignment Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/neuromorphicfl/final_baseline_campaign.py'
+      - 'experiments/t3_alignment_audit.py'
+      - '.github/workflows/t3_alignment_audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - name: Verify trajectory invariance and audit identities
+        run: PYTHONPATH=src python experiments/t3_alignment_audit.py --smoke
+
+  audit:
+    needs: smoke
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        partition_seed: [2500, 2600, 2700]
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - name: Run frozen MLP alignment audit
+        run: |
+          TRAIN_SEED=$((70000 + ${{ matrix.partition_seed }}))
+          PYTHONPATH=src python experiments/t3_alignment_audit.py \
+            --partition-seed "${{ matrix.partition_seed }}" \
+            --train-seed "$TRAIN_SEED" \
+            --audit-stride 5
+      - uses: actions/upload-artifact@v4
+        with:
+          name: t3-alignment-${{ matrix.partition_seed }}
+          path: experiments/results/t3_alignment_audit/*_p${{ matrix.partition_seed }}_*.csv
+
+  aggregate:
+    needs: audit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: t3-alignment-*
+          merge-multiple: true
+          path: experiments/results/t3_alignment_audit
+      - name: Aggregate audit results
+        run: PYTHONPATH=src python experiments/t3_alignment_audit.py --aggregate
+      - uses: actions/upload-artifact@v4
+        with:
+          name: t3-alignment-combined
+          path: |
+            experiments/results/t3_alignment_audit/combined_summary.csv
+            experiments/results/t3_alignment_audit/combined_rounds.csv
+            experiments/results/t3_alignment_audit/aggregate_metrics.csv
+            experiments/results/t3_alignment_audit/t3_alignment_audit_summary.png
+            experiments/results/t3_alignment_audit/t3_alignment_audit_summary.pdf
