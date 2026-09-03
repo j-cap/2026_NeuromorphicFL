@@ -86,6 +86,7 @@ def run_final_baseline(
     seed: int = 70707,
     alignment_audit_stride: int | None = None,
     alignment_client_reference_size: int | None = None,
+    alignment_audit_rounds: tuple[int, ...] | None = None,
 ) -> dict[str, float | int | str | pd.DataFrame]:
     """Run one frozen FedAvg baseline and account for exact bidirectional replay.
 
@@ -95,15 +96,27 @@ def run_final_baseline(
     unicast accounting charges every client a 32-bit catch-up request per round
     and chooses the cheaper of exact replay and a float32 model checkpoint.
     """
-    if alignment_audit_stride is not None:
+    if alignment_audit_stride is not None and alignment_audit_rounds is not None:
+        raise ValueError(
+            "choose alignment_audit_stride or alignment_audit_rounds, not both"
+        )
+    audit_enabled = (
+        alignment_audit_stride is not None or alignment_audit_rounds is not None
+    )
+    if audit_enabled:
         if method != "event":
             raise ValueError("alignment auditing is defined only for method='event'")
-        if alignment_audit_stride <= 0:
-            raise ValueError("alignment_audit_stride must be positive")
+    if alignment_audit_stride is not None and alignment_audit_stride <= 0:
+        raise ValueError("alignment_audit_stride must be positive")
+    if alignment_audit_rounds is not None:
+        if not alignment_audit_rounds:
+            raise ValueError("alignment_audit_rounds must not be empty")
+        if min(alignment_audit_rounds) <= 0 or max(alignment_audit_rounds) > config.rounds:
+            raise ValueError("alignment_audit_rounds must lie within the run")
     if alignment_client_reference_size is not None:
-        if alignment_audit_stride is None:
+        if not audit_enabled:
             raise ValueError(
-                "alignment_client_reference_size requires alignment_audit_stride"
+                "alignment_client_reference_size requires alignment auditing"
             )
         if alignment_client_reference_size <= 0:
             raise ValueError("alignment_client_reference_size must be positive")
@@ -143,55 +156,24 @@ def run_final_baseline(
     )
 
     for rnd in range(1, config.rounds + 1):
-        audit_round = (
-            alignment_audit_stride is not None
-            and (
-                rnd == 1
-                or rnd % alignment_audit_stride == 0
-                or rnd == config.rounds
+        audit_round = bool(
+            (
+                alignment_audit_stride is not None
+                and (
+                    rnd == 1
+                    or rnd % alignment_audit_stride == 0
+                    or rnd == config.rounds
+                )
+            )
+            or (
+                alignment_audit_rounds is not None
+                and rnd in alignment_audit_rounds
             )
         )
         reference_objective_before = float("nan")
         reference_gradient: np.ndarray | None = None
         local_reference_gradients: list[np.ndarray] | None = None
-        if audit_round:
-            if alignment_client_reference_size is None:
-                (
-                    reference_objective_before,
-                    _,
-                    reference_gradient,
-                ) = loss_grad(
-                    w,
-                    federation.X_train_eval,
-                    federation.y_train_eval,
-                    layout=layout,
-                    regularization=config.regularization,
-                    need_gradient=True,
-                )
-            else:
-                reference_objective_before = 0.0
-                reference_gradient = np.zeros(d, dtype=np.float64)
-                local_reference_gradients = []
-                for client in range(n_clients):
-                    n_reference = min(
-                        alignment_client_reference_size,
-                        len(federation.client_y[client]),
-                    )
-                    local_objective, _, local_gradient = loss_grad(
-                        w,
-                        federation.client_X[client][:n_reference],
-                        federation.client_y[client][:n_reference],
-                        layout=layout,
-                        regularization=config.regularization,
-                        need_gradient=True,
-                    )
-                    local_reference_gradients.append(
-                        local_gradient.astype(np.float64, copy=False)
-                    )
-                    reference_objective_before += (
-                        float(weights[client]) * float(local_objective)
-                    )
-                    reference_gradient += float(weights[client]) * local_gradient
+        audit_w_before: np.ndarray | None = None
 
         deltas: list[np.ndarray] = []
         for client in range(n_clients):
@@ -209,6 +191,9 @@ def run_final_baseline(
 
         aggregate = np.zeros(d, dtype=np.float32)
         raw_aggregate = np.zeros(d, dtype=np.int16) if audit_round else None
+        audit_client_events: list[tuple[np.ndarray, np.ndarray] | None] | None = (
+            [None] * n_clients if audit_round else None
+        )
         round_coordinate_events = 0
         descent_mass = 0.0
         harmful_mass = 0.0
@@ -226,71 +211,25 @@ def run_final_baseline(
                 event_state[client] += evidence_gain * float(weights[client]) * deltas[client]
                 mask = np.abs(event_state[client]) >= config.threshold
                 count = int(np.sum(mask))
-                local_proxy: np.ndarray | None = None
-                if audit_round and local_reference_gradients is not None:
-                    local_proxy = (
-                        deltas[client].astype(np.float64, copy=False)
-                        / (config.local_lr * config.local_steps)
-                    )
-                    silent_local_mass += float(
-                        np.sum(np.abs(local_proxy[~mask]))
-                    )
                 if count:
                     signs = np.sign(event_state[client, mask]).astype(np.int8)
                     aggregate[mask] += jump * signs.astype(np.float32)
                     round_coordinate_events += count
                     if audit_round:
                         assert raw_aggregate is not None
-                        assert reference_gradient is not None
+                        assert audit_client_events is not None
                         raw_aggregate[mask] += signs.astype(np.int16)
-                        gradient_on_events = reference_gradient[mask]
-                        signed_products = gradient_on_events * signs
-                        absolute_gradient = np.abs(gradient_on_events)
-                        descent_mass += float(
-                            np.sum(absolute_gradient[signed_products < 0])
+                        audit_client_events[client] = (
+                            np.flatnonzero(mask),
+                            signs.copy(),
                         )
-                        harmful_mass += float(
-                            np.sum(absolute_gradient[signed_products > 0])
-                        )
-                        if local_reference_gradients is not None:
-                            assert local_proxy is not None
-                            proxy_on_events = local_proxy[mask]
-                            signs_float = signs.astype(np.float64, copy=False)
-                            local_gradient_on_events = local_reference_gradients[
-                                client
-                            ][mask]
-                            global_gradient_on_events = reference_gradient[mask]
-                            ideal_local_mass += float(
-                                np.sum(np.abs(proxy_on_events))
-                            )
-                            memory_opposition_penalty += float(
-                                2.0
-                                * np.sum(
-                                    np.abs(
-                                        proxy_on_events[
-                                            proxy_on_events * signs_float < 0.0
-                                        ]
-                                    )
-                                )
-                            )
-                            local_drift_term += float(
-                                np.sum(
-                                    (
-                                        -local_gradient_on_events
-                                        - proxy_on_events
-                                    )
-                                    * signs_float
-                                )
-                            )
-                            heterogeneity_term += float(
-                                np.sum(
-                                    (
-                                        local_gradient_on_events
-                                        - global_gradient_on_events
-                                    )
-                                    * signs_float
-                                )
-                            )
+                elif audit_round:
+                    assert audit_client_events is not None
+                    audit_client_events[client] = (
+                        np.empty(0, dtype=np.int64),
+                        np.empty(0, dtype=np.int8),
+                    )
+                if count:
                     event_state[client, mask] = 0.0
                     bits = count * pulse_bits
                     packet = bits + 64
@@ -360,11 +299,102 @@ def run_final_baseline(
         else:
             raise ValueError(method)
 
+        if audit_round:
+            audit_w_before = w.copy()
         w += aggregate
         round_replay_packetized.append(int(replay_this_round))
 
         if audit_round:
             assert raw_aggregate is not None
+            assert audit_client_events is not None
+            assert audit_w_before is not None
+            if alignment_client_reference_size is None:
+                (
+                    reference_objective_before,
+                    _,
+                    reference_gradient,
+                ) = loss_grad(
+                    audit_w_before,
+                    federation.X_train_eval,
+                    federation.y_train_eval,
+                    layout=layout,
+                    regularization=config.regularization,
+                    need_gradient=True,
+                )
+            else:
+                reference_objective_before = 0.0
+                reference_gradient = np.zeros(d, dtype=np.float64)
+                local_reference_gradients = []
+                for client in range(n_clients):
+                    n_reference = min(
+                        alignment_client_reference_size,
+                        len(federation.client_y[client]),
+                    )
+                    local_objective, _, local_gradient = loss_grad(
+                        audit_w_before,
+                        federation.client_X[client][:n_reference],
+                        federation.client_y[client][:n_reference],
+                        layout=layout,
+                        regularization=config.regularization,
+                        need_gradient=True,
+                    )
+                    local_reference_gradients.append(
+                        local_gradient.astype(np.float64, copy=False)
+                    )
+                    reference_objective_before += (
+                        float(weights[client]) * float(local_objective)
+                    )
+                    reference_gradient += float(weights[client]) * local_gradient
+
+            for client, event in enumerate(audit_client_events):
+                assert event is not None
+                ids, signs = event
+                local_proxy = (
+                    deltas[client].astype(np.float64, copy=False)
+                    / (config.local_lr * config.local_steps)
+                )
+                proxy_on_events = local_proxy[ids]
+                silent_local_mass += float(
+                    np.sum(np.abs(local_proxy)) - np.sum(np.abs(proxy_on_events))
+                )
+                if len(ids) == 0:
+                    continue
+                signs_float = signs.astype(np.float64, copy=False)
+                gradient_on_events = reference_gradient[ids]
+                signed_products = gradient_on_events * signs_float
+                absolute_gradient = np.abs(gradient_on_events)
+                descent_mass += float(
+                    np.sum(absolute_gradient[signed_products < 0.0])
+                )
+                harmful_mass += float(
+                    np.sum(absolute_gradient[signed_products > 0.0])
+                )
+                if local_reference_gradients is not None:
+                    local_gradient_on_events = local_reference_gradients[client][ids]
+                    ideal_local_mass += float(np.sum(np.abs(proxy_on_events)))
+                    memory_opposition_penalty += float(
+                        2.0
+                        * np.sum(
+                            np.abs(
+                                proxy_on_events[
+                                    proxy_on_events * signs_float < 0.0
+                                ]
+                            )
+                        )
+                    )
+                    local_drift_term += float(
+                        np.sum(
+                            (-local_gradient_on_events - proxy_on_events)
+                            * signs_float
+                        )
+                    )
+                    heterogeneity_term += float(
+                        np.sum(
+                            (local_gradient_on_events - gradient_on_events)
+                            * signs_float
+                        )
+                    )
+
             assert reference_gradient is not None
             if alignment_client_reference_size is None:
                 reference_objective_after, _ = loss_grad(
@@ -583,8 +613,13 @@ def run_final_baseline(
     }
     for cls, acc in enumerate(per_class):
         result[f"class_{cls}_accuracy"] = float(acc)
-    if alignment_audit_stride is not None:
-        result["alignment_audit_stride"] = int(alignment_audit_stride)
+    if audit_enabled:
+        if alignment_audit_stride is not None:
+            result["alignment_audit_stride"] = int(alignment_audit_stride)
+        if alignment_audit_rounds is not None:
+            result["alignment_audit_rounds"] = ",".join(
+                str(round_index) for round_index in alignment_audit_rounds
+            )
         result["alignment_reference_size"] = int(alignment_reference_size)
         if alignment_client_reference_size is not None:
             result["alignment_client_reference_size"] = int(

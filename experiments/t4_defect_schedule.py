@@ -160,11 +160,31 @@ def run_point(
         method="event",
         config=config,
         seed=train_seed,
-        alignment_audit_stride=audit_stride,
-        alignment_client_reference_size=reference_per_client,
     )
-    audit = result.pop("alignment_audit")
-    assert isinstance(audit, pd.DataFrame)
+    audit_rounds = sorted(
+        {
+            1,
+            config.rounds,
+            *range(audit_stride, config.rounds + 1, audit_stride),
+        }
+    )
+    audit_rows: list[pd.Series] = []
+    for target_round in audit_rounds:
+        snapshot = run_final_baseline(
+            federation=federation,
+            architecture="mlp",
+            method="event",
+            config=replace(config, rounds=target_round),
+            seed=train_seed,
+            alignment_audit_rounds=(target_round,),
+            alignment_client_reference_size=reference_per_client,
+        )
+        snapshot_audit = snapshot["alignment_audit"]
+        assert isinstance(snapshot_audit, pd.DataFrame)
+        if len(snapshot_audit) != 1:
+            raise AssertionError("single-round audit produced an invalid trace")
+        audit_rows.append(snapshot_audit.iloc[0])
+    audit = pd.DataFrame(audit_rows).reset_index(drop=True)
     audit = add_defect_components(audit)
     summary = summarize(audit)
     summary.update(
@@ -173,6 +193,7 @@ def run_point(
             "partition_seed": partition_seed,
             "train_seed": train_seed,
             "audit_stride": audit_stride,
+            "audit_protocol": "independent_single_round_replay",
             "reference_per_client": reference_per_client,
             "jump0": config.jump0,
             "jump_exponent": config.jump_exponent,
@@ -340,11 +361,11 @@ def smoke_test() -> None:
         method="event",
         config=config,
         seed=1235,
-        alignment_audit_stride=1,
+        alignment_audit_rounds=(config.rounds,),
         alignment_client_reference_size=16,
     )
     audit = audited.pop("alignment_audit")
-    audited.pop("alignment_audit_stride")
+    audited.pop("alignment_audit_rounds")
     audited.pop("alignment_reference_size")
     audited.pop("alignment_client_reference_size")
     assert plain.keys() == audited.keys()
