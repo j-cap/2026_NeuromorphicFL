@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Apply LaTeX readability patch
-        run: python tools/report_readability_patch.py
+        run: python tools/run_report_readability_patch.py
       - name: Commit report updates
         run: |
           git config user.name "github-actions[bot]"
