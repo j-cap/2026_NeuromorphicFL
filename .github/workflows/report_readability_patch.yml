@@ -28,6 +28,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No report changes to commit."
           else
-            git commit -m "Improve report figures, tables, and takeaway blocks"
+            git commit -m "Finish report readability cleanup"
             git push
           fi
