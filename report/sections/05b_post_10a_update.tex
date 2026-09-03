@@ -19,9 +19,9 @@ Experiment~10B should test a genuinely vector-specific mechanism: competition am
 When more than $K$ coordinates request transmission in one communication opportunity, only the $K$ largest activations should fire. Non-selected coordinates retain their membrane states and continue integrating evidence. This mechanism is the event-driven analogue of winner-take-all or lateral inhibition.
 
 The key comparison is not independent LIF versus no sparsification. Competitive LIF must be compared against conventional sparse mechanisms at the same packet/event budget, especially EMA-TopK and error-feedback TopK. The main research question is
-\begin{equation}
-  \boxed{\text{Does Top-$K$ selection of temporally accumulated membrane evidence allocate bits better than Top-$K$ selection of conventional updates?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Does Top-$K$ selection of temporally accumulated membrane evidence allocate bits better than Top-$K$ selection of conventional updates?}}$}
+\end{center}
 
 Primary outputs remain objective error versus payload/packetized bits, whole-run transient cost, coordinate coverage, per-coordinate firing distribution, and slow-client participation. Competition is useful only if it reduces communication without permanently starving low-activity but important coordinates.
 

@@ -100,6 +100,7 @@ and every such locally stale event is globally harmful in the fixed-initial-cond
 
 However, the causal comparison does \emph{not} support stale-gradient removal as the main explanation of the LIF improvement. Representative zero-noise results are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method at $R=40$ & tail RMSE & local stale frac. & global harmful frac. & events \\
@@ -109,6 +110,7 @@ Fresh-gradient IF oracle & 0.0442 & 0 & 0.375 & 40 \\
 LIF ($\rho=0.995$) & 0.0300 & 0 & 0 & 10 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The fresh-gradient oracle removes the locally stale events but changes IF's error and global-harm rate only slightly. Therefore the stale events are real and individually harmful, but they are not the dominant source of IF's aggregate degradation.
 
@@ -130,6 +132,7 @@ This distinction is scientifically important. It may still be useful for federat
 
 The fixed stress trajectory could in principle align favorably with the $q=0.1$ update lattice. A robustness check therefore randomizes the initial condition over approximately $[0.93,1.13]$ at $R=40$. The deterministic averages over 1000 runs are approximately
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & tail RMSE & local stale frac. & global harmful frac. & events \\
@@ -140,6 +143,7 @@ LIF ($\rho=0.995$) & 0.0288 & 0 & 0.031 & 11.0 \\
 LIF ($\rho=0.99$) & 0.1045 & 0 & 0 & 9.3 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The exact stale-event fraction becomes smaller when the trajectory phase is randomized, but the causal conclusion becomes even clearer: removing delay staleness alone does not improve IF, whereas LIF's gain accompanies much stronger suppression of the entire heterogeneous event process. Stronger leak eventually creates the known deadzone error.
 

@@ -99,6 +99,7 @@ The quadratic-era trigger $(\gamma,\Delta)=(0.05,0.25)$ produces too few logisti
 The strongest non-IID split is the most discriminating case. The selected $1200$-tick results are summarized below.
 
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test loss & Test acc. & Mean train loss & Payload bits\\
@@ -111,6 +112,7 @@ EF-TopK, $k=1$ & 0.50813 & 0.7746 & 0.5147 & 164280\\
 Full precision & 0.50611 & 0.7773 & 0.5103 & 2841600\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 Several observations are important.
@@ -131,6 +133,7 @@ The same qualitative picture holds across all three data regimes. Scheduled even
 
 On the strong non-IID split, event-level objective checks give
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
 \toprule
 Method & Acceptance & Harmful/accepted & Payload bits\\
@@ -142,6 +145,7 @@ Diagonal+residual, $C=25$ & 0.031 & 0.000 & 339236\\
 Unsafe diagonal-only, $C=50$ & 0.379 & 0.047 & 175994\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The valid summaries behave exactly as intended: no accepted event was observed to increase the full training objective. The cheap diagonal-only control is much less conservative and nearly matches the oracle final loss, but about $4.7\%$ of its accepted events are globally harmful. This is precisely why its strong numerical result cannot be used as evidence for a safe certificate.
 

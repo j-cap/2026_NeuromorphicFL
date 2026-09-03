@@ -98,6 +98,7 @@ A higher-seed confirmation run at $R=40$ and $\sigma=0.25$ gives the representat
 \centering
 \caption{Experiment~9 tuned comparator summary in the noisy heterogeneous delayed-asynchronous setting. Event/message counts are scalar communication proxies, not complete bit costs.}
 \label{tab:exp9-noisy}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
 \toprule
 Method & Mean events/messages & Tail RMSE & Harmful-event fraction\\
@@ -112,6 +113,7 @@ Periodic sign & 4612.0 & 0.10428 & 0.498\\
 Memoryless pulse & 164.75 & 0.12885 & 0.445\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The event-driven finite-memory methods therefore remain highly effective as communication mechanisms in this toy problem. Full-reset LIF reaches a tail RMSE only slightly above the tuned full-precision reference while replacing thousands of messages by a few tens of signed events. It also marginally outperforms the subtractive-residual variant in this setting. This suggests that preserving every threshold overshoot is not essential here and can even retain undesirable noisy/heterogeneous evidence.

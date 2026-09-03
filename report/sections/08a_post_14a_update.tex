@@ -27,8 +27,8 @@ Experiment~14B should preserve the lessons from 14A:
 If multiclass Fashion-MNIST also passes, the next meaningful scaling change would be architectural rather than merely dimensional: a compact convolutional network or another structured feature extractor. Clustering/personalization should become a separate later experiment in which the federation is deliberately made multimodal, for example by assigning client groups incompatible class subsets, label semantics, or domain shifts. Only then is there a concrete question of whether event-sign, event-time, or co-firing statistics can reveal latent client groups at low communication cost.
 
 The updated progression is therefore
-\begin{equation}
-\boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
 13\mathrm{B}\;\text{synthetic depth/dimension PASS}
 \rightarrow
 14\mathrm{A}\;\text{binary real-data PASS}
@@ -36,5 +36,5 @@ The updated progression is therefore
 14\mathrm{B}\;\text{ten-class Fashion-MNIST}
 \rightarrow
 \text{structured model or clustering once a specific failure is identified}.
-}
-\end{equation}
+}$}
+\end{center}

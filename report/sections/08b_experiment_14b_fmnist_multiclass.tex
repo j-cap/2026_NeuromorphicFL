@@ -149,6 +149,7 @@ The matched references are summarized in Table~\ref{tab:exp14b-primary}.
 \centering
 \caption{Experiment~14B at $650$ ticks on the default strong label-skew partition. Baseline steps are selected from the stated training-objective sweeps.}
 \label{tab:exp14b-primary}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Payload\\
@@ -159,6 +160,7 @@ Dense SGD & 0.67331 & 0.7496 & 0.355 & 1986.13 M\\
 \textbf{Events} & \textbf{0.64007} & \textbf{0.7823} & 0.353 & \textbf{34.75 M}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 On this partition, event communication uses about
@@ -181,6 +183,7 @@ The selected event hyperparameters are frozen and repeated for partition seeds $
 \centering
 \caption{Experiment~14B robustness across independent strong label-skew partitions.}
 \label{tab:exp14b-seeds}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrr}
 \toprule
 Seed & Method & Test CE & Accuracy & Worst class\\
@@ -198,6 +201,7 @@ Seed & Method & Test CE & Accuracy & Worst class\\
      & Events & 0.6593 & 0.7654 & \textbf{0.361}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The event means over these three partitions are
@@ -226,6 +230,7 @@ Table~\ref{tab:exp14b-long} summarizes the important long-horizon points on seed
 \centering
 \caption{Experiment~14B strong-skew result at $1200$ ticks.}
 \label{tab:exp14b-long}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Payload\\
@@ -238,6 +243,7 @@ EF $2.5\%$, step $0.08$ & \textbf{0.61715} & 0.7685 & \textbf{0.560} & 134.60 M\
 \textbf{Events} & 0.62883 & \textbf{0.7824} & 0.416 & \textbf{66.99 M}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The event model now uses about $54.8\times$ fewer payload bits than dense communication and approximately $2.01\times$ fewer than EF-TopK $2.5\%$. Its final training objective $0.6201$ is essentially the same as EF-TopK $2.5\%$ at $0.6155$, while its mean test accuracy is $1.39$ percentage points higher. EF-TopK retains a clear worst-class advantage, $56.0\%$ versus $41.6\%$, and a slightly lower test cross-entropy. Hence the long-horizon result is a communication-efficiency pass, but not a strict domination of the complete EF performance vector.
@@ -280,6 +286,7 @@ Second, extending the default extreme split to $1200$ ticks gives the results in
 \centering
 \caption{Experiment~14B extreme $85\%$ label skew at $1200$ ticks.}
 \label{tab:exp14b-extreme-long}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Payload\\
@@ -289,6 +296,7 @@ EF $2.5\%$, step $0.08$ & 0.96294 & 0.6919 & 0.390 & 134.60 M\\
 Events & 0.68202 & 0.7849 & 0.476 & \textbf{101.49 M}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The event worst class recovers from $2.4\%$ to $47.6\%$, while overall accuracy rises to $78.49\%$, essentially matching dense accuracy at about $36.1\times$ lower payload. The event model also substantially outperforms the tested EF-TopK $2.5\%$ point in cross-entropy, mean accuracy, and worst-class accuracy while using fewer bits. Thus extreme skew produces a serious finite-horizon class imbalance, but it does not establish a permanent inability to learn the ten-class objective.
@@ -341,11 +349,11 @@ The resulting gates are
 \end{equation}
 
 The central empirical result is therefore more nuanced than Experiment~14A:
-\begin{equation}
-\boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
 \text{multiclass sparse-event learning scales, but class-wise convergence is more fragile than aggregate convergence.}
-}
-\end{equation}
+}$}
+\end{center}
 The mechanism remains highly communication-efficient on the strong and long-horizon tests, yet a paper-quality argument must explicitly include its partition-sensitive transient behavior rather than report only mean test accuracy.
 
 The reusable implementation is in \texttt{src/neuromorphicfl/fmnist\_multiclass\_benchmark.py}. The Experiment~14B audit, refinement, fairness, final robustness, and layer-diagnostic drivers are in \texttt{experiments/14b\_*.py}. Report-ready observed tables are stored under \texttt{experiments/results/14b\_fmnist\_multiclass/}.

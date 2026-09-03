@@ -56,6 +56,7 @@ The final validation uses the same strong non-IID setup as Experiment~12A: eight
 \centering
 \caption{Selected Experiment~12B results on the strong non-IID logistic benchmark. All communication values are mean logical uplink payload bits and include event, curvature-summary, and calibration/refresh payloads.}
 \label{tab:exp12b-main}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test loss & Accuracy & Whole-run train loss & Payload bits \\
@@ -69,6 +70,7 @@ EF-TopK, $k=1$ & 0.508132 & 0.7746 & 0.514678 & 164,280 \\
 Full precision & 0.506114 & 0.7773 & 0.510250 & 2,841,600 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The gap-50 selective-coordinate rule is the important point. It reduces payload by approximately $66.9\%$ relative to the full Experiment~12A certificate while slightly improving its transient objective. More importantly, it uses approximately $8.9\%$ fewer payload bits than EF-TopK $k=1$, reaches a lower test loss, and improves the whole-run training objective by approximately $0.64\%$. Thus the practical valid certificate finally produces a Pareto-relevant point against the conventional sparse baseline.
@@ -80,14 +82,14 @@ The method does not dominate the extremely cheap scheduled-event baseline. It us
 The design sweep tested block sizes $1$, $2$, $5$, and $10$. The best practical result is the finest possible partition: one coordinate per block. Larger blocks tighten the uncertainty radius because more cross-couplings are treated exactly, but every refresh becomes proportionally more expensive. On this $d=20$ problem the lower refresh cost dominates the benefit of the tighter block certificate.
 
 For the selected gap-50 point, total payload decomposes approximately into
-\begin{equation}
- \boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
  B_{\mathrm{total}}
  \approx
  12.9\text{ kbit curvature}
  +126.6\text{ kbit refresh}
- +10.2\text{ kbit events}.}
-\end{equation}
+ +10.2\text{ kbit events}.}$}
+\end{center}
 Thus refresh information still accounts for roughly $84.6\%$ of the payload, but this is a substantial improvement over Experiment~12A, where dense calibration plus the full curvature matrix dominated an approximately $452$ kbit certificate budget.
 
 Using the full curvature matrix together with the same coordinate-selective refresh policy gives essentially the same final performance but about $264.5$ kbit payload. Therefore the diagonal-plus-residual summary is not merely a cosmetic compression: it removes roughly $115$ kbit of metadata without losing the useful operating point.

@@ -65,15 +65,15 @@ and the server applies the sparse signed model jump
 The event resolution $q_r>0$ is independent of the trigger threshold and the evidence-memory dynamics. Experiment~15A shows that this separation is important: persistent evidence memory can remain useful while the applied model quantum becomes progressively finer during late-stage optimization.
 
 The frozen V1 mechanism is therefore
-\begin{equation}
-\boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
 \text{persistent temporal evidence}
 +\text{coordinate first-passage events}
 +\text{address/sign payload}
 +\text{full reset}
 +\text{independently annealed update resolution}.
-}
-\end{equation}
+}$}
+\end{center}
 Its standard FL instantiation is Event-FedAvg, in which multi-step local model deltas drive this stateful pulse encoder.
 
 \subsection{What is deliberately excluded from V1}

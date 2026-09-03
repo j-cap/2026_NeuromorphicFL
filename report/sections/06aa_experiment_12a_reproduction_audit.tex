@@ -8,6 +8,7 @@ The experiment numbering in this report denotes logical experiment families rath
 
 The core Experiment~12A configurations were independently reconstructed from the committed implementation and rerun using the same strong-non-IID data seed, optimization seed, eight Monte Carlo data realizations, and $1200$ wall-clock ticks. The reproduced values agree with the originally reported numbers to the displayed precision. The central comparison is
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test loss & Test acc. & Whole-run train loss & Payload bits\\
@@ -21,6 +22,7 @@ Block-10 certificate, $C=25$ & 0.505815 & 0.774167 & 0.517548 & 395092.5\\
 Centralized reference & 0.505780 & 0.775417 & -- & --\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 For the strong split, the scheduled-event safety audit again gives a harmful packet/event diagnostic of approximately $0.337$, whereas both valid $C=25$ certificates produce zero harmful accepted events. The full certificate again spends $128000$ bits on the static curvature matrix and $313600$ bits on dense gradient calibration; the block-10 variant reduces the curvature contribution to $70400$ bits but retains the same recurring calibration cost.
 
@@ -28,6 +30,7 @@ For the strong split, the scheduled-event safety audit again gives a harmful pac
 
 The selected methods were also rerun on the IID, moderate, and strong client partitions. The mean standard deviation of client positive-class rates is approximately $0.031$, $0.098$, and $0.190$, respectively. The reproduced final test losses are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
 \toprule
 Method & IID & Moderate & Strong\\
@@ -39,6 +42,7 @@ Full certificate, $C=25$ & 0.529960 & 0.527464 & 0.505787\\
 Block-10 certificate, $C=25$ & 0.529983 & 0.527576 & 0.505815\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The qualitative conclusion is unchanged across heterogeneity regimes: sparse scheduled events and the global descent oracle remain communication-efficient; valid calibrated certificates remain accurate and conservative; but dense calibration and curvature metadata prevent the original practical certificate from reaching a favorable total-bit Pareto point. Increasing non-IID heterogeneity does not remove this bottleneck.
 

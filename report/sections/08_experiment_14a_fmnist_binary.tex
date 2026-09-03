@@ -87,6 +87,7 @@ Table~\ref{tab:exp14a-pareto} summarizes the most important 450-tick operating p
 \centering
 \caption{Experiment~14A strong-non-IID Fashion-MNIST comparison. Communication is logical uplink payload.}
 \label{tab:exp14a-pareto}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test BCE & Accuracy & Whole train obj. & Payload bits\\
@@ -100,6 +101,7 @@ EF-TopK $2.5\%$ & 0.42059 & 0.8090 & 0.57579 & 50.21 M\\
 Dense SGD & 0.40033 & 0.8265 & 0.53366 & 1366.61 M\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 Figure~\ref{fig:exp14a-pareto} visualizes the same operating points on a logarithmic communication axis and makes the communication--performance separation explicit.
@@ -152,6 +154,7 @@ The fraction of parameters that fire at least once is approximately $65.1\%$. Th
 \small
 \caption{Experiment~14A event activity by parameter tensor for the selected strong-partition run.}
 \label{tab:exp14a-tensor-activity}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrr}
 \toprule
 Tensor & Events/parameter & Never-fired fraction\\
@@ -164,6 +167,7 @@ $W_3$ & 134.81 & 0\\
 $b_3$ & 573.0 & 0\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 There is therefore no evidence of a dead upper layer: all later tensors are highly active and every parameter in $b_2,W_3,b_3$ fires. The result instead suggests that high-dimensional event learning naturally leaves a substantial subset of first-layer coordinates silent when the accumulated evidence never reaches threshold. Whether this is beneficial implicit pruning or unused capacity remains an open question.
 

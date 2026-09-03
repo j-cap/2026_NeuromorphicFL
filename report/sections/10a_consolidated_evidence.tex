@@ -6,8 +6,8 @@ This section summarizes the empirical and analytical evidence that motivates the
 \subsection{Evidence that survived the full sequence}
 
 The most persistent empirical observation is that temporal accumulation can convert dense local learning signals into sparse signed coordinate events while preserving useful optimization behavior. This conclusion survives a sequence of increasingly difficult settings:
-\begin{equation}
-\boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
 \text{scalar stochastic optimization}
 \rightarrow
 \text{vector quadratics}
@@ -21,8 +21,8 @@ The most persistent empirical observation is that temporal accumulation can conv
 \text{real-data multiclass FL}
 \rightarrow
 \text{CNNs}.
-}
-\end{equation}
+}$}
+\end{center}
 
 Across this progression, the event stream repeatedly achieves final predictive or optimization performance in the same broad regime as conventional sparse or dense references while substantially reducing logical communication payload. The real-data Fashion-MNIST experiments are particularly important because they show that the phenomenon is not confined to low-dimensional toy problems. Experiment~14A establishes binary real-data viability at roughly $2.6\times10^4$ parameters. Experiment~14B extends this to a ten-class softmax problem. Experiment~15A then introduces convolution and weight sharing while retaining the same basic coordinate-event representation.
 

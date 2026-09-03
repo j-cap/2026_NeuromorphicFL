@@ -6,9 +6,9 @@
 Experiment~9 shows that the two fixed-threshold LIF recurrences studied so far are algebraically reducible to familiar optimization primitives: subtractive-reset FedLIF is decayed error feedback after rescaling, while full-reset LIF is a resetting thresholded exponential moving average. Experiment~9b therefore tests a mechanism that is genuinely state dependent in a different way: the \emph{firing threshold itself} becomes a dynamical state that reacts to recent event activity.
 
 The intended question is
-\begin{equation}
-  \boxed{\text{Can adaptive firing thresholds regulate communication better than a tuned fixed threshold?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Can adaptive firing thresholds regulate communication better than a tuned fixed threshold?}}$}
+\end{center}
 A positive result would provide a more specifically neuromorphic mechanism than the base LIF recurrence and would reduce the need to hand tune a single threshold $\Delta$ for each operating condition.
 
 \subsection{Why a constant firing-rate setpoint is inappropriate for optimization}
@@ -73,6 +73,7 @@ The adaptive-threshold mechanism does \emph{not} improve the scalar Pareto front
 \centering
 \caption{Experiment~9b stationary noisy comparison. The adaptive configuration is the best tested adaptive point below approximately 30 events.}
 \label{tab:exp9b-stationary}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Mean events & Tail RMSE & Whole-run MSE & Harmful fraction\\
@@ -81,6 +82,7 @@ Fixed full-reset LIF, $\Delta=1.5$ & 22.34 & 0.02759 & 0.08996 & 0.0446\\
 Adaptive threshold, $\Delta_0=0.9$, $\delta_a=1$, $\tau_a=200$ & 25.84 & 0.03097 & 0.09838 & 0.1078\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The adaptive point therefore uses more events, has approximately $12\%$ larger tail RMSE, larger whole-run error, and more than twice the globally harmful-event fraction. The full adaptive grid is globally dominated by the best fixed-threshold point in this scalar operating condition.
@@ -94,6 +96,7 @@ To test the claimed adaptability directly, the gradient-noise level is changed h
 \centering
 \caption{Experiment~9b noise-change diagnostic.}
 \label{tab:exp9b-shift}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Mean events & Tail RMSE & Whole-run MSE & Harmful fraction\\
@@ -102,6 +105,7 @@ Fixed threshold & 26.83 & 0.05469 & 0.08980 & 0.1297\\
 Adaptive threshold & 29.93 & 0.05516 & 0.09786 & 0.1683\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 The adaptive state therefore performs the intended qualitative function---frequent events temporarily increase the threshold and quiet periods let it decay---but that homeostatic behavior is not itself sufficient to improve optimization in the scalar test.
 

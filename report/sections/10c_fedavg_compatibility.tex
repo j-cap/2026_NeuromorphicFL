@@ -115,6 +115,7 @@ Table~\ref{tab:q3-mlp-main} reports the 150-round comparison. The $E=1$ case rem
 \label{tab:q3-mlp-main}
 \begin{adjustbox}{max width=\textwidth}
 \begin{adjustbox}{max width=\textwidth}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{crrrrr}
 \toprule
 $E$ & Method & Test CE & Acc. [\%] & Worst [\%] & Payload [Mbit]\\
@@ -135,6 +136,7 @@ $E$ & Method & Test CE & Acc. [\%] & Worst [\%] & Payload [Mbit]\\
 10 & Sign-EF & 0.4690 & 82.80 & 57.2 & 38.78\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{adjustbox}
 \end{table}
 
@@ -186,6 +188,7 @@ A central Q3 failure hypothesis was that large local deltas would cause uncontro
 \small
 \caption{Event-FedAvg diagnostics for the 150-round MLP campaign.}
 \label{tab:q3-diagnostics}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{crrrrr}
 \toprule
 $E$ & Mean $\|\Delta_i^r\|_2$ & Events & Events/msg & Final $\|z\|_2$ & Sign reversals [\%]\\
@@ -195,6 +198,7 @@ $E$ & Mean $\|\Delta_i^r\|_2$ & Events & Events/msg & Final $\|z\|_2$ & Sign rev
 10 & 0.411 & 1073330 & 715.6 & 6.23 & 2.93\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 Mean local-delta magnitude more than doubles from $E=1$ to $E=10$, but communication does not explode proportionally. Payload rises from 8.31 to 17.17 Mbit and then begins to saturate. The final membrane norm also does not grow with $E$. Most importantly, sign reversals of repeatedly fired coordinates remain below 3\% even at $E=10$.
@@ -220,6 +224,7 @@ again selects $\eta=0.1$. The event audit varies only $q_0\in\{0.005,0.0075,0.01
 \small
 \caption{Q3 compact-CNN transfer at $E=5$ after 80 FedAvg rounds.}
 \label{tab:q3-cnn}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test CE & Acc. [\%] & Worst [\%] & Payload [Mbit]\\
@@ -230,6 +235,7 @@ EF-TopK 2.5\% & 0.6269 & 76.71 & 27.3 & 13.36\\
 Sign-EF & 0.6686 & 76.32 & 29.7 & 11.66\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The selected Event-FedAvg CNN uses approximately

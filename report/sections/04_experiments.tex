@@ -27,6 +27,7 @@ The methods are ordinary SGD, periodic signSGD, non-leaky IF-SGD ($\rho=1$), and
 \paragraph{Observed optimization behavior.}
 For the current configuration, the 200-seed averages were approximately
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & final $\E|w|$ & tail $\E[w^2]$ & mean $w^2$ & communications \\
@@ -37,6 +38,7 @@ IF-SGD & 0.0790 & 0.01035 & 0.19226 & 206.3 \\
 LIF-SGD ($\rho=0.98$) & 0.0743 & 0.00934 & 0.20122 & 177.8 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 Thus, in this deliberately small diagnostic, IF/LIF reach an SGD-like tail error with roughly 4\% of the periodic communication count. This number must not be interpreted as an FL bandwidth claim: the problem is scalar, event addressing is absent, and periodic SGD/signSGD are intentionally simple references.
 
@@ -96,6 +98,7 @@ The experiment uses 400 Monte Carlo runs. This long pre-switch phase makes the o
 \paragraph{Result.}
 The moderate shift does not reveal a tracking advantage from leakage. Over the first 500 post-switch samples, the measured MAEs are approximately
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrr}
 \toprule
 Method & post-switch MAE, $0{:}500$ & post-switch events \\
@@ -108,6 +111,7 @@ LIF-SGD, $\rho=0.98$ & 0.217 & 43.4 \\
 LIF-SGD, $\rho=0.95$ & 0.243 & 31.6 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The oracle reset again changes the IF trajectory only marginally. Recovery to sustained mean absolute error below 0.1 takes about 397 gradient evaluations for IF and about 399 for oracle-reset IF, whereas stronger leakage delays recovery to roughly 421 evaluations at $\rho=0.98$ and 515 at $\rho=0.95$.
 

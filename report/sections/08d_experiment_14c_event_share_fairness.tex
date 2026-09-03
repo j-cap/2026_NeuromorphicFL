@@ -95,6 +95,7 @@ Table~\ref{tab:exp14c-output-share-correlation} reports the Spearman correlation
 \small
 \caption{Experiment~14C correlation between class-associated output-event share and final class accuracy.}
 \label{tab:exp14c-output-share-correlation}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lr}
 \toprule
 Scenario & $\rho(s_c^{\mathrm{out}},A_c)$\\
@@ -109,6 +110,7 @@ Strong seed 2500, equal periods & $-0.851$\\
 Strong seed 2500, heterogeneous periods & $-0.333$\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 For example, under strong skew with equal periods, class~6 (Shirt) has only $20.9\%$ final accuracy while receiving about $13.4\%$ of all output-block events, one of the largest shares. Under IID/equal compute, where the client event shares are essentially uniform, class~6 still has only $24.3\%$ accuracy and again receives the largest output event share, approximately $14.8\%$. Thus
@@ -127,6 +129,7 @@ Strong-skew runs were repeated while permuting which semantic class is dominant 
 \small
 \caption{Experiment~14C sensitivity to the assignment between semantic class and client compute period.}
 \label{tab:exp14c-period-assignment}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
 \toprule
 Assignment & Test CE & Accuracy & Worst class\\
@@ -136,6 +139,7 @@ Reverse & 0.6521 & 0.7719 & \textbf{0.537}\\
 Mixed & 0.6686 & 0.7524 & 0.264\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 Thus semantic class and compute period cannot be treated independently. Merely changing which class is associated with a fast or slow client changes the weakest-class result substantially.
 
@@ -151,6 +155,7 @@ The matched-work event results are summarized in Table~\ref{tab:exp14c-matched-w
 \small
 \caption{Experiment~14C event results with equal and heterogeneous compute schedules after matching the total amount of local work.}
 \label{tab:exp14c-matched-work}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrr}
 \toprule
 Regime & Compute & Test CE & Accuracy & Worst class\\
@@ -163,6 +168,7 @@ Strong, seed 2500 & equal, matched & 0.5860 & 0.8034 & \textbf{0.508}\\
                     & heterogeneous & 0.7491 & 0.7303 & 0.239\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 Figure~\ref{fig:exp14c-matched-work} isolates the worst-class effect and shows that the degradation is large in all three matched-work comparisons.

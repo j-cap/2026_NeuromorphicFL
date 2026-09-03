@@ -70,6 +70,7 @@ followed by subtractive reset
 \end{equation}
 The three parameters have deliberately separate roles:
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{cl}
 \toprule
 $q$ & optimization/update resolution \\
@@ -77,6 +78,7 @@ $\Delta$ & amount of temporal evidence required before communication \\
 $\rho$ (or $\mu$) & memory/freshness timescale \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 Before firing, the state is an exponentially weighted accumulation of past gradients,

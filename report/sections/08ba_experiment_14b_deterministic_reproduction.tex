@@ -22,6 +22,7 @@ B=34.72\ \mathrm{Mbit}.
 \end{equation}
 The corresponding deterministic baseline points are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Payload\\
@@ -32,6 +33,7 @@ Dense SGD & 0.67332 & 0.7497 & 0.355 & 1986.13 M\\
 \textbf{Events} & \textbf{0.61679} & \textbf{0.7934} & \textbf{0.517} & \textbf{34.72 M}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 Thus the selected event run uses approximately $57.2\times$ fewer payload bits than dense SGD and $2.10\times$ fewer than EF-TopK $2.5\%$, while outperforming both in cross-entropy, mean accuracy, and worst-class accuracy on this partition.
 
@@ -41,6 +43,7 @@ The event stream contains $2{,}170{,}236$ coordinate events in $2404$ nonempty m
 
 With the selected event hyperparameters frozen over strong-skew partition seeds $2400$, $2500$, and $2600$, the deterministic event results are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
 \toprule
 Seed & Test CE & Accuracy & Worst class\\
@@ -50,6 +53,7 @@ Seed & Test CE & Accuracy & Worst class\\
 2600 & 0.63630 & 0.7860 & 0.410\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 Their mean values are
 \begin{equation}
@@ -65,6 +69,7 @@ The scientific interpretation remains deliberately qualified. The event method h
 
 With event parameters frozen from the strong-skew operating point, deterministic payload and test behavior are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrr}
 \toprule
 Regime & Event test CE & Event accuracy & Event payload\\
@@ -75,6 +80,7 @@ Strong & 0.61679 & 0.7934 & 34.72 M\\
 Extreme & 0.88987 & 0.6672 & 56.11 M\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The main mechanism observation is unchanged: stronger client disagreement produces more endogenous event traffic. The frozen strong-skew event configuration is not a universal IID optimum. EF-TopK is better on the IID transfer test, while events are especially competitive on moderate and strong skew. Under extreme skew the $650$-tick class-wise transient is severe.
 

@@ -101,6 +101,7 @@ Table~\ref{tab:final-baseline-mlp} gives the three-seed MLP result. Values are m
 \small
 \caption{Final matched MLP comparison over three held-out partitions. Communication is conservative bidirectional unicast traffic with replay/checkpoint fallback.}
 \label{tab:final-baseline-mlp}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test CE & Acc. [\%] & Worst [\%] & Total [Mbit]\\
@@ -112,6 +113,7 @@ Strom, $\tau=0.00125$ & 0.5206$\pm$0.0086 & 81.81$\pm$0.10 & 50.3$\pm$3.4 & 1610
 Dense FedAvg & 0.4967$\pm$0.0015 & 82.23$\pm$0.15 & 52.2$\pm$1.0 & 2487.0$\pm$0.0\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The MLP result is a particularly strong closure. V1 has the lowest mean test cross entropy, highest mean accuracy, and highest mean worst-class accuracy of the tested methods. At the same time, its conservative end-to-end traffic is approximately
@@ -135,6 +137,7 @@ Table~\ref{tab:final-baseline-cnn} gives the corresponding CNN result.
 \small
 \caption{Final matched compact-CNN comparison over three held-out partitions.}
 \label{tab:final-baseline-cnn}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test CE & Acc. [\%] & Worst [\%] & Total [Mbit]\\
@@ -146,6 +149,7 @@ Sign-EF & 0.6694$\pm$0.0022 & 76.07$\pm$0.24 & 16.9$\pm$1.3 & 133.5$\pm$0.0\\
 Dense FedAvg & 0.6046$\pm$0.0017 & 77.55$\pm$0.08 & 23.1$\pm$0.6 & 749.1$\pm$0.0\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
 Figure~\ref{fig:final-baseline-frontier} places the held-out MLP and CNN results on the same communication--accuracy view and makes the final Pareto interpretation visually explicit.
@@ -169,6 +173,7 @@ To test the algorithmic distinction from Q1 more directly, the closest sparse ba
 \label{tab:final-baseline-traffic}
 \begin{adjustbox}{max width=\textwidth}
 \begin{adjustbox}{max width=\textwidth}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrr}
 \toprule
 Architecture & Method & Test CE & Acc. [\%] & Worst [\%] & Total [Mbit]\\
@@ -182,6 +187,7 @@ CNN & Strom, $\tau=0.02$ & 0.5592$\pm$0.0485 & 79.88$\pm$1.56 & 19.2$\pm$10.8 & 
 CNN & EF-TopK 1\% & 0.6590$\pm$0.0031 & 75.83$\pm$0.26 & 19.4$\pm$1.6 & \textbf{63.9$\pm$0.0}\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{adjustbox}
 \end{table}
 

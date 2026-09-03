@@ -6,8 +6,8 @@ The consolidation phase was introduced to determine whether the accumulated expe
 \subsection{Completed consolidation sequence}
 
 The executed sequence is
-\begin{equation}
-\boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
 \text{freeze V1}
 \rightarrow
 Q1\ \text{novelty/equivalence}
@@ -17,13 +17,14 @@ Q2\ \text{bidirectional protocol}
 Q3\ \text{FedAvg compatibility}
 \rightarrow
 \text{matched closest-baseline campaign}.
-}
-\end{equation}
+}$}
+\end{center}
 The project should therefore no longer return to open-ended mechanism discovery unless later theory or manuscript review exposes a specific unresolved failure mode. The remaining core scientific task is theoretical characterization of the frozen communication operator, followed by manuscript extraction from this living report.
 
 \subsection{Final consolidation decision table}
 
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.35\linewidth}p{0.20\linewidth}p{0.35\linewidth}}
 \toprule
 Question / gate & Outcome & Evidence / consequence\\
@@ -34,6 +35,7 @@ Does the total uplink+downlink protocol retain a substantial communication advan
 Does the result survive a tuned closest-baseline campaign? & \textbf{PASS} & Section~\ref{sec:final-baseline-campaign}: V1 dominates the final MLP comparison and remains on a strong CNN communication--performance frontier. Traffic-matched Strom is worse predictively on both architectures.\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 The combined evidence supports the following overall conclusion.
@@ -67,11 +69,11 @@ On the MLP, Event-FedAvg has mean test CE 0.4784 and mean accuracy 83.14\% at 18
 The CNN preserves an important negative qualification. Quality-selected Strom reaches 82.24\% mean accuracy versus 81.34\% for V1, but requires 359.5~Mbit versus 72.8~Mbit. Thus V1 does not uniformly dominate every high-traffic residual-pulse operating point. The traffic-matched control is more directly relevant to the Q1 mechanism distinction: Strom at $\tau=0.02$ uses 82.0~Mbit and reaches 79.88\% on the CNN, while V1 uses 72.8~Mbit and reaches 81.34\%. On the MLP, Strom and V1 are almost exactly traffic matched at 181.0 and 183.5~Mbit, while V1 improves mean accuracy from 79.51\% to 83.14\%.
 
 The correct final empirical claim is therefore a communication--performance claim, not uniform predictive dominance:
-\begin{equation}
-\boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
 \text{At comparable communication, V1 provides a stronger predictive operating point than its closest tested residual-pulse sibling.}
-}
-\end{equation}
+}$}
+\end{center}
 A tuned Strom configuration can buy slightly better CNN accuracy only by moving substantially toward the high-traffic side of the frontier.
 
 \subsection{Remaining tasks are theory and manuscript closure}

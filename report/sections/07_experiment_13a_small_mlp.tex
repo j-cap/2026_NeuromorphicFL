@@ -79,6 +79,7 @@ produces a healthy event stream. This trigger is fixed before the main campaign.
 
 The primary campaign uses eight independent strong-non-IID realizations, $1200$ wall-clock ticks, and the same stochastic mini-batch seed for all methods. The selected results are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test loss & Test acc. & Whole-run train loss & Payload bits\\
@@ -93,6 +94,7 @@ Full precision & 0.49527 & 0.7807 & 0.52173 & 24,011,520\\
 Centralized L-BFGS reference & 0.49238 & 0.7812 & -- & --\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 The communication result is strong. The $q_0=0.015$ event method uses approximately $78.7\%$ fewer payload bits than EF-TopK $k=4$ while reaching a slightly lower test loss and a clearly lower integrated training loss. Relative to EF-TopK $k=8$, its test loss differs by only about $4.2\times10^{-4}$ while using approximately $89.3\%$ fewer bits. Relative to full precision, the event method uses roughly $158\times$ fewer bits and gives only about $1.7\times10^{-3}$ higher final test loss.
@@ -103,6 +105,7 @@ The result should nevertheless not be overstated. The event method does not reac
 
 Experiments~10A and~10D made scale normalization essential for heterogeneous quadratic coordinates. It is therefore important not to assume that the same is automatically true for a neural network. We compare three trigger variants at $q_0=0.015$:
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Threshold scheme & Test loss & Whole-run loss & Payload bits & Scale metadata\\
@@ -112,6 +115,7 @@ Four tensor/layer scales & 0.50013 & \textbf{0.51265} & 268,626 & 1,280\\
 Per-coordinate RMS scales & 0.49916 & 0.52540 & 209,590 & 54,080\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The detailed normalizers do not improve the useful operating point. Layer scaling almost doubles the number of transmitted events. Coordinate scaling adds substantial metadata and also worsens final test loss. Consequently, the primary Experiment~13A result uses the raw threshold.
 
@@ -156,9 +160,9 @@ The most important mechanism audit in Experiment~13A is a short exact packet-lev
 On a two-realization, $250$-tick strong-non-IID diagnostic, the ordinary scheduled event rule gives test loss $0.53855$ and whole-run training loss $0.64669$ with about $12.1$ kbit. The strict packet-descent oracle accepts about $92\%$ of candidate event coordinates, guarantees immediate packet-level descent by construction, but gives worse test loss $0.55112$ and whole-run loss $0.65026$ with about $11.0$ kbit.
 
 A separate $600$-tick four-realization audit finds that roughly $40\%$ of event coordinates belong to packets that increase the full training objective immediately. Nevertheless, the unconstrained event optimizer learns successfully. These two observations imply
-\begin{equation}
-  \boxed{\text{immediate monotone descent is not a necessary condition for useful nonconvex event training}.}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{immediate monotone descent is not a necessary condition for useful nonconvex event training}.}$}
+\end{center}
 This is a genuine conceptual break from Experiments~11A--12B. In a nonconvex stochastic problem, temporarily uphill or noisy updates may be useful, and a hard per-event descent certificate can suppress that behavior. The result does not prove that all forms of descent-aware information are harmful. It shows that the specific convex-style monotonic certificate should not be transferred unchanged.
 
 \subsection{Experiment 13A verdict}

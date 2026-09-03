@@ -69,6 +69,7 @@ The oracle reset represents maximal freshness: no client may retain evidence pre
 \paragraph{Diagnostic results.}
 Across 400 Monte Carlo runs of 3000 wall-clock ticks, the current configuration gives approximately
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & tail RMSE & events & harmful-event fraction & slow-client events \\
@@ -80,6 +81,7 @@ LIF, $\rho=0.98$ & 0.0513 & 19.21 & 0.000 & 0.03 \\
 LIF, $\rho=0.95$ & 0.2469 & 15.25 & 0.000 & 0.00 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 The mild-leak case $\rho=0.995$ is the first experiment in which finite memory shows a net systems-level advantage in the selected regime. Relative to IF, it reduces the fraction of events opposing the current descent direction from about $8.7\%$ to $3.7\%$, reduces the total event count by roughly $20\%$, and improves tail RMSE. Stronger leak suppresses harmful events even further but begins to suppress useful learning as well; the $\rho=0.95$ case is effectively dominated by the LIF deadzone.

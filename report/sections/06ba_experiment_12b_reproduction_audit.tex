@@ -12,6 +12,7 @@ should replace the original Experiment~12B candidate-driven refresh mechanism on
 The original Experiment~12B implementation was reconstructed from the committed source and rerun on the canonical strong non-IID ensemble using the same eight problem realizations, $1200$ ticks, client periods, stochastic mini-batch stream, trigger parameters, curvature summary, and communication accounting. The reproduced values agree with the report to numerical precision.
 
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Test loss & Accuracy & Whole-run loss & Payload bits\\
@@ -25,6 +26,7 @@ Coupling block 5, gap 25 & 0.505789 & 0.7757 & 0.511698 & 329257\\
 Round-robin coordinate, every 3 & 0.505931 & 0.7758 & 0.516334 & 158042\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 The safety rerun also reproduces the original result: the selected gap-50 rule, the gap-100 rule, and the coupling-block control each produced zero measured harmful accepted events. The residual cross-block coupling fractions also reproduce the original geometry diagnosis. Singleton blocks retain approximately $0.915$ residual coupling, block size five reduces this to approximately $0.719$, and block size ten to approximately $0.479$. Nevertheless, the additional refresh cost of larger blocks outweighs their tighter uncertainty radius on this problem.
@@ -50,6 +52,7 @@ with random and round-robin controls. The refresh payload is still $NK\times32$ 
 
 The transfer result is negative. Selected strong non-IID points are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Selector & $K$ & $C$ & Test loss & Payload bits\\
@@ -64,6 +67,7 @@ Round robin & 4 & 25 & 0.508731 & 93520\\
 Relative radius & 4 & 25 & 0.596666 & 101532\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 Even at a payload slightly above the canonical on-demand gap-50 point, periodic absolute-radius refresh with $K=8,C=25$ reaches only $0.511562$ rather than $0.505779$. The best targeted periodic absolute-radius point is $K=1,C=10$. It is communication-efficient at approximately $70.0$ kbit and remains safe, but reaches only $0.507667$ and accepts approximately $4.0\%$ of candidate events. The on-demand gap-50 rule accepts approximately $15.0\%$ of candidates while retaining the same hard certificate.
@@ -81,11 +85,11 @@ The original 12B rule uses a stronger composite trigger. A coordinate is refresh
   \item the minimum refresh gap has elapsed.
 \end{enumerate}
 Thus the rule implicitly combines \emph{uncertainty} with \emph{communication demand}. The candidate event acts as an endogenous relevance signal. The practical lesson is
-\begin{equation}
-  \boxed{
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{
   \text{refresh where uncertainty blocks an actual event, not where uncertainty is merely largest.}
-  }
-\end{equation}
+  }$}
+\end{center}
 
 \subsection{Independent strong-partition check}
 

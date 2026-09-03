@@ -4,9 +4,9 @@
 \subsection{Purpose}
 
 Experiments~1--9c deliberately remained scalar in order to isolate temporal evidence accumulation, leakage, asynchronous delay, event regularization, mechanism equivalences, adaptive thresholds, and event-time effects. Experiment~10A is the first scaling step in which the communication state is a population of coordinate neurons rather than a single scalar accumulator. The central question is
-\begin{equation}
-  \boxed{\text{Can sparse LIF-style coordinate events remain useful once optimization and communication are genuinely vector-valued?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Can sparse LIF-style coordinate events remain useful once optimization and communication are genuinely vector-valued?}}$}
+\end{center}
 The experiment is still synthetic and strongly convex so that the exact global optimum and objective gap remain available. This allows communication effects to be separated from model-identification or nonconvex-learning effects.
 
 \subsection{Federated vector quadratic}
@@ -93,7 +93,8 @@ Table~\ref{tab:exp10a_selected} compares representative tuned operating points. 
   \small
   \caption{Representative Experiment~10A results. ``Whole'' denotes the mean aggregate excess objective over the complete run, while ``Tail'' is averaged over the final $500$ ticks.}
   \label{tab:exp10a_selected}
-  \begin{tabular}{lrrrrr}
+  \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrr}
     \toprule
     Method & Tail gap & Tail RMSE & Whole gap & Payload bits & Packetized bits \\
     \midrule
@@ -103,6 +104,7 @@ Table~\ref{tab:exp10a_selected} compares representative tuned operating points. 
     Full precision & $0.00298$ & $0.02255$ & $0.2009$ & $4.736\times10^6$ & $4.973\times10^6$ \\
     \bottomrule
   \end{tabular}
+\end{adjustbox}
 \end{table}
 
 At nearly matched tail objective gap, normalized Coord-LIF therefore uses approximately

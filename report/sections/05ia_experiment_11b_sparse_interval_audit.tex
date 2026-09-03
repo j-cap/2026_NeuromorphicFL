@@ -48,6 +48,7 @@ with a calibrated aggregate coordinate-curvature upper bound $\bar L_j^F$. No de
 
 The main 2000-tick campaign gives the following representative results:
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrr}
 \toprule
 Method & Tail gap & Whole-run gap & Payload bits & Accept. & Harmful/accepted \\
@@ -60,6 +61,7 @@ Sparse interval, $c=0.95$ & 0.483 & 1.124 & 12640 & 0.148 & 0.00032 \\
 Sparse interval, $c=0.99$ & 1.015 & 1.703 & 16109 & 0.105 & 0 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 The uncertainty intervals are not merely conservative on paper. At $c=0.80$, local belief coverage is approximately 80.1\% while the weighted aggregate interval covers the true global gradient approximately 95.9\% of the time. At $c=0.95$, local coverage is 94.6\% and global coverage is 99.8\%. The corresponding harmful accepted-event rate falls from 1.4\% to $3.2\times10^{-4}$.
@@ -111,9 +113,9 @@ The failure is therefore not tied to one favorable or unfavorable evaluation see
 This audit sharpens rather than contradicts the primary periodic-calibration result. The event stream contains useful temporal gradient information, and statistically calibrated uncertainty can suppress almost all harmful updates. However, sparse first-passage observations alone do not refresh the global-gradient belief with enough precision to support fine convergence. The certificate develops an uncertainty-induced practical neighborhood.
 
 The primary periodic-gradient calibration in \cref{sec:exp11b} succeeds precisely because it periodically collapses this uncertainty set. On the diagonal benchmark, only a few dense calibrations are enough to recover oracle-like behavior; under rotated geometry the required refresh rate becomes much higher. The two studies therefore identify the same bottleneck from opposite sides:
-\begin{equation}
-  \boxed{\textbf{the missing resource is trustworthy global magnitude information, not another timing heuristic.}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\textbf{the missing resource is trustworthy global magnitude information, not another timing heuristic.}}$}
+\end{center}
 
 The sparse-only route should not replace periodic calibration in the current reference algorithm. Future communication reductions should instead target selective/block/low-rank refresh of the certificate or a representation in which uncertainty grows more slowly.
 

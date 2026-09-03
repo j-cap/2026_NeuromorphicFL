@@ -9,6 +9,7 @@ The experiment deliberately does not introduce a new event gate, clustering meth
 
 We retain exactly the same federated binary-classification family, asynchronous client periods, strong non-IID partition, mini-batch size, and event parameters as in Experiment~13A. Only the network architecture changes. The primary architectures are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrr}
 \toprule
 Label & Architecture & Parameters\\
@@ -20,6 +21,7 @@ Shallow-large & $19$--$32$--$1$ & 673\\
 Deep-large & $19$--$16$--$16$--$1$ & 609\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 The pairs $(253,241)$ and $(673,609)$ separate depth from raw parameter count approximately. EF-TopK uses
 \begin{equation}
@@ -57,6 +59,7 @@ as the primary predictive metric. The regularized objective is retained for opti
 
 The primary campaign uses eight independent problem realizations and 1200 wall-clock ticks. The main results are
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrr}
 \toprule
 Architecture & Method & Test CE & Accuracy & Whole obj. & Payload bits\\
@@ -78,6 +81,7 @@ $19$--$16$--$16$--$1$ & Events & 0.46074 & 0.7803 & 0.54830 & 321,559\\
  & Full & 0.45825 & 0.7818 & 0.55862 & 86,526,720\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 The first conclusion is that depth does not create a LIF-specific collapse. On the 241-parameter deep network, events use about $6.5\times$ fewer payload bits than EF-TopK and about $179\times$ fewer than dense SGD, while their predictive cross-entropy is slightly \emph{better} than EF-TopK and only $9.0\times10^{-4}$ above full precision. On the 609-parameter deep network, events use about $9.3\times$ fewer bits than EF-TopK and about $269\times$ fewer than dense SGD. The predictive CE gap is approximately $1.38\times10^{-3}$ to EF-TopK and $2.50\times10^{-3}$ to full precision.

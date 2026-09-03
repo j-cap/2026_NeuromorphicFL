@@ -4,9 +4,9 @@
 \subsection{Purpose}
 
 Experiment~11A showed that descent-aware event sizing is extremely effective when the server knows the aggregate gradient, but that exact client-local descent is not a valid substitute under heterogeneous objectives. Experiment~11B therefore asks the next information question:
-\begin{equation}
-  \boxed{\text{Can occasional dense calibration messages support a much larger stream of safe low-bit coordinate events?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Can occasional dense calibration messages support a much larger stream of safe low-bit coordinate events?}}$}
+\end{center}
 The experiment deliberately retains the normalized full-reset LIF trigger. A threshold crossing still communicates only a coordinate address and sign. What changes is the information maintained by the server for deciding whether the event is globally useful and how large its jump may be.
 
 The study uses the same $N=10$, $d=20$ asynchronous quadratic family as Experiments~10D and 11A. Two geometries are evaluated: the diagonal problem and the strongly rotated isospectral problem from Experiment~10D. The primary campaign uses 40 held-out problems, 2000 wall-clock ticks, a 500-tick tail window, and stochastic-gradient noise $\sigma_g=0.25$.
@@ -85,6 +85,7 @@ The first-passage margins are estimated on a separate calibration ensemble and g
 
 The diagonal problem is highly favorable because \cref{eq:11b-componentwise-bound} is tight coordinate by coordinate. Every tested periodic certificate, including $C=1000$, reproduces the global-oracle trajectory to numerical precision:
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrr}
 \toprule
 Method & Tail gap & Whole-run gap & Payload bits & Calibrations \\
@@ -95,6 +96,7 @@ Periodic certificate, $C=500$ & $\approx0$ & 0.210 & 39812 & 5 \\
 Periodic certificate, $C=1000$ & $\approx0$ & 0.210 & 27012 & 3 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 Thus only three dense calibrations over 2000 ticks, including the initial one, are sufficient to retain oracle-like descent. The accepted-event fraction is about 1.5\%, and no accepted event is globally harmful.
 
@@ -114,6 +116,7 @@ The retuned no-certificate reference from Experiment~10D gives
 \end{equation}
 With sequentially processed certified events, the native-coordinate trade-off is
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{rrrrr}
 \toprule
 $C$ & Tail gap & Whole-run gap & Total payload & Calibration payload \\
@@ -126,6 +129,7 @@ $C$ & Tail gap & Whole-run gap & Total payload & Calibration payload \\
 25  & $6.3\times10^{-5}$ & 0.160 & 533597 & 518400 \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 All accepted events in this deterministic-certificate sweep have measured objective change $\Delta F\leq0$; the harmful accepted-event fraction is zero.
 
@@ -236,6 +240,6 @@ Empirical timing margins either sacrifice safety or become too conservative.
 A good shared representation simultaneously restores sparse event efficiency and sparse certificate maintenance.
 
 The principal conclusion is
-\begin{equation}
-  \boxed{\textbf{occasional trustworthy magnitude information can make descent-aware sparse events practical, but calibration payload and representation geometry are now the dominant design problems.}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\textbf{occasional trustworthy magnitude information can make descent-aware sparse events practical, but calibration payload and representation geometry are now the dominant design problems.}}$}
+\end{center}

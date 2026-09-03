@@ -6,9 +6,9 @@
 Experiment~10A showed that a population of coordinate LIF encoders can reach a good final optimization neighborhood with very low communication, but it also showed that the basic full-reset recurrence remains equivalent to a reset EMA threshold encoder. Experiment~10B therefore tests the first genuinely vector-specific mechanism from the neuromorphic design backlog: competition among simultaneously active coordinate neurons under a finite per-packet event budget.
 
 The central question is
-\begin{equation}
-  \boxed{\text{Does competition among accumulated coordinate evidences allocate a sparse communication budget better than independent firing or conventional Top-$K$ selection?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Does competition among accumulated coordinate evidences allocate a sparse communication budget better than independent firing or conventional Top-$K$ selection?}}$}
+\end{center}
 
 The benchmark, problem ensemble, asynchronous compute periods, stochastic-gradient noise, curvature-normalized thresholds, rate normalization, and communication accounting are inherited from Experiment~10A: $N=10$ clients, $d=20$ coordinates, $80$ heterogeneous problem realizations, $2000$ wall-clock ticks, and a $500$-tick tail window.
 
@@ -45,7 +45,8 @@ Table~\ref{tab:exp10b_k} shows the decisive $K$ sweep at the Experiment~10A refe
   \small
   \caption{Experiment~10B competition-budget sweep. ``Suppressed'' is the fraction of immediately eligible coordinate events that are deferred by the Top-$K$ competition. The two slowest clients have an intended combined weight of $20\%$.}
   \label{tab:exp10b_k}
-  \begin{tabular}{lrrrrrr}
+  \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrrr}
     \toprule
     Variant & Tail gap & Whole gap & Payload bits & Packetized bits & Suppressed & Slow share \\
     \midrule
@@ -57,6 +58,7 @@ Table~\ref{tab:exp10b_k} shows the decisive $K$ sweep at the Experiment~10A refe
     $K=20$ & $0.00625$ & $0.8255$ & $10310$ & $50976$ & $0.0\%$ & $20.9\%$ \\
     \bottomrule
   \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The central observation is that suppression of an event does not remove its evidence. The coordinate usually remains close to or above threshold and competes again at a later client completion. Consequently, the per-packet cap changes \emph{when} events are emitted much more than \emph{how many} events are eventually emitted.

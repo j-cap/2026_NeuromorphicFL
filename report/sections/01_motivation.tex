@@ -6,6 +6,7 @@ Recent work on neuromorphic control develops feedback controllers whose informat
 
 The present project asks whether the same structural principle can be applied not to physical actuation but to \emph{learning communication}. The desired analogy is
 \begin{center}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{ll}
 \toprule
 Neuromorphic control & Neuromorphic distributed learning \\
@@ -19,6 +20,7 @@ closed-loop state & model parameter vector \\
 Lyapunov stability & optimization convergence/descent \\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{center}
 
 The intended neural network does \emph{not} need to be a spiking neural network. Backpropagation can remain completely conventional. The candidate novelty is an event-driven communication and optimization layer that transforms local stochastic-gradient information into sparse signed events.

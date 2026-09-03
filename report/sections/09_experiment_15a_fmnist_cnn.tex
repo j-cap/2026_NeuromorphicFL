@@ -34,6 +34,7 @@ The parameter counts are summarized in Table~\ref{tab:exp15a-parameters}.
 \small
 \caption{Experiment~15A compact-CNN parameterization.}
 \label{tab:exp15a-parameters}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrr}
 \toprule
 Tensor & Shape contribution & Parameters\\
@@ -46,6 +47,7 @@ Output + bias & $32\cdot10+10$ & 330\\
 Total & & $\mathbf{14538}$\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 Thus a coordinate address requires
 \begin{equation}
@@ -112,6 +114,7 @@ The representative comparison is summarized in Table~\ref{tab:exp15a-primary-650
 \caption{Experiment~15A primary compact-CNN comparison at 650 ticks.}
 \label{tab:exp15a-primary-650}
 \begin{adjustbox}{max width=\textwidth}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Whole train obj. & Payload\\
@@ -122,6 +125,7 @@ EF-TopK $2.5\%$ & 0.6075 & 0.7742 & 0.418 & 0.9795 & 40.14 Mbit\\
 Dense SGD & 0.5715 & 0.7876 & 0.308 & 0.9061 & 1118.38 Mbit\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{adjustbox}
 \end{table}
 
@@ -164,6 +168,7 @@ The selected 650-tick event rule was frozen and evaluated on independent strong-
 \caption{Experiment~15A robustness across independent strong-skew partitions at 650 ticks.}
 \label{tab:exp15a-strong-robustness}
 \begin{adjustbox}{max width=\textwidth}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrr}
 \toprule
 Regime / seed & Method & Test CE & Accuracy & Worst class & Payload\\
@@ -178,6 +183,7 @@ Strong / 2600 & Events & \textbf{0.5813} & \textbf{0.7868} & \textbf{0.442} & 17
 \bottomrule
 \end{tabular}
 \end{adjustbox}
+\end{adjustbox}
 \end{table}
 The strong-skew advantage is therefore not specific to the original partition.
 
@@ -187,6 +193,7 @@ The same frozen event rule was also transferred to IID and moderate label skew, 
 \small
 \caption{Experiment~15A transfer of the frozen 650-tick event rule to IID and moderate label skew.}
 \label{tab:exp15a-heterogeneity-transfer}
+\begin{adjustbox}{max width=\textwidth}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrr}
 \toprule
@@ -201,6 +208,7 @@ Moderate & Events & \textbf{0.5426} & \textbf{0.8059} & \textbf{0.551} & \textbf
  & Dense & 0.5551 & 0.7974 & 0.458 & 1118.38 Mbit\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{adjustbox}
 \end{table}
 Under IID data, dense SGD retains a modest final-CE advantage, which is expected because communication compression is not needed to compensate client-objective disagreement. Nevertheless, the event model is close in predictive performance while using approximately two orders of magnitude less payload. Under moderate skew, the frozen event configuration is best on all reported predictive metrics among the tested references.
@@ -236,6 +244,7 @@ The key 1200-tick configurations are summarized in Table~\ref{tab:exp15a-resolut
 \caption{Experiment~15A long-horizon event-resolution schedule refinement.}
 \label{tab:exp15a-resolution-sweep}
 \begin{adjustbox}{max width=\textwidth}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrr}
 \toprule
 $(q_0,p)$ & Train obj. & Test CE & Accuracy & Worst class & Payload\\
@@ -248,6 +257,7 @@ $\mathbf{(0.01,0.5)}$ & \textbf{0.5442} & \textbf{0.5648} & \textbf{0.7973} & \t
 $(0.0125,0.5)$ & 0.5828 & 0.5858 & 0.7877 & 0.316 & 27.79 Mbit\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{adjustbox}
 \end{table}
 The stronger schedule
@@ -289,6 +299,7 @@ The canonical same-run comparison is summarized in Table~\ref{tab:exp15a-canonic
 \caption{Experiment~15A canonical paired 1200-tick validation in one fixed numerical environment.}
 \label{tab:exp15a-canonical-1200}
 \begin{adjustbox}{max width=\textwidth}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Whole train obj. & Payload\\
@@ -298,6 +309,7 @@ EF-TopK $2.5\%$ & \textbf{0.5527} & 0.7892 & 0.381 & 0.8337 & 74.14 Mbit\\
 Dense SGD & 0.5785 & 0.7799 & \textbf{0.552} & 0.8245 & 2065.56 Mbit\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{adjustbox}
 \end{table}
 

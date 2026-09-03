@@ -4,9 +4,9 @@
 \subsection{Purpose}
 
 Experiments~10A--10C use diagonal local Hessians. This is analytically convenient, but it is also unusually favorable to independent coordinate neurons because the optimization principal directions coincide with the communication coordinates. Experiment~10D therefore asks
-\begin{equation}
-  \boxed{\text{Does the low-bit event encoder remain useful when the objective is not aligned with the parameter coordinates?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Does the low-bit event encoder remain useful when the objective is not aligned with the parameter coordinates?}}$}
+\end{center}
 The experiment is deliberately constructed so that a change in geometry does not silently change the underlying optimization difficulty.
 
 \subsection{Controlled isospectral rotation}
@@ -77,7 +77,8 @@ Table~\ref{tab:exp10d-primary} gives the main results. The basis-aligned event e
   \centering
   \caption{Experiment~10D isospectral rotation sweep. Payload is the mean logical uplink payload over $2000$ ticks.}
   \label{tab:exp10d-primary}
-  \begin{tabular}{rrrrr}
+  \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{rrrrr}
     \toprule
     $\eta_{\rm off}$ & Method & Tail gap & Whole-run gap & Payload bits \\
     \midrule
@@ -98,6 +99,7 @@ Table~\ref{tab:exp10d-primary} gives the main results. The basis-aligned event e
     0.599 & EF-TopK & $7.89\times10^{-3}$ & 0.183 & 1095200 \\
     \bottomrule
   \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The native LIF tail gap therefore worsens by a factor of approximately
@@ -167,9 +169,9 @@ Thus the native event encoder eventually surpasses the selected EF-TopK tail err
 fewer logical payload bits. It still converges more slowly in integrated objective cost and requires about $68\%$ more event payload than the basis-aligned LIF control.
 
 The correct interpretation is therefore not that rotated geometry makes event coding unusable. Rather,
-\begin{equation}
-  \boxed{\text{native coordinate event coding remains highly communication efficient, but loses convergence efficiency when the communication basis is misaligned with curvature.}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{native coordinate event coding remains highly communication efficient, but loses convergence efficiency when the communication basis is misaligned with curvature.}}$}
+\end{center}
 
 \subsection{Global descent oracle under rotation}
 

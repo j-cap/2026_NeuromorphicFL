@@ -6,13 +6,13 @@
 Experiment~9c provided a partial positive result for event-time-aware aggregation in the scalar problem: event intervals contained useful state information, but a simple timing-dependent jump did not consistently dominate a conventional global step-size schedule. Experiment~10C revisits this question in the vector setting, where every client--coordinate pair $(i,j)$ has its own event stream and therefore its own inter-event timescale.
 
 The central questions are
-\begin{equation}
-  \boxed{\text{Does coordinate-level inter-event timing contain useful optimization information beyond event sign?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Does coordinate-level inter-event timing contain useful optimization information beyond event sign?}}$}
+\end{center}
 and, more importantly,
-\begin{equation}
-  \boxed{\text{Can that information be decoded into a better jump rule than fixed $q$ or conventional global jump decay?}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{Can that information be decoded into a better jump rule than fixed $q$ or conventional global jump decay?}}$}
+\end{center}
 
 The distinction between these questions is essential. A timing variable may be statistically informative without the chosen timing-to-jump mapping being a good optimizer.
 
@@ -84,7 +84,8 @@ A calibration-normalized interval gives the particularly interpretable result in
   \small
   \caption{Experiment~10C event quality versus inter-event interval normalized by the calibration median of the same client and coordinate.}
   \label{tab:exp10c_timing_quality}
-  \begin{tabular}{lrrr}
+  \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrr}
     \toprule
     $\tau/\tau_{\mathrm{median}}$ & Events & Mean $|w_j-w_j^\star|$ & Harmful-event fraction \\
     \midrule
@@ -95,6 +96,7 @@ A calibration-normalized interval gives the particularly interpretable result in
     $>4$ & $9253$ & $0.038$ & $58.45\%$ \\
     \bottomrule
   \end{tabular}
+\end{adjustbox}
 \end{table}
 
 This strongly supports the descriptive statement
@@ -112,7 +114,8 @@ Table~\ref{tab:exp10c_primary} summarizes the main held-out comparison. Each fam
   \small
   \caption{Experiment~10C selected held-out results for $\sigma_g=0.25$. Logical payload uses the same event accounting as Experiment~10A.}
   \label{tab:exp10c_primary}
-  \begin{tabular}{lrrrr}
+  \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrr}
     \toprule
     Method & Tail gap & Whole-run gap & Payload bits & Events \\
     \midrule
@@ -125,6 +128,7 @@ Table~\ref{tab:exp10c_primary} summarizes the main held-out comparison. Each fam
     Coordinate-normalized $q_j$ & $0.00911$ & $1.0118$ & $10247$ & $1708$ \\
     \bottomrule
   \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The most direct timing rule is therefore a negative result. The best tested local-timing point is worse than the tuned fixed-jump reference in both final error and transient cost. More importantly, the shuffled-timing control is better than the true local-timing rule for the same basic decoder family. This shows that the information contained in the actual local interval is not being converted into useful parameter motion by the simple inverse-power rule.
@@ -152,7 +156,8 @@ The mechanism comparison was repeated for $\sigma_g\in\{0,0.25,0.5\}$ on the hel
   \small
   \caption{Experiment~10C robustness to stochastic-gradient noise.}
   \label{tab:exp10c_noise}
-  \begin{tabular}{crrrr}
+  \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{crrrr}
     \toprule
     $\sigma_g$ & Fixed $q$ & Local timing & Wall timing & Global schedule \\
     \midrule
@@ -161,6 +166,7 @@ The mechanism comparison was repeated for $\sigma_g\in\{0,0.25,0.5\}$ on the hel
     $0.50$ & $0.00696$ & $0.00783$ & $0.00705$ & $\mathbf{0.00612}$ \\
     \bottomrule
   \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The qualitative ordering is stable. Local timing is consistently worse than fixed $q$, wall timing is close to but not better than the tuned fixed family, and global jump decay gives the smallest final error at all three noise levels. This makes it unlikely that the primary result is a particular-noise tuning artifact.

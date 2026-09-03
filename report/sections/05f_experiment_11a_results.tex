@@ -21,7 +21,8 @@ Table~\ref{tab:exp11a-main} summarizes representative configurations. Values rep
   \centering
   \caption{Experiment~11A primary comparison. Candidate events are transmitted threshold crossings; accepted events are candidates that receive nonzero jump amplitude.}
   \label{tab:exp11a-main}
-  \begin{tabular}{lrrrrr}
+  \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrr}
     \toprule
     Method & Tail gap & Whole-run gap & Payload bits & Candidates & Accepted \\
     \midrule
@@ -34,6 +35,7 @@ Table~\ref{tab:exp11a-main} summarizes representative configurations. Values rep
     Event-derived + oracle margins, $\eta=1$ & $\approx0$ & 0.211 & 8001 & 1334 & 32.4 \\
     \bottomrule
   \end{tabular}
+\end{adjustbox}
 \end{table}
 
 The first gate is therefore passed very strongly. Relative to the empirically best conventional global schedule from Experiment~10C, the global descent oracle reduces whole-run excess cost by approximately
@@ -94,9 +96,9 @@ as an oracle-valid bound and forms
 With $q=\underline a_{i,j}/L_j$, the certified rule essentially reproduces the global oracle: numerical-zero tail error, whole-run cost $0.208$, zero harmful accepted events, and approximately $21$ accepted events per run. It also remains stable throughout the tested heterogeneity sweep.
 
 This does not solve the practical FL problem because the exact eventwise $\zeta_{i,j}$ is unavailable. It does, however, prove an important structural point:
-\begin{equation}
-  \boxed{\text{a sufficiently informative local--global disagreement bound can convert local evidence into globally safe sparse events.}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\text{a sufficiently informative local--global disagreement bound can convert local evidence into globally safe sparse events.}}$}
+\end{center}
 The key open question is therefore how such a bound can be estimated, learned, or conservatively maintained without reintroducing dense communication.
 
 \subsection{First-passage timing estimates local gradient magnitude, but imperfectly}
@@ -163,7 +165,7 @@ A valid disagreement bound is sufficient to recover globally safe sparse events,
 First-passage timing provides useful local gradient information but is too inaccurate and too local to replace the missing global certificate directly.
 
 The central conclusion is therefore
-\begin{equation}
-  \boxed{\textbf{descent-aware neuromorphic event sizing is promising; the research bottleneck is a sparse federated certificate of global alignment and uncertainty.}}
-\end{equation}
+\begin{center}
+\resizebox{0.96\linewidth}{!}{$\displaystyle \boxed{\textbf{descent-aware neuromorphic event sizing is promising; the research bottleneck is a sparse federated certificate of global alignment and uncertainty.}}$}
+\end{center}
 This is a substantially sharper target than the earlier heuristic timing, homeostasis, or competition mechanisms.
