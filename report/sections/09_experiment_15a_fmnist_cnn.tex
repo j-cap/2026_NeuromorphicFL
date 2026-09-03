@@ -28,8 +28,12 @@ The network is intentionally small enough to retain deterministic NumPy backprop
 \end{equation}
 The first convolution uses eight $5\times5$ filters with stride two. The second convolution uses sixteen $3\times3$ filters with stride two. Both hidden stages use $\tanh$ nonlinearities. The resulting $16\times5\times5=400$ features are flattened, mapped to a 32-dimensional hidden layer, and finally to ten logits.
 
-The parameter counts are
-\begin{center}
+The parameter counts are summarized in Table~\ref{tab:exp15a-parameters}.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~15A compact-CNN parameterization.}
+\label{tab:exp15a-parameters}
 \begin{tabular}{lrr}
 \toprule
 Tensor & Shape contribution & Parameters\\
@@ -42,7 +46,7 @@ Output + bias & $32\cdot10+10$ & 330\\
 Total & & $\mathbf{14538}$\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
 Thus a coordinate address requires
 \begin{equation}
 \left\lceil\log_2 14538\right\rceil=14
@@ -101,8 +105,13 @@ with
 \begin{equation}
 q(k)=0.0075\left(1+\frac{k}{500}\right)^{-0.1}.
 \end{equation}
-The representative comparison is
-\begin{center}
+The representative comparison is summarized in Table~\ref{tab:exp15a-primary-650}.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~15A primary compact-CNN comparison at 650 ticks.}
+\label{tab:exp15a-primary-650}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Whole train obj. & Payload\\
@@ -113,7 +122,12 @@ EF-TopK $2.5\%$ & 0.6075 & 0.7742 & 0.418 & 0.9795 & 40.14 Mbit\\
 Dense SGD & 0.5715 & 0.7876 & 0.308 & 0.9061 & 1118.38 Mbit\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{adjustbox}
+\end{table}
+
+Figure~\ref{fig:exp15a-pareto} shows the corresponding communication--accuracy frontier on a logarithmic communication axis.
+
+\ExpFifteenAParetoFigure
 
 At this horizon, the event method uses approximately
 \begin{equation}
@@ -143,8 +157,13 @@ Consequently, filter-level or block-level event packets are not justified merely
 
 \subsection{Robustness across partitions and heterogeneity regimes}
 
-The selected 650-tick event rule was frozen and evaluated on independent strong-skew partitions. The results are
-\begin{center}
+The selected 650-tick event rule was frozen and evaluated on independent strong-skew partitions. Table~\ref{tab:exp15a-strong-robustness} reports the results.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~15A robustness across independent strong-skew partitions at 650 ticks.}
+\label{tab:exp15a-strong-robustness}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrr}
 \toprule
 Regime / seed & Method & Test CE & Accuracy & Worst class & Payload\\
@@ -158,11 +177,17 @@ Strong / 2600 & Events & \textbf{0.5813} & \textbf{0.7868} & \textbf{0.442} & 17
  & Dense & 0.6756 & 0.7577 & 0.186 & 1118.38 Mbit\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{adjustbox}
+\end{table}
 The strong-skew advantage is therefore not specific to the original partition.
 
-The same frozen event rule was also transferred to IID and moderate label skew:
-\begin{center}
+The same frozen event rule was also transferred to IID and moderate label skew, as summarized in Table~\ref{tab:exp15a-heterogeneity-transfer}.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~15A transfer of the frozen 650-tick event rule to IID and moderate label skew.}
+\label{tab:exp15a-heterogeneity-transfer}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrr}
 \toprule
 Regime & Method & Test CE & Accuracy & Worst class & Payload\\
@@ -176,7 +201,8 @@ Moderate & Events & \textbf{0.5426} & \textbf{0.8059} & \textbf{0.551} & \textbf
  & Dense & 0.5551 & 0.7974 & 0.458 & 1118.38 Mbit\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{adjustbox}
+\end{table}
 Under IID data, dense SGD retains a modest final-CE advantage, which is expected because communication compression is not needed to compensate client-objective disagreement. Nevertheless, the event model is close in predictive performance while using approximately two orders of magnitude less payload. Under moderate skew, the frozen event configuration is best on all reported predictive metrics among the tested references.
 
 \subsection{Negative result: the medium-horizon jump schedule degrades late}
@@ -189,10 +215,10 @@ q(k)=0.0075\left(1+\frac{k}{500}\right)^{-0.1}
 \end{equation}
 reached test accuracy only $75.8\%$ and test CE about $0.659$ at 1200 ticks, whereas EF-TopK improved with the longer horizon. The precise trajectory is hardware-sensitive near event thresholds, as discussed in Experiment~14C, but the qualitative issue was sufficiently large to require investigation rather than being dismissed as runner noise.
 
-This result should be retained explicitly:
-\begin{equation}
-\boxed{\text{a jump schedule that is strong at 650 ticks need not remain stable at 1200 ticks}.}
-\end{equation}
+This result should be retained explicitly.
+\begin{takeawaybox}[title={Experiment 15A negative result}]
+A jump schedule that is strong at 650 ticks need not remain stable at 1200 ticks. Medium-horizon tuning is therefore insufficient for the event-update resolution.
+\end{takeawaybox}
 The failure is not evidence that the LIF evidence state itself stops carrying useful information. Instead, the natural hypothesis is a mismatch between two time scales: persistent evidence accumulation remains desirable, while the discrete update resolution should shrink more strongly as the model approaches a fine optimum region.
 
 \subsection{Event-resolution annealing audit}
@@ -203,8 +229,13 @@ q(k)=q_0\left(1+\frac{k}{500}\right)^{-p},
 \end{equation}
 with $q_0\in\{0.0075,0.01,0.0125\}$ and stronger decay exponents up to $p=0.5$. Event configurations were compared by training-side objective behavior rather than selecting on test accuracy.
 
-The key 1200-tick configurations are
-\begin{center}
+The key 1200-tick configurations are summarized in Table~\ref{tab:exp15a-resolution-sweep}.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~15A long-horizon event-resolution schedule refinement.}
+\label{tab:exp15a-resolution-sweep}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrr}
 \toprule
 $(q_0,p)$ & Train obj. & Test CE & Accuracy & Worst class & Payload\\
@@ -217,17 +248,18 @@ $\mathbf{(0.01,0.5)}$ & \textbf{0.5442} & \textbf{0.5648} & \textbf{0.7973} & \t
 $(0.0125,0.5)$ & 0.5828 & 0.5858 & 0.7877 & 0.316 & 27.79 Mbit\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{adjustbox}
+\end{table}
 The stronger schedule
 \begin{equation}
 \boxed{
 q(k)=0.01\left(1+\frac{k}{500}\right)^{-0.5}
 }
 \end{equation}
-therefore restores the long-horizon behavior. The central mechanism conclusion is
-\begin{equation}
-\boxed{\text{late CNN degradation is a jump-resolution problem, not a demonstrated event-learning floor}.}
-\end{equation}
+therefore restores the long-horizon behavior. The central mechanism conclusion is summarized as follows.
+\begin{takeawaybox}[title={Resolution-annealing conclusion}]
+The observed late CNN degradation is a jump-resolution problem, not a demonstrated event-learning floor. Persistent evidence can remain useful while the applied model quantum requires stronger late-stage refinement.
+\end{takeawaybox}
 
 This result also sharpens the conceptual separation between the membrane dynamics and the global model jump. The evidence memory can remain highly persistent with $\rho\approx1$, while the update quantum should become progressively finer:
 \begin{equation}
@@ -250,8 +282,13 @@ B=30{,}341{,}190\ \text{bits},
 \qquad
 N_{\mathrm{event}}=2{,}022{,}746.
 \end{equation}
-The canonical same-run comparison is
-\begin{center}
+The canonical same-run comparison is summarized in Table~\ref{tab:exp15a-canonical-1200}.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~15A canonical paired 1200-tick validation in one fixed numerical environment.}
+\label{tab:exp15a-canonical-1200}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lrrrrr}
 \toprule
 Method & Test CE & Accuracy & Worst class & Whole train obj. & Payload\\
@@ -261,7 +298,12 @@ EF-TopK $2.5\%$ & \textbf{0.5527} & 0.7892 & 0.381 & 0.8337 & 74.14 Mbit\\
 Dense SGD & 0.5785 & 0.7799 & \textbf{0.552} & 0.8245 & 2065.56 Mbit\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{adjustbox}
+\end{table}
+
+Figure~\ref{fig:exp15a-final} visualizes the final long-horizon communication--accuracy operating points after the resolution schedule is corrected.
+
+\ExpFifteenAFinalFigure
 
 The event method does not strictly dominate every metric. EF-TopK attains slightly lower final cross-entropy, while dense SGD attains the best worst-class accuracy in this particular final run. The event method nevertheless has the highest mean test accuracy and the lowest whole-run training objective among the three selected references. More importantly, it requires approximately
 \begin{equation}
@@ -273,10 +315,10 @@ less payload than EF-TopK and
 \end{equation}
 less than dense SGD.
 
-The appropriate claim is therefore a Pareto result rather than universal metric dominance:
-\begin{equation}
-\boxed{\text{compact CNN event learning attains competitive predictive performance at much lower communication}.}
-\end{equation}
+The appropriate claim is therefore a Pareto result rather than universal metric dominance.
+\begin{takeawaybox}[title={Experiment 15A main result}]
+Compact-CNN event learning attains competitive predictive performance at much lower communication. EF-TopK or dense training can win individual predictive metrics, but neither matches the selected event operating point at comparable payload.
+\end{takeawaybox}
 
 \subsection{Reproducibility qualification}
 
@@ -311,30 +353,8 @@ Experiment~15A gives the following gates:
 \boxed{\text{stronger event-resolution annealing: PASS}}.
 \end{equation}
 
-The empirical progression now reaches
-\begin{equation}
-\boxed{
-\text{quadratics}
-\rightarrow
-\text{convex logistic regression}
-\rightarrow
-\text{nonconvex MLPs}
-\rightarrow
-\text{real-data MLPs}
-\rightarrow
-\text{convolutional neural networks}.
-}
-\end{equation}
-Across this progression, the basic communication mechanism remains recognizable:
-\begin{equation}
-\boxed{
-\text{local stochastic gradient}
-\rightarrow
-\text{temporal evidence accumulation}
-\rightarrow
-\text{threshold crossing}
-\rightarrow
-\text{sparse signed coordinate update}.
-}
-\end{equation}
+The empirical progression now reaches quadratics, convex logistic regression, nonconvex MLPs, real-data MLPs, and finally convolutional neural networks.
+\begin{takeawaybox}[title={Empirical progression through Experiment 15A}]
+Across this progression, the recognizable communication mechanism remains: local learning signal $\rightarrow$ temporal evidence accumulation $\rightarrow$ threshold crossing $\rightarrow$ sparse signed coordinate update. The CNN result therefore extends the mechanism to a new architecture class without requiring filter-specific communication machinery.
+\end{takeawaybox}
 The most important new lesson from the CNN is not that convolution demands structured event packets. The evidence currently says the opposite. Instead, the new algorithmic bottleneck is that the signed event \emph{resolution} must adapt from coarse early optimization to fine late-stage refinement.

@@ -89,8 +89,12 @@ Under strong label skew, semantic differences in the local gradients partially m
 
 The most important falsified hypothesis is the intuitive starvation explanation. If a class were learned late because too few events reached its output block, one would expect a positive relationship between $s_c^{\mathrm{out}}$ and final class accuracy. The observed relation has the opposite sign in every tested scenario.
 
-The Spearman correlations between output event share and final class accuracy are approximately
-\begin{center}
+Table~\ref{tab:exp14c-output-share-correlation} reports the Spearman correlations between output event share and final class accuracy.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~14C correlation between class-associated output-event share and final class accuracy.}
+\label{tab:exp14c-output-share-correlation}
 \begin{tabular}{lr}
 \toprule
 Scenario & $\rho(s_c^{\mathrm{out}},A_c)$\\
@@ -105,7 +109,7 @@ Strong seed 2500, equal periods & $-0.851$\\
 Strong seed 2500, heterogeneous periods & $-0.333$\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
 
 For example, under strong skew with equal periods, class~6 (Shirt) has only $20.9\%$ final accuracy while receiving about $13.4\%$ of all output-block events, one of the largest shares. Under IID/equal compute, where the client event shares are essentially uniform, class~6 still has only $24.3\%$ accuracy and again receives the largest output event share, approximately $14.8\%$. Thus
 \begin{equation}
@@ -117,8 +121,12 @@ This result is important algorithmically. A naive fairness rule that boosts thre
 
 \subsection{Class-to-period assignment changes the transient}
 
-Strong-skew runs were repeated while permuting which semantic class is dominant on each compute slot. At the same $650$-tick horizon, the event results within one fixed numerical environment are
-\begin{center}
+Strong-skew runs were repeated while permuting which semantic class is dominant on each compute slot. Table~\ref{tab:exp14c-period-assignment} reports the event results at the same $650$-tick horizon within one fixed numerical environment.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~14C sensitivity to the assignment between semantic class and client compute period.}
+\label{tab:exp14c-period-assignment}
 \begin{tabular}{lrrr}
 \toprule
 Assignment & Test CE & Accuracy & Worst class\\
@@ -128,7 +136,7 @@ Reverse & 0.6521 & 0.7719 & \textbf{0.537}\\
 Mixed & 0.6686 & 0.7524 & 0.264\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
 Thus semantic class and compute period cannot be treated independently. Merely changing which class is associated with a fast or slow client changes the weakest-class result substantially.
 
 However, this sensitivity is not explained by a simple dominant-client event-share rule. The Spearman correlation between the event share of a class's dominant client and that class's final accuracy is approximately $-0.527$ for the identity assignment, $-0.224$ for reverse, and $+0.079$ for mixed. The sign and magnitude are not stable enough to support a scalar event-share predictor of class convergence.
@@ -137,8 +145,12 @@ However, this sensitivity is not explained by a simple dominant-client event-sha
 
 At $650$ wall-clock ticks, $T_i=3$ gives $2160$ total local completions, while the heterogeneous schedule produces $2404$. The difference is only about $10\%$, but it is scientifically relevant because the experiment concerns finite-horizon convergence. The equal-period horizon was therefore extended to $722$ ticks, yielding $2400$ total local completions, almost exactly matching the heterogeneous schedule.
 
-The matched-work event results are
-\begin{center}
+The matched-work event results are summarized in Table~\ref{tab:exp14c-matched-work}.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~14C event results with equal and heterogeneous compute schedules after matching the total amount of local work.}
+\label{tab:exp14c-matched-work}
 \begin{tabular}{llrrr}
 \toprule
 Regime & Compute & Test CE & Accuracy & Worst class\\
@@ -151,7 +163,11 @@ Strong, seed 2500 & equal, matched & 0.5860 & 0.8034 & \textbf{0.508}\\
                     & heterogeneous & 0.7491 & 0.7303 & 0.239\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
+
+Figure~\ref{fig:exp14c-matched-work} isolates the worst-class effect and shows that the degradation is large in all three matched-work comparisons.
+
+\ExpFourteenCMatchedWorkFigure
 
 This resolves an ambiguity in the wall-clock-only comparison. With total local work matched,
 \begin{equation}
@@ -219,20 +235,10 @@ The mechanism audit gives the following gates:
 \boxed{\text{class-to-period assignment matters: PASS}}.
 \end{equation}
 
-The resulting mechanism picture is more precise than the initial fairness hypothesis:
-\begin{equation}
-\boxed{
-\text{compute heterogeneity}
-\;\longrightarrow\;
-\begin{matrix}
-\text{general asynchronous optimization delay}\\
-+\\
-\text{event-specific nonlinear traffic reshaping}
-\end{matrix}
-\;\longrightarrow\;
-\text{partition-sensitive class transients}.
-}
-\end{equation}
+The resulting mechanism picture is more precise than the initial fairness hypothesis.
+\begin{takeawaybox}[title={Experiment 14C mechanism summary}]
+Compute heterogeneity produces a general asynchronous optimization delay and, for the event method, an additional nonlinear reshaping of communication traffic. Their interaction produces partition-sensitive class transients; the data do not support a simple event-starvation explanation.
+\end{takeawaybox}
 Hard classes respond to that delay with increased corrective event activity rather than disappearing from the communication stream. Therefore a client- or class-specific rule that merely equalizes event counts is not scientifically justified by the present evidence.
 
 The reproducible audit drivers are \texttt{experiments/14c\_event\_share\_fairness.py}, \texttt{14c\_baseline\_period\_controls.py}, \texttt{14c\_matched\_completion\_controls.py}, and \texttt{14c\_instrumentation\_repro\_check.py}. Report-ready summary tables are stored under \texttt{experiments/results/14c\_event\_share\_fairness/}.

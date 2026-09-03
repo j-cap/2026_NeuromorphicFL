@@ -102,6 +102,10 @@ Dense SGD & 0.40033 & 0.8265 & 0.53366 & 1366.61 M\\
 \end{tabular}
 \end{table}
 
+Figure~\ref{fig:exp14a-pareto} visualizes the same operating points on a logarithmic communication axis and makes the communication--performance separation explicit.
+
+\ExpFourteenAParetoFigure
+
 The selected event point strictly improves the tested EF Pareto frontier. Relative to EF-TopK $0.5\%$, it uses approximately $26\%$ fewer payload bits while reducing test BCE from $0.48489$ to $0.39317$ and increasing accuracy from $80.9\%$ to $82.65\%$. Relative to EF-TopK $2.5\%$, the event method uses approximately $6.77\times$ fewer bits while also attaining lower test BCE. Relative to dense SGD, the payload reduction is approximately
 \begin{equation}
 \boxed{184\times}.
@@ -142,8 +146,12 @@ The selected strong-partition run transmits $463263$ coordinate events in $1627$
 \end{equation}
 coordinate events on average, corresponding to only about $1.1\%$ of the $25665$ model parameters. The mean logical packet payload is about $4556$ bits, still roughly two orders of magnitude below a dense $821280$-bit float32 vector.
 
-The fraction of parameters that fire at least once is approximately $65.1\%$. This is lower than in Experiment~13B and is mainly caused by the large first-layer matrix. Tensor-wise activity is
-\begin{center}
+The fraction of parameters that fire at least once is approximately $65.1\%$. This is lower than in Experiment~13B and is mainly caused by the large first-layer matrix. Table~\ref{tab:exp14a-tensor-activity} resolves the activity by tensor.
+\begin{table}[ht]
+\centering
+\small
+\caption{Experiment~14A event activity by parameter tensor for the selected strong-partition run.}
+\label{tab:exp14a-tensor-activity}
 \begin{tabular}{lrr}
 \toprule
 Tensor & Events/parameter & Never-fired fraction\\
@@ -156,7 +164,7 @@ $W_3$ & 134.81 & 0\\
 $b_3$ & 573.0 & 0\\
 \bottomrule
 \end{tabular}
-\end{center}
+\end{table}
 There is therefore no evidence of a dead upper layer: all later tensors are highly active and every parameter in $b_2,W_3,b_3$ fires. The result instead suggests that high-dimensional event learning naturally leaves a substantial subset of first-layer coordinates silent when the accumulated evidence never reaches threshold. Whether this is beneficial implicit pruning or unused capacity remains an open question.
 
 \subsection{Negative findings and interpretation}

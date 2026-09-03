@@ -113,6 +113,7 @@ Table~\ref{tab:q3-mlp-main} reports the 150-round comparison. The $E=1$ case rem
 \small
 \caption{Q3 synchronous strong-non-IID Fashion-MNIST MLP results after 150 FedAvg rounds. Communication is uplink logical payload.}
 \label{tab:q3-mlp-main}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{crrrrr}
 \toprule
 $E$ & Method & Test CE & Acc. [\%] & Worst [\%] & Payload [Mbit]\\
@@ -133,7 +134,12 @@ $E$ & Method & Test CE & Acc. [\%] & Worst [\%] & Payload [Mbit]\\
 10 & Sign-EF & 0.4690 & 82.80 & 57.2 & 38.78\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
+
+Figure~\ref{fig:q3-local-work} visualizes the central Q3 trend: the one-step bridge is weaker, while Event-FedAvg becomes fully competitive once the client performs genuine multi-step local training.
+
+\QThreeLocalWorkFigure
 
 The minimum Q3 gate is already passed at $E=5$. Event-FedAvg reaches the same predictive regime as dense FedAvg and the strongest tested sparse baseline while using
 \begin{equation}
@@ -164,12 +170,10 @@ At $E=1$, Event-FedAvg reaches 71.93\% accuracy compared with 74.84\% for dense 
 
 The pattern is scientifically useful. V1 does not become unstable as local work increases. Instead, its relative performance improves when the encoder is driven by a genuine multi-step local delta. This is consistent with the intended temporal-evidence interpretation: a local FedAvg update already integrates several stochastic learning signals before entering the persistent communication state.
 
-Consequently the supported claim is
-\begin{equation}
-\boxed{
-\text{V1 is compatible with conventional multi-step FedAvg local updates.}
-}
-\end{equation}
+Consequently the supported claim is deliberately limited to compatibility rather than universal dominance.
+\begin{takeawaybox}[title={Q3 compatibility conclusion}]
+V1 is compatible with conventional multi-step FedAvg local updates. The evidence does not support the stronger claim that one fixed event setting dominates dense FedAvg for every amount of local work and every horizon.
+\end{takeawaybox}
 The evidence does not support a stronger statement that one fixed event setting uniformly dominates dense FedAvg for every $E$ and horizon.
 
 \subsection{Local-drift and event-state diagnostics}

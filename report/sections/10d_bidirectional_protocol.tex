@@ -1,12 +1,10 @@
 \section{Consolidation Question Q2: End-to-End Bidirectional FL Protocol}
 \label{sec:consolidation-q2}
 
-The strongest communication results in Part~I are primarily uplink results. A complete communication-efficient FL algorithm must also specify how clients receive the evolving global model. Q2 therefore asks
-\begin{equation}
-\boxed{
-\text{Does the communication advantage survive explicit server--client synchronization?}
-}
-\end{equation}
+The strongest communication results in Part~I are primarily uplink results. A complete communication-efficient FL algorithm must also specify how clients receive the evolving global model. Q2 therefore asks the following end-to-end systems question.
+\begin{takeawaybox}[title={Q2 question}]
+Does the communication advantage survive explicit server--client synchronization once downlink traffic and client catch-up are accounted for?
+\end{takeawaybox}
 The answer is not automatic. If every sparse client upload is followed by a dense float32 global-model download, the downlink can dominate the total traffic and erase most of the distinction between sparse uplink methods.
 
 The original consolidation roadmap placed Q2 after the FedAvg compatibility study. The protocol question was instead executed first. This does not change the learning rule: Q2 operates on the server-update stream produced by a frozen compressor and is agnostic to whether the client-side input was one stochastic gradient or, later, a multi-step FedAvg delta. The present study should therefore be regarded as the protocol-feasibility result for frozen V1. Q3 must verify that the same packet semantics remain valid when the encoder input changes to a local model delta.
@@ -102,6 +100,7 @@ The absolute neural-network trajectory remains subject to the hybrid numerical s
 \small
 \caption{Q2 end-to-end packetized communication on the 1200-tick compact-CNN run. ``Broadcast'' counts one logical server transmission per sparse packet. ``Unicast'' counts pull-based replay independently for each client. ``Hybrid'' selects replay or a dense checkpoint at every catch-up.}
 \label{tab:q2-end-to-end}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrrr}
 \toprule
 Uplink method & Downlink & Test CE & Acc. [\%] & $B_\uparrow$ [Mbit] & $B_\downarrow$ [Mbit] & $B_{\mathrm{tot}}$ [Mbit]\\
@@ -119,7 +118,12 @@ EF-TopK & Hybrid & 0.5414 & 79.43 & 74.42 & 614.28 & 688.71\\
 Dense & Dense sync & 0.5785 & 77.99 & 2065.84 & 2070.17 & 4136.02\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
+
+Figure~\ref{fig:q2-bidirectional} compares the conservative hybrid V1 and EF protocols with dense bidirectional synchronization and makes the downlink contribution explicit.
+
+\QTwoCommunicationFigure
 
 The dense-downlink rows expose the central systems issue. V1's uplink is less than half the EF-TopK uplink, but their complete traffic is
 \begin{equation}
@@ -127,13 +131,10 @@ The dense-downlink rows expose the central systems issue. V1's uplink is less th
 \quad\text{vs.}\quad
 2144.60\ \text{Mbit}.
 \end{equation}
-The total difference is only about 2\%. Therefore
-\begin{equation}
-\boxed{
-\text{uplink compression alone is insufficient for a strong end-to-end claim.}
-}
-\end{equation}
-A sparse global-model synchronization mechanism is essential.
+The total difference is only about 2\%. Therefore the protocol result must be interpreted end to end.
+\begin{takeawaybox}[title={Q2 systems lesson}]
+Uplink compression alone is insufficient for a strong end-to-end claim. A sparse global-model synchronization mechanism is essential because dense downlink traffic almost completely masks the difference between sparse uplink methods.
+\end{takeawaybox}
 
 Once both methods are allowed to reuse their sparse server-update streams, V1 retains the advantage. Under logical broadcast,
 \begin{equation}
@@ -193,14 +194,10 @@ The Q2 verdict is
 \begin{equation}
 \boxed{\text{Q2 bidirectional protocol: STRONG PASS}.}
 \end{equation}
-This verdict has an important qualification. The strong end-to-end claim is supported by the \emph{combined} architecture
-\begin{equation}
-\boxed{
-\text{sparse V1 uplink}
-+\text{sparse ordered server-update log}
-+\text{checkpoint fallback}.
-}
-\end{equation}
+This verdict has an important qualification.
+\begin{takeawaybox}[title={Q2 final protocol architecture}]
+The strong end-to-end claim is supported by the combined architecture of sparse V1 uplink, an ordered sparse server-update log for exact replay, and dense checkpoint fallback when replay becomes more expensive.
+\end{takeawaybox}
 It is not supported by sparse uplink plus dense global-model downloads. The final paper should make this systems dependency explicit rather than quoting uplink bit ratios as if they were complete FL communication costs.
 
 Q1 identified Strom-style residual pulses as the closest historical compressor. The present Q2 study uses EF-TopK as the matched modern sparse protocol because it already served as the principal scalable baseline in Part~I. A final publication-level baseline campaign should attach the same bidirectional accounting to the closest Q1 predecessor after Q3 freezes the client-update semantics. That additional comparison is a baseline-completeness task, not a reason to keep Q2 open.

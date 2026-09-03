@@ -72,15 +72,10 @@ The strongest result of the present literature audit is that the nearest predece
 \end{align}
 The method also explicitly supports asynchronous operation. Strom further observes that one-bit quantization is sufficient and therefore communicates signed threshold-sized weight deltas indexed by coordinate.
 
-This prior work establishes that the following combination is \emph{not} new:
-\begin{equation}
-\boxed{
-\text{per-coordinate temporal gradient accumulation}
-+\text{threshold crossing}
-+\text{address/sign communication}
-+\text{asynchronous sparse model updates}.
-}
-\end{equation}
+This prior work establishes that the broad mechanism cannot be claimed as new.
+\begin{takeawaybox}[title={Q1 prior-art boundary}]
+Per-coordinate temporal gradient accumulation, threshold crossing, address/sign communication, and asynchronous sparse model updates already exist in closely related residual-pulse methods. The novelty question must therefore concern the complete V1 operator, not these ingredients individually.
+\end{takeawaybox}
 It also gives a concrete algorithmic interpretation to the equivalence found in Experiment~9. In the special case $\rho=1$, $q=\Delta=\tau$, and subtractive reset, the earlier subtractive FedLIF mechanism is essentially Strom-style residual compression.
 
 Frozen V1 is nevertheless not algebraically identical to Strom's method. There are three structural differences:
@@ -142,6 +137,7 @@ This lossy reset is not automatically beneficial. It is precisely the point that
 \small
 \caption{Structural comparison of frozen V1 with its closest identified predecessors. ``Coord.'' denotes a coordinate-level operation.}
 \label{tab:q1-structure}
+\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{3.6cm}ccccc}
 \toprule
 Property & V1 & Strom & LENA & STC & Level crossing\\
@@ -158,21 +154,13 @@ Server update on silence & none & none & drift/history & round aggregation & hol
 Asynchronous formulation & yes & yes & not primary & round based & yes\\
 \bottomrule
 \end{tabular}
+\end{adjustbox}
 \end{table}
 
-The table makes the novelty boundary explicit. V1 does not introduce temporal accumulation, sparse threshold communication, sign compression, event-triggered learning, or level-crossing coding individually. Its candidate distinction is the specific \emph{lossy pulse encoder}
-\begin{equation}
-\boxed{
-\text{leaky coordinate evidence}
-\rightarrow
-\text{first passage}
-\rightarrow
-\text{sign/address pulse of independent size }q_r
-\rightarrow
-\text{full reset},
-}
-\end{equation}
-used as a federated client-update communication layer.
+Table~\ref{tab:q1-structure} makes the novelty boundary explicit. V1 does not introduce temporal accumulation, sparse threshold communication, sign compression, event-triggered learning, or level-crossing coding individually. Its candidate distinction is the specific lossy pulse encoder used as a federated client-update communication layer.
+\begin{takeawaybox}[title={Q1 candidate distinction}]
+V1 combines leaky coordinate evidence, first-passage triggering, a sign/address pulse with independently controlled model quantum $q_r$, and full reset of fired evidence. This complete operator---rather than accumulation, thresholding, or sign coding alone---is the object carried into the final FL experiments.
+\end{takeawaybox}
 
 \subsection{Analytical Q1 verdict}
 
