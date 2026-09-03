@@ -134,22 +134,44 @@ def run_point(partition_seed: int, train_seed: int, audit_stride: int) -> None:
         regime="strong",
         seed=partition_seed,
     )
+    config = frozen_mlp_config()
     result = run_final_baseline(
         federation=federation,
         architecture="mlp",
         method="event",
-        config=frozen_mlp_config(),
+        config=config,
         seed=train_seed,
-        alignment_audit_stride=audit_stride,
     )
-    audit = result.pop("alignment_audit")
-    assert isinstance(audit, pd.DataFrame)
+    audit_rounds = sorted(
+        {
+            1,
+            config.rounds,
+            *range(audit_stride, config.rounds + 1, audit_stride),
+        }
+    )
+    audit_rows: list[pd.Series] = []
+    for target_round in audit_rounds:
+        snapshot = run_final_baseline(
+            federation=federation,
+            architecture="mlp",
+            method="event",
+            config=replace(config, rounds=target_round),
+            seed=train_seed,
+            alignment_audit_rounds=(target_round,),
+        )
+        snapshot_audit = snapshot["alignment_audit"]
+        assert isinstance(snapshot_audit, pd.DataFrame)
+        if len(snapshot_audit) != 1:
+            raise AssertionError("single-round audit produced an invalid trace")
+        audit_rows.append(snapshot_audit.iloc[0])
+    audit = pd.DataFrame(audit_rows).reset_index(drop=True)
     summary = summarize(audit)
     summary.update(
         {
             "partition_seed": partition_seed,
             "train_seed": train_seed,
             "audit_stride": audit_stride,
+            "audit_protocol": "independent_single_round_replay",
             "final_train_objective": float(result["final_train_objective"]),
             "final_test_accuracy": float(result["final_test_accuracy"]),
             "final_worst_class_accuracy": float(result["final_worst_class_accuracy"]),
@@ -263,11 +285,11 @@ def smoke_test() -> None:
         method="event",
         config=config,
         seed=1234,
-        alignment_audit_stride=1,
+        alignment_audit_rounds=(config.rounds,),
     )
     audit = audited.pop("alignment_audit")
     assert isinstance(audit, pd.DataFrame)
-    audited.pop("alignment_audit_stride")
+    audited.pop("alignment_audit_rounds")
     audited.pop("alignment_reference_size")
     assert plain.keys() == audited.keys()
     for key in plain:
