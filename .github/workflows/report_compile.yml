@@ -1,0 +1,46 @@
+name: Compile LaTeX Report
+
+on:
+  push:
+    paths:
+      - 'report/**'
+      - '.github/workflows/report_compile.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile report
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: report
+      - name: Inspect layout warnings
+        shell: bash
+        run: |
+          echo '--- Overfull boxes ---'
+          if grep -n 'Overfull \\hbox' report/main.log; then
+            echo 'OVERFULL_BOXES_PRESENT=1' >> "$GITHUB_ENV"
+          else
+            echo 'No overfull hbox warnings.'
+            echo 'OVERFULL_BOXES_PRESENT=0' >> "$GITHUB_ENV"
+          fi
+          echo '--- Undefined references/citations ---'
+          grep -nE 'undefined references|Reference .* undefined|Citation .* undefined' report/main.log || true
+      - name: Upload compiled report and log
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-report-check
+          path: |
+            report/main.pdf
+            report/main.log
+      - name: Enforce width-safe layout
+        if: env.OVERFULL_BOXES_PRESENT == '1'
+        run: |
+          echo 'LaTeX reported one or more Overfull \\hbox warnings. See the uploaded log.'
+          exit 1
