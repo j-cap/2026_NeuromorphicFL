@@ -123,14 +123,9 @@
       "sha256": "0e89e1ad0689abc01a55c8f267281b00fee01c48787968529580875f9d8d9761"
     },
     {
-      "path": "paper/ijcnn2027/IEEEtran.cls",
-      "role": "template",
-      "sha256": "65419311f0bbc0aece1da7ffeddd42736f09c250fedeaa6c7b4ebd062522c352"
-    },
-    {
-      "path": "paper/ijcnn2027/IEEEtran.bst",
-      "role": "template",
-      "sha256": "314f0ece704568faf827011bac498650691b2b5ee06320720830e782416d5a5f"
+      "path": "paper/ijcnn2027/IEEE_TEMPLATE.md",
+      "role": "template provenance",
+      "sha256": "10874824af2c9cf05d199844b1af78244e32a590570e217b58e70b35c4bfa660"
     },
     {
       "path": "paper/ijcnn2027/build_evidence.py",

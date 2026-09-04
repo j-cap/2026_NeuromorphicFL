@@ -10,11 +10,11 @@ campaigns remain manual and are not triggered by paper changes.
 
 ## Frozen bundle
 
-`reproducibility_manifest.json` records SHA-256 hashes for 38 items spanning:
+`reproducibility_manifest.json` records SHA-256 hashes for 37 items spanning:
 
 - authoritative Fashion-MNIST, CIFAR-10, P8, and T4 result sources;
 - all manuscript evidence CSVs, generated tables, and vector figures;
-- the manuscript, bibliography, and IEEE template files;
+- the manuscript, bibliography, and IEEE template-provenance record;
 - the deterministic builders and validation scripts;
 - the pinned artifact and campaign environments; and
 - the central experiment implementation.
