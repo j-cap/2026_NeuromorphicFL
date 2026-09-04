@@ -48,12 +48,12 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P5 is complete. The three-element visual argument is in
-`main.tex`, and its selection rules, claim mapping, exclusions, and readability
-checks are recorded in `P5_VISUAL_AUDIT.md`. P4's compact theory and P3's
-cross-dataset evidence remain frozen. P2 is complete for the 2026-09-04 search
-snapshot, with a mandatory refresh at P10. The author list remains
-intentionally deferred to the project team. P6 is next.
+**Current status:** P6 is complete. A five-page standalone IEEE conference
+draft now contains the full argument, frozen theory, experimental protocol,
+held-out results, qualifications, and conclusion. Its compilation and claim
+checks are recorded in `P6_MANUSCRIPT_AUDIT.md`. P2 remains valid for the
+2026-09-04 search snapshot, with a mandatory refresh at P10. The author list
+remains intentionally deferred to the project team. P7 is next.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -198,15 +198,16 @@ Recommended structure:
 5. Experimental protocol.
 6. Results, limitations, and conclusion.
 
-- [ ] Write results and contribution statements first.
-- [ ] Remove all T1--T4, Q1--Q3, experiment-number, and "next task" language.
-- [ ] Keep the manuscript within the current official page limit without
+- [x] Write results and contribution statements first.
+- [x] Remove all T1--T4, Q1--Q3, experiment-number, and "next task" language.
+- [x] Keep the manuscript within the current official page limit without
       relying on unspecified supplementary material.
-- [ ] State limitations next to the affected claims.
-- [ ] Ensure that the paper is understandable independently of the repository
+- [x] State limitations next to the affected claims.
+- [x] Ensure that the paper is understandable independently of the repository
       history.
 
-**Gate:** a complete, compliant draft exists with no placeholders.
+**Gate:** closed. A complete five-page draft exists with no placeholders or
+internal experiment-history language; see `P6_MANUSCRIPT_AUDIT.md`.
 
 ### P7 -- Simulate peer review
 

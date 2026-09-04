@@ -22,32 +22,56 @@
 \maketitle
 
 \begin{abstract}
-Federated learning exchanges high-dimensional model updates even when much of
-their coordinate-wise evidence is weak or temporally redundant. We study
-Event-FedAvg, a stateful communication layer inspired by leaky
-integrate-and-fire dynamics. Each client accumulates weighted local-model
-deltas in a persistent leaky state, emits sparse signed coordinate events after
-threshold crossings, fully resets fired coordinates, and lets the server apply
-an independently scheduled model-update quantum. This separation distinguishes
-the method from residual-conserving threshold-pulse compressors. We establish
-bounded encoder state and a pathwise event budget, and derive a smoothness-based
-descent decomposition with a conditional finite-horizon stationarity result.
-Matched federated experiments evaluate predictive quality against total
-uplink-plus-downlink communication, including exact sparse synchronization.
-The resulting evidence positions Event-FedAvg as a communication--performance
-method rather than as an unconditional convergence or neuromorphic-hardware
-claim.
+Federated learning repeatedly exchanges high-dimensional updates, although
+individual coordinates may carry weak but temporally persistent evidence. We
+introduce Event-FedAvg, a stateful communication layer inspired by leaky
+integrate-and-fire dynamics. Clients accumulate weighted local-model deltas,
+emit signed coordinate events after first passage, and fully reset fired
+states; the server applies an independently scheduled model quantum and
+synchronizes clients through exact sparse replay or dense checkpoints. We prove
+a pathwise event budget and bounded encoder state, and derive a one-step descent
+decomposition with a conditional finite-horizon stationarity result. Under
+matched local learning, development-only tuning, and conservative
+uplink-plus-downlink accounting, Event-FedAvg is nondominated on held-out
+Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN experiments. On CIFAR-10 it
+reaches $48.06\pm1.12\%$ accuracy at $201.5\pm4.3$ Mbit, compared with
+$42.42\pm0.24\%$ at $1586.6$ Mbit for dense FedAvg. These results establish a
+communication--performance operating point in the evaluated synchronous
+setting, not unconditional convergence or hardware-energy savings.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
 
-% P6 extraction target:
-% - high-dimensional bidirectional FL communication problem;
-% - why temporal evidence is different from per-round sparsification;
-% - the communication--performance headline result;
-% - three contributions from PAPER_CONTRACT.md;
-% - one-sentence limitation boundary.
+Federated averaging (FedAvg) reduces central data collection but can replace it
+with repeated transmission of high-dimensional model deltas
+\cite{mcmahan2017fedavg}. Compression commonly treats each round as an isolated
+vector or retains an error residual so discarded information is eventually
+reintroduced. A different question is whether weak coordinate evidence should
+persist only long enough to trigger a sparse event: old evidence may leak,
+crossing the threshold produces a signed pulse, and firing clears the state.
+This temporal mechanism resembles leaky integrate-and-fire (LIF) encoding, but
+it surrounds a conventional model and local optimizer rather than requiring a
+spiking neural network.
+
+We develop this idea as Event-FedAvg. Its trigger threshold controls when a
+client communicates, while an independent quantum controls how far the shared
+model moves. Full reset intentionally discards overshoot, distinguishing the
+operator from residual-conserving pulse compression. Exact ordered replay, with
+dense-checkpoint fallback, closes the often omitted downlink side of sparse
+federated communication.
+
+Our contributions are threefold. First, we specify the complete client/server
+transition and synchronization protocol for multi-step FedAvg. Second, we give
+unconditional encoder guarantees and a scoped optimization characterization:
+smoothness yields an exact descent inequality, while finite-horizon stationarity
+requires an explicit aggregate-alignment condition. Third, we compare against
+dense FedAvg, Sign-EF, EF-TopK, and Strom-style threshold pulses using matched
+local learning, held-out non-IID partitions, and total bidirectional traffic.
+Event-FedAvg is nondominated in all three tested model/dataset settings and,
+on CIFAR-10, uses $7.9\times$ less traffic than dense FedAvg while improving
+mean accuracy by $5.63$ percentage points. Claims are restricted to three-seed,
+synchronous full-participation experiments and software-level bit accounting.
 
 \section{Related Work and Novelty Boundary}
 \label{sec:related-work}
@@ -210,12 +234,12 @@ computation, and suppose, for $\kappa>0$ and deterministic $\beta_r\geq0$,
 If $F\geq F_{\inf}$ and $w^1$ is deterministic, define
 $Q_R=\sum_{r=1}^Rq_r$ and independently draw $J_R$ with
 $\Pr(J_R=r)=q_r/Q_R$. Then
-\begin{equation}
- \E\norm{\nabla F(w^{J_R})}_2^2\leq
- \frac{F(w^1)-F_{\inf}+\sum_rq_r\beta_r+
- \frac{LM}{2}\sum_rq_r^2\E N_r}{\kappa Q_R}.
+\begin{align}
+ \kappa Q_R\E\norm{\nabla F(w^{J_R})}_2^2
+ &\leq F(w^1)-F_{\inf}+\sum_rq_r\beta_r \notag\\
+ &\quad+\frac{LM}{2}\sum_rq_r^2\E N_r .
  \label{eq:stationarity}
-\end{equation}
+\end{align}
 \end{proposition}
 Equation~\eqref{eq:descent} is the smoothness inequality combined with
 \eqref{eq:alignment} and the event-energy bound; summing its conditional
@@ -241,8 +265,35 @@ finite-trajectory diagnostics, not proof of the conditional expectation in
 \section{Experimental Protocol}
 \label{sec:experiments}
 
-% State datasets, architectures, partitions, held-out tuning protocol,
-% comparators, seeds, and symmetric end-to-end communication accounting.
+\textbf{Tasks and models.}
+We evaluate ten-client image classification under strong label skew. The
+Fashion-MNIST campaign uses a 25,818-parameter MLP for 150 rounds and a
+14,538-parameter compact CNN for 80 rounds. CIFAR-10 uses a conventional
+20,570-parameter CNN for 120 rounds: two strided convolutional layers with
+8 and 16 channels, a 32-unit hidden layer, and a ten-class output. No model is
+spiking. Each CIFAR-10 client holds 5,000 examples: 2,750 from its dominant
+class and 250 from every other class. All runs use ten active clients, five
+local SGD steps, minibatches of 32, and identical initialization and minibatch
+streams across methods for a given seed. The local learning rate is $0.1$ on
+Fashion-MNIST and $0.05$ on CIFAR-10.
+
+\textbf{Selection and evaluation.}
+We compare Event-FedAvg with dense FedAvg, one-bit Sign-EF, EF-TopK with error
+feedback, and Strom's residual-conserving threshold pulses. Hyperparameters are
+selected only on one development partition per dataset. For each baseline we
+retain its best-quality point; for Strom and EF-TopK we additionally freeze the
+development point closest to Event-FedAvg in log total traffic. Final values are
+mean and sample standard deviation over three untouched partition/training-seed
+pairs. Test cross-entropy, accuracy, worst-class accuracy, coordinate events,
+and communication are recorded; no held-out result influences selection.
+
+\textbf{Communication metric.}
+The primary metric is conservative bidirectional unicast traffic. It charges
+packet headers, coordinate addresses, signs or values, initial dense model
+synchronization, a 32-bit request per client and round, and either exact ordered
+update replay or a float32 checkpoint, whichever is smaller. The same rule is
+applied to every method. Thus a sparse uplink is not credited while omitting the
+communication required to keep all client models synchronized.
 
 \section{Results and Discussion}
 \label{sec:results}
@@ -271,11 +322,45 @@ rules and records the compact empirical audit of the theory interface.
 
 \input{generated/main_results_table}
 
+On Fashion-MNIST MLP, Event-FedAvg attains
+$83.14\pm0.14\%$ at $183.5\pm2.0$ Mbit. The strongest quality-selected
+control, EF-TopK, reaches $82.45\pm0.19\%$ using $1010.5$ Mbit, whereas the
+nearest-traffic Strom point reaches $79.51\pm0.86\%$ at
+$181.0\pm6.7$ Mbit. The CNN exposes the important qualification: Strom gains
+$0.90$ accuracy points, but requires $359.5\pm4.3$ Mbit versus
+$72.8\pm1.2$ Mbit; at nearby traffic, Event-FedAvg exceeds Strom by $1.46$
+points.
+
+The independent CIFAR-10 campaign supports transfer of the operating point.
+Event-FedAvg obtains the best mean accuracy and cross-entropy among the
+quality-selected methods while using the least traffic. Compared with dense
+FedAvg, its $48.06\pm1.12\%$ accuracy is $5.63$ points higher at only $12.7\%$
+of the traffic. Quality-selected Strom reaches $47.68\pm0.49\%$ but uses
+$4.6\times$ more traffic. Its nearest-traffic variant uses $10.1\%$ more
+traffic and trails by $12.56$ points. The nearest EF-TopK point is a genuine
+trade-off: it uses $32.9\%$ less traffic but trails by $7.10$ points.
+
+The frontier is not uniform predictive dominance. On CIFAR-10, dense FedAvg
+and quality-selected EF-TopK obtain slightly higher mean worst-class accuracy
+($26.8\%$ and $26.7\%$) than Event-FedAvg ($24.6\%$), and all estimates use
+only three held-out seeds. Together with the alignment audit in
+Section~\ref{sec:theory}, the results support the proposed finite-horizon
+communication mechanism, but do not establish the conditional assumption or
+statistical significance.
+
 \section{Limitations and Conclusion}
 \label{sec:conclusion}
 
-% Bound the result to the evaluated synchronous full-participation setting,
-% conditional theory, software-level bit accounting, and tested benchmarks.
+Event-FedAvg turns temporally accumulated local-update evidence into sparse
+signed events with leakage, full reset, and an independent model quantum. Its
+encoder admits pathwise guarantees, while optimization performance is governed
+by an explicit alignment condition that we audit but do not prove for the
+coupled learning process. Across the tested Fashion-MNIST and CIFAR-10 settings,
+the method provides a strong bidirectional communication--performance operating
+point. The evidence does not cover partial participation, asynchronous
+training, broad dataset generalization, network latency, or neuromorphic
+hardware energy. These are extension directions rather than implications of
+the present results.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
