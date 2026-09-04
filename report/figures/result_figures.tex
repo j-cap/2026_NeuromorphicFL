@@ -215,7 +215,7 @@
         xlabel={Total bidirectional traffic [Mbit]},
         ylabel={Test accuracy [\%]},
         grid=major,
-        mark size=2.4pt,
+        every mark/.append style={mark size=2.4pt},
     ]
     \nextgroupplot[title={MLP},xmin=150,xmax=3000,ymin=79,ymax=84]
         \addplot+[only marks,mark=*] coordinates {(183.5,83.14)};
