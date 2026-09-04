@@ -63,8 +63,13 @@ The contribution is the complete combination of:
 
 The paper does not claim novelty for accumulated gradients, threshold
 sparsification, sign communication, error feedback, event-triggered learning,
-or the generic accumulate--threshold--pulse motif. Strom-style
-residual-conserving pulses are treated as the closest predecessor.
+LIF dynamics, or the generic accumulate--threshold--pulse motif. The P2
+operator audit treats Strom-style residual-conserving pulses as the closest
+algorithmic predecessor, LENA as the closest accumulated-memory/full-clear
+precedent, and model-deviation triggers as a separate event-communication
+family. The defensible wording is that the targeted search did not identify
+the complete frozen operator; this is not a universal priority claim and must
+be rechecked at P10.
 
 ## Claim boundary
 
@@ -150,4 +155,3 @@ of the conference scope unless a focused review shows that the coupled
 alignment mechanism is a submission-blocking theoretical gap. Partial
 participation, network emulation, hardware energy measurement, and stronger
 coupled convergence theory are journal-extension candidates.
-

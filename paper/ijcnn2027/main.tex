@@ -50,9 +50,27 @@ claim.
 \section{Related Work and Novelty Boundary}
 \label{sec:related-work}
 
-% Organize by operator mechanics: residual/error feedback, sign and sparse FL,
-% event-triggered communication, and neuromorphic/event-driven processing.
-% Treat Strom-style residual pulses as the closest predecessor.
+One-bit and sign methods reduce precision, while sparse methods with memory and
+error feedback preserve compression residuals for later correction
+\cite{seide2014onebit,bernstein2018signsgd,stich2018memory,richtarik2021ef21}.
+STC applies residual-corrected sparse ternary compression in both FL directions
+\cite{sattler2020stc}. Strom's coordinate residuals and signed threshold pulses
+are our closest algorithmic predecessor \cite{strom2015distributed}. Unlike its
+conservative residual subtraction, Event-FedAvg leaks old evidence, fully
+clears fired coordinates, and decouples the trigger threshold from the applied
+model quantum.
+
+Event-triggered learning usually suppresses a vector message until a model or
+gradient deviation becomes significant. Examples include self-triggered memory
+uploads, compressed decentralized triggers, and bidirectional event-triggered
+FL \cite{ghadikolaei2021lena,singh2023sparq,he2023etfl,yoon2025etfl,
+zhai2026gossip}. These methods do not combine coordinate first passage, leaky
+evidence, full reset, and an independent server quantum. Federated SNN work,
+in turn, places LIF dynamics inside the trained model and communicates SNN
+parameters or compressed updates \cite{venkatesha2021fedsnn,chaki2023tradeoffs,
+tao2026sfedhifi}. We instead use LIF-inspired state only as a communication
+layer around conventional FedAvg. Accordingly, we claim the complete operator
+and protocol, not priority for event-triggered, sign, or neuromorphic FL.
 
 \section{Event-FedAvg}
 \label{sec:method}

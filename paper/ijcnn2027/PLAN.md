@@ -48,10 +48,11 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P1 is complete. The paper contract and existing
-Fashion-MNIST evidence are frozen, reconciled, and reproducible from committed
-source artifacts. The author list is intentionally deferred to the project
-team; the next scientific gate is P2.
+**Current status:** P2 is complete for the 2026-09-04 search snapshot. The
+operator-level novelty boundary and manuscript bibliography are recorded in
+`RELATED_WORK.md`; the search must be refreshed during P10 because the
+submission period is still in the future. The author list remains intentionally
+deferred to the project team. The next scientific gate is P3.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -85,18 +86,20 @@ and traceable to a result artifact. See `EVIDENCE_FREEZE.md` and run
 
 ### P2 -- Close the novelty and literature boundary
 
-- [ ] Update the literature search through the submission period.
-- [ ] Compare Event-FedAvg with residual/error-feedback compressors, sign and
+- [x] Update the literature search through the current snapshot and record the
+      mandatory P10 refresh for the submission period.
+- [x] Compare Event-FedAvg with residual/error-feedback compressors, sign and
       quantized FL, temporal/event-triggered communication, and neuromorphic or
       spike-inspired communication.
-- [ ] Build an operator-level comparison covering state, leakage, thresholding,
+- [x] Build an operator-level comparison covering state, leakage, thresholding,
       reset, transmitted value, server resolution, and synchronization.
-- [ ] Verify that no predecessor contains the full frozen operator.
-- [ ] Write the novelty claim around the complete operator, with Strom-style
+- [x] Record that the targeted search identified no predecessor containing the
+      full frozen operator, without treating absence search as proof.
+- [x] Write the novelty claim around the complete operator, with Strom-style
       residual pulses treated as the closest predecessor.
 
 **Gate:** the novelty claim remains precise and defensible without a broad
-"first neuromorphic FL" assertion.
+"first neuromorphic FL" assertion. Closed by `RELATED_WORK.md`; recheck at P10.
 
 ### P3 -- Add a second benchmark
 
