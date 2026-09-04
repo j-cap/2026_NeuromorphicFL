@@ -1,4 +1,4 @@
-"""Build and validate the frozen Fashion-MNIST evidence used by the paper.
+"""Build and validate the frozen Fashion-MNIST and CIFAR-10 paper evidence.
 
 The committed aggregate CSVs are the numerical source of truth.  This script
 validates their expected campaign structure, checks communication-accounting
@@ -30,10 +30,15 @@ TRAFFIC = (
     / "final_baseline_campaign"
     / "observed_traffic_matched_summary.csv"
 )
+CIFAR_ROOT = REPO / "experiments" / "results" / "p3_cifar10"
+CIFAR_RUNS = CIFAR_ROOT / "heldout_runs.csv"
+CIFAR_SOURCE = CIFAR_ROOT / "master_results.csv"
 
 MASTER = PAPER / "evidence" / "fmnist_master_results.csv"
 QUALITY_TEX = PAPER / "generated" / "fmnist_quality_table.tex"
 TRAFFIC_TEX = PAPER / "generated" / "fmnist_traffic_table.tex"
+CIFAR_MASTER = PAPER / "evidence" / "cifar10_master_results.csv"
+CIFAR_TEX = PAPER / "generated" / "cifar10_table.tex"
 
 PARTITION_SEEDS = "2500;2600;2700"
 TRAIN_SEEDS = "72500;72600;72700"
@@ -278,6 +283,198 @@ def products(
     }
 
 
+def read_cifar_rows(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    required = {
+        "comparison",
+        "method",
+        "config_name",
+        "final_test_ce_mean",
+        "final_test_ce_std",
+        "final_test_accuracy_mean",
+        "final_test_accuracy_std",
+        "final_worst_class_accuracy_mean",
+        "final_worst_class_accuracy_std",
+        "uplink_packetized_bits_mean",
+        "uplink_packetized_bits_std",
+        "broadcast_total_bits_mean",
+        "broadcast_total_bits_std",
+        "unicast_hybrid_total_bits_mean",
+        "unicast_hybrid_total_bits_std",
+    }
+    if not rows:
+        raise ValueError(f"empty evidence source: {path}")
+    missing = required.difference(rows[0])
+    if missing:
+        raise ValueError(f"{path} lacks columns: {sorted(missing)}")
+    return rows
+
+
+def validate_cifar(rows: list[dict[str, str]]) -> None:
+    expected = {
+        ("quality", "event", "event_t025_q005"),
+        ("quality", "strom", "strom_t0025"),
+        ("quality", "ef_topk", "ef_k05"),
+        ("quality", "sign_ef", "sign_ef"),
+        ("quality", "dense", "dense"),
+        ("traffic", "event", "event_t025_q005"),
+        ("traffic", "strom", "strom_t01"),
+        ("traffic", "ef_topk", "ef_k01"),
+    }
+    observed = {
+        (row["comparison"], row["method"], row["config_name"])
+        for row in rows
+    }
+    if observed != expected or len(rows) != len(expected):
+        raise ValueError("CIFAR-10 summary rows do not match the frozen P3 design")
+
+    numeric = [
+        "final_test_ce_mean",
+        "final_test_ce_std",
+        "final_test_accuracy_mean",
+        "final_test_accuracy_std",
+        "final_worst_class_accuracy_mean",
+        "final_worst_class_accuracy_std",
+        "uplink_packetized_bits_mean",
+        "uplink_packetized_bits_std",
+        "broadcast_total_bits_mean",
+        "broadcast_total_bits_std",
+        "unicast_hybrid_total_bits_mean",
+        "unicast_hybrid_total_bits_std",
+    ]
+    for row in rows:
+        if any(float(row[column]) < 0 for column in numeric):
+            raise ValueError(f"negative CIFAR-10 metric for {row['comparison']} {row['method']}")
+        uplink = float(row["uplink_packetized_bits_mean"])
+        broadcast = float(row["broadcast_total_bits_mean"])
+        unicast = float(row["unicast_hybrid_total_bits_mean"])
+        if not uplink < broadcast < unicast:
+            raise ValueError(
+                "CIFAR-10 communication totals violate uplink < broadcast < "
+                f"unicast for {row['comparison']} {row['method']}"
+            )
+
+    by_key = {(row["comparison"], row["method"]): row for row in rows}
+    for column in numeric:
+        if by_key[("quality", "event")][column] != by_key[("traffic", "event")][column]:
+            raise ValueError(f"CIFAR-10 Event-FedAvg drift between comparisons: {column}")
+
+    with CIFAR_RUNS.open(newline="", encoding="utf-8") as stream:
+        runs = list(csv.DictReader(stream))
+    expected_seeds = {"3500", "3600", "3700"}
+    if len(runs) != 21 or {row["partition_seed"] for row in runs} != expected_seeds:
+        raise ValueError("CIFAR-10 held-out runs do not contain the frozen 21-run design")
+    for row in runs:
+        if row["train_seed"] != str(80000 + int(row["partition_seed"])):
+            raise ValueError("CIFAR-10 partition and training seed mapping drifted")
+
+
+def cifar_configuration(row: dict[str, str]) -> str:
+    return {
+        "event_t025_q005": "tau=0.025;q0=0.005",
+        "strom_t0025": "tau=0.0025",
+        "strom_t01": "tau=0.01",
+        "ef_k05": "k=0.05",
+        "ef_k01": "k=0.01",
+        "sign_ef": "-",
+        "dense": "-",
+    }[row["config_name"]]
+
+
+def cifar_master_csv(rows: list[dict[str, str]]) -> str:
+    columns = [
+        "comparison",
+        "architecture",
+        "method",
+        "configuration_value",
+        "n_seeds",
+        "partition_seeds",
+        "training_seeds",
+        *METRIC_COLUMNS,
+        "source_artifact",
+    ]
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
+    writer.writeheader()
+    order = {"event": 0, "strom": 1, "ef_topk": 2, "sign_ef": 3, "dense": 4}
+    for row in sorted(rows, key=lambda item: (item["comparison"] != "quality", order[item["method"]])):
+        output = {
+            "comparison": "quality-selected" if row["comparison"] == "quality" else "traffic-matched",
+            "architecture": "cifar_cnn",
+            "method": row["method"],
+            "configuration_value": cifar_configuration(row),
+            "n_seeds": "3",
+            "partition_seeds": "3500;3600;3700",
+            "training_seeds": "83500;83600;83700",
+            "source_artifact": CIFAR_SOURCE.relative_to(REPO).as_posix(),
+        }
+        mapping = {
+            "final_test_ce_mean": "final_test_ce_mean",
+            "final_test_ce_std": "final_test_ce_std",
+            "final_test_accuracy_mean": "final_test_accuracy_mean",
+            "final_test_accuracy_std": "final_test_accuracy_std",
+            "final_worst_class_accuracy_mean": "final_worst_class_accuracy_mean",
+            "final_worst_class_accuracy_std": "final_worst_class_accuracy_std",
+            "uplink_Mbit_mean": "uplink_packetized_bits_mean",
+            "uplink_Mbit_std": "uplink_packetized_bits_std",
+            "broadcast_total_Mbit_mean": "broadcast_total_bits_mean",
+            "broadcast_total_Mbit_std": "broadcast_total_bits_std",
+            "unicast_total_Mbit_mean": "unicast_hybrid_total_bits_mean",
+            "unicast_total_Mbit_std": "unicast_hybrid_total_bits_std",
+        }
+        for destination, source in mapping.items():
+            scale = 1e6 if "Mbit" in destination else 1.0
+            output[destination] = str(float(row[source]) / scale)
+        writer.writerow(output)
+    return stream.getvalue()
+
+
+def cifar_method_label(row: dict[str, str]) -> str:
+    return {
+        "event": "Event-FedAvg",
+        "strom": "Strom",
+        "ef_topk": "EF-TopK",
+        "sign_ef": "Sign-EF",
+        "dense": "Dense FedAvg",
+    }[row["method"]]
+
+
+def cifar_latex_table(rows: list[dict[str, str]]) -> str:
+    lines = [
+        "% Generated by paper/ijcnn2027/build_evidence.py; do not edit by hand.",
+        "\\begin{table*}[t]",
+        "\\centering",
+        "\\caption{CIFAR-10 results over three held-out partitions. Values are mean "
+        "$\\pm$ sample standard deviation; total is conservative bidirectional "
+        "unicast traffic. Quality-selected and traffic-matched rows are separated.}",
+        "\\label{tab:cifar10-results}",
+        "\\small",
+        "\\begin{tabular}{llrrrr}",
+        "\\toprule",
+        "Selection & Method & Test CE & Accuracy [\\%] & Worst class [\\%] & Total [Mbit] \\\\",
+        "\\midrule",
+    ]
+    order = {"event": 0, "strom": 1, "ef_topk": 2, "sign_ef": 3, "dense": 4}
+    ordered = sorted(rows, key=lambda item: (item["comparison"] != "quality", order[item["method"]]))
+    previous = None
+    for row in ordered:
+        if previous is not None and row["comparison"] != previous:
+            lines.append("\\midrule")
+        selection = "Quality" if row["comparison"] == "quality" else "Traffic"
+        lines.append(
+            f"{selection} & {cifar_method_label(row)} & "
+            f"{float(row['final_test_ce_mean']):.4f}$\\pm${float(row['final_test_ce_std']):.4f} & "
+            f"{100 * float(row['final_test_accuracy_mean']):.2f}$\\pm${100 * float(row['final_test_accuracy_std']):.2f} & "
+            f"{100 * float(row['final_worst_class_accuracy_mean']):.1f}$\\pm${100 * float(row['final_worst_class_accuracy_std']):.1f} & "
+            f"{float(row['unicast_hybrid_total_bits_mean']) / 1e6:.1f}$\\pm$"
+            f"{float(row['unicast_hybrid_total_bits_std']) / 1e6:.1f} \\\\"
+        )
+        previous = row["comparison"]
+    lines.extend(["\\bottomrule", "\\end{tabular}", "\\end{table*}", ""])
+    return "\n".join(lines)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -291,6 +488,14 @@ def main() -> None:
     traffic = read_rows(TRAFFIC)
     validate(heldout, traffic)
     expected = products(heldout, traffic)
+    cifar = read_cifar_rows(CIFAR_SOURCE)
+    validate_cifar(cifar)
+    expected.update(
+        {
+            CIFAR_MASTER: cifar_master_csv(cifar),
+            CIFAR_TEX: cifar_latex_table(cifar),
+        }
+    )
 
     stale: list[str] = []
     for path, content in expected.items():

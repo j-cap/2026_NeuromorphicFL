@@ -14,7 +14,7 @@ material has already been compressed into paper form.
 | C6 | Smoothness yields an exact one-step descent inequality, and aggregate alignment with explicit defect yields conditional finite-horizon stationarity. | `report/sections/13_theory_t3_optimization_interface.tex` | Theory | Ready but conditional; no unconditional convergence claim. |
 | C7 | Aggregate Event-FedAvg pulses are usually globally aligned on the frozen strong-non-IID MLP, with weaker late-stage margins. | Exact full-client-gradient baseline in `report/sections/14_theory_t4_defect_schedule.tex` and `report/data/t4_schedule_baseline.csv` | Compact result-table entry or alignment inset | Ready for finite-horizon evidence only. Use this exact audit as authoritative; do not mix it with the earlier 5000-example T3a diagnostic. |
 | C8 | Replacing the empirical quantum schedule by an asymptotically admissible exponent does not by itself improve finite-horizon late descent. | `report/sections/14_theory_t4_defect_schedule.tex` and the three T4 schedule CSVs | Limitations or technical report | Ready negative result; not a headline contribution. |
-| C9 | The communication--performance result transfers beyond Fashion-MNIST. | P3 second-benchmark campaign | Main frontier figure and result table | Missing and required before broad transfer language is used. |
+| C9 | The communication--performance result transfers from Fashion-MNIST to CIFAR-10 with a compact conventional CNN. | `paper/ijcnn2027/evidence/cifar10_master_results.csv`, generated from the frozen P3 campaign; protocol and interpretation in `P3_PROTOCOL.md` and `P3_DECISION.md` | Main frontier figure and result table | Ready; three held-out seeds support the tested operating-point claim, not statistical significance or broad dataset generalization. |
 | C10 | Event-FedAvg reduces measured hardware energy or real-network latency. | None | Excluded | Not claimable in the conference paper. |
 | C11 | The current results cover partial participation and asynchronous FedAvg. | Earlier special-case experiments only; not the frozen final claim | Excluded or limitations | Not claimable without a dedicated final-method campaign. |
 
@@ -35,9 +35,11 @@ them necessary.
 
 ### Second benchmark
 
-P3 is the only default missing scientific evidence. Its outcome determines the
-breadth of C9 and may require narrowing, but not suppressing, the established
-Fashion-MNIST result.
+P3 closed with a pass. Event-FedAvg is nondominated on the frozen CIFAR-10
+compact-CNN campaign and has the best mean test CE and accuracy among the
+quality-selected methods while using the least total traffic. C9 is limited to
+this concrete transfer; worst-class accuracy and three-seed uncertainty remain
+visible qualifications.
 
 ## Paper-level evidence gate
 

@@ -23,14 +23,16 @@ multi-step federated averaging?
 Yes, within the evaluated scope. Event-FedAvg accumulates weighted local-model
 deltas in persistent leaky evidence states, emits sparse signed coordinate
 events after first passage, fully resets fired coordinates, and applies an
-independently scheduled server-model quantum. On the established
-Fashion-MNIST campaigns, it provides a strong predictive operating point under
-conservative bidirectional communication accounting and remains stronger than
-the closest tested residual-pulse alternatives at comparable traffic.
+independently scheduled server-model quantum. Across the established
+Fashion-MNIST campaigns and the independent CIFAR-10 compact-CNN campaign, it
+provides a strong predictive operating point under conservative bidirectional
+communication accounting. On CIFAR-10 it remains nondominated and stronger
+than the closest tested residual-pulse alternative at comparable traffic.
 
-The second benchmark must determine how broadly this answer transfers. A
-qualified trade-off remains publishable; domination at comparable traffic
-requires narrowing the claim.
+This answer is bounded to the evaluated synchronous, full-participation,
+software-accounted settings. The three-seed CIFAR-10 result supports transfer
+to a second image dataset and architecture, not broad dataset generalization or
+statistical significance.
 
 ## Contributions
 
@@ -91,7 +93,8 @@ The paper must not claim:
 - measured hardware energy savings or deployment latency;
 - robustness to partial participation or asynchronous FedAvg unless new
   evidence is added;
-- broad dataset generalization before P3 closes.
+- broad dataset generalization beyond the tested Fashion-MNIST and CIFAR-10
+  settings.
 
 ## Intended reader takeaway
 
@@ -150,8 +153,8 @@ would be inappropriate during anonymous review.
 
 ## Scope-control decision
 
-The default final scientific addition is one second benchmark. T5 is not part
-of the conference scope unless a focused review shows that the coupled
+The default final scientific addition, the CIFAR-10 compact-CNN campaign, is
+complete. T5 is not part of the conference scope unless a focused review shows that the coupled
 alignment mechanism is a submission-blocking theoretical gap. Partial
 participation, network emulation, hardware energy measurement, and stronger
 coupled convergence theory are journal-extension candidates.

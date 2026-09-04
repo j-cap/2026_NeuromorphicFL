@@ -31,9 +31,11 @@ The project has since consolidated the supported mechanism into Event-FedAvg:
 conventional multi-step local model deltas drive persistent leaky evidence
 states; sparse signed coordinate events update the server; and ordered replay
 with checkpoint fallback provides complete bidirectional synchronization. The
-matched-baseline campaign and theory tasks T1--T4 are complete. The current
-priority is manuscript extraction plus one reviewer-facing breadth experiment,
-not open-ended mechanism discovery.
+matched-baseline campaign and theory tasks T1--T4 are complete. The P3
+CIFAR-10 compact-CNN campaign also closes with a pass: Event-FedAvg remains on
+the held-out communication--performance frontier. The current priority is P4
+theory extraction and then manuscript construction, not open-ended mechanism
+discovery.
 
 ## Publication planning
 

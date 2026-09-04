@@ -48,12 +48,12 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P3 is in progress. P2 is complete for the 2026-09-04 search snapshot. The
-operator-level novelty boundary and manuscript bibliography are recorded in
-`RELATED_WORK.md`; the search must be refreshed during P10 because the
-submission period is still in the future. The author list remains intentionally
-deferred to the project team. The frozen CIFAR-10 design is recorded in
-`P3_PROTOCOL.md`; results remain pending.
+**Current status:** P3 is complete with a **pass**. On three untouched CIFAR-10
+partitions, the compact-CNN Event-FedAvg point remains on the
+communication--performance frontier; the frozen evidence and decision are
+recorded in `EVIDENCE_FREEZE.md` and `P3_DECISION.md`. P2 is complete for the
+2026-09-04 search snapshot, with a mandatory refresh at P10. The author list
+remains intentionally deferred to the project team. P4 is next.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -110,16 +110,16 @@ proposed T5 mechanism decomposition.
 - [x] Select the benchmark and partition before inspecting held-out results.
       The preferred option is CIFAR-10 with a compact CNN, multiple clients,
       full participation, and a fixed non-IID partition protocol.
-- [ ] Run and validate dense FedAvg first.
-- [ ] Test whether the frozen Event-FedAvg design transfers in scale; use a
+- [x] Run and validate dense FedAvg first.
+- [x] Test whether the frozen Event-FedAvg design transfers in scale; use a
       development partition for any necessary tuning.
-- [ ] Compare against Strom-style pulses, EF-TopK, dense FedAvg, and Sign-EF if
+- [x] Compare against Strom-style pulses, EF-TopK, dense FedAvg, and Sign-EF if
       computationally reasonable.
-- [ ] Evaluate independent held-out seeds with method-matched local learning.
-- [ ] Report test loss, accuracy, worst-class accuracy, coordinate events,
+- [x] Evaluate independent held-out seeds with method-matched local learning.
+- [x] Report test loss, accuracy, worst-class accuracy, coordinate events,
       uplink bits, downlink bits, and total communication.
-- [ ] Add a traffic-matched nearest-neighbor comparison.
-- [ ] Reproduce the final campaign from a clean environment.
+- [x] Add a traffic-matched nearest-neighbor comparison.
+- [x] Reproduce the final campaign from a clean GitHub Actions checkout.
 
 **Gate:** classify the result before writing the claim:
 
@@ -127,6 +127,13 @@ proposed T5 mechanism decomposition.
 - **qualified pass:** it trades some quality for a clear communication gain;
 - **fail:** it is dominated at comparable traffic, requiring an explicitly
   narrower paper claim.
+
+**Decision:** **pass**. Event-FedAvg obtains 48.06$\pm$1.12\% mean test
+accuracy at 201.5$\pm$4.3 Mbit. It is nondominated, uses about 7.9 times less
+traffic than dense FedAvg while improving mean accuracy by 5.63 percentage
+points, and remains favorable to the closest quality-selected and
+traffic-neighbor controls. This is a three-seed operating-point result, not a
+statistical-significance or uniform worst-class-superiority claim.
 
 ### P4 -- Extract the publishable theory
 
@@ -279,7 +286,7 @@ The work is ready for IJCNN submission when:
 - [ ] the closest predecessors and limitations are represented accurately;
 - [ ] the communication metric is symmetric and consistently defined;
 - [ ] the theory states its assumptions and boundaries explicitly;
-- [ ] the second benchmark supports at least a defensible qualified-pass claim;
+- [x] the second benchmark supports at least a defensible qualified-pass claim;
 - [ ] all figures and tables are referenced, readable, and necessary;
 - [ ] independent technical reviews have no unresolved blocking comments;
 - [ ] the final code, results, and manuscript are frozen together.

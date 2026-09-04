@@ -1,4 +1,4 @@
-# P1 evidence freeze
+# P1 and P3 evidence freeze
 
 This file records the Fashion-MNIST evidence that may be used in the IJCNN
 manuscript. The freeze is gate-based and has no internal calendar dates.
@@ -151,3 +151,35 @@ python paper/ijcnn2027/build_evidence.py --check
 
 These statements do not imply statistical significance, generality beyond the
 tested setting, or measured hardware-energy savings.
+
+## P3 CIFAR-10 extension
+
+The second-benchmark protocol was frozen in `P3_PROTOCOL.md` before held-out
+inspection. The campaign uses the official CIFAR-10 Python archive, ten equal
+clients with 55% dominant-class label skew, a 20,570-parameter conventional
+CNN, 120 synchronous rounds, and the same conservative bidirectional accounting
+model as the Fashion-MNIST campaign. Development selection uses partition seed
+3400 only; held-out partitions are 3500, 3600, and 3700 with training seeds
+83500, 83600, and 83700.
+
+The authoritative sources are:
+
+- `experiments/results/p3_cifar10/protocol.json` and `partition_audit.csv`;
+- `experiments/results/p3_cifar10/development_summary.csv` and `selection.json`;
+- `experiments/results/p3_cifar10/heldout_runs.csv` and `master_results.csv`;
+- `paper/ijcnn2027/evidence/cifar10_master_results.csv`, generated and checked
+  by `build_evidence.py`.
+
+The frozen quality-selected Event-FedAvg configuration is threshold 0.025,
+initial quantum 0.005, leak 0.999, and quantum exponent 0.2. It obtains
+48.06$\pm$1.12% test accuracy and 1.4411$\pm$0.0260 test CE at
+201.5$\pm$4.3 Mbit. Dense FedAvg obtains 42.42$\pm$0.24% at 1586.6 Mbit.
+Thus Event-FedAvg uses 12.7% of dense traffic (about 7.9-fold less) while its
+mean accuracy is 5.63 percentage points higher.
+
+The gate classification is **pass** because the Event-FedAvg point is
+nondominated and leads every quality-selected method in mean test CE, mean test
+accuracy, and total traffic. The permitted claim remains an operating-point
+comparison. Dense and quality-selected EF-TopK have slightly higher mean
+worst-class accuracy, the EF-TopK traffic neighbor uses less traffic than the
+Event point, and three seeds do not establish statistical significance.
