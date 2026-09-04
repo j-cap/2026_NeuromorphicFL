@@ -8,10 +8,13 @@ on:
       - 'experiments/results/p3_cifar10/heldout_runs.csv'
       - 'experiments/results/p3_cifar10/master_results.csv'
       - 'paper/ijcnn2027/build_evidence.py'
+      - 'paper/ijcnn2027/build_visuals.py'
       - 'paper/ijcnn2027/check_theory_contract.py'
       - 'paper/ijcnn2027/main.tex'
       - 'paper/ijcnn2027/evidence/**'
+      - 'paper/ijcnn2027/figures/**'
       - 'paper/ijcnn2027/generated/**'
+      - 'artifacts/t4_defect_schedule_full/aggregate_metrics.csv'
       - '.github/workflows/ijcnn_evidence_check.yml'
   push:
     paths:
@@ -20,10 +23,13 @@ on:
       - 'experiments/results/p3_cifar10/heldout_runs.csv'
       - 'experiments/results/p3_cifar10/master_results.csv'
       - 'paper/ijcnn2027/build_evidence.py'
+      - 'paper/ijcnn2027/build_visuals.py'
       - 'paper/ijcnn2027/check_theory_contract.py'
       - 'paper/ijcnn2027/main.tex'
       - 'paper/ijcnn2027/evidence/**'
+      - 'paper/ijcnn2027/figures/**'
       - 'paper/ijcnn2027/generated/**'
+      - 'artifacts/t4_defect_schedule_full/aggregate_metrics.csv'
       - '.github/workflows/ijcnn_evidence_check.yml'
 
 jobs:
@@ -34,7 +40,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install pinned visualization dependency
+        run: python -m pip install matplotlib==3.10.8
       - name: Validate generated evidence
         run: python paper/ijcnn2027/build_evidence.py --check
+      - name: Validate generated visual argument
+        run: python paper/ijcnn2027/build_visuals.py --check
       - name: Validate Event-FedAvg theory contract
         run: python paper/ijcnn2027/check_theory_contract.py

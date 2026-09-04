@@ -79,6 +79,21 @@ and protocol, not priority for event-triggered, sign, or neuromorphic FL.
 
 \subsection{Client event encoder}
 
+Figure~\ref{fig:event-fedavg-method} summarizes the complete round transition
+and makes the two persistent quantities explicit: the post-reset encoder state
+and the exactly synchronized server model.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=\textwidth]{figures/event_fedavg_method.pdf}
+ \caption{Event-FedAvg is a stateful communication layer around conventional
+ multi-step FedAvg. Weighted local deltas drive leaky evidence; a coordinate
+ emits only after first passage and then fully resets. The trigger resolution
+ $\vartheta$ is independent of the model-update resolution $q_r$, and ordered
+ replay or checkpoint fallback synchronizes every client exactly.}
+ \label{fig:event-fedavg-method}
+\end{figure*}
+
 Let $M$ clients minimize
 $F(w)=\sum_{i=1}^M p_iF_i(w)$, where $p_i>0$ and $\sum_i p_i=1$.
 We study synchronous full participation. At round $r$, every client starts from
@@ -232,16 +247,29 @@ finite-trajectory diagnostics, not proof of the conditional expectation in
 \section{Results and Discussion}
 \label{sec:results}
 
-% P1 source-controlled table fragments are generated from the frozen CSVs:
-% \input{generated/fmnist_quality_table}
-% \input{generated/fmnist_traffic_table}
-% \input{generated/cifar10_table}
-% Select the final cross-dataset layout during P5; do not copy numerical
-% values by hand.
-%
-% Lead with the communication--performance frontier. Then report the
-% traffic-matched closest-baseline result and the exact-gradient alignment
-% audit. Preserve the CNN high-traffic Strom qualification.
+Figure~\ref{fig:communication-frontier} gives the primary cross-benchmark
+comparison using total uplink-plus-downlink unicast traffic. Filled controls
+are quality-selected on development partitions; hollow controls are selected
+for proximity to Event-FedAvg traffic. Table~\ref{tab:main-results} isolates
+the strongest-quality and nearest-traffic controls under those predeclared
+rules and records the compact empirical audit of the theory interface.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=\textwidth]{figures/communication_frontier.pdf}
+ \caption{Held-out communication--performance operating points. Event-FedAvg
+ is nondominated on Fashion-MNIST MLP, Fashion-MNIST CNN, and CIFAR-10 compact
+ CNN under conservative bidirectional unicast accounting. It combines lower
+ traffic with higher mean accuracy than the strongest quality-selected control
+ on the MLP and CIFAR-10; the Fashion-MNIST CNN qualification is a
+ $0.90$-point accuracy deficit to Strom at $4.9\times$ less traffic. Filled and
+ hollow markers denote quality-selected and traffic-matched controls,
+ respectively; dotted lines connect observed nondominated points. Error bars
+ show mean $\pm$ sample standard deviation over three held-out partitions.}
+ \label{fig:communication-frontier}
+\end{figure*}
+
+\input{generated/main_results_table}
 
 \section{Limitations and Conclusion}
 \label{sec:conclusion}

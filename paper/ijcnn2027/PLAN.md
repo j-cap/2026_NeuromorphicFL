@@ -48,12 +48,12 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P4 is complete. The compact method/theory extraction is in
-`main.tex`, and the independent notation, proof-boundary, schedule, and
-implementation audit is recorded in `P4_THEORY_AUDIT.md`. P3 closed with a
-pass and its evidence remains frozen in `EVIDENCE_FREEZE.md`. P2 is complete
-for the 2026-09-04 search snapshot, with a mandatory refresh at P10. The author
-list remains intentionally deferred to the project team. P5 is next.
+**Current status:** P5 is complete. The three-element visual argument is in
+`main.tex`, and its selection rules, claim mapping, exclusions, and readability
+checks are recorded in `P5_VISUAL_AUDIT.md`. P4's compact theory and P3's
+cross-dataset evidence remain frozen. P2 is complete for the 2026-09-04 search
+snapshot, with a mandatory refresh at P10. The author list remains
+intentionally deferred to the project team. P6 is next.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -176,15 +176,16 @@ Target three main visual elements:
 2. a communication--performance frontier across the final benchmarks;
 3. a compact main-results table or alignment diagnostic.
 
-- [ ] Introduce every figure and table before it appears.
-- [ ] Make captions state the scientific finding.
-- [ ] Use total bidirectional traffic as the default communication metric.
-- [ ] Distinguish quality-selected from traffic-matched baselines.
-- [ ] Verify IEEE-column and grayscale readability.
-- [ ] Remove figures that do not support a paper claim.
+- [x] Introduce every figure and table before it appears.
+- [x] Make captions state the scientific finding.
+- [x] Use total bidirectional traffic as the default communication metric.
+- [x] Distinguish quality-selected from traffic-matched baselines.
+- [x] Verify IEEE-column and grayscale readability.
+- [x] Remove figures that do not support a paper claim.
 
-**Gate:** the central result is recoverable from the figures, tables, and
-captions alone.
+**Gate:** closed. The central result and its Fashion-MNIST CNN qualification
+are recoverable from the figures, table, and captions alone. Reproducible
+selection and rendering details are in `P5_VISUAL_AUDIT.md`.
 
 ### P6 -- Write the conference manuscript
 
