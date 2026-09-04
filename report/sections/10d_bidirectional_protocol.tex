@@ -101,8 +101,6 @@ The absolute neural-network trajectory remains subject to the hybrid numerical s
 \caption{Q2 end-to-end packetized communication on the 1200-tick compact-CNN run. ``Broadcast'' counts one logical server transmission per sparse packet. ``Unicast'' counts pull-based replay independently for each client. ``Hybrid'' selects replay or a dense checkpoint at every catch-up.}
 \label{tab:q2-end-to-end}
 \begin{adjustbox}{max width=\textwidth}
-\begin{adjustbox}{max width=\textwidth}
-\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llrrrrr}
 \toprule
 Uplink method & Downlink & Test CE & Acc. [\%] & $B_\uparrow$ [Mbit] & $B_\downarrow$ [Mbit] & $B_{\mathrm{tot}}$ [Mbit]\\
@@ -120,7 +118,6 @@ EF-TopK & Hybrid & 0.5414 & 79.43 & 74.42 & 614.28 & 688.71\\
 Dense & Dense sync & 0.5785 & 77.99 & 2065.84 & 2070.17 & 4136.02\\
 \bottomrule
 \end{tabular}
-\end{adjustbox}
 \end{adjustbox}
 \end{table}
 
