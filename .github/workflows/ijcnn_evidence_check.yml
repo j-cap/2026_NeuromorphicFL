@@ -14,7 +14,6 @@ on:
       - 'paper/ijcnn2027/evidence/**'
       - 'paper/ijcnn2027/figures/**'
       - 'paper/ijcnn2027/generated/**'
-      - 'artifacts/t4_defect_schedule_full/aggregate_metrics.csv'
       - '.github/workflows/ijcnn_evidence_check.yml'
   push:
     paths:
@@ -29,7 +28,6 @@ on:
       - 'paper/ijcnn2027/evidence/**'
       - 'paper/ijcnn2027/figures/**'
       - 'paper/ijcnn2027/generated/**'
-      - 'artifacts/t4_defect_schedule_full/aggregate_metrics.csv'
       - '.github/workflows/ijcnn_evidence_check.yml'
 
 jobs:

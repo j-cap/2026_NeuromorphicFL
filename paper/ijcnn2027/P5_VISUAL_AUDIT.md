@@ -14,7 +14,7 @@ into the manuscript by hand.
 |---|---|---|---|
 | `figures/event_fedavg_method.pdf` | C1 and C3: complete stateful operator and exact synchronization | Frozen transition in `main.tex` and implementation contract checked in P4 | Diagram does not imply asynchronous or partial-participation support. |
 | `figures/communication_frontier.pdf` | C4 and C9: communication--performance operating point on three benchmark/model settings | `evidence/fmnist_master_results.csv` and `evidence/cifar10_master_results.csv` | Uses total conservative bidirectional unicast traffic; no energy or latency axis. |
-| `generated/main_results_table.tex` | C4, C7, and C9: strongest-quality and nearest-traffic comparisons plus finite-trajectory alignment evidence | The two paper evidence CSVs and `artifacts/t4_defect_schedule_full/aggregate_metrics.csv` | Three seeds are shown as mean $\pm$ sample standard deviation, not significance claims. The alignment audit does not prove the conditional assumption. |
+| `generated/main_results_table.tex` | C4, C7, and C9: strongest-quality and nearest-traffic comparisons plus finite-trajectory alignment evidence | The three paper evidence CSVs, with the alignment aggregate traced to the authoritative T4 Actions run | Three seeds are shown as mean $\pm$ sample standard deviation, not significance claims. The alignment audit does not prove the conditional assumption. |
 
 ## Selection rules
 

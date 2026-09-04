@@ -25,7 +25,7 @@ REPO = Path(__file__).resolve().parents[2]
 PAPER = REPO / "paper" / "ijcnn2027"
 FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
 CIFAR10 = PAPER / "evidence" / "cifar10_master_results.csv"
-ALIGNMENT = REPO / "artifacts" / "t4_defect_schedule_full" / "aggregate_metrics.csv"
+ALIGNMENT = PAPER / "evidence" / "t4_alignment_audit.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -405,11 +405,21 @@ def pm(row: dict[str, str], mean: str, std: str, scale: float, digits: int) -> s
 
 
 def alignment_metrics() -> tuple[float, float, float, float]:
-    rows = [row for row in read_csv(ALIGNMENT) if row["variant"] == "baseline"]
+    rows = read_csv(ALIGNMENT)
     by_metric = {row["metric"]: row for row in rows}
     required = {"weighted_alignment_ratio", "objective_decrease_fraction"}
-    if not required.issubset(by_metric):
+    if set(by_metric) != required or len(rows) != len(required):
         raise ValueError("authoritative T4 baseline metrics are missing")
+    for row in rows:
+        counts = (
+            int(row["n_partitions"]),
+            int(row["snapshots_per_partition"]),
+            int(row["total_snapshots"]),
+        )
+        if counts != (3, 31, 93):
+            raise ValueError("T4 alignment-audit sample counts drifted")
+        if not row["source_run"].endswith("/33807650381"):
+            raise ValueError("T4 alignment-audit source run drifted")
     alignment = by_metric["weighted_alignment_ratio"]
     descent = by_metric["objective_decrease_fraction"]
     return (
