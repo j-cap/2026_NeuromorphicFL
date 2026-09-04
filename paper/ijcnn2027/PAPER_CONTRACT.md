@@ -45,7 +45,7 @@ statistical significance.
    post-reset state and a pathwise event budget. Smoothness yields an exact
    descent-versus-harm decomposition, and an explicit aggregate-alignment
    condition yields a finite-horizon stationarity result.
-3. **Matched communication--performance evidence.** Development-only tuning,
+3. **Controlled communication--performance evidence.** Development-only tuning,
    held-out partitions, close residual and error-feedback baselines, and
    symmetric uplink-plus-downlink accounting test the practical operating
    point. An exact empirical-gradient audit assesses the theory's alignment
@@ -131,7 +131,7 @@ The main paper should use at most three principal visual elements:
 2. **Frontier figure:** predictive performance versus total bidirectional
    communication for both final benchmarks.
 3. **Main result table with compact alignment evidence:** quality-selected and
-   traffic-matched comparisons plus the minimum diagnostic required to support
+   nearest-traffic comparisons plus the minimum diagnostic required to support
    the conditional theory.
 
 The full T4 decomposition, schedule comparison, observer-effect audit, and

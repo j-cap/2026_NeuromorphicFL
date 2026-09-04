@@ -355,7 +355,7 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         Line2D(
             [0], [0], marker="o", linestyle="none", markersize=5.0,
             markerfacecolor="white", markeredgecolor="#111111",
-            label="traffic-matched",
+            label="nearest-traffic",
         ),
     ]
     fig.legend(
@@ -445,13 +445,13 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         "It leads the strongest quality-selected control on Fashion-MNIST MLP and "
         "CIFAR-10; on Fashion-MNIST CNN, Strom gains 0.90 accuracy points but uses "
         "4.9$\\times$ more traffic. Values are mean $\\pm$ sample standard deviation "
-        "over three partitions.}",
+        "over three independently seeded data realizations.}",
         "\\label{tab:main-results}",
         "\\footnotesize",
         "\\setlength{\\tabcolsep}{4pt}",
-        "\\begin{tabular*}{0.96\\textwidth}{@{\\extracolsep{\\fill}}lllrr@{}}",
+        "\\begin{tabular*}{0.99\\textwidth}{@{\\extracolsep{\\fill}}lllrrr@{}}",
         "\\toprule",
-        "Benchmark & Selection rule & Method & Accuracy [\\%] & Total [Mbit] \\\\",
+        "Benchmark & Selection rule & Method & Accuracy [\\%] & Worst [\\%] & Total [Mbit] \\\\",
         "\\midrule",
     ]
     for index, (key, _title, _architecture, _ylim) in enumerate(PANELS):
@@ -468,6 +468,7 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
             lines.append(
                 f"{benchmark} & {selection} & {METHODS[row['method']]['label']} & "
                 f"{pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', 100.0, 2)} & "
+                f"{pm(row, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', 100.0, 1)} & "
                 f"{pm(row, 'unicast_total_Mbit_mean', 'unicast_total_Mbit_std', 1.0, 1)} \\\\"
             )
         if index != len(PANELS) - 1:
@@ -479,7 +480,10 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
             "\\bottomrule",
             "\\end{tabular*}",
             "\\vspace{2pt}",
-            "\\parbox{0.96\\textwidth}{\\footnotesize \\emph{Theory-interface audit "
+            "\\parbox{0.99\\textwidth}{\\footnotesize \\emph{Class-wise qualification:} "
+            "on CIFAR-10, quality-selected EF-TopK has the highest mean worst-class "
+            "accuracy (26.7$\\pm$0.8\\%), versus 24.6$\\pm$4.6\\% for Event-FedAvg. "
+            "\\emph{Theory-interface audit "
             "(Fashion-MNIST MLP):} the $q_r$-weighted aggregate-alignment ratio is "
             f"{alignment_mean:.2f}$\\pm${alignment_std:.2f}, and the objective decreases on "
             f"{100 * descent_mean:.2f}$\\pm${100 * descent_std:.2f}\\% of 31 independently "

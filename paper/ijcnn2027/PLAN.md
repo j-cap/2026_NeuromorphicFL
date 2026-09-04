@@ -48,12 +48,11 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** the three P7 reviews are complete, with findings recorded in
-`P7_PEER_REVIEW.md`. Theory correctness and algorithm correspondence pass, but
-the P7 gate requires revisions because the dense-FedAvg accuracy headline does
-not yet control for Event-FedAvg's independent server-update scale. P8 is next
-and is deliberately limited to that fairness closure, one compact mechanism
-audit, and targeted manuscript corrections. P2 remains valid for the
+**Current status:** P8 is complete. Development-only dense server-gain tuning
+closes the P7 fairness blocker, and a compact mechanism audit shows that weak
+leakage is negligible while independent trigger and update resolutions are
+important at the selected operating point. Details are in
+`P8_REVISION_AUDIT.md`. P9 reproducibility freezing is next. P2 remains valid for the
 2026-09-04 search snapshot, with a mandatory refresh at P10. The author list
 remains intentionally deferred to the project team.
 
@@ -120,7 +119,7 @@ proposed T5 mechanism decomposition.
 - [x] Evaluate independent held-out seeds with method-matched local learning.
 - [x] Report test loss, accuracy, worst-class accuracy, coordinate events,
       uplink bits, downlink bits, and total communication.
-- [x] Add a traffic-matched nearest-neighbor comparison.
+- [x] Add a development-selected nearest-traffic comparison.
 - [x] Reproduce the final campaign from a clean GitHub Actions checkout.
 
 **Gate:** classify the result before writing the claim:
@@ -131,10 +130,11 @@ proposed T5 mechanism decomposition.
   narrower paper claim.
 
 **Decision:** **pass**. Event-FedAvg obtains 48.06$\pm$1.12\% mean test
-accuracy at 201.5$\pm$4.3 Mbit. It is nondominated, uses about 7.9 times less
-traffic than dense FedAvg while improving mean accuracy by 5.63 percentage
-points, and remains favorable to the closest quality-selected and
-traffic-neighbor controls. This is a three-seed operating-point result, not a
+accuracy at 201.5$\pm$4.3 Mbit. It is nondominated and, after P8
+development-only server-gain tuning, uses about 7.9 times less traffic than
+dense FedAvg while improving mean accuracy by 3.93 percentage points. It
+remains favorable to the closest quality-selected and nearest-traffic
+controls. This is a three-seed operating-point result, not a
 statistical-significance or uniform worst-class-superiority claim.
 
 ### P4 -- Extract the publishable theory
@@ -181,7 +181,7 @@ Target three main visual elements:
 - [x] Introduce every figure and table before it appears.
 - [x] Make captions state the scientific finding.
 - [x] Use total bidirectional traffic as the default communication metric.
-- [x] Distinguish quality-selected from traffic-matched baselines.
+- [x] Distinguish quality-selected from nearest-traffic baselines.
 - [x] Verify IEEE-column and grayscale readability.
 - [x] Remove figures that do not support a paper claim.
 
@@ -235,18 +235,18 @@ T5 or a broader experiment campaign.
 
 Permitted additions include:
 
-- [ ] one missing traffic-matched baseline point;
-- [ ] additional seeds for an unstable headline result;
-- [ ] correction of a communication-accounting ambiguity;
-- [ ] clarification or narrowing of the conditional theorem;
-- [ ] one compact ablation if the role of leakage, full reset, or independent
+- [x] development-select and evaluate a dense server gain to close FL-B1;
+- [x] retain three held-out seeds and state the uncertainty boundary;
+- [x] correct nearest-traffic and partition-template terminology;
+- [x] clarify the empirical statistic and preserve the conditional theorem;
+- [x] run one compact ablation because the role of leakage and independent
       resolution remains unclear.
 
 Run T5 only if review identifies the coupled alignment assumption as a
 submission-blocking gap. Otherwise retain T5 for a journal extension.
 
-**Gate:** every added task responds to a documented submission risk rather than
-reopening mechanism discovery.
+**Gate:** closed by `P8_REVISION_AUDIT.md`. Every added task responds to a
+documented submission risk rather than reopening mechanism discovery.
 
 ### P9 -- Freeze reproducibility artifacts
 

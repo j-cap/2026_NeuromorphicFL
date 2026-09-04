@@ -173,13 +173,19 @@ The authoritative sources are:
 The frozen quality-selected Event-FedAvg configuration is threshold 0.025,
 initial quantum 0.005, leak 0.999, and quantum exponent 0.2. It obtains
 48.06$\pm$1.12% test accuracy and 1.4411$\pm$0.0260 test CE at
-201.5$\pm$4.3 Mbit. Dense FedAvg obtains 42.42$\pm$0.24% at 1586.6 Mbit.
-Thus Event-FedAvg uses 12.7% of dense traffic (about 7.9-fold less) while its
-mean accuracy is 5.63 percentage points higher.
+201.5$\pm$4.3 Mbit. The original P3 dense gain-1 run obtains
+42.42$\pm$0.24% at 1586.6 Mbit. P8 subsequently selected dense server gain 2
+using development training loss; its held-out result is 44.13$\pm$1.12% at
+the same traffic. Thus the frozen Event-FedAvg result uses 12.7% of tuned dense
+traffic (about 7.9-fold less) while its mean accuracy is 3.93 percentage points
+higher.
 
 The gate classification is **pass** because the Event-FedAvg point is
 nondominated and leads every quality-selected method in mean test CE, mean test
 accuracy, and total traffic. The permitted claim remains an operating-point
-comparison. Dense and quality-selected EF-TopK have slightly higher mean
-worst-class accuracy, the EF-TopK traffic neighbor uses less traffic than the
-Event point, and three seeds do not establish statistical significance.
+comparison. Quality-selected EF-TopK has slightly higher mean worst-class
+accuracy, the EF-TopK traffic neighbor uses less traffic than the Event point,
+and three seeds do not establish statistical significance. The P8 tuned dense
+and mechanism-audit sources are frozen in
+`experiments/results/p8_targeted_revision/` and audited in
+`P8_REVISION_AUDIT.md`.

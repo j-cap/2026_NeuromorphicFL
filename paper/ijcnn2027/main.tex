@@ -35,7 +35,8 @@ matched local learning, development-only tuning, and conservative
 uplink-plus-downlink accounting, Event-FedAvg is nondominated on held-out
 Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN experiments. On CIFAR-10 it
 reaches $48.06\pm1.12\%$ accuracy at $201.5\pm4.3$ Mbit, compared with
-$42.42\pm0.24\%$ at $1586.6$ Mbit for dense FedAvg. These results establish a
+$44.13\pm1.12\%$ at $1586.6$ Mbit for development-tuned dense FedAvg. These
+results establish a
 communication--performance operating point in the evaluated synchronous
 setting, not unconditional convergence or hardware-energy savings.
 \end{abstract}
@@ -70,7 +71,7 @@ dense FedAvg, Sign-EF, EF-TopK, and Strom-style threshold pulses using matched
 local learning, held-out non-IID partitions, and total bidirectional traffic.
 Event-FedAvg is nondominated in all three tested model/dataset settings and,
 on CIFAR-10, uses $7.9\times$ less traffic than dense FedAvg while improving
-mean accuracy by $5.63$ percentage points. Claims are restricted to three-seed,
+mean accuracy by $3.93$ percentage points. Claims are restricted to three-seed,
 synchronous full-participation experiments and software-level bit accounting.
 
 \section{Related Work and Novelty Boundary}
@@ -90,8 +91,10 @@ Event-triggered learning usually suppresses a vector message until a model or
 gradient deviation becomes significant. Examples include self-triggered memory
 uploads, compressed decentralized triggers, and bidirectional event-triggered
 FL \cite{ghadikolaei2021lena,singh2023sparq,he2023etfl,yoon2025etfl,
-zhai2026gossip}. These methods do not combine coordinate first passage, leaky
-evidence, full reset, and an independent server quantum. Federated SNN work,
+zhai2026gossip}. In our dated, targeted review, we did not identify a method
+combining coordinate first passage, leaky evidence, full reset, and an
+independent server quantum; this is an absence-search result, not proof of
+priority. Federated SNN work,
 in turn, places LIF dynamics inside the trained model and communicates SNN
 parameters or compressed updates \cite{venkatesha2021fedsnn,chaki2023tradeoffs,
 tao2026sfedhifi}. We instead use LIF-inspired state only as a communication
@@ -251,9 +254,16 @@ square-summability condition, so we make no asymptotic convergence claim for
 the reported runs.
 
 We audit~\eqref{eq:alignment-assumption-paper} without changing the training
-rule. For the frozen strong-non-IID MLP, exact full-client empirical gradients
+rule. For audited rounds $\mathcal A$, define the finite-trajectory statistic
+\begin{equation}
+ \widehat\kappa_{\mathcal A}=
+ \frac{\sum_{r\in\mathcal A}q_rA_r}
+ {\sum_{r\in\mathcal A}q_r\norm{\nabla F(w^r)}_2^2}.
+ \label{eq:empirical-alignment-ratio}
+\end{equation}
+For the frozen strong-non-IID MLP, exact full-client empirical gradients
 were evaluated at 31 independently replayed rounds for each of three held-out
-partitions. The $q_r$-weighted trajectory alignment ratio was
+partitions. The resulting $\widehat\kappa_{\mathcal A}$ was
 $35.42\pm1.35$; objective descent occurred on
 $75.27\pm7.45\%$ of audited rounds. At all 93 snapshots, emitted state signs
 agreed with current local-delta signs, while client heterogeneity was the main
@@ -281,11 +291,14 @@ Fashion-MNIST and $0.05$ on CIFAR-10.
 We compare Event-FedAvg with dense FedAvg, one-bit Sign-EF, EF-TopK with error
 feedback, and Strom's residual-conserving threshold pulses. Hyperparameters are
 selected only on one development partition per dataset. For each baseline we
-retain its best-quality point; for Strom and EF-TopK we additionally freeze the
-development point closest to Event-FedAvg in log total traffic. Final values are
-mean and sample standard deviation over three untouched partition/training-seed
-pairs. Test cross-entropy, accuracy, worst-class accuracy, coordinate events,
-and communication are recorded; no held-out result influences selection.
+retain its best-quality point; this includes a CIFAR-10 dense-server gain
+selected from $\{0.25,0.5,0.75,1,1.5,2,4\}$ by development training loss.
+For Strom and EF-TopK we additionally freeze the development point closest to
+Event-FedAvg in log total traffic. Final values are mean and sample standard
+deviation over three independently seeded data realizations of the same
+predeclared strong-skew template, with paired training seeds across methods.
+Test cross-entropy, accuracy, worst-class accuracy, coordinate events, and
+communication are recorded; no held-out result influences selection.
 
 \textbf{Communication metric.}
 The primary metric is conservative bidirectional unicast traffic. It charges
@@ -314,9 +327,10 @@ rules and records the compact empirical audit of the theory interface.
  traffic with higher mean accuracy than the strongest quality-selected control
  on the MLP and CIFAR-10; the Fashion-MNIST CNN qualification is a
  $0.90$-point accuracy deficit to Strom at $4.9\times$ less traffic. Filled and
- hollow markers denote quality-selected and traffic-matched controls,
+ hollow markers denote quality-selected and nearest-traffic controls,
  respectively; dotted lines connect observed nondominated points. Error bars
- show mean $\pm$ sample standard deviation over three held-out partitions.}
+ show mean $\pm$ sample standard deviation over three held-out data
+ realizations.}
  \label{fig:communication-frontier}
 \end{figure*}
 
@@ -334,15 +348,28 @@ points.
 The independent CIFAR-10 campaign supports transfer of the operating point.
 Event-FedAvg obtains the best mean accuracy and cross-entropy among the
 quality-selected methods while using the least traffic. Compared with dense
-FedAvg, its $48.06\pm1.12\%$ accuracy is $5.63$ points higher at only $12.7\%$
-of the traffic. Quality-selected Strom reaches $47.68\pm0.49\%$ but uses
+FedAvg tuned to server gain $2$, its $48.06\pm1.12\%$ accuracy is
+$3.93$ points higher at only $12.7\%$ of the traffic; tuned dense FedAvg
+reaches $44.13\pm1.12\%$. Quality-selected Strom reaches
+$47.68\pm0.49\%$ but uses
 $4.6\times$ more traffic. Its nearest-traffic variant uses $10.1\%$ more
 traffic and trails by $12.56$ points. The nearest EF-TopK point is a genuine
 trade-off: it uses $32.9\%$ less traffic but trails by $7.10$ points.
 
-The frontier is not uniform predictive dominance. On CIFAR-10, dense FedAvg
-and quality-selected EF-TopK obtain slightly higher mean worst-class accuracy
-($26.8\%$ and $26.7\%$) than Event-FedAvg ($24.6\%$), and all estimates use
+The targeted mechanism audit narrows the LIF interpretation. A like-for-like
+rerun of the frozen Event-FedAvg setting gives $48.25\pm1.07\%$ at
+$200.2\pm2.2$ Mbit; removing leakage ($\rho=1$) gives
+$48.32\pm1.05\%$ at $202.1\pm5.6$ Mbit. Thus leakage at $\rho=0.999$ has no
+material isolated effect at this resolution. In contrast, coupling the server
+quantum to the trigger as $q_r=\vartheta=0.025$ reduces accuracy to
+$18.42\pm7.33\%$ at $44.8\pm17.7$ Mbit. This supports independent trigger and
+update resolutions for the selected operating point, not a universal claim
+that every coupled schedule fails.
+
+The frontier is not uniform predictive dominance. On CIFAR-10,
+quality-selected EF-TopK obtains slightly higher mean worst-class accuracy
+($26.7\%$) than Event-FedAvg ($24.6\%$); tuned dense FedAvg reaches $23.3\%$.
+All estimates use
 only three held-out seeds. Together with the alignment audit in
 Section~\ref{sec:theory}, the results support the proposed finite-horizon
 communication mechanism, but do not establish the conditional assumption or
@@ -352,7 +379,8 @@ statistical significance.
 \label{sec:conclusion}
 
 Event-FedAvg turns temporally accumulated local-update evidence into sparse
-signed events with leakage, full reset, and an independent model quantum. Its
+signed events with optional leakage, full reset, and an independent model
+quantum. Its
 encoder admits pathwise guarantees, while optimization performance is governed
 by an explicit alignment condition that we audit but do not prove for the
 coupled learning process. Across the tested Fashion-MNIST and CIFAR-10 settings,

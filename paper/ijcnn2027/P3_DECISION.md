@@ -1,5 +1,13 @@
 # P3 CIFAR-10 gate decision
 
+> **P8 amendment.** P3 froze the original benchmark campaign. P8 subsequently
+> tuned dense FedAvg's server gain on the development partition and selected
+> gain 2. The held-out dense result is 44.13 +/- 1.12%, so the frozen P3
+> Event-FedAvg result remains 3.93 points higher while using 12.7% of its
+> traffic. The original gain-1 row and comparison below are retained as the P3
+> historical record; the manuscript and generated evidence use the P8-tuned
+> dense row. See `P8_REVISION_AUDIT.md`.
+
 ## Decision
 
 **Pass:** Event-FedAvg remains on the held-out communication--performance

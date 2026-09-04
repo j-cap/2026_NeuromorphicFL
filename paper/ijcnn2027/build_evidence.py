@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import csv
 import io
+import json
 from pathlib import Path
 
 
@@ -33,12 +34,18 @@ TRAFFIC = (
 CIFAR_ROOT = REPO / "experiments" / "results" / "p3_cifar10"
 CIFAR_RUNS = CIFAR_ROOT / "heldout_runs.csv"
 CIFAR_SOURCE = CIFAR_ROOT / "master_results.csv"
+P8_ROOT = REPO / "experiments" / "results" / "p8_targeted_revision"
+P8_RUNS = P8_ROOT / "heldout_runs.csv"
+P8_SOURCE = P8_ROOT / "heldout_summary.csv"
+P8_SELECTION = P8_ROOT / "selection.json"
+P8_DEVELOPMENT = P8_ROOT / "development_summary.csv"
 
 MASTER = PAPER / "evidence" / "fmnist_master_results.csv"
 QUALITY_TEX = PAPER / "generated" / "fmnist_quality_table.tex"
 TRAFFIC_TEX = PAPER / "generated" / "fmnist_traffic_table.tex"
 CIFAR_MASTER = PAPER / "evidence" / "cifar10_master_results.csv"
 CIFAR_TEX = PAPER / "generated" / "cifar10_table.tex"
+P8_EVIDENCE = PAPER / "evidence" / "p8_targeted_revision.csv"
 
 PARTITION_SEEDS = "2500;2600;2700"
 TRAIN_SEEDS = "72500;72600;72700"
@@ -275,7 +282,7 @@ def products(
             comparison="traffic-matched",
             label="tab:fmnist-traffic-matched",
             caption=(
-                "Fashion-MNIST traffic-matched comparison over the same three "
+                "Fashion-MNIST nearest-traffic comparison over the same three "
                 "held-out partitions."
             ),
             order=TRAFFIC_METHOD_ORDER,
@@ -370,6 +377,90 @@ def validate_cifar(rows: list[dict[str, str]]) -> None:
             raise ValueError("CIFAR-10 partition and training seed mapping drifted")
 
 
+def read_p8_rows(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    required = {
+        "family", "config_name",
+        "final_test_ce_mean", "final_test_ce_std",
+        "final_test_accuracy_mean", "final_test_accuracy_std",
+        "final_worst_class_accuracy_mean", "final_worst_class_accuracy_std",
+        "uplink_packetized_bits_mean", "uplink_packetized_bits_std",
+        "broadcast_total_bits_mean", "broadcast_total_bits_std",
+        "unicast_hybrid_total_bits_mean", "unicast_hybrid_total_bits_std",
+    }
+    if not rows or required.difference(rows[0]):
+        raise ValueError("P8 targeted-revision summary is empty or incomplete")
+    return rows
+
+
+def validate_p8(rows: list[dict[str, str]]) -> None:
+    expected = {
+        ("dense_gain", "dense_gain_2p0"),
+        ("mechanism", "event_frozen"),
+        ("mechanism", "event_no_leak"),
+        ("mechanism", "event_coupled_quantum"),
+    }
+    observed = {(row["family"], row["config_name"]) for row in rows}
+    if observed != expected or len(rows) != len(expected):
+        raise ValueError("P8 rows do not match the frozen targeted-revision design")
+
+    with P8_SELECTION.open(encoding="utf-8") as stream:
+        selection = json.load(stream)
+    if (
+        selection["development_seed"] != 3400
+        or selection["dense_selected"] != "dense_gain_2p0"
+        or selection["heldout_seeds"] != [3500, 3600, 3700]
+    ):
+        raise ValueError("P8 development selection or held-out seeds drifted")
+    with P8_DEVELOPMENT.open(newline="", encoding="utf-8") as stream:
+        development = list(csv.DictReader(stream))
+    expected_development = set(selection["dense_grid"]) | set(
+        selection["mechanism_variants"]
+    )
+    if (
+        len(development) != 10
+        or {row["config_name"] for row in development} != expected_development
+        or {int(row["partition_seed"]) for row in development} != {3400}
+    ):
+        raise ValueError("P8 development grid drifted")
+
+    with P8_RUNS.open(newline="", encoding="utf-8") as stream:
+        runs = list(csv.DictReader(stream))
+    if len(runs) != 12:
+        raise ValueError("P8 held-out runs do not contain the frozen 12-run design")
+    for config_name in {name for _family, name in expected}:
+        selected = [row for row in runs if row["config_name"] == config_name]
+        if {int(row["partition_seed"]) for row in selected} != {3500, 3600, 3700}:
+            raise ValueError(f"P8 held-out seed drift for {config_name}")
+        if any(int(row["train_seed"]) != 80000 + int(row["partition_seed"]) for row in selected):
+            raise ValueError(f"P8 training-seed drift for {config_name}")
+
+
+def merge_tuned_dense(
+    rows: list[dict[str, str]], p8_rows: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    """Replace only the quality-view dense row with its dev-selected P8 gain."""
+
+    tuned = next(row for row in p8_rows if row["config_name"] == "dense_gain_2p0")
+    merged = [dict(row) for row in rows]
+    dense = next(
+        row for row in merged
+        if row["comparison"] == "quality" and row["method"] == "dense"
+    )
+    dense["config_name"] = "dense_gain_2p0"
+    for column in (
+        "final_test_ce_mean", "final_test_ce_std",
+        "final_test_accuracy_mean", "final_test_accuracy_std",
+        "final_worst_class_accuracy_mean", "final_worst_class_accuracy_std",
+        "uplink_packetized_bits_mean", "uplink_packetized_bits_std",
+        "broadcast_total_bits_mean", "broadcast_total_bits_std",
+        "unicast_hybrid_total_bits_mean", "unicast_hybrid_total_bits_std",
+    ):
+        dense[column] = tuned[column]
+    return merged
+
+
 def cifar_configuration(row: dict[str, str]) -> str:
     return {
         "event_t025_q005": "tau=0.025;q0=0.005",
@@ -379,6 +470,7 @@ def cifar_configuration(row: dict[str, str]) -> str:
         "ef_k01": "k=0.01",
         "sign_ef": "-",
         "dense": "-",
+        "dense_gain_2p0": "server gain=2",
     }[row["config_name"]]
 
 
@@ -407,7 +499,9 @@ def cifar_master_csv(rows: list[dict[str, str]]) -> str:
             "n_seeds": "3",
             "partition_seeds": "3500;3600;3700",
             "training_seeds": "83500;83600;83700",
-            "source_artifact": CIFAR_SOURCE.relative_to(REPO).as_posix(),
+            "source_artifact": (
+                P8_SOURCE if row["config_name"] == "dense_gain_2p0" else CIFAR_SOURCE
+            ).relative_to(REPO).as_posix(),
         }
         mapping = {
             "final_test_ce_mean": "final_test_ce_mean",
@@ -445,9 +539,9 @@ def cifar_latex_table(rows: list[dict[str, str]]) -> str:
         "% Generated by paper/ijcnn2027/build_evidence.py; do not edit by hand.",
         "\\begin{table*}[t]",
         "\\centering",
-        "\\caption{CIFAR-10 results over three held-out partitions. Values are mean "
+        "\\caption{CIFAR-10 results over three held-out data realizations. Values are mean "
         "$\\pm$ sample standard deviation; total is conservative bidirectional "
-        "unicast traffic. Quality-selected and traffic-matched rows are separated.}",
+        "unicast traffic. Quality-selected and nearest-traffic rows are separated.}",
         "\\label{tab:cifar10-results}",
         "\\small",
         "\\begin{tabular}{llrrrr}",
@@ -461,7 +555,7 @@ def cifar_latex_table(rows: list[dict[str, str]]) -> str:
     for row in ordered:
         if previous is not None and row["comparison"] != previous:
             lines.append("\\midrule")
-        selection = "Quality" if row["comparison"] == "quality" else "Traffic"
+        selection = "Quality" if row["comparison"] == "quality" else "Nearest traffic"
         lines.append(
             f"{selection} & {cifar_method_label(row)} & "
             f"{float(row['final_test_ce_mean']):.4f}$\\pm${float(row['final_test_ce_std']):.4f} & "
@@ -490,10 +584,14 @@ def main() -> None:
     expected = products(heldout, traffic)
     cifar = read_cifar_rows(CIFAR_SOURCE)
     validate_cifar(cifar)
+    p8 = read_p8_rows(P8_SOURCE)
+    validate_p8(p8)
+    cifar_with_tuned_dense = merge_tuned_dense(cifar, p8)
     expected.update(
         {
-            CIFAR_MASTER: cifar_master_csv(cifar),
-            CIFAR_TEX: cifar_latex_table(cifar),
+            CIFAR_MASTER: cifar_master_csv(cifar_with_tuned_dense),
+            CIFAR_TEX: cifar_latex_table(cifar_with_tuned_dense),
+            P8_EVIDENCE: P8_SOURCE.read_text(encoding="utf-8"),
         }
     )
 
