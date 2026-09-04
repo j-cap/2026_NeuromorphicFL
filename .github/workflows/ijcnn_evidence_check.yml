@@ -1,0 +1,30 @@
+name: IJCNN Evidence Check
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/results/final_baseline_campaign/observed_heldout_summary.csv'
+      - 'experiments/results/final_baseline_campaign/observed_traffic_matched_summary.csv'
+      - 'paper/ijcnn2027/build_evidence.py'
+      - 'paper/ijcnn2027/evidence/**'
+      - 'paper/ijcnn2027/generated/**'
+      - '.github/workflows/ijcnn_evidence_check.yml'
+  push:
+    paths:
+      - 'experiments/results/final_baseline_campaign/observed_heldout_summary.csv'
+      - 'experiments/results/final_baseline_campaign/observed_traffic_matched_summary.csv'
+      - 'paper/ijcnn2027/build_evidence.py'
+      - 'paper/ijcnn2027/evidence/**'
+      - 'paper/ijcnn2027/generated/**'
+      - '.github/workflows/ijcnn_evidence_check.yml'
+
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate generated evidence
+        run: python paper/ijcnn2027/build_evidence.py --check
