@@ -99,7 +99,8 @@ Centralized L-BFGS reference & 0.49238 & 0.7812 & -- & --\\
 
 The communication result is strong. The $q_0=0.015$ event method uses approximately $78.7\%$ fewer payload bits than EF-TopK $k=4$ while reaching a slightly lower test loss and a clearly lower integrated training loss. Relative to EF-TopK $k=8$, its test loss differs by only about $4.2\times10^{-4}$ while using approximately $89.3\%$ fewer bits. Relative to full precision, the event method uses roughly $158\times$ fewer bits and gives only about $1.7\times10^{-3}$ higher final test loss.
 
-The result should nevertheless not be overstated. The event method does not reach the centralized reference at the finite horizon. The experiment therefore supports a useful performance--communication Pareto point, not lossless compression of dense training.
+The result should nevertheless not be overstated. The event method does not reach the centralized reference at the finite horizon. The experiment therefore supports a useful Pareto point in performance and
+communication, not lossless compression of dense training.
 
 \subsection{Threshold-normalization audit}
 
