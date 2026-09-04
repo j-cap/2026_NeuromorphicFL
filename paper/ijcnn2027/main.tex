@@ -8,6 +8,8 @@
 
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\ind}[1]{\mathbf{1}_{\{#1\}}}
+\newtheorem{proposition}{Proposition}
 
 \title{Event-FedAvg: Stateful Event-Driven Communication for Federated Learning}
 
@@ -75,22 +77,151 @@ and protocol, not priority for event-triggered, sign, or neuromorphic FL.
 \section{Event-FedAvg}
 \label{sec:method}
 
-% Extract the normative full-participation transition from T1:
-% local FedAvg delta, weighted evidence input, leak, one threshold test,
-% signed pulse, full reset, independent model quantum, algebraic aggregation,
-% and sparse replay/checkpoint synchronization.
-
 \subsection{Client event encoder}
 
+Let $M$ clients minimize
+$F(w)=\sum_{i=1}^M p_iF_i(w)$, where $p_i>0$ and $\sum_i p_i=1$.
+We study synchronous full participation. At round $r$, every client starts from
+$w^r$, performs $E_r$ SGD steps of size $\eta_r$, and forms
+\begin{equation}
+ \delta_i^r=w_{i,E_r}^r-w^r
+ =-\eta_r\sum_{e=0}^{E_r-1}g_{i,e}^r .
+ \label{eq:local-delta}
+\end{equation}
+Client $i$ stores post-reset communication state $z_i^r\in\mathbb{R}^d$.
+The weighted evidence input and pre-trigger state are
+\begin{equation}
+ a_i^r=\frac{p_i}{\eta_r}\delta_i^r,
+ \qquad
+ \widetilde z_i^r=\rho_r z_i^r+a_i^r,
+ \quad 0\leq\rho_r\leq1 .
+ \label{eq:evidence-update}
+\end{equation}
+Thus client weights affect firing through evidence accumulation; they are not
+applied a second time at the server. For threshold $\vartheta>0$, each
+coordinate is tested exactly once:
+\begin{align}
+ m_{ij}^r&=\ind{|\widetilde z_{ij}^r|\geq\vartheta},
+ &c_{ij}^r&=m_{ij}^r\operatorname{sign}(\widetilde z_{ij}^r),
+ \label{eq:event-pulse}\\
+ z_i^{r+1}&=(\mathbf{1}-m_i^r)\odot\widetilde z_i^r,
+ &c_i^r&\in\{-1,0,1\}^d .
+ \label{eq:full-reset}
+\end{align}
+Equation~\eqref{eq:full-reset} is a full reset: a fired coordinate discards its
+entire pre-trigger state, including overshoot. It neither subtracts the
+threshold nor retains a compression residual. This is the principal semantic
+difference from residual-conserving threshold pulses.
+
 \subsection{Server update and synchronization}
+
+With a positive model quantum $q_r$, common to all coordinates in a round but
+independent of $\vartheta$, the server applies
+\begin{equation}
+ C^r=\sum_{i=1}^M c_i^r,
+ \qquad
+ w^{r+1}=w^r+q_rC^r .
+ \label{eq:server-update}
+\end{equation}
+The experiments prescribe $q_r=q_0(1+r/r_0)^{-\alpha}$; clients recover it
+from the round index and transmit no floating-point event magnitude.
+Coincident client pulses add algebraically and may cancel. There is no
+normalization by messages or events. One round is therefore: (i) synchronize
+clients to $w^r$ and run local SGD; (ii) insert the weighted deltas into the
+leaky states; (iii) test each coordinate once, transmit addresses and signs,
+and fully reset fired coordinates; and (iv) aggregate the signed pulses and
+apply~\eqref{eq:server-update}. This ordering is the compact normative
+algorithm used in all final experiments.
+
+A nonempty client packet carries one 64-bit header and, per event, a
+$\lceil\log_2d\rceil$-bit address and one sign bit. Clients reproduce server
+updates by ordered sparse replay; when replay is more expensive, the server
+sends a dense float32 checkpoint. The reported conservative total additionally
+charges initial synchronization and a 32-bit catch-up request plus the chosen
+downlink representation for every client and round. Replay and checkpointing
+change communication cost, not the mathematical update in
+\eqref{eq:server-update}.
 
 \section{Scoped Theoretical Characterization}
 \label{sec:theory}
 
-% Retain only the state invariant, event budget, one-step descent inequality,
-% and conditional finite-horizon stationarity statement. Clearly distinguish
-% identities, assumptions, and empirical validation. Full derivations remain
-% in the living technical report.
+We separate encoder properties that hold for every realized input sequence
+from the assumption needed to connect emitted events to optimization.
+
+\begin{proposition}[State and pathwise event budget]
+Assume $|z_{ij}^1|<\vartheta$ initially. The full-reset encoder keeps
+$|z_{ij}^r|<\vartheta$ in every round. If
+$N_R^{\rm coord}=\sum_{r=1}^R\sum_{i,j}m_{ij}^r$, then
+\begin{equation}
+ N_R^{\rm coord}\leq\frac{1}{\vartheta}
+ \left(\sum_i\norm{z_i^1}_1+
+ \sum_{r=1}^R\sum_i\norm{a_i^r}_1\right).
+ \label{eq:event-budget}
+\end{equation}
+Consequently, if $P_R$ is the number of nonempty packets, the exact event
+uplink is $64P_R+(\lceil\log_2d\rceil+1)N_R^{\rm coord}$ bits.
+\end{proposition}
+The state claim follows immediately from the threshold test and full reset.
+For~\eqref{eq:event-budget}, expand the leaky recurrence over each disjoint
+reset-to-event block; every leak product is at most one, while threshold
+crossing requires at least $\vartheta$ total absolute evidence in that block.
+This bound is deterministic and permits biased, dependent, or nonstationary
+inputs. It is an upper bound, not a guarantee that weak evidence fires.
+
+Write $g^r=\nabla F(w^r)$ and let
+$N_r=\sum_i\norm{c_i^r}_0$. Define the realized aggregate alignment
+\begin{equation}
+ A_r=-\langle g^r,C^r\rangle=D_r-H_r,
+ \label{eq:alignment}
+\end{equation}
+where $D_r$ and $H_r$ are respectively the global-gradient mass carried by
+client pulses opposing and following $g^r$. This identity includes
+same-coordinate cancellation. Cauchy--Schwarz also gives
+$\norm{C^r}_2^2\leq MN_r$.
+
+\begin{proposition}[Descent and conditional stationarity]
+If $F$ is $L$-smooth, every realized round obeys
+\begin{equation}
+ F(w^{r+1})\leq F(w^r)-q_rA_r+\frac{LM}{2}q_r^2N_r.
+ \label{eq:descent}
+\end{equation}
+Let $\mathcal{F}_r$ contain all randomness revealed before round-$r$ local
+computation, and suppose, for $\kappa>0$ and deterministic $\beta_r\geq0$,
+\begin{equation}
+ \E[A_r\mid\mathcal{F}_r]\geq
+ \kappa\norm{\nabla F(w^r)}_2^2-\beta_r .
+ \label{eq:alignment-assumption-paper}
+\end{equation}
+If $F\geq F_{\inf}$ and $w^1$ is deterministic, define
+$Q_R=\sum_{r=1}^Rq_r$ and independently draw $J_R$ with
+$\Pr(J_R=r)=q_r/Q_R$. Then
+\begin{equation}
+ \E\norm{\nabla F(w^{J_R})}_2^2\leq
+ \frac{F(w^1)-F_{\inf}+\sum_rq_r\beta_r+
+ \frac{LM}{2}\sum_rq_r^2\E N_r}{\kappa Q_R}.
+ \label{eq:stationarity}
+\end{equation}
+\end{proposition}
+Equation~\eqref{eq:descent} is the smoothness inequality combined with
+\eqref{eq:alignment} and the event-energy bound; summing its conditional
+expectation proves~\eqref{eq:stationarity}. The result is deliberately
+conditional: silence, leakage, stale evidence, local drift, sign errors, and
+heterogeneity all enter $\beta_r$. The empirical power exponents $0.1$ and
+$0.3$ are finite-horizon schedules and do not satisfy the infinite-horizon
+square-summability condition, so we make no asymptotic convergence claim for
+the reported runs.
+
+We audit~\eqref{eq:alignment-assumption-paper} without changing the training
+rule. For the frozen strong-non-IID MLP, exact full-client empirical gradients
+were evaluated at 31 independently replayed rounds for each of three held-out
+partitions. The $q_r$-weighted trajectory alignment ratio was
+$35.42\pm1.35$; objective descent occurred on
+$75.27\pm7.45\%$ of audited rounds. At all 93 snapshots, emitted state signs
+agreed with current local-delta signs, while client heterogeneity was the main
+adverse signed term. Large cancellation between heterogeneity and favorable
+local-update terms makes a componentwise worst-case bound vacuous. These are
+finite-trajectory diagnostics, not proof of the conditional expectation in
+\eqref{eq:alignment-assumption-paper}.
 
 \section{Experimental Protocol}
 \label{sec:experiments}

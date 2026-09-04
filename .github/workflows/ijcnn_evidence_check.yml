@@ -8,6 +8,8 @@ on:
       - 'experiments/results/p3_cifar10/heldout_runs.csv'
       - 'experiments/results/p3_cifar10/master_results.csv'
       - 'paper/ijcnn2027/build_evidence.py'
+      - 'paper/ijcnn2027/check_theory_contract.py'
+      - 'paper/ijcnn2027/main.tex'
       - 'paper/ijcnn2027/evidence/**'
       - 'paper/ijcnn2027/generated/**'
       - '.github/workflows/ijcnn_evidence_check.yml'
@@ -18,6 +20,8 @@ on:
       - 'experiments/results/p3_cifar10/heldout_runs.csv'
       - 'experiments/results/p3_cifar10/master_results.csv'
       - 'paper/ijcnn2027/build_evidence.py'
+      - 'paper/ijcnn2027/check_theory_contract.py'
+      - 'paper/ijcnn2027/main.tex'
       - 'paper/ijcnn2027/evidence/**'
       - 'paper/ijcnn2027/generated/**'
       - '.github/workflows/ijcnn_evidence_check.yml'
@@ -32,3 +36,5 @@ jobs:
           python-version: '3.11'
       - name: Validate generated evidence
         run: python paper/ijcnn2027/build_evidence.py --check
+      - name: Validate Event-FedAvg theory contract
+        run: python paper/ijcnn2027/check_theory_contract.py

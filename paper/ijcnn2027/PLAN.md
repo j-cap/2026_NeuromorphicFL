@@ -48,12 +48,12 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P3 is complete with a **pass**. On three untouched CIFAR-10
-partitions, the compact-CNN Event-FedAvg point remains on the
-communication--performance frontier; the frozen evidence and decision are
-recorded in `EVIDENCE_FREEZE.md` and `P3_DECISION.md`. P2 is complete for the
-2026-09-04 search snapshot, with a mandatory refresh at P10. The author list
-remains intentionally deferred to the project team. P4 is next.
+**Current status:** P4 is complete. The compact method/theory extraction is in
+`main.tex`, and the independent notation, proof-boundary, schedule, and
+implementation audit is recorded in `P4_THEORY_AUDIT.md`. P3 closed with a
+pass and its evidence remains frozen in `EVIDENCE_FREEZE.md`. P2 is complete
+for the 2026-09-04 search snapshot, with a mandatory refresh at P10. The author
+list remains intentionally deferred to the project team. P5 is next.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -139,31 +139,33 @@ statistical-significance or uniform worst-class-superiority claim.
 
 Keep in the main paper:
 
-- [ ] the formal Event-FedAvg transition and compact algorithm listing;
-- [ ] the post-reset state invariant;
-- [ ] the pathwise event-budget result;
-- [ ] the one-step smoothness/descent inequality;
-- [ ] the conditional finite-horizon stationarity statement;
-- [ ] one concise empirical audit of the aggregate-alignment condition.
+- [x] the formal Event-FedAvg transition and compact algorithm listing;
+- [x] the post-reset state invariant;
+- [x] the pathwise event-budget result;
+- [x] the one-step smoothness/descent inequality;
+- [x] the conditional finite-horizon stationarity statement;
+- [x] one concise empirical audit of the aggregate-alignment condition.
 
 Keep in the living report or extended proof material:
 
-- [ ] detailed first-passage and sign-reliability derivations;
-- [ ] the complete T4 defect decomposition;
-- [ ] diagnostic observer-effect details;
-- [ ] the negative quantum-schedule experiment;
-- [ ] asynchronous and partial-participation extensions.
+- [x] detailed first-passage and sign-reliability derivations;
+- [x] the complete T4 defect decomposition;
+- [x] diagnostic observer-effect details;
+- [x] the negative quantum-schedule experiment;
+- [x] asynchronous and partial-participation extensions.
 
 Use the exact full-client empirical-gradient baseline from T4 as the
 authoritative alignment audit. Do not mix its values with the earlier
 5000-example T3a reference as if the diagnostics were identical.
 
-An independent mathematical check must cover weighting, signs, indexing,
-conditioning, event-energy bounds, schedule assumptions, and agreement between
-the theorem and the implemented full-reset operator.
+The independent mathematical check in `P4_THEORY_AUDIT.md` covers weighting,
+signs, indexing, conditioning, event-energy bounds, schedule assumptions, and
+agreement between the theorem and the implemented full-reset operator.
 
-**Gate:** a reader can distinguish unconditional identities, conditional
-results, and empirical observations without consulting the full report.
+**Gate:** closed. A reader can distinguish unconditional identities,
+conditional results, and empirical observations without consulting the full
+report. `check_theory_contract.py` guards the core algebra and implementation
+correspondence in CI.
 
 ### P5 -- Build the visual argument
 
