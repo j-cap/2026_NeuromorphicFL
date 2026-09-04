@@ -17,17 +17,14 @@ Second, the hybrid trajectory is unusually sensitive to very small floating-poin
 
 The main optimization mechanism has now survived
 \begin{equation}
+\begin{aligned}
 \text{quadratics}
-\rightarrow
-\text{convex logistic regression}
-\rightarrow
-\text{synthetic MLPs}
-\rightarrow
-\text{deep MLPs}
-\rightarrow
-\text{binary Fashion-MNIST}
-\rightarrow
-\text{ten-class Fashion-MNIST}.
+&\rightarrow \text{convex logistic regression}
+\rightarrow \text{synthetic MLPs}\\
+&\rightarrow \text{deep MLPs}
+\rightarrow \text{binary Fashion-MNIST}
+\rightarrow \text{ten-class Fashion-MNIST}.
+\end{aligned}
 \end{equation}
 Experiment~14C does not expose an event-specific failure severe enough to justify another compensating mechanism before changing architecture. The natural next gate is therefore a compact convolutional network on Fashion-MNIST.
 
