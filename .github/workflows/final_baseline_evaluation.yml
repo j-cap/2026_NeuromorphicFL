@@ -2,13 +2,15 @@ name: Final Baseline Held-Out Evaluation
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/final_baseline_evaluation.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   evaluate:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -52,12 +54,14 @@ jobs:
             --tag eval
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: eval-${{ matrix.architecture }}-${{ matrix.method }}-${{ matrix.partition_seed }}
           path: experiments/results/final_baseline_campaign/*_eval.csv
 
   aggregate:
     needs: evaluate
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -73,5 +77,6 @@ jobs:
         run: python experiments/final_baseline_aggregate.py --tag eval
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: final-baseline-heldout-combined
           path: experiments/results/final_baseline_campaign/combined_eval.csv

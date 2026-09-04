@@ -1,9 +1,11 @@
 name: Apply Report Readability Patch
 
 on:
-  push:
-    paths:
-      - '.github/workflows/report_readability_patch.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -11,6 +13,7 @@ permissions:
 jobs:
   patch:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
         with:

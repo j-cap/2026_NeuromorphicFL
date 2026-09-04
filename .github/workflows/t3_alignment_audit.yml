@@ -2,16 +2,10 @@ name: T3 Event-FedAvg Alignment Audit
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'src/neuromorphicfl/final_baseline_campaign.py'
-      - 'experiments/t3_alignment_audit.py'
-      - '.github/workflows/t3_alignment_audit.yml'
-  push:
-    paths:
-      - 'src/neuromorphicfl/final_baseline_campaign.py'
-      - 'experiments/t3_alignment_audit.py'
-      - '.github/workflows/t3_alignment_audit.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -19,6 +13,7 @@ permissions:
 jobs:
   smoke:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
@@ -39,6 +34,7 @@ jobs:
   audit:
     needs: smoke
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -66,12 +62,14 @@ jobs:
             --audit-stride 5
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: t3-alignment-${{ matrix.partition_seed }}
           path: experiments/results/t3_alignment_audit/*_p${{ matrix.partition_seed }}_*.csv
 
   aggregate:
     needs: audit
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -88,6 +86,7 @@ jobs:
         run: PYTHONPATH=src python experiments/t3_alignment_audit.py --aggregate
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: t3-alignment-combined
           path: |
             experiments/results/t3_alignment_audit/combined_summary.csv

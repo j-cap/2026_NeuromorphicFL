@@ -1,16 +1,16 @@
 name: Experiment 15A Fashion-MNIST CNN
 
 on:
-  push:
-    paths:
-      - 'src/neuromorphicfl/fmnist_cnn_benchmark.py'
-      - 'experiments/15a_cnn_audit.py'
-      - '.github/workflows/exp15a_cnn.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   exp15a:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
@@ -30,5 +30,6 @@ jobs:
       - name: Upload Experiment 15A audit
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: exp15a-audit
           path: experiments/results/15a_fmnist_cnn/

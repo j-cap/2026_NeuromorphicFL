@@ -1,10 +1,11 @@
 name: Experiment 14A Fashion-MNIST
 
 on:
-  push:
-    paths:
-      - '.github/workflows/exp14a_fmnist.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

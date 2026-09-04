@@ -1,11 +1,11 @@
 name: Q1 Focused Strom Audit
 
 on:
-  push:
-    paths:
-      - 'experiments/q1_strom_focused.py'
-      - '.github/workflows/q1_strom_focused.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   q1-focused:
@@ -13,6 +13,7 @@ jobs:
       matrix:
         architecture: [mlp, cnn]
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
@@ -32,5 +33,6 @@ jobs:
       - name: Upload focused Q1 results
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: q1-focused-${{ matrix.architecture }}
           path: experiments/results/q1_nearest_neighbor_focused/${{ matrix.architecture }}_650.csv

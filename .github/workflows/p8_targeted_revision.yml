@@ -2,11 +2,10 @@ name: P8 Targeted Revision Campaign
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'src/neuromorphicfl/final_baseline_campaign.py'
-      - 'experiments/p8_targeted_revision.py'
-      - '.github/workflows/p8_targeted_revision.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -22,6 +21,7 @@ env:
 jobs:
   smoke:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -66,12 +66,14 @@ jobs:
           --config "${{ matrix.config }}" --partition-seed 3400 --tag dev
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: p8-dev-${{ matrix.config }}
           path: experiments/results/p8_targeted_revision/*_dev.csv
 
   select-development:
     needs: development
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     outputs:
       dense_config: ${{ steps.freeze.outputs.dense_config }}
     steps:
@@ -98,6 +100,7 @@ jobs:
           echo "dense_config=${dense_config}" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: p8-selection
           path: |
             experiments/results/p8_targeted_revision/selection.json
@@ -134,6 +137,7 @@ jobs:
           --partition-seed "${{ matrix.partition_seed }}"
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: p8-heldout-dense-${{ matrix.partition_seed }}
           path: experiments/results/p8_targeted_revision/*_heldout.csv
 
@@ -169,12 +173,14 @@ jobs:
           --partition-seed "${{ matrix.partition_seed }}"
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: p8-heldout-${{ matrix.config }}-${{ matrix.partition_seed }}
           path: experiments/results/p8_targeted_revision/*_heldout.csv
 
   aggregate:
     needs: [heldout-dense, heldout-mechanism]
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -197,5 +203,6 @@ jobs:
           --selection artifacts/p8-selection/selection.json
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: p8-targeted-revision-combined
           path: experiments/results/p8_targeted_revision/*

@@ -8,17 +8,16 @@ on:
       - 'paper/ijcnn2027/figures/**'
       - 'paper/ijcnn2027/generated/**'
       - '.github/workflows/ijcnn_manuscript_check.yml'
-  push:
-    paths:
-      - 'paper/ijcnn2027/main.tex'
-      - 'paper/ijcnn2027/references.bib'
-      - 'paper/ijcnn2027/figures/**'
-      - 'paper/ijcnn2027/generated/**'
-      - '.github/workflows/ijcnn_manuscript_check.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   manuscript:
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Install IEEE LaTeX toolchain
@@ -48,7 +47,7 @@ jobs:
           echo "Compiled manuscript: ${pages} pages."
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: ijcnn-manuscript
           path: paper/ijcnn2027/main.pdf
           if-no-files-found: error
-

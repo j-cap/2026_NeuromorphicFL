@@ -1,15 +1,16 @@
 name: Experiment 15A CNN Long Horizon
 
 on:
-  push:
-    paths:
-      - 'experiments/15a_cnn_long_horizon.py'
-      - '.github/workflows/exp15a_cnn_long_horizon.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   exp15a-long:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
@@ -29,5 +30,6 @@ jobs:
       - name: Upload Experiment 15A long horizon
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: exp15a-long-horizon
           path: experiments/results/15a_fmnist_cnn/

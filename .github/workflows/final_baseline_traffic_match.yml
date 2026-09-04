@@ -2,13 +2,15 @@ name: Final Baseline Traffic-Matched Controls
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/final_baseline_traffic_match.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   evaluate:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -47,12 +49,14 @@ jobs:
             --tag traffic
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: traffic-${{ matrix.architecture }}-${{ matrix.method }}-${{ matrix.partition_seed }}
           path: experiments/results/final_baseline_campaign/*_traffic.csv
 
   aggregate:
     needs: evaluate
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -68,5 +72,6 @@ jobs:
         run: python experiments/final_baseline_aggregate.py --tag traffic
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: final-baseline-traffic-combined
           path: experiments/results/final_baseline_campaign/combined_traffic.csv
