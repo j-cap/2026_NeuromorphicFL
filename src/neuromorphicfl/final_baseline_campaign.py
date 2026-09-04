@@ -20,9 +20,15 @@ from .fmnist_cnn_benchmark import (
     loss_and_gradient as cnn_loss_and_gradient,
     predictive_metrics as cnn_predictive_metrics,
 )
+from .cifar10_benchmark import (
+    LAYOUT as CIFAR_CNN_LAYOUT,
+    initialize_cnn as initialize_cifar_cnn,
+    loss_and_gradient as cifar_cnn_loss_and_gradient,
+    predictive_metrics as cifar_cnn_predictive_metrics,
+)
 
 
-Architecture = Literal["mlp", "cnn"]
+Architecture = Literal["mlp", "cnn", "cifar_cnn"]
 Method = Literal["event", "strom", "ef_topk", "sign_ef", "dense"]
 
 
@@ -41,6 +47,7 @@ class FinalBaselineConfig:
     jump_exponent: float = 0.1
     topk_fraction: float = 0.025
     strom_threshold: float = 0.005
+    init_scale: float = 0.5
 
 
 def _architecture_ops(architecture: Architecture):
@@ -48,6 +55,13 @@ def _architecture_ops(architecture: Architecture):
         return MLP_LAYOUT, initialize_mlp, mlp_loss_and_gradient, mlp_predictive_metrics
     if architecture == "cnn":
         return CNN_LAYOUT, initialize_cnn, cnn_loss_and_gradient, cnn_predictive_metrics
+    if architecture == "cifar_cnn":
+        return (
+            CIFAR_CNN_LAYOUT,
+            initialize_cifar_cnn,
+            cifar_cnn_loss_and_gradient,
+            cifar_cnn_predictive_metrics,
+        )
     raise ValueError(architecture)
 
 
@@ -87,6 +101,7 @@ def run_final_baseline(
     alignment_audit_stride: int | None = None,
     alignment_client_reference_size: int | None = None,
     alignment_audit_rounds: tuple[int, ...] | None = None,
+    record_history: bool = False,
 ) -> dict[str, float | int | str | pd.DataFrame]:
     """Run one frozen FedAvg baseline and account for exact bidirectional replay.
 
@@ -131,7 +146,7 @@ def run_final_baseline(
     weights = federation.weights.astype(float)
     weights /= np.sum(weights)
 
-    w = initialize(layout=layout, seed=7777, scale=0.5)
+    w = initialize(layout=layout, seed=7777, scale=config.init_scale)
     event_state = np.zeros((n_clients, d), dtype=np.float32)
     strom_state = np.zeros((n_clients, d), dtype=np.float32)
     residual = np.zeros((n_clients, d), dtype=np.float32)
@@ -610,6 +625,7 @@ def run_final_baseline(
         "jump_exponent": float(config.jump_exponent),
         "topk_fraction": float(config.topk_fraction),
         "strom_threshold": float(config.strom_threshold),
+        "init_scale": float(config.init_scale),
     }
     for cls, acc in enumerate(per_class):
         result[f"class_{cls}_accuracy"] = float(acc)
@@ -626,4 +642,6 @@ def run_final_baseline(
                 alignment_client_reference_size
             )
         result["alignment_audit"] = pd.DataFrame(alignment_rows)
+    if record_history:
+        result["history"] = history
     return result

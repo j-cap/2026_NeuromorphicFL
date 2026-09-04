@@ -48,11 +48,12 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P2 is complete for the 2026-09-04 search snapshot. The
+**Current status:** P3 is in progress. P2 is complete for the 2026-09-04 search snapshot. The
 operator-level novelty boundary and manuscript bibliography are recorded in
 `RELATED_WORK.md`; the search must be refreshed during P10 because the
 submission period is still in the future. The author list remains intentionally
-deferred to the project team. The next scientific gate is P3.
+deferred to the project team. The frozen CIFAR-10 design is recorded in
+`P3_PROTOCOL.md`; results remain pending.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -106,7 +107,7 @@ and traceable to a result artifact. See `EVIDENCE_FREEZE.md` and run
 This is the primary remaining empirical task and takes precedence over the
 proposed T5 mechanism decomposition.
 
-- [ ] Select the benchmark and partition before inspecting held-out results.
+- [x] Select the benchmark and partition before inspecting held-out results.
       The preferred option is CIFAR-10 with a compact CNN, multiple clients,
       full participation, and a fixed non-IID partition protocol.
 - [ ] Run and validate dense FedAvg first.

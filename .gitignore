@@ -5,6 +5,9 @@ venv/
 .env
 .DS_Store
 
+# Downloaded datasets
+data/cifar-10/
+
 # Generated experiment outputs
 experiments/results/**
 !experiments/results/.gitkeep

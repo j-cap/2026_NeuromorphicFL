@@ -1,0 +1,230 @@
+name: P3 CIFAR-10 Campaign
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/neuromorphicfl/cifar10_benchmark.py'
+      - 'src/neuromorphicfl/final_baseline_campaign.py'
+      - 'experiments/p3_cifar10_campaign.py'
+      - '.github/workflows/p3_cifar10_campaign.yml'
+
+permissions:
+  contents: read
+
+env:
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - name: Verify CNN gradients, determinism, partition, and accounting
+        run: PYTHONPATH=src python experiments/p3_cifar10_campaign.py smoke
+
+  dense-development:
+    needs: smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: cifar10-python-c58f30108f718f92721af3b95e74349a
+      - name: Validate dense FedAvg on the development partition
+        run: PYTHONPATH=src python experiments/p3_cifar10_campaign.py point --config dense --partition-seed 3400 --tag dev
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-dev-dense
+          path: experiments/results/p3_cifar10/*
+
+  tune-development:
+    needs: dense-development
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        config:
+          - sign_ef
+          - ef_k005
+          - ef_k01
+          - ef_k025
+          - ef_k05
+          - strom_t0025
+          - strom_t005
+          - strom_t01
+          - strom_t02
+          - strom_t04
+          - event_t0125_q0025
+          - event_t025_q0025
+          - event_t025_q005
+          - event_t05_q005
+          - event_t05_q01
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: cifar10-python-c58f30108f718f92721af3b95e74349a
+      - name: Run development-only configuration
+        run: PYTHONPATH=src python experiments/p3_cifar10_campaign.py point --config "${{ matrix.config }}" --partition-seed 3400 --tag dev
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-dev-${{ matrix.config }}
+          path: experiments/results/p3_cifar10/*
+
+  select-development:
+    needs: tune-development
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p3-dev-*
+          merge-multiple: true
+          path: artifacts/p3-development
+      - name: Freeze quality-selected and traffic-matched configurations
+        run: PYTHONPATH=src python experiments/p3_cifar10_campaign.py select --input-dir artifacts/p3-development
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-selection
+          path: |
+            experiments/results/p3_cifar10/selection.json
+            experiments/results/p3_cifar10/development_summary.csv
+
+  heldout-quality:
+    needs: select-development
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        method: [event, strom, ef_topk, sign_ef, dense]
+        partition_seed: [3500, 3600, 3700]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: cifar10-python-c58f30108f718f92721af3b95e74349a
+      - uses: actions/download-artifact@v4
+        with:
+          name: p3-selection
+          path: artifacts/p3-selection
+      - name: Run untouched held-out quality point
+        run: >-
+          PYTHONPATH=src python experiments/p3_cifar10_campaign.py heldout
+          --selection artifacts/p3-selection/selection.json
+          --method "${{ matrix.method }}"
+          --comparison quality
+          --partition-seed "${{ matrix.partition_seed }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-quality-${{ matrix.method }}-${{ matrix.partition_seed }}
+          path: experiments/results/p3_cifar10/*heldout_quality*.csv
+
+  heldout-traffic:
+    needs: select-development
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        method: [strom, ef_topk]
+        partition_seed: [3500, 3600, 3700]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: cifar10-python-c58f30108f718f92721af3b95e74349a
+      - uses: actions/download-artifact@v4
+        with:
+          name: p3-selection
+          path: artifacts/p3-selection
+      - name: Run untouched held-out traffic-matched point
+        run: >-
+          PYTHONPATH=src python experiments/p3_cifar10_campaign.py heldout
+          --selection artifacts/p3-selection/selection.json
+          --method "${{ matrix.method }}"
+          --comparison traffic
+          --partition-seed "${{ matrix.partition_seed }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-traffic-${{ matrix.method }}-${{ matrix.partition_seed }}
+          path: experiments/results/p3_cifar10/*heldout_traffic*.csv
+
+  aggregate:
+    needs: [heldout-quality, heldout-traffic]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p3-quality-*
+          merge-multiple: true
+          path: artifacts/p3-heldout
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p3-traffic-*
+          merge-multiple: true
+          path: artifacts/p3-heldout
+      - uses: actions/download-artifact@v4
+        with:
+          name: p3-selection
+          path: artifacts/p3-selection
+      - name: Aggregate, classify, and render the P3 result
+        run: >-
+          PYTHONPATH=src python experiments/p3_cifar10_campaign.py aggregate
+          --input-dir artifacts/p3-heldout
+          --selection artifacts/p3-selection/selection.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: p3-cifar10-combined
+          path: experiments/results/p3_cifar10/*
