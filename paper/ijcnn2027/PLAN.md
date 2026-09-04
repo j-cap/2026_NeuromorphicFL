@@ -48,15 +48,20 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
+**Current status:** P0 is technically prepared. The paper contract, claim--
+evidence matrix, IEEE LaTeX root, section budget, visual budget, and exclusions
+are frozen. Author and reviewer assignments remain a project-team decision
+before the P0 gate is formally closed.
+
 ### P0 -- Freeze scope and paper structure
 
-- [ ] Freeze the working title, research question, and contribution wording.
+- [x] Freeze the working title, research question, and contribution wording.
 - [ ] Confirm the author list and review responsibilities.
-- [ ] Create the IEEE conference LaTeX root in this directory.
-- [ ] Define the main-paper section and page budget.
-- [ ] Create a claim--evidence table linking every claim to a theorem,
+- [x] Create the IEEE conference LaTeX root in this directory.
+- [x] Define the main-paper section and page budget.
+- [x] Create a claim--evidence table linking every claim to a theorem,
       experiment, table, or figure.
-- [ ] Record all exclusions and journal-extension ideas outside the paper scope.
+- [x] Record all exclusions and journal-extension ideas outside the paper scope.
 
 **Gate:** the paper has one agreed story, and no intended claim depends on an
 undefined future experiment.
@@ -273,4 +278,3 @@ The work is ready for IJCNN submission when:
 - [ ] all figures and tables are referenced, readable, and necessary;
 - [ ] independent technical reviews have no unresolved blocking comments;
 - [ ] the final code, results, and manuscript are frozen together.
-

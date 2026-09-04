@@ -1,0 +1,100 @@
+\documentclass[conference]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{url}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\title{Event-FedAvg: Stateful Event-Driven Communication for Federated Learning}
+
+% Keep the initial submission anonymous if required by the final IJCNN 2027
+% author instructions. Author identities and affiliations are added only after
+% the applicable submission policy is verified.
+\author{\IEEEauthorblockN{Anonymous Authors}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Federated learning exchanges high-dimensional model updates even when much of
+their coordinate-wise evidence is weak or temporally redundant. We study
+Event-FedAvg, a stateful communication layer inspired by leaky
+integrate-and-fire dynamics. Each client accumulates weighted local-model
+deltas in a persistent leaky state, emits sparse signed coordinate events after
+threshold crossings, fully resets fired coordinates, and lets the server apply
+an independently scheduled model-update quantum. This separation distinguishes
+the method from residual-conserving threshold-pulse compressors. We establish
+bounded encoder state and a pathwise event budget, and derive a smoothness-based
+descent decomposition with a conditional finite-horizon stationarity result.
+Matched federated experiments evaluate predictive quality against total
+uplink-plus-downlink communication, including exact sparse synchronization.
+The resulting evidence positions Event-FedAvg as a communication--performance
+method rather than as an unconditional convergence or neuromorphic-hardware
+claim.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+% P6 extraction target:
+% - high-dimensional bidirectional FL communication problem;
+% - why temporal evidence is different from per-round sparsification;
+% - the communication--performance headline result;
+% - three contributions from PAPER_CONTRACT.md;
+% - one-sentence limitation boundary.
+
+\section{Related Work and Novelty Boundary}
+\label{sec:related-work}
+
+% Organize by operator mechanics: residual/error feedback, sign and sparse FL,
+% event-triggered communication, and neuromorphic/event-driven processing.
+% Treat Strom-style residual pulses as the closest predecessor.
+
+\section{Event-FedAvg}
+\label{sec:method}
+
+% Extract the normative full-participation transition from T1:
+% local FedAvg delta, weighted evidence input, leak, one threshold test,
+% signed pulse, full reset, independent model quantum, algebraic aggregation,
+% and sparse replay/checkpoint synchronization.
+
+\subsection{Client event encoder}
+
+\subsection{Server update and synchronization}
+
+\section{Scoped Theoretical Characterization}
+\label{sec:theory}
+
+% Retain only the state invariant, event budget, one-step descent inequality,
+% and conditional finite-horizon stationarity statement. Clearly distinguish
+% identities, assumptions, and empirical validation. Full derivations remain
+% in the living technical report.
+
+\section{Experimental Protocol}
+\label{sec:experiments}
+
+% State datasets, architectures, partitions, held-out tuning protocol,
+% comparators, seeds, and symmetric end-to-end communication accounting.
+
+\section{Results and Discussion}
+\label{sec:results}
+
+% Lead with the communication--performance frontier. Then report the
+% traffic-matched closest-baseline result and the exact-gradient alignment
+% audit. Preserve the CNN high-traffic Strom qualification.
+
+\section{Limitations and Conclusion}
+\label{sec:conclusion}
+
+% Bound the result to the evaluated synchronous full-participation setting,
+% conditional theory, software-level bit accounting, and tested benchmarks.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
+
