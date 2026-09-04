@@ -48,6 +48,7 @@ class FinalBaselineConfig:
     topk_fraction: float = 0.025
     strom_threshold: float = 0.005
     init_scale: float = 0.5
+    server_gain: float = 1.0
 
 
 def _architecture_ops(architecture: Architecture):
@@ -135,6 +136,8 @@ def run_final_baseline(
             )
         if alignment_client_reference_size <= 0:
             raise ValueError("alignment_client_reference_size must be positive")
+    if not np.isfinite(config.server_gain) or config.server_gain <= 0.0:
+        raise ValueError("server_gain must be finite and positive")
 
     layout, initialize, loss_grad, metrics = _architecture_ops(architecture)
     rng = np.random.default_rng(seed)
@@ -314,6 +317,11 @@ def run_final_baseline(
         else:
             raise ValueError(method)
 
+        # A deterministic server gain is part of the optimizer, not the
+        # communication payload.  The frozen campaigns use one.  P8 exposes
+        # this standard degree of freedom for a development-only dense-FedAvg
+        # fairness audit.
+        aggregate *= float(config.server_gain)
         if audit_round:
             audit_w_before = w.copy()
         w += aggregate
@@ -451,10 +459,11 @@ def run_final_baseline(
             objective_change = float(
                 reference_objective_after - reference_objective_before
             )
-            first_order_change = float(-jump * net_alignment)
+            effective_jump = float(jump) * float(config.server_gain)
+            first_order_change = float(-effective_jump * net_alignment)
             alignment_row: dict[str, float | int] = {
                     "round": rnd,
-                    "jump": float(jump),
+                    "jump": effective_jump,
                     "reference_size": int(alignment_reference_size),
                     "reference_objective_before": float(reference_objective_before),
                     "reference_objective_after": float(reference_objective_after),
@@ -499,7 +508,7 @@ def run_final_baseline(
                     "update_reconstruction_error": float(
                         np.linalg.norm(
                             aggregate
-                            - float(jump) * raw_aggregate.astype(np.float32)
+                            - effective_jump * raw_aggregate.astype(np.float32)
                         )
                     ),
                 }
@@ -626,6 +635,7 @@ def run_final_baseline(
         "topk_fraction": float(config.topk_fraction),
         "strom_threshold": float(config.strom_threshold),
         "init_scale": float(config.init_scale),
+        "server_gain": float(config.server_gain),
     }
     for cls, acc in enumerate(per_class):
         result[f"class_{cls}_accuracy"] = float(acc)
