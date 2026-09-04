@@ -165,7 +165,7 @@
     {
       "path": "experiments/final_baseline_point.py",
       "role": "experiment code",
-      "sha256": "93a831231e4bf7327f8de30cf86222c0dd2f8c098c6bf901d207474170be173d"
+      "sha256": "0c2657efa551fd06e91394ec050186f9674e6a41bece4249a8ffcc488e115129"
     },
     {
       "path": "experiments/p3_cifar10_campaign.py",
