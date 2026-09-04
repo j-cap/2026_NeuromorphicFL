@@ -11,7 +11,7 @@ change:
 
 | Workflow | Purpose | Timeout |
 |---|---|---:|
-| IJCNN Evidence Check | Validate frozen CSVs, generated tables and figures, and the theory contract | 30 min |
+| IJCNN Evidence Check | Regenerate and validate the checksum-frozen paper bundle and theory contract | 30 min |
 | IJCNN Manuscript Check | Compile and inspect the conference manuscript | 30 min |
 | Compile LaTeX Report | Compile and inspect the living report | 30 min |
 

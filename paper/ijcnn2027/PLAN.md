@@ -48,13 +48,13 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P8 is complete. Development-only dense server-gain tuning
-closes the P7 fairness blocker, and a compact mechanism audit shows that weak
-leakage is negligible while independent trigger and update resolutions are
-important at the selected operating point. Details are in
-`P8_REVISION_AUDIT.md`. P9 reproducibility freezing is next. P2 remains valid for the
-2026-09-04 search snapshot, with a mandatory refresh at P10. The author list
-remains intentionally deferred to the project team.
+**Current status:** P9 is complete. The central evidence, tables, figures,
+manuscript claims, and implementation are checksum-frozen, and the bounded
+paper checks regenerate the products in a clean checkout. Details are in
+`P9_REPRODUCIBILITY_AUDIT.md` and `REPRODUCIBILITY.md`. P10 submission checks
+are next. P2 remains valid for the 2026-09-04 search snapshot, with a mandatory
+refresh at P10. The author list remains intentionally deferred to the project
+team.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -250,14 +250,14 @@ documented submission risk rather than reopening mechanism discovery.
 
 ### P9 -- Freeze reproducibility artifacts
 
-- [ ] Regenerate all central tables and figures from a clean checkout.
-- [ ] Check manuscript numbers against source CSVs automatically.
-- [ ] Pin dependencies and remove machine-specific paths.
-- [ ] Document the minimum reproduction commands.
-- [ ] Freeze the final code, results, and manuscript commit.
-- [ ] Tag the submitted artifact.
+- [x] Regenerate all central tables and figures from a clean checkout.
+- [x] Check manuscript numbers against source CSVs automatically.
+- [x] Pin dependencies and remove machine-specific paths.
+- [x] Document the minimum reproduction commands.
+- [x] Freeze the submission-candidate code, results, and manuscript bundle.
 
-**Gate:** a clean checkout reproduces every central result artifact.
+**Gate:** closed by `P9_REPRODUCIBILITY_AUDIT.md`; a clean checkout reproduces
+every central result artifact byte-for-byte from the committed source results.
 
 ### P10 -- Complete submission checks
 
@@ -269,6 +269,7 @@ documented submission risk rather than reopening mechanism discovery.
 - [ ] Add any disclosure required by the applicable IEEE/IJCNN AI-use policy.
 - [ ] Obtain approval from every author.
 - [ ] Upload and inspect a test PDF before final submission.
+- [ ] Tag the exact commit whose PDF is submitted.
 
 **Gate:** the submission system confirms a compliant PDF and complete metadata.
 

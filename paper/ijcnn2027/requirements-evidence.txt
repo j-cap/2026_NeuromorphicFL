@@ -1,3 +1,3 @@
-# Exact environment used by the frozen baseline GitHub Actions campaigns.
+# Exact numerical environment used by the frozen experiment campaigns.
 numpy==2.4.6
 pandas==3.0.5

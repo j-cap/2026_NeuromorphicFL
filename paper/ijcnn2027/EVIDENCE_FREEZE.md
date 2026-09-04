@@ -98,7 +98,7 @@ or a stability objection submission-blocking.
 
 ## Frozen environment and reproduction
 
-The campaign workflows use Python 3.11 with the exact packages in
+The campaign workflows use Python 3.11 with the exact numerical packages in
 `paper/ijcnn2027/requirements-evidence.txt`:
 
 ```text
@@ -106,13 +106,19 @@ numpy==2.4.6
 pandas==3.0.5
 ```
 
-The minimum local evidence build is:
+The deterministic paper build additionally pins Matplotlib and PyYAML in
+`paper/ijcnn2027/requirements-reproduction.txt`. The minimum clean-checkout
+artifact build is:
 
 ```bash
-python -m pip install -r paper/ijcnn2027/requirements-evidence.txt
-python paper/ijcnn2027/build_evidence.py
-python paper/ijcnn2027/build_evidence.py --check
+python -m pip install -r paper/ijcnn2027/requirements-reproduction.txt
+python paper/ijcnn2027/reproduce.py --regenerate --strict-environment
 ```
+
+This single entry point regenerates and checks the evidence, figures, and
+tables; validates numerical manuscript prose and the theory contract; and
+verifies the P9 checksum manifest. Full commands and the retraining boundary
+are in `REPRODUCIBILITY.md`.
 
 To reproduce one held-out point:
 

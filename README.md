@@ -37,8 +37,10 @@ the held-out communication--performance frontier. P4 has now extracted the
 compact operator, encoder bounds, conditional optimization result, and
 exact-gradient alignment audit into the manuscript. P5 has now frozen the
 three-element visual argument: method schematic, cross-benchmark frontier, and
-compact headline table. P6--P8 are complete; the current priority is P9
-reproducibility freezing, not open-ended mechanism discovery.
+compact headline table. P6--P9 are complete: the submission-candidate sources,
+products, manuscript claims, and central implementation are checksum-frozen and
+rebuild in a clean checkout. The current priority is P10 submission compliance,
+not open-ended mechanism discovery.
 
 ## Publication planning
 
@@ -52,5 +54,9 @@ run automatically on pull requests, while all computational experiment
 campaigns require explicit manual dispatch. The policy and resource controls
 are documented in
 [`.github/ACTIONS_POLICY.md`](.github/ACTIONS_POLICY.md).
+
+The minimum clean-checkout commands and the explicit boundary between
+artifact reproduction and full training reruns are documented in
+[`paper/ijcnn2027/REPRODUCIBILITY.md`](paper/ijcnn2027/REPRODUCIBILITY.md).
 
 The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.
