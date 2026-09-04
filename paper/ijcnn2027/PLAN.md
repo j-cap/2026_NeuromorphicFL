@@ -48,12 +48,14 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P6 is complete. A five-page standalone IEEE conference
-draft now contains the full argument, frozen theory, experimental protocol,
-held-out results, qualifications, and conclusion. Its compilation and claim
-checks are recorded in `P6_MANUSCRIPT_AUDIT.md`. P2 remains valid for the
+**Current status:** the three P7 reviews are complete, with findings recorded in
+`P7_PEER_REVIEW.md`. Theory correctness and algorithm correspondence pass, but
+the P7 gate requires revisions because the dense-FedAvg accuracy headline does
+not yet control for Event-FedAvg's independent server-update scale. P8 is next
+and is deliberately limited to that fairness closure, one compact mechanism
+audit, and targeted manuscript corrections. P2 remains valid for the
 2026-09-04 search snapshot, with a mandatory refresh at P10. The author list
-remains intentionally deferred to the project team. P7 is next.
+remains intentionally deferred to the project team.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -213,19 +215,21 @@ internal experiment-history language; see `P6_MANUSCRIPT_AUDIT.md`.
 
 Run three focused reviews:
 
-- [ ] **FL-method review:** comparator fairness, tuning, partitions, and
+- [x] **FL-method review:** comparator fairness, tuning, partitions, and
       communication accounting.
-- [ ] **Theory review:** usefulness and correctness of the conditional result
+- [x] **Theory review:** usefulness and correctness of the conditional result
       and exact correspondence with the algorithm.
-- [ ] **IJCNN/neuromorphic review:** whether the LIF inspiration is substantive,
+- [x] **IJCNN/neuromorphic review:** whether the LIF inspiration is substantive,
       why full reset and independent resolution matter, and whether the paper
       avoids unsupported hardware claims.
 
 Classify comments as blocking, important, or optional. Only blocking and
 important comments may expand the conference scope.
 
-**Gate:** no unresolved correctness, novelty, or evidence objection threatens
-the central claim.
+**Gate:** reviews complete; revisions required. FL-B1 in
+`P7_PEER_REVIEW.md` is blocking for the current dense-FedAvg accuracy headline.
+No mathematical correctness failure was identified, and no finding requires
+T5 or a broader experiment campaign.
 
 ### P8 -- Perform targeted revisions
 
