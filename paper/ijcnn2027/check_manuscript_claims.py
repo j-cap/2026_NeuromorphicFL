@@ -174,7 +174,7 @@ def main() -> None:
         (
             "CIFAR tuned-dense comparison",
             f"its ${pm(c_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ accuracy is "
-            f"${c_accuracy_gap:.2f}$ points higher at only ${c_traffic_fraction:.1f}\\%$ of the traffic; tuned dense FedAvg reaches "
+            f"${c_accuracy_gap:.2f}$ points higher at only ${c_traffic_fraction:.1f}\\%$ of the traffic. Tuned dense FedAvg reaches "
             f"${pm(c_dense, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$",
         ),
         (
@@ -195,7 +195,7 @@ def main() -> None:
         (
             "CIFAR worst-class qualification",
             f"(${100 * number(select(cifar, comparison='quality-selected', architecture='cifar_cnn', method='ef_topk'), 'final_worst_class_accuracy_mean'):.1f}\\%$) than Event-FedAvg "
-            f"(${100 * number(c_event, 'final_worst_class_accuracy_mean'):.1f}\\%$); tuned dense FedAvg reaches "
+            f"(${100 * number(c_event, 'final_worst_class_accuracy_mean'):.1f}\\%$). Tuned dense FedAvg reaches "
             f"${100 * number(c_dense, 'final_worst_class_accuracy_mean'):.1f}\\%$",
         ),
     ]
