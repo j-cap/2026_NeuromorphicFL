@@ -115,7 +115,7 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "29f5fd684548294b203440467a158ed3a7719e1979b9edc55babdc2d5d0f8c9c"
+      "sha256": "267d329a808dfeb25f9d3014ca6a51eb0bc4ca60aababfd3a998bc8663c9a0e5"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -140,7 +140,7 @@
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "7209eba89fa19ed9c1ce6756f1cc427bd8743f5e17aa243aaa85a6957963f213"
+      "sha256": "bfe5c1c3e23c98a4ba89d28487f826182983e86649e36fba012d0028e1d926d0"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
