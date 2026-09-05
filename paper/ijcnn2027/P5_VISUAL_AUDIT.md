@@ -16,7 +16,7 @@ into the manuscript by hand.
 | `figures/event_fedavg_method.pdf` | C1 and C3: complete stateful operator and exact synchronization | Frozen transition in `main.tex` and implementation contract checked in P4 | Diagram does not imply asynchronous or partial-participation support. |
 | `figures/communication_frontier.pdf` | C4 and C9: communication--performance operating point on three benchmark/model settings | `evidence/fmnist_master_results.csv` and `evidence/cifar10_master_results.csv` | Uses total conservative bidirectional unicast traffic; no energy or latency axis. |
 | `generated/main_results_table.tex` | C4 and C9: strongest-quality and nearest-traffic comparisons | The three paper evidence CSVs | Three seeds are shown as mean $\pm$ sample standard deviation, not significance claims. |
-| `generated/p11_alignment_table.tex` | C7: exact alignment decomposition under controlled heterogeneity and local-depth factors | `evidence/p11_alignment_factorial.csv`, traced to 12 independently audited runs | The three-seed contrasts are descriptive. Positive first-order alignment is not equivalent to realized descent. |
+| `generated/p11_alignment_table.tex` | C7: exact alignment decomposition under controlled heterogeneity and local-depth factors | `evidence/p11_alignment_factorial.csv`, traced to 40 independently audited runs | The ten-seed contrasts assess one frozen operating point. Positive first-order alignment is not equivalent to realized descent. |
 
 ## Selection rules
 

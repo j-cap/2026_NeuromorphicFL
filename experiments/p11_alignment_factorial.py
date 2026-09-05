@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import replace
+import math
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -31,8 +32,11 @@ DATA = Path("data/fashion-mnist")
 OUT = Path("experiments/results/p11_alignment_factorial")
 REGIMES = ("iid", "strong")
 LOCAL_STEPS = (1, 5)
-PARTITION_SEEDS = (2500, 2600, 2700)
+# Preserve the original three paired seeds and extend the same preregistered
+# design to ten independent partition/training-seed pairs.
+PARTITION_SEEDS = tuple(range(2500, 3500, 100))
 KAPPA = 8.0
+T95_CRITICAL_10_PAIRS = 2.2621571627409915
 
 
 def experiment_config(local_steps: int) -> FinalBaselineConfig:
@@ -295,6 +299,39 @@ def _validate_complete_design(summaries: pd.DataFrame, rounds: pd.DataFrame) -> 
         raise AssertionError("alignment decomposition identity failed")
     if float(rounds["update_reconstruction_error"].max()) >= 1e-6:
         raise AssertionError("server update reconstruction failed")
+    indexed = summaries.set_index(["regime", "local_steps", "partition_seed"])
+    for seed in PARTITION_SEEDS:
+        cells = [
+            indexed.loc[(regime, steps, seed)]
+            for regime in REGIMES
+            for steps in LOCAL_STEPS
+        ]
+        if min(float(row["weighted_alignment_ratio"]) for row in cells) <= 0.0:
+            raise AssertionError("an individual P11 trajectory has nonpositive alignment")
+        iid_e1 = indexed.loc[("iid", 1, seed)]
+        iid_e5 = indexed.loc[("iid", 5, seed)]
+        strong_e1 = indexed.loc[("strong", 1, seed)]
+        strong_e5 = indexed.loc[("strong", 5, seed)]
+        if not float(strong_e1["heterogeneity_ratio"]) < float(
+            iid_e1["heterogeneity_ratio"]
+        ) or not float(strong_e5["heterogeneity_ratio"]) < float(
+            iid_e5["heterogeneity_ratio"]
+        ):
+            raise AssertionError("heterogeneity effect changed direction")
+        if not float(iid_e5["local_drift_ratio"]) < float(
+            iid_e1["local_drift_ratio"]
+        ) or not float(strong_e5["local_drift_ratio"]) > float(
+            strong_e1["local_drift_ratio"]
+        ):
+            raise AssertionError("local-depth effect changed direction")
+        if not float(strong_e5["objective_decrease_fraction"]) < float(
+            strong_e1["objective_decrease_fraction"]
+        ):
+            raise AssertionError("non-IID descent-depth effect changed direction")
+        if not float(strong_e5["mean_curvature_remainder"]) > float(
+            strong_e1["mean_curvature_remainder"]
+        ):
+            raise AssertionError("non-IID curvature-depth effect changed direction")
 
 
 def _aggregate_metrics(summaries: pd.DataFrame) -> pd.DataFrame:
@@ -337,6 +374,11 @@ def _paired_effects(summaries: pd.DataFrame) -> pd.DataFrame:
                     for seed in PARTITION_SEEDS
                 ]
             )
+            standard_deviation = float(np.std(deltas, ddof=1))
+            ci_half_width = T95_CRITICAL_10_PAIRS * standard_deviation / math.sqrt(
+                len(deltas)
+            )
+            mean_difference = float(np.mean(deltas))
             rows.append(
                 {
                     "factor": factor,
@@ -344,8 +386,13 @@ def _paired_effects(summaries: pd.DataFrame) -> pd.DataFrame:
                     "to": f"{regime_b}_e{steps_b}",
                     "metric": metric,
                     "n_pairs": len(deltas),
-                    "mean_paired_difference": float(np.mean(deltas)),
-                    "std_paired_difference": float(np.std(deltas, ddof=1)),
+                    "mean_paired_difference": mean_difference,
+                    "std_paired_difference": standard_deviation,
+                    "paired_t95_low": mean_difference - ci_half_width,
+                    "paired_t95_high": mean_difference + ci_half_width,
+                    "positive_pairs": int(np.sum(deltas > 0.0)),
+                    "negative_pairs": int(np.sum(deltas < 0.0)),
+                    "zero_pairs": int(np.sum(deltas == 0.0)),
                     "min_paired_difference": float(np.min(deltas)),
                     "max_paired_difference": float(np.max(deltas)),
                 }

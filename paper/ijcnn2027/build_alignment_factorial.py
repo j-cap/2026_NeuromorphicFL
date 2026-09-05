@@ -16,11 +16,12 @@ ROOT = REPO / "experiments" / "results" / "p11_alignment_factorial"
 SUMMARY = ROOT / "combined_summary.csv"
 ROUNDS = ROOT / "combined_rounds.csv"
 AGGREGATES = ROOT / "aggregate_metrics.csv"
+PAIRED = ROOT / "paired_effects.csv"
 EVIDENCE = PAPER / "evidence" / "p11_alignment_factorial.csv"
 TABLE = PAPER / "generated" / "p11_alignment_table.tex"
 REGIMES = ("iid", "strong")
 LOCAL_STEPS = (1, 5)
-SEEDS = (2500, 2600, 2700)
+SEEDS = tuple(range(2500, 3500, 100))
 
 
 def read_rows(path: Path) -> list[dict[str, str]]:
@@ -52,8 +53,9 @@ def validate_design(
         for steps in LOCAL_STEPS
         for seed in SEEDS
     }
-    if {run_key(row) for row in summaries} != expected or len(summaries) != 12:
-        raise AssertionError("P11 does not contain the complete 12-run design")
+    expected_runs = len(REGIMES) * len(LOCAL_STEPS) * len(SEEDS)
+    if {run_key(row) for row in summaries} != expected or len(summaries) != expected_runs:
+        raise AssertionError(f"P11 does not contain the complete {expected_runs}-run design")
     counts: dict[tuple[str, int, int], int] = {key: 0 for key in expected}
     for row in rounds:
         key = run_key(row)
@@ -70,8 +72,11 @@ def validate_design(
             raise AssertionError("P11 defect upper bound failed")
         if float(row["memory_opposition_penalty"]) != 0.0:
             raise AssertionError("P11 unexpectedly contains memory-opposed pulses")
-    if len(rounds) != 372 or set(counts.values()) != {31}:
-        raise AssertionError("P11 must contain 31 snapshots for each of 12 runs")
+    expected_snapshots = expected_runs * 31
+    if len(rounds) != expected_snapshots or set(counts.values()) != {31}:
+        raise AssertionError(
+            f"P11 must contain 31 snapshots for each of {expected_runs} runs"
+        )
 
     indexed = {run_key(row): row for row in summaries}
     for steps in LOCAL_STEPS:
@@ -87,6 +92,11 @@ def validate_design(
         iid_e5 = indexed[("iid", 5, seed)]
         strong_e1 = indexed[("strong", 1, seed)]
         strong_e5 = indexed[("strong", 5, seed)]
+        if min(
+            float(row["weighted_alignment_ratio"])
+            for row in (iid_e1, iid_e5, strong_e1, strong_e5)
+        ) <= 0.0:
+            raise AssertionError("an individual P11 trajectory has nonpositive alignment")
         if not float(iid_e5["local_drift_ratio"]) < float(
             iid_e1["local_drift_ratio"]
         ):
@@ -95,6 +105,14 @@ def validate_design(
             strong_e1["local_drift_ratio"]
         ):
             raise AssertionError("non-IID local-depth effect changed direction")
+        if not float(strong_e5["objective_decrease_fraction"]) < float(
+            strong_e1["objective_decrease_fraction"]
+        ):
+            raise AssertionError("non-IID descent-depth effect changed direction")
+        if not float(strong_e5["mean_curvature_remainder"]) > float(
+            strong_e1["mean_curvature_remainder"]
+        ):
+            raise AssertionError("non-IID curvature-depth effect changed direction")
 
 
 def build_cells(summaries: list[dict[str, str]]) -> list[dict[str, str]]:
@@ -122,13 +140,13 @@ def build_cells(summaries: list[dict[str, str]]) -> list[dict[str, str]]:
     for regime in REGIMES:
         for steps in LOCAL_STEPS:
             group = grouped[(regime, steps)]
-            if len(group) != 3:
-                raise AssertionError("each P11 cell requires three seeds")
+            if len(group) != len(SEEDS):
+                raise AssertionError(f"each P11 cell requires {len(SEEDS)} seeds")
             output = {
                 "regime": regime,
                 "local_steps": str(steps),
-                "n_seeds": "3",
-                "partition_seeds": "2500;2600;2700",
+                "n_seeds": str(len(SEEDS)),
+                "partition_seeds": ";".join(str(seed) for seed in SEEDS),
                 "snapshots_per_seed": "31",
             }
             for metric in metrics:
@@ -161,6 +179,34 @@ def validate_aggregates(cells: list[dict[str, str]]) -> None:
                 raise AssertionError(f"P11 aggregate drift for {cell_key(cell)} {metric}")
 
 
+def validate_paired_effects() -> None:
+    rows = read_rows(PAIRED)
+    lookup = {
+        (row["factor"], row["from"], row["to"], row["metric"]): row
+        for row in rows
+    }
+    directional_contract = (
+        ("heterogeneity", "iid_e1", "strong_e1", "heterogeneity_ratio", "negative_pairs"),
+        ("heterogeneity", "iid_e5", "strong_e5", "heterogeneity_ratio", "negative_pairs"),
+        ("local_steps", "iid_e1", "iid_e5", "local_drift_ratio", "negative_pairs"),
+        ("local_steps", "strong_e1", "strong_e5", "local_drift_ratio", "positive_pairs"),
+        ("local_steps", "strong_e1", "strong_e5", "objective_decrease_fraction", "negative_pairs"),
+        ("local_steps", "strong_e1", "strong_e5", "mean_curvature_remainder", "positive_pairs"),
+    )
+    for factor, source, target, metric, direction in directional_contract:
+        row = lookup[(factor, source, target, metric)]
+        if int(row["n_pairs"]) != len(SEEDS) or int(row[direction]) != len(SEEDS):
+            raise AssertionError(
+                f"P11 paired direction failed for {source}->{target} {metric}"
+            )
+        low = float(row["paired_t95_low"])
+        high = float(row["paired_t95_high"])
+        if low <= 0.0 <= high:
+            raise AssertionError(
+                f"P11 paired interval crosses zero for {source}->{target} {metric}"
+            )
+
+
 def evidence_csv(cells: list[dict[str, str]]) -> str:
     stream = io.StringIO(newline="")
     columns = list(cells[0])
@@ -182,7 +228,7 @@ def table_tex(cells: list[dict[str, str]]) -> str:
         "% Generated by paper/ijcnn2027/build_alignment_factorial.py; do not edit.",
         "\\begin{table}[t]",
         "\\centering",
-        "\\caption{Finite-trajectory alignment factorial. Values are mean $\\pm$ sample standard deviation over three seeds and 31 independently replayed snapshots per seed.}",
+        "\\caption{Finite-trajectory alignment factorial. Values are mean $\\pm$ sample standard deviation over ten seeds and 31 independently replayed snapshots per seed.}",
         "\\label{tab:alignment-factorial}",
         "\\footnotesize",
         "\\setlength{\\tabcolsep}{3pt}",
@@ -221,9 +267,14 @@ def main() -> None:
     validate_design(summaries, rounds)
     cells = build_cells(summaries)
     validate_aggregates(cells)
+    validate_paired_effects()
     check_or_write(EVIDENCE, evidence_csv(cells), args.check)
     check_or_write(TABLE, table_tex(cells), args.check)
-    print("validated P11: 12 runs, 372 snapshots, 4 paper cells")
+    print(
+        f"validated P11: {len(REGIMES) * len(LOCAL_STEPS) * len(SEEDS)} runs, "
+        f"{len(REGIMES) * len(LOCAL_STEPS) * len(SEEDS) * 31} snapshots, "
+        "4 paper cells"
+    )
 
 
 if __name__ == "__main__":

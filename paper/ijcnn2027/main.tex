@@ -89,8 +89,9 @@ Strom-style threshold pulses under matched local learning, held-out non-IID
 partitions, and total bidirectional traffic. Event-FedAvg is nondominated in all
 three tested model and dataset settings. On CIFAR-10, it uses $7.9\times$ less
 traffic than dense FedAvg while improving mean accuracy by $3.93$ percentage
-points. These claims are restricted to three-seed, synchronous
-full-participation experiments and software-level bit accounting.
+points. The communication--performance comparisons use three held-out seeds,
+while the alignment factorial uses ten. All experiments are synchronous with
+full participation and software-level bit accounting.
 
 \section{Related Work and Novelty Boundary}
 \label{sec:related-work}
@@ -424,7 +425,8 @@ communication required to keep all client models synchronized.
 \textbf{Alignment factorial.}
 On the Fashion-MNIST MLP, we additionally cross IID and strong non-IID
 partitions with $E\in\{1,5\}$ while keeping all Event-FedAvg settings fixed.
-For each of the same three seed pairs, rounds $1,5,10,\ldots,150$ are
+For each of ten paired partition and training seeds, rounds
+$1,5,10,\ldots,150$ are
 independently replayed. Exact gradients use all 6,000 examples of every client
 and are evaluated only after the audited event decision, preventing the
 diagnostic computation from perturbing later threshold crossings.
@@ -473,23 +475,23 @@ that every coupled schedule fails.
 
 Table~\ref{tab:alignment-factorial} connects the optimization interface to its
 mechanisms. Mean aggregate alignment is positive in all four cells, and
-$95.7$--$100.0\%$ of the audited updates have $A_r>0$. Heterogeneity has the
+$96.1$--$99.0\%$ of the audited updates have $A_r>0$. Heterogeneity has the
 predicted adverse effect on $B_r$ for every paired seed. After normalizing
 $q_r$-weighted signed sums by
-$\sum_{r\in\mathcal A}q_r\norm{g^r}_2^2$, its mean changes from $-0.27$ to
-$-360.98$ at $E=1$ and from $-5.37$ to $-700.62$ at $E=5$. Local depth also
+$\sum_{r\in\mathcal A}q_r\norm{g^r}_2^2$, its mean changes from $-0.25$ to
+$-350.31$ at $E=1$ and from $-5.65$ to $-678.29$ at $E=5$. Local depth also
 changes $L_r$, but the direction depends on heterogeneity: its normalized mean
-moves from $-21.74$ to $-57.80$ under IID data and from $-95.23$ to $411.36$
+moves from $-22.11$ to $-59.18$ under IID data and from $-90.17$ to $400.45$
 under strong non-IID data. Thus local drift and heterogeneity interact rather
 than contributing independent worst-case penalties.
 
 Positive first-order alignment is not sufficient for monotone descent. Under
-strong non-IID data, the objective-decrease fraction falls from $86.0\%$ at
-$E=1$ to $67.7\%$ at $E=5$, even though aggregate alignment remains positive
-in $98.9\%$ of the latter snapshots. The mean curvature remainder increases
-from $0.0100$ to $0.0166$, and $29$ of the $93$ strong-non-IID, $E=5$ updates
+strong non-IID data, the objective-decrease fraction falls from $87.4\%$ at
+$E=1$ to $69.7\%$ at $E=5$, even though aggregate alignment remains positive
+in $99.0\%$ of the latter snapshots. The mean curvature remainder increases
+from $0.0096$ to $0.0167$, and $91$ of the $310$ strong-non-IID, $E=5$ updates
 have positive alignment without objective descent. No emitted pulse opposes
-the current local-update proxy in any of the $372$ audited snapshots. The
+the current local-update proxy in any of the $1{,}240$ audited snapshots. The
 experiment therefore supports the decomposition and identifies a finite-step
 heterogeneity--depth limitation. It does not close the conditional convergence
 assumption.
@@ -506,8 +508,9 @@ statistical significance.
 \section{Limitations}
 \label{sec:limitations}
 
-The experiments cover synchronous full participation, ten clients, two image
-datasets, and three held-out seeds per setting. The factorial audit varies two
+The experiments cover synchronous full participation, ten clients, and two
+image datasets. The communication--performance comparisons use three held-out
+seeds per setting, while the factorial audit uses ten seeds but varies only two
 factors around one Fashion-MNIST operating point and is not a broad robustness
 study. The results do not establish
 statistical significance or broad dataset and model generalization. The theory

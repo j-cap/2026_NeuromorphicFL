@@ -70,22 +70,22 @@
     {
       "path": "experiments/results/p11_alignment_factorial/combined_summary.csv",
       "role": "frozen source",
-      "sha256": "f5895bb903d7c4c99d9a21fe95af95d5a3e83b5410bcd21a338f8a5ac81b333f"
+      "sha256": "2c84bc00edd49ebc6ef0d45617d3e8a0869907d9ebc5d7f545735daeb283143c"
     },
     {
       "path": "experiments/results/p11_alignment_factorial/combined_rounds.csv",
       "role": "frozen source",
-      "sha256": "98fe79642a3a8b589070b6a35d0bd5b34d6b3a81ee72643f57da5d4aa5e85028"
+      "sha256": "bbe23e1c338be90bb1a2cdc229384492d72402cc36316e8530cf6944812de497"
     },
     {
       "path": "experiments/results/p11_alignment_factorial/aggregate_metrics.csv",
       "role": "frozen analysis",
-      "sha256": "4e953eb124193aa004e14ccc6818298a3291a7dcc952201e3b92d1ed8fcbd04e"
+      "sha256": "dfa62fe2fa2e34f624836b4cf8dd982faafd91c32341c8b38cc1afc5e81a73bf"
     },
     {
       "path": "experiments/results/p11_alignment_factorial/paired_effects.csv",
       "role": "frozen analysis",
-      "sha256": "70cb4e9c291dddfa9de2304588cee5c62225df5a98152c5074da6a25c2ba9b04"
+      "sha256": "71bee0c413903b9409e84c2733c1e67692127d36fdd96b00acd8cc3c67641f70"
     },
     {
       "path": "paper/ijcnn2027/evidence/fmnist_master_results.csv",
@@ -105,7 +105,7 @@
     {
       "path": "paper/ijcnn2027/evidence/p11_alignment_factorial.csv",
       "role": "generated evidence",
-      "sha256": "a87bb58eed32a58308c4db12e50429d2b7d5af1051cb0c6aa8bc250ae77cfb72"
+      "sha256": "3ca260198915168ee41d0cfb5e4fb348047991163c4f5d3422de50aaa54e24c1"
     },
     {
       "path": "paper/ijcnn2027/generated/fmnist_quality_table.tex",
@@ -130,7 +130,7 @@
     {
       "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
       "role": "generated table",
-      "sha256": "ef710f9a4cf5f3a76b4f2e7d95f9141b90888724cf41ab77e90fa0bd5e5333ef"
+      "sha256": "f90c34aee55c9fc13690ad793a60409ee8a70387dd2fc119bdd3876019f5f4db"
     },
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
@@ -145,7 +145,7 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "fae819721ff2ddc994095d5e40cfa471661ef17fef5441aa72b0bcbc5e995603"
+      "sha256": "3c2d353787184512022514bfe8433d4779a2b8257cf225593c3cfa3e84fe9650"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -170,12 +170,12 @@
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
       "role": "reproduction code",
-      "sha256": "94e51e14356e7e791843b7a792b8e19b46c26cbe94a8c095bc15288ecfbbd0f0"
+      "sha256": "d1e3d3ff623678d9ae291ffe4f93e7df9ba5735156001e00ed7eab39a36aa2c8"
     },
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "a5418f2a27fed077ab7413801bbd8901bc75ad2ccb79b63795c9d6f48bf2a765"
+      "sha256": "4ee5c4742022851f10f2d31d3140effd0ab6a7d0a26d8c24bc1a03b95a150f49"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
@@ -215,12 +215,12 @@
     {
       "path": "experiments/p11_alignment_factorial.py",
       "role": "experiment code",
-      "sha256": "517adccbfea1d700d7e0240b5e35e448c19a3f885bc154445c023d81f33485e3"
+      "sha256": "dd00bb93fa28729a5370383958af987726e3d817a6d4c4e1b50e75972573d008"
     },
     {
       "path": ".github/workflows/p11_alignment_factorial.yml",
       "role": "campaign workflow",
-      "sha256": "994b396fdd772f541b84ca75763a79c4b4e4dfe303803af166ccb0f156a73042"
+      "sha256": "913126af2572f96a4bc5c964bad03ce5bb92c6026602feadc0e15828f9781332"
     },
     {
       "path": "src/neuromorphicfl/cifar10_benchmark.py",
