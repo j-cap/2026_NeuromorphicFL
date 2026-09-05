@@ -1,11 +1,15 @@
 name: Compile LaTeX Report
 
 on:
-  push:
+  pull_request:
     paths:
       - 'report/**'
       - '.github/workflows/report_compile.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -13,6 +17,7 @@ permissions:
 jobs:
   compile:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Compile report
@@ -35,6 +40,7 @@ jobs:
       - name: Upload compiled report and log
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: latex-report-check
           path: |
             report/main.pdf

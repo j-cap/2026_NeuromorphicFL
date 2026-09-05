@@ -1,0 +1,616 @@
+\section{Theory Task T3: Optimization Interface and Conditional Convergence}
+\label{sec:theory-t3-optimization}
+
+T1 freezes the Event-FedAvg transition and T2 characterizes its stateful
+encoder.  This section couples the emitted pulses back to a smooth global
+objective.  The result is deliberately conditional: it identifies the exact
+aggregate alignment quantity that must be controlled for convergence, while
+using T2 to control the event-energy and communication terms.  It does not
+reintroduce either of the descent certificates investigated during mechanism
+development.
+
+\begin{takeawaybox}[title={T3 result boundary}]
+For an $L$-smooth, lower-bounded objective, Event-FedAvg obeys an exact
+descent-versus-harm decomposition.  Under an explicit conditional aggregate
+alignment assumption, it has a finite-horizon stationarity bound, a
+constant-quantum neighborhood bound, and a diminishing-quantum asymptotic
+corollary.  T2 bounds the curvature penalty by the realized coordinate-event
+stream.  What remains unproved is the alignment assumption itself under
+general heterogeneous, model-coupled FedAvg evidence.
+\end{takeawaybox}
+
+\subsection{Round-level quantities}
+
+Let
+\begin{equation}
+    F(w)=\sum_{i=1}^{M}p_iF_i(w),
+    \qquad p_i>0,
+    \qquad \sum_{i=1}^{M}p_i=1,
+    \label{eq:t3-global-objective}
+\end{equation}
+and write $g^r=\nabla F(w^r)$.  Under the frozen full-participation semantics,
+client $i$ emits $c_i^r\in\{-1,0,+1\}^d$, the server forms
+\begin{equation}
+    C^r=\sum_{i=1}^{M}c_i^r,
+    \label{eq:t3-aggregate-pulse}
+\end{equation}
+and applies
+\begin{equation}
+    w^{r+1}=w^r+q_rC^r,
+    \qquad q_r>0.
+    \label{eq:t3-server-update}
+\end{equation}
+Define the number of client-coordinate events in round $r$ by
+\begin{equation}
+    N_r=\sum_{i=1}^{M}\sum_{j=1}^{d}(c_{ij}^r)^2
+       =\sum_{i=1}^{M}\|c_i^r\|_0.
+    \label{eq:t3-round-event-count}
+\end{equation}
+Thus $0\leq N_r\leq Md$.  This counts client-coordinate events before
+same-coordinate pulses are added at the server; it is the quantity that also
+drives the sparse uplink accounting in T2.
+
+For each realized round, separate the gradient mass carried by pulses that
+oppose the global gradient from the mass carried by pulses that follow it:
+\begin{align}
+    D_r
+    &=
+    \sum_{i=1}^{M}\sum_{j=1}^{d}
+    |g_j^r|\,\mathbf{1}_{\{c_{ij}^rg_j^r<0\}},
+    \label{eq:t3-descent-mass}\\
+    H_r
+    &=
+    \sum_{i=1}^{M}\sum_{j=1}^{d}
+    |g_j^r|\,\mathbf{1}_{\{c_{ij}^rg_j^r>0\}}.
+    \label{eq:t3-harmful-mass}
+\end{align}
+The letters stand for descent-aligned and harmful gradient mass.  A silent
+coordinate, or one with $g_j^r=0$, contributes to neither quantity.
+
+\begin{proposition}[Exact aggregate alignment identity]
+\label{prop:t3-alignment-identity}
+For every realized round,
+\begin{equation}
+    -\langle g^r,C^r\rangle=D_r-H_r.
+    \label{eq:t3-alignment-identity}
+\end{equation}
+This identity already includes cancellation among clients that emit opposing
+pulses on the same coordinate.
+\end{proposition}
+
+\begin{proof}
+Expanding the inner product gives
+\begin{equation}
+    \langle g^r,C^r\rangle
+    =\sum_{i=1}^{M}\sum_{j=1}^{d}g_j^rc_{ij}^r.
+\end{equation}
+Each nonzero summand is $-|g_j^r|$ when the pulse opposes the gradient and
+$+|g_j^r|$ when it follows the gradient.  Summing the two cases gives
+\eqref{eq:t3-alignment-identity}.
+\end{proof}
+
+\begin{lemma}[Aggregate event energy]
+\label{lem:t3-event-energy}
+For every round,
+\begin{equation}
+    \|C^r\|_2^2\leq MN_r\leq M^2d.
+    \label{eq:t3-event-energy}
+\end{equation}
+Consequently, for any horizon $R$ and $q_{\max,R}=\max_{1\leq r\leq R}q_r$,
+\begin{align}
+    \sum_{r=1}^{R}q_r^2\|C^r\|_2^2
+    &\leq
+    M\sum_{r=1}^{R}q_r^2N_r
+    \label{eq:t3-weighted-event-energy}\\
+    &\leq
+    Mq_{\max,R}^2N_R^{\mathrm{coord}}.
+    \label{eq:t3-event-energy-cumulative}
+\end{align}
+With a common threshold $\vartheta$, T2 further gives
+\begin{equation}
+    \sum_{r=1}^{R}q_r^2\|C^r\|_2^2
+    \leq
+    \frac{Mq_{\max,R}^2}{\vartheta}
+    \left(
+      \sum_{i=1}^{M}\|z_i^1\|_1
+      +\sum_{r=1}^{R}\sum_{i=1}^{M}\|a_i^r\|_1
+    \right).
+    \label{eq:t3-energy-evidence-budget}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+For each coordinate, Cauchy--Schwarz gives
+\begin{equation}
+    \left(\sum_{i=1}^{M}c_{ij}^r\right)^2
+    \leq M\sum_{i=1}^{M}(c_{ij}^r)^2.
+\end{equation}
+Summing over $j$ proves the first inequality.  The remaining statements follow
+from $N_r\leq Md$, from
+$\sum_rN_r=N_R^{\mathrm{coord}}$, and from
+Proposition~\ref{prop:t2-vector-event-budget}.
+\end{proof}
+
+The factor $M$ is a worst-case coherence factor.  Opposing simultaneous pulses
+can make $\|C^r\|_2^2$ much smaller than $MN_r$, but they do not reduce the
+uplink event count $N_r$.
+
+\subsection{A deterministic descent inequality}
+
+\begin{proposition}[One-step Event-FedAvg descent decomposition]
+\label{prop:t3-one-step-descent}
+Suppose $F$ has an $L$-Lipschitz gradient.  Then every realized Event-FedAvg
+round satisfies
+\begin{equation}
+    F(w^{r+1})
+    \leq
+    F(w^r)
+    -q_r(D_r-H_r)
+    +\frac{LM}{2}q_r^2N_r.
+    \label{eq:t3-one-step-descent}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The smoothness inequality and \eqref{eq:t3-server-update} give
+\begin{equation}
+    F(w^{r+1})
+    \leq
+    F(w^r)
+    +q_r\langle g^r,C^r\rangle
+    +\frac{L}{2}q_r^2\|C^r\|_2^2.
+\end{equation}
+Apply Proposition~\ref{prop:t3-alignment-identity} and
+Lemma~\ref{lem:t3-event-energy}.
+\end{proof}
+
+Equation~\eqref{eq:t3-one-step-descent} is the optimization interface supplied
+by T3.  The net first-order benefit is $D_r-H_r$; the second-order cost is
+controlled by the model quantum and the realized event stream.  Silence is not
+automatically beneficial: when $N_r=D_r=H_r=0$, the model simply does not move.
+
+\subsection{Conditional finite-horizon stationarity}
+
+Let $\mathcal{F}_r$ contain the initial state and all randomness revealed before
+the local computation of round $r$.  In particular, $w^r$ and $g^r$ are
+$\mathcal{F}_r$-measurable.  The following condition states exactly what is
+needed from the closed encoder--optimization loop.
+
+\paragraph{Aggregate alignment with defect.}
+There exist a constant $\kappa>0$ and deterministic numbers $\beta_r\geq0$
+such that
+\begin{equation}
+    \mathbb{E}[D_r-H_r\mid\mathcal{F}_r]
+    \geq
+    \kappa\|\nabla F(w^r)\|_2^2-\beta_r.
+    \label{eq:t3-alignment-assumption}
+\end{equation}
+The defect $\beta_r$ is not an algorithmic safeguard.  It records the loss of
+global descent alignment caused by silence, leakage, stale accumulated
+evidence, local-update drift, stochastic sign error, and client heterogeneity.
+
+\begin{proposition}[Conditional finite-horizon stationarity bound]
+\label{prop:t3-finite-horizon}
+Assume that $F$ is $L$-smooth and lower bounded by $F_{\inf}$, and that
+\eqref{eq:t3-alignment-assumption} holds.  Then, for every $R\geq1$,
+\begin{equation}
+    \kappa\sum_{r=1}^{R}q_r
+    \mathbb{E}\|\nabla F(w^r)\|_2^2
+    \leq
+    F(w^1)-F_{\inf}
+    +\sum_{r=1}^{R}q_r\beta_r
+    +\frac{LM}{2}\sum_{r=1}^{R}q_r^2\mathbb{E}N_r.
+    \label{eq:t3-finite-horizon-bound}
+\end{equation}
+Let $Q_R=\sum_{r=1}^{R}q_r$ and draw $J_R\in\{1,\ldots,R\}$ independently
+with $\mathbb{P}(J_R=r)=q_r/Q_R$.  Then
+\begin{equation}
+    \mathbb{E}\|\nabla F(w^{J_R})\|_2^2
+    \leq
+    \frac{
+      F(w^1)-F_{\inf}
+      +\sum_{r=1}^{R}q_r\beta_r
+      +\frac{LM}{2}\sum_{r=1}^{R}q_r^2\mathbb{E}N_r
+    }{\kappa Q_R}.
+    \label{eq:t3-random-iterate-bound}
+\end{equation}
+The same right-hand side bounds
+$\min_{1\leq r\leq R}\mathbb{E}\|\nabla F(w^r)\|_2^2$.
+\end{proposition}
+
+\begin{proof}
+Take conditional expectation in \eqref{eq:t3-one-step-descent} and apply
+\eqref{eq:t3-alignment-assumption}.  Taking total expectation and summing over
+$r$ telescopes the objective values.  Lower bounding the final objective by
+$F_{\inf}$ proves \eqref{eq:t3-finite-horizon-bound}.  Division by $\kappa Q_R$
+gives the random-iterate identity and the minimum bound.
+\end{proof}
+
+\begin{corollary}[Constant model quantum]
+\label{cor:t3-constant-quantum}
+Let $q_r=q$, and suppose
+\begin{equation}
+    \frac{1}{R}\sum_{r=1}^{R}\beta_r\leq\bar\beta_R,
+    \qquad
+    \frac{1}{R}\sum_{r=1}^{R}\mathbb{E}N_r\leq\bar N_R.
+\end{equation}
+Then
+\begin{equation}
+    \min_{1\leq r\leq R}
+    \mathbb{E}\|\nabla F(w^r)\|_2^2
+    \leq
+    \frac{F(w^1)-F_{\inf}}{\kappa qR}
+    +\frac{\bar\beta_R}{\kappa}
+    +\frac{LM\bar N_R}{2\kappa}q.
+    \label{eq:t3-constant-quantum-bound}
+\end{equation}
+In the worst case, $\bar N_R\leq Md$.
+\end{corollary}
+
+This exposes two distinct neighborhood terms.  Decreasing $q$ reduces the
+smoothness penalty but does not by itself reduce the alignment defect.  In
+particular, a leaky encoder that remains silent near a nonstationary point must
+pay for that silence through $\beta_r$.
+
+\begin{corollary}[Diminishing model quantum]
+\label{cor:t3-diminishing-quantum}
+Under the assumptions of Proposition~\ref{prop:t3-finite-horizon}, suppose
+\begin{equation}
+    \sum_{r=1}^{\infty}q_r=\infty,
+    \qquad
+    \sum_{r=1}^{\infty}q_r^2<\infty,
+    \qquad
+    \sum_{r=1}^{\infty}q_r\beta_r<\infty.
+    \label{eq:t3-robbins-monro-window}
+\end{equation}
+Then
+\begin{equation}
+    \lim_{R\to\infty}
+    \frac{1}{Q_R}
+    \sum_{r=1}^{R}q_r
+    \mathbb{E}\|\nabla F(w^r)\|_2^2
+    =0,
+    \label{eq:t3-weighted-stationarity}
+\end{equation}
+and therefore
+\begin{equation}
+    \liminf_{r\to\infty}
+    \mathbb{E}\|\nabla F(w^r)\|_2^2=0.
+    \label{eq:t3-liminf-stationarity}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Use $N_r\leq Md$ in \eqref{eq:t3-finite-horizon-bound}.  The numerator of the
+weighted-average bound remains finite while $Q_R$ diverges.  A nonnegative
+sequence whose weighted average tends to zero with positive divergent total
+weight must have limit inferior zero.
+\end{proof}
+
+This corollary establishes weighted stationarity and a limit-inferior result,
+not convergence of every iterate.  Almost-sure convergence or convergence of
+the full gradient sequence would require additional martingale, stability, or
+geometric assumptions.
+
+\subsection{Optional stronger geometry: a PL neighborhood}
+
+\begin{corollary}[Polyak--\L{}ojasiewicz objective]
+\label{cor:t3-pl}
+Suppose, in addition, that
+\begin{equation}
+    \|\nabla F(w)\|_2^2
+    \geq 2\mu_{\mathrm{PL}}(F(w)-F_\star)
+    \label{eq:t3-pl-condition}
+\end{equation}
+for all visited iterates, with $\mu_{\mathrm{PL}}>0$.  If $q_r=q$,
+$0<2\kappa\mu_{\mathrm{PL}}q\leq1$, $\beta_r\leq\bar\beta$, and
+$\mathbb{E}N_r\leq\bar N$, then
+\begin{align}
+    \mathbb{E}[F(w^{R+1})-F_\star]
+    \leq{}&
+    (1-2\kappa\mu_{\mathrm{PL}}q)^R
+    (F(w^1)-F_\star)
+    \nonumber\\
+    &+\frac{\bar\beta}{2\kappa\mu_{\mathrm{PL}}}
+    +\frac{LMq\bar N}{4\kappa\mu_{\mathrm{PL}}}.
+    \label{eq:t3-pl-neighborhood}
+\end{align}
+\end{corollary}
+
+\begin{proof}
+Combine the conditional form of \eqref{eq:t3-one-step-descent} with
+\eqref{eq:t3-alignment-assumption} and \eqref{eq:t3-pl-condition}.  The
+resulting affine recursion has contraction factor
+$1-2\kappa\mu_{\mathrm{PL}}q$; summing its geometric series gives the bound.
+\end{proof}
+
+The PL condition is not asserted for the neural networks in the empirical
+campaign.  This corollary only records what the same Event-FedAvg interface
+implies when stronger objective geometry is independently available.
+
+\subsection{How T2 sign reliability enters the alignment defect}
+
+T2 controls the sign of a first-passage event relative to a locally persistent
+mean evidence direction.  T3 requires alignment relative to the current global
+gradient.  The following elementary split shows the gap between the two.
+
+\begin{lemma}[Local sign error versus global mismatch]
+\label{lem:t3-local-global-split}
+Fix a client-coordinate pulse $c_{ij}^r$, a reference local mean evidence
+$\mu_{ij}^r$, and a nonzero global-gradient coordinate $g_j^r$.  Then
+\begin{equation}
+    \mathbf{1}_{\{c_{ij}^rg_j^r>0\}}
+    \leq
+    \mathbf{1}_{\{c_{ij}^r\neq0,\ c_{ij}^r\mu_{ij}^r\leq0\}}
+    +
+    \mathbf{1}_{\{c_{ij}^r\neq0,\ \mu_{ij}^rg_j^r>0\}}.
+    \label{eq:t3-local-global-split}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+For a harmful nonzero pulse, either its sign fails to match the reference local
+mean, including the zero-mean case, or its sign matches that mean.  In the
+latter case the local mean has the same sign as the global gradient, so the
+second indicator equals one.
+\end{proof}
+
+The first term is an encoder sign-error term and can be bounded by T2 on blocks
+that satisfy its stationary sub-Gaussian assumptions.  The second is a
+local-to-global mismatch term caused by client heterogeneity, local-update
+drift, or stale accumulation; it is not controlled by the encoder theorem.
+Thus T2 sign reliability is useful but insufficient on its own to establish
+\eqref{eq:t3-alignment-assumption}.
+
+\subsection{Schedule audit for the frozen experiments}
+
+The final matched-baseline campaign uses
+\begin{equation}
+    q_r=q_0\left(1+\frac{r}{r_0}\right)^{-\alpha}.
+    \label{eq:t3-power-law-schedule}
+\end{equation}
+For an infinite run, the two step-size series in
+\eqref{eq:t3-robbins-monro-window} satisfy
+\begin{align}
+    \sum_rq_r=\infty
+    &\quad\Longleftrightarrow\quad \alpha\leq1,
+    \\
+    \sum_rq_r^2<\infty
+    &\quad\Longleftrightarrow\quad \alpha>\frac12.
+    \label{eq:t3-power-law-window}
+\end{align}
+Hence the classical asymptotic window is
+\begin{equation}
+    \frac12<\alpha\leq1.
+    \label{eq:t3-alpha-window}
+\end{equation}
+
+\begin{center}
+\begin{tabular}{lcccccc}
+\toprule
+Model & $q_0$ & $r_0$ & $\alpha$ & rounds & $\sum q_r$ & $\sum q_r^2$\\
+\midrule
+MLP & $0.005$ & $100$ & $0.1$ & $150$ & diverges & diverges\\
+CNN & $0.010$ & $100$ & $0.3$ & $80$ & diverges & diverges\\
+T3 asymptotic family & free & $>0$ & $(1/2,1]$ & infinite & diverges & converges\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The first two rows describe finite experimental horizons, for which both sums
+are finite numerically.  The labels in the final two columns describe what
+would happen if the same formulas were extended indefinitely.  Therefore the
+reported MLP and CNN schedules are finite-horizon empirical schedules, not
+instances of Corollary~\ref{cor:t3-diminishing-quantum}.  Establishing an
+asymptotic result requires either a schedule in \eqref{eq:t3-alpha-window} or a
+different argument that exploits stronger decay in the realized event stream.
+
+\subsection{A verifiable offline alignment audit}
+
+The theory assumption can be measured without changing the training rule.  On
+selected rounds, store the client pulse vectors and evaluate a sufficiently
+accurate reference global gradient.  Then compute
+\begin{align}
+    A_r^{\mathrm{net}}
+    &=-\langle\nabla F(w^r),C^r\rangle=D_r-H_r,
+    \label{eq:t3-audit-net-alignment}\\
+    \chi_r
+    &=\frac{H_r}{D_r+H_r}
+      \quad\text{when }D_r+H_r>0,
+    \label{eq:t3-audit-harm-fraction}\\
+    \beta_r(\kappa)
+    &=\left[
+       \kappa\|\nabla F(w^r)\|_2^2-A_r^{\mathrm{net}}
+      \right]_+.
+    \label{eq:t3-audit-defect}
+\end{align}
+Together with $N_r$, these values separate net alignment, harmful-event share,
+alignment defect, and event energy.  They are diagnostics, not acceptance
+tests: no event is blocked and no extra server update is applied.
+
+\subsection{T3a: instrumented alignment audit}
+\label{sec:t3a-alignment-audit}
+
+The proposed audit was run on the frozen MLP configuration without modifying
+the Event-FedAvg update.  The experiment used the strong non-IID partition,
+$E=5$, $\eta=0.1$, $150$ rounds, $\rho=0.999$, $\vartheta=0.025$, and
+\begin{equation}
+    q_r=0.005(1+r/100)^{-0.1}.
+\end{equation}
+The held-out partition seeds were $2500$, $2600$, and $2700$, with training
+seed $70000$ plus the partition seed.  Every fifth round, together with rounds
+$1$ and $150$, the audit evaluated the objective and gradient on the fixed
+$5000$-example training-reference set.  This gives $31$ audited updates per
+run.  The reference set is large enough to provide a stable diagnostic but is
+not identified with the exact population objective in
+\eqref{eq:t3-global-objective}.
+
+The instrumentation consumes no random numbers, but the event trigger makes
+the long trajectory sensitive to otherwise irrelevant floating-point work
+inserted between rounds.  The final audit therefore uses independent
+single-round replays.  To audit round $r$, the uninstrumented method is replayed
+from initialization through the pulse decision at round $r$; only then are the
+model and pulse copied and the reference quantities evaluated.  Final
+performance is taken from a separate uninstrumented run.  A paired smoke test
+confirms exact agreement of all pre-existing outputs.  Across the full audit,
+the maximum numerical errors in \eqref{eq:t3-audit-net-alignment} and in
+reconstructing $q_rC^r$ were $5.54\times10^{-6}$ and
+$5.90\times10^{-9}$, respectively.
+
+Define the trajectory-level weighted alignment ratio
+\begin{equation}
+    \widehat\kappa_R
+    =
+    \frac{\sum_{r\in\mathcal{R}_{\mathrm{audit}}}
+      q_r(D_r-H_r)}
+    {\sum_{r\in\mathcal{R}_{\mathrm{audit}}}
+      q_r\|\nabla F_{\mathrm{ref}}(w^r)\|_2^2}.
+    \label{eq:t3-empirical-kappa}
+\end{equation}
+This is a descriptive path statistic, not an estimate that by itself proves
+the conditional expectation in \eqref{eq:t3-alignment-assumption}.
+
+\begin{table}[H]
+\centering
+\caption{Frozen-MLP T3a alignment audit.  Percentages are over the $31$
+audited rounds except for the harmful share, which is aggregated by gradient
+mass.}
+\label{tab:t3a-alignment-summary}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Seed & Test acc. & $\widehat\kappa_R$ & Net $>0$ & Harmful & $\Delta F<0$ & Cancellation\\
+\midrule
+$2500$ & $82.82\%$ & $33.56$ & $96.77\%$ & $31.52\%$ & $77.42\%$ & $15.37\%$\\
+$2600$ & $83.00\%$ & $33.84$ & $93.55\%$ & $30.91\%$ & $74.19\%$ & $15.78\%$\\
+$2700$ & $83.28\%$ & $32.28$ & $100.00\%$ & $32.30\%$ & $74.19\%$ & $15.31\%$\\
+\midrule
+Mean & $83.03\%$ & $33.23$ & $96.77\%$ & $31.58\%$ & $75.27\%$ & $15.49\%$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.35cm},
+  width=0.46\linewidth,
+  height=0.31\linewidth,
+  xlabel={Round},
+  grid=major,
+  major grid style={black!12},
+  tick label style={font=\small},
+  label style={font=\small},
+  title style={font=\small},
+]
+\nextgroupplot[
+  title={Aggregate alignment},
+  ylabel={$({D_r-H_r})/{\|\nabla F_{\mathrm{ref}}(w^r)\|_2^2}$},
+]
+\addplot+[mark=*, mark size=1.2pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t3_alignment_audit_seed_2500.csv};
+\addplot+[mark=square*, mark size=1.1pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t3_alignment_audit_seed_2600.csv};
+\addplot+[mark=triangle*, mark size=1.2pt] table[x=round,y=alignment_ratio,col sep=comma]
+  {data/t3_alignment_audit_seed_2700.csv};
+\addplot[black, thin, forget plot] coordinates {(1,0) (150,0)};
+
+\nextgroupplot[
+  title={Harmful gradient-mass share},
+  ylabel={$H_r/(D_r+H_r)$},
+  ymin=0,
+  ymax=0.55,
+  legend entries={$2500$,$2600$,$2700$},
+  legend style={font=\scriptsize, draw=none, at={(0.98,0.98)}, anchor=north east},
+]
+\addplot+[mark=*, mark size=1.2pt] table[x=round,y=harmful_share,col sep=comma]
+  {data/t3_alignment_audit_seed_2500.csv};
+\addplot+[mark=square*, mark size=1.1pt] table[x=round,y=harmful_share,col sep=comma]
+  {data/t3_alignment_audit_seed_2600.csv};
+\addplot+[mark=triangle*, mark size=1.2pt] table[x=round,y=harmful_share,col sep=comma]
+  {data/t3_alignment_audit_seed_2700.csv};
+\addplot[black, dashed, thin, forget plot] coordinates {(1,0.5) (150,0.5)};
+\end{groupplot}
+\end{tikzpicture}
+\caption{T3a alignment diagnostics for the three held-out MLP runs.  Positive
+alignment is dominant, but its normalized margin decreases and the harmful
+share rises as training progresses.}
+\label{fig:t3a-alignment-audit}
+\end{figure}
+
+Table~\ref{tab:t3a-alignment-summary} and
+Figure~\ref{fig:t3a-alignment-audit} support four conclusions.
+\begin{enumerate}
+    \item \emph{Finite-horizon aggregate alignment is strong.}  The net mass
+    $D_r-H_r$ is positive on $90$ of $93$ audited updates.  The cross-seed
+    weighted ratio is $33.23\pm0.83$; the three negative snapshots occur at
+    seed/round pairs $(2500,85)$, $(2600,115)$, and $(2600,125)$.
+    \item \emph{The margin weakens late in training.}  The mean alignment ratio
+    falls from $39.88$ in rounds $1$--$50$ to $23.25$ in rounds $101$--$150$;
+    the harmful share rises from $24.13\%$ to $38.97\%$.  Thus the finite-run
+    evidence does not support a uniform pathwise lower bound with zero defect.
+    \item \emph{Positive first-order alignment is not monotone descent.}  Of
+    the $90$ positive-alignment updates, $20$ still increase the reference
+    objective.  In those cases the observed curvature remainder exceeds the
+    first-order improvement.  This is precisely the second-order term retained
+    in Proposition~\ref{prop:t3-one-step-descent}; the slowly decaying frozen
+    $q_r$ is not a per-round descent guarantee.
+    \item \emph{The worst-case event-energy bound is conservative.}  The pooled
+    ratio $\sum_r\|C^r\|_2^2/(M\sum_rN_r)$ is $0.0982$, so the bound
+    $\|C^r\|_2^2\leq MN_r$ is roughly one order of magnitude above the observed
+    aggregate energy.  Signed client cancellation removes $15.49\%$ of the
+    event-stream $\ell_1$ mass on average.
+\end{enumerate}
+
+As a scale diagnostic, a fixed $\kappa=8$ is violated on only a small fraction
+of the $31$ audited rounds per seed, but the resulting weighted positive-part
+defect still equals $13.6\%$--$16.0\%$ of the corresponding target alignment
+budget.
+This supports using an explicit nonzero $\beta_r$ in
+\eqref{eq:t3-alignment-assumption}; it does not establish that the defect is
+summable or that the same $\kappa$ transfers to other architectures, data
+partitions, or schedules.
+
+The audit is deliberately limited to three numerical paths, a
+$5000$-sample reference gradient, and every fifth round.  Independent replay
+removes the diagnostic observer effect up to each audited pulse, but does not
+remove cross-run floating-point branch sensitivity after threshold decisions.
+It therefore provides evidence for the
+finite-horizon interface, not a proof of the conditional expectation or of the
+asymptotic conditions in Corollary~\ref{cor:t3-diminishing-quantum}.
+
+\subsection{T3 conclusions and remaining theorem gap}
+
+T3 establishes the following scoped result:
+\begin{enumerate}
+    \item every aggregate pulse has an exact descent-aligned minus harmful
+    gradient-mass decomposition;
+    \item smoothness converts that decomposition into a deterministic
+    one-step objective bound;
+    \item the quadratic remainder is bounded by the actual coordinate-event
+    count and, through T2, by accumulated evidence variation;
+    \item explicit aggregate alignment with summable defect yields a
+    finite-horizon stationarity bound and a diminishing-quantum asymptotic
+    corollary;
+    \item constant $q$ produces separate alignment-defect and event-energy
+    neighborhoods;
+    \item local first-passage sign reliability does not eliminate the distinct
+    client-to-global mismatch caused by heterogeneity and local drift;
+    \item the frozen experimental schedules support finite-horizon claims but
+    do not satisfy the stated asymptotic square-summability condition;
+    \item the T3a audit finds strong but nonuniform finite-horizon aggregate
+    alignment, together with a material second-order obstacle to monotone
+    descent.
+\end{enumerate}
+
+The audit changes the priority of the remaining theory work.  The main question
+is no longer whether aggregate alignment exists at all on the frozen MLP; it is
+whether its late-stage deterioration and the curvature remainder can be
+controlled.  A next proof and experiment should decompose $\beta_r$ into
+stochastic encoder sign error, local-SGD drift, heterogeneity, stale-state
+error, and silence/deadzone terms, while separately testing a theoretically
+admissible or event-energy-aware $q_r$ schedule.  Until such bounds are
+available, Proposition~\ref{prop:t3-finite-horizon} remains a conditional
+convergence interface rather than an unconditional convergence theorem for the
+complete frozen method.

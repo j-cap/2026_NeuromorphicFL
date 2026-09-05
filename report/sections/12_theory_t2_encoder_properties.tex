@@ -1,0 +1,653 @@
+\section{Theory Task T2: Encoder-Level Properties}
+\label{sec:theory-t2-encoder-properties}
+
+Section~\ref{sec:theory-t1-formal-semantics} freezes the round-level Event-FedAvg transition. The present section establishes the first mathematical properties of that transition. The results are intentionally modular. They condition on an arbitrary evidence-input sequence and characterize the local stateful encoder before coupling its output back to the optimization dynamics.
+
+The deterministic statements require no convexity, smoothness, stochastic-gradient model, or descent certificate. The sign-reliability statement requires an explicit locally stationary signal-plus-noise model over one inter-event block. No result in this section is presented as a convergence theorem for Event-FedAvg.
+
+\begin{takeawaybox}[title={T2 result boundary}]
+Unconditional results: post-reset state invariance, pre-trigger overshoot, an exact discounted evidence identity, a pathwise event-count bound, and a packetized uplink bound. Conditional stochastic result: a finite-horizon bound on wrong-sign first passage under persistent mean evidence and independent sub-Gaussian noise.
+\end{takeawaybox}
+
+\subsection{Scalar encoder used in the analysis}
+
+Fix one client and one coordinate and suppress both indices. Let
+\begin{equation}
+    z_{r+1}
+    =
+    (1-m_r)\widetilde z_r,
+    \qquad
+    \widetilde z_r=\rho_r z_r+a_r,
+    \label{eq:t2-scalar-transition}
+\end{equation}
+where
+\begin{equation}
+    m_r=\mathbf{1}_{\{|\widetilde z_r|\geq\vartheta\}},
+    \qquad
+    0\leq\rho_r\leq1,
+    \qquad
+    \vartheta>0.
+    \label{eq:t2-scalar-trigger}
+\end{equation}
+Here $a_r$ is the coordinate of the weighted local-delta input in \eqref{eq:t1-evidence-input}. An inactive-client round is represented by $a_r=0$ and no threshold test. Since leakage cannot create a threshold crossing from a subthreshold state, including such rounds in \eqref{eq:t2-scalar-trigger} does not alter the state path.
+
+Define the signed pulse and discarded evidence by
+\begin{align}
+    c_r
+    &=
+    m_r\operatorname{sign}(\widetilde z_r),
+    \label{eq:t2-scalar-pulse}\\
+    d_r
+    &=
+    m_r\widetilde z_r.
+    \label{eq:t2-discarded-evidence}
+\end{align}
+The term \emph{discarded evidence} is descriptive: $d_r$ is the complete pre-trigger state removed by full reset. It is not assumed to have the same scale as the applied model quantum $q_r$.
+
+Equations \eqref{eq:t2-scalar-transition}--\eqref{eq:t2-discarded-evidence} give the exact additive state form
+\begin{equation}
+    z_{r+1}
+    =
+    \rho_r z_r+a_r-d_r.
+    \label{eq:t2-additive-state}
+\end{equation}
+
+\subsection{State invariance and overshoot}
+
+\begin{proposition}[Post-reset invariant and one-step overshoot]
+\label{prop:t2-state-overshoot}
+Assume $|z_1|<\vartheta$. Then, for every round $r\geq1$,
+\begin{equation}
+    |z_{r+1}|<\vartheta.
+    \label{eq:t2-state-invariant}
+\end{equation}
+Moreover,
+\begin{equation}
+    |\widetilde z_r|
+    \leq
+    \rho_r\vartheta+|a_r|
+    \leq
+    \vartheta+|a_r|.
+    \label{eq:t2-pretrigger-bound}
+\end{equation}
+If an event occurs, define its threshold overshoot
+\begin{equation}
+    o_r=|\widetilde z_r|-\vartheta\geq0.
+\end{equation}
+It satisfies
+\begin{equation}
+    0\leq o_r
+    \leq
+    |a_r|-(1-\rho_r)\vartheta
+    < |a_r|.
+    \label{eq:t2-overshoot-bound}
+\end{equation}
+In particular, an event in round $r$ requires
+\begin{equation}
+    |a_r|\geq(1-\rho_r)\vartheta.
+    \label{eq:t2-event-necessary-input}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+If $m_r=1$, full reset gives $z_{r+1}=0$. If $m_r=0$, the failed trigger implies $|z_{r+1}|=|\widetilde z_r|<\vartheta$. This proves \eqref{eq:t2-state-invariant} by induction.
+
+Using the invariant and the triangle inequality,
+\begin{equation}
+    |\widetilde z_r|
+    \leq
+    \rho_r|z_r|+|a_r|
+    \leq
+    \rho_r\vartheta+|a_r|,
+\end{equation}
+which proves \eqref{eq:t2-pretrigger-bound}. On a firing round, subtracting $\vartheta$ yields
+\begin{equation}
+    o_r
+    \leq
+    \rho_r\vartheta+|a_r|-\vartheta
+    =
+    |a_r|-(1-\rho_r)\vartheta.
+\end{equation}
+Because $o_r\geq0$, condition \eqref{eq:t2-event-necessary-input} follows. When $\rho_r>0$, the strict state invariant makes both inequalities strict; the non-strict form is needed for the endpoint $\rho_r=0$.
+\end{proof}
+
+\begin{remark}[What the overshoot bound does and does not say]
+The bound is specific to the frozen one-test/full-reset rule. It would change under repeated threshold subtraction, multiple pulses per coordinate and round, or subtractive error feedback. It bounds the evidence discarded beyond the threshold, but does not yet bound the optimization perturbation caused by applying $q_r c_r$.
+\end{remark}
+
+\subsection{Exact discounted evidence accounting}
+
+For integers $s\leq t$, define
+\begin{equation}
+    \Phi(t,s)=\prod_{k=s}^{t}\rho_k,
+\end{equation}
+with the empty-product convention $\Phi(t,t+1)=1$.
+
+\begin{proposition}[Discounted input--reset identity]
+\label{prop:t2-discounted-identity}
+For every horizon $R\geq1$, the scalar encoder satisfies
+\begin{equation}
+    z_{R+1}
+    =
+    \Phi(R,1)z_1
+    +
+    \sum_{r=1}^{R}
+    \Phi(R,r+1)(a_r-d_r).
+    \label{eq:t2-discounted-identity}
+\end{equation}
+Equivalently,
+\begin{equation}
+    \sum_{r=1}^{R}\Phi(R,r+1)a_r
+    =
+    z_{R+1}
+    -
+    \Phi(R,1)z_1
+    +
+    \sum_{r=1}^{R}\Phi(R,r+1)d_r.
+    \label{eq:t2-discounted-balance}
+\end{equation}
+For the nonleaky special case $\rho_r=1$,
+\begin{equation}
+    \sum_{r=1}^{R}a_r
+    =
+    z_{R+1}-z_1+\sum_{r=1}^{R}d_r.
+    \label{eq:t2-nonleaky-balance}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Repeated substitution of \eqref{eq:t2-additive-state} gives \eqref{eq:t2-discounted-identity}. Rearranging gives \eqref{eq:t2-discounted-balance}, and setting every $\rho_r$ to one gives \eqref{eq:t2-nonleaky-balance}.
+\end{proof}
+
+Equation~\eqref{eq:t2-discounted-balance} is the appropriate conservation statement for the communication state. Full reset does not destroy the algebraic ability to account for the removed state: it appears explicitly as $d_r$. What is deliberately not conserved is a residual that reconstructs the applied model update $q_rc_r$. In general,
+\begin{equation}
+    d_r\neq q_rc_r,
+\end{equation}
+because the trigger threshold, overshoot, and model quantum are decoupled.
+
+\begin{corollary}[Threshold representative and discarded overshoot]
+\label{cor:t2-discarded-overshoot}
+For every event,
+\begin{equation}
+    d_r=(\vartheta+o_r)c_r.
+    \label{eq:t2-discarded-decomposition}
+\end{equation}
+Consequently,
+\begin{equation}
+    |d_r-\vartheta c_r|
+    =
+    m_ro_r
+    <
+    m_r|a_r|.
+    \label{eq:t2-threshold-representative-error}
+\end{equation}
+Over a horizon,
+\begin{equation}
+    \sum_{r=1}^{R}|d_r-\vartheta c_r|
+    \leq
+    \sum_{r:m_r=1}|a_r|.
+    \label{eq:t2-total-overshoot}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+On an event, $|d_r|=|\widetilde z_r|=\vartheta+o_r$ and $\operatorname{sign}(d_r)=c_r$. Equation~\eqref{eq:t2-discarded-decomposition} follows. Proposition~\ref{prop:t2-state-overshoot} then gives the remaining inequalities.
+\end{proof}
+
+The comparison in Corollary~\ref{cor:t2-discarded-overshoot} uses the evidence-scale representative $\vartheta c_r$, not the model update $q_rc_r$. This avoids silently identifying two quantities that the frozen method intentionally treats as independent.
+
+\subsection{Pathwise event-count bound}
+
+Let
+\begin{equation}
+    N_R=\sum_{r=1}^{R}m_r
+\end{equation}
+be the number of scalar events through round $R$.
+
+\begin{proposition}[Scalar event budget]
+\label{prop:t2-scalar-event-budget}
+For any deterministic or stochastic realization of the input sequence,
+\begin{equation}
+    N_R\vartheta
+    \leq
+    |z_1|+\sum_{r=1}^{R}|a_r|.
+    \label{eq:t2-scalar-event-budget}
+\end{equation}
+In particular, if $z_1=0$,
+\begin{equation}
+    N_R
+    \leq
+    \frac{1}{\vartheta}
+    \sum_{r=1}^{R}|a_r|.
+    \label{eq:t2-scalar-event-budget-zero}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Let $\tau_1<\cdots<\tau_{N_R}$ be the event rounds and set $\tau_0=0$. After every event, the next-round state is zero. For $k\geq2$, expanding the recurrence between two consecutive events gives
+\begin{equation}
+    \widetilde z_{\tau_k}
+    =
+    \sum_{r=\tau_{k-1}+1}^{\tau_k}
+    \left(
+        \prod_{s=r+1}^{\tau_k}\rho_s
+    \right)a_r.
+    \label{eq:t2-event-block}
+\end{equation}
+The first block additionally contains
+\begin{equation}
+    \left(\prod_{s=1}^{\tau_1}\rho_s\right)z_1.
+\end{equation}
+Because every $\rho_s\in[0,1]$, the absolute value of every product coefficient is at most one. Threshold crossing and the triangle inequality therefore imply
+\begin{align}
+    \vartheta
+    &\leq
+    |z_1|+\sum_{r=1}^{\tau_1}|a_r|,
+    \\
+    \vartheta
+    &\leq
+    \sum_{r=\tau_{k-1}+1}^{\tau_k}|a_r|,
+    \qquad k=2,\ldots,N_R.
+\end{align}
+The inter-event blocks are disjoint. Summing the inequalities proves \eqref{eq:t2-scalar-event-budget}.
+\end{proof}
+
+\begin{corollary}[Total discarded-evidence magnitude]
+\label{cor:t2-total-discarded}
+The discarded evidence satisfies
+\begin{equation}
+    \sum_{r=1}^{R}|d_r|
+    =
+    N_R\vartheta+\sum_{r:m_r=1}o_r
+    \leq
+    |z_1|+2\sum_{r=1}^{R}|a_r|.
+    \label{eq:t2-total-discarded}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Use \eqref{eq:t2-discarded-decomposition}, the event-budget bound, and \eqref{eq:t2-total-overshoot}.
+\end{proof}
+
+The event-budget result is pathwise and therefore remains valid under biased, dependent, adversarial, or nonstationary inputs. It is an upper bound, not a firing guarantee. Cancellation and leakage can make the actual event count much smaller.
+
+\subsection{Vector event and uplink-bit bounds}
+
+Return to the $M$-client, $d$-coordinate system. Let $m_{ij}^r$ and $a_{ij}^r$ be defined as in T1, and allow fixed coordinate thresholds $\vartheta_j>0$. Define
+\begin{equation}
+    N_R^{\mathrm{coord}}
+    =
+    \sum_{r=1}^{R}
+    \sum_{i=1}^{M}
+    \sum_{j=1}^{d}
+    m_{ij}^r.
+    \label{eq:t2-total-coordinate-events}
+\end{equation}
+
+\begin{proposition}[Weighted vector event budget]
+\label{prop:t2-vector-event-budget}
+The total coordinate-event stream satisfies
+\begin{equation}
+    \sum_{r=1}^{R}
+    \sum_{i=1}^{M}
+    \sum_{j=1}^{d}
+    \vartheta_jm_{ij}^r
+    \leq
+    \sum_{i=1}^{M}\|z_i^1\|_1
+    +
+    \sum_{r=1}^{R}
+    \sum_{i\in\mathcal{A}_r}
+    \|a_i^r\|_1.
+    \label{eq:t2-vector-weighted-budget}
+\end{equation}
+If the frozen common threshold $\vartheta_j=\vartheta$ is used,
+\begin{equation}
+    N_R^{\mathrm{coord}}
+    \leq
+    \frac{
+        \sum_{i=1}^{M}\|z_i^1\|_1
+        +
+        \sum_{r=1}^{R}\sum_{i\in\mathcal{A}_r}\|a_i^r\|_1
+    }{\vartheta}.
+    \label{eq:t2-vector-event-budget}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Apply Proposition~\ref{prop:t2-scalar-event-budget} separately to every client-coordinate pair and sum the resulting inequalities. Inactive-client rounds have $a_i^r=0$.
+\end{proof}
+
+Let $P_R$ be the number of nonempty client packets, let
+\begin{equation}
+    b_{\mathrm{evt}}
+    =
+    \lceil\log_2d\rceil+1,
+\end{equation}
+and retain the $H$-bit packet header from T1.
+
+\begin{corollary}[Packetized uplink bound]
+\label{cor:t2-uplink-bound}
+The exact packetized event uplink is
+\begin{equation}
+    B_{\uparrow}^{1:R}
+    =
+    H P_R+b_{\mathrm{evt}}N_R^{\mathrm{coord}}.
+    \label{eq:t2-exact-uplink}
+\end{equation}
+Since every nonempty packet contains at least one event,
+\begin{equation}
+    P_R
+    \leq
+    \min\left\{
+        N_R^{\mathrm{coord}},
+        \sum_{r=1}^{R}|\mathcal{A}_r|
+    \right\}.
+    \label{eq:t2-packet-count}
+\end{equation}
+For a common threshold,
+\begin{equation}
+    B_{\uparrow}^{1:R}
+    \leq
+    \left(H+b_{\mathrm{evt}}\right)
+    \frac{
+        \sum_i\|z_i^1\|_1+
+        \sum_r\sum_{i\in\mathcal{A}_r}\|a_i^r\|_1
+    }{\vartheta}.
+    \label{eq:t2-simple-uplink-bound}
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Equation~\eqref{eq:t2-exact-uplink} follows from one header per nonempty client packet and one address/sign payload per coordinate event. The packet-count inequality follows because there is at most one packet per active client and round, and each counted packet contains at least one coordinate event. Proposition~\ref{prop:t2-vector-event-budget} then gives \eqref{eq:t2-simple-uplink-bound}.
+\end{proof}
+
+\begin{remark}[Interpretation of the communication result]
+The bound formalizes the temporal sparsification mechanism:
+\begin{equation}
+    \text{coordinate events}
+    \;\lesssim\;
+    \frac{\text{accumulated evidence variation}}{\text{threshold}}.
+\end{equation}
+It is independent of $q_r$ for a fixed input path. In the closed learning loop, $q_r$ affects future evidence inputs through the evolving model, but it does not enter the local trigger directly.
+\end{remark}
+
+\subsection{Constant-input first passage and the leak deadzone}
+
+The pathwise event budget does not guarantee that persistent weak evidence eventually fires when $\rho<1$. The constant-input case makes this limitation exact.
+
+For a block starting immediately after reset, let
+\begin{equation}
+    a_r=a\neq0,
+    \qquad
+    \rho_r=\rho.
+\end{equation}
+Before the first event, the pre-trigger state after $h$ insertions is
+\begin{equation}
+    V_h=aS_h,
+    \label{eq:t2-constant-state}
+\end{equation}
+where
+\begin{equation}
+    S_h=
+    \begin{cases}
+        h, & \rho=1,\\[1mm]
+        \dfrac{1-\rho^h}{1-\rho}, & 0\leq\rho<1.
+    \end{cases}
+    \label{eq:t2-geometric-sum}
+\end{equation}
+
+\begin{proposition}[Constant-input firing time]
+\label{prop:t2-constant-firing}
+Let
+\begin{equation}
+    h_\star=\inf\{h\geq1:|a|S_h\geq\vartheta\}.
+    \label{eq:t2-hstar-definition}
+\end{equation}
+Then:
+\begin{enumerate}
+    \item if $\rho=1$,
+    \begin{equation}
+        h_\star
+        =
+        \left\lceil\frac{\vartheta}{|a|}\right\rceil;
+        \label{eq:t2-hstar-if}
+    \end{equation}
+    \item if $0<\rho<1$ and $|a|>(1-\rho)\vartheta$,
+    \begin{equation}
+        h_\star
+        =
+        \left\lceil
+        \frac{
+            \log\left(1-\frac{(1-\rho)\vartheta}{|a|}\right)
+        }{\log\rho}
+        \right\rceil;
+        \label{eq:t2-hstar-lif}
+    \end{equation}
+    \item if $0<\rho<1$ and $|a|\leq(1-\rho)\vartheta$, then $h_\star=\infty$;
+    \item if $\rho=0$, then $h_\star=1$ when $|a|\geq\vartheta$ and $h_\star=\infty$ otherwise.
+\end{enumerate}
+Whenever $h_\star<\infty$, repeated constant input produces one event every $h_\star$ rounds, so the long-run event rate is $1/h_\star$ and is capped at one event per round.
+\end{proposition}
+
+\begin{proof}
+Equation~\eqref{eq:t2-constant-state} follows by expanding the recurrence from zero. For $\rho=1$, the threshold condition is $h|a|\geq\vartheta$. For $0<\rho<1$, a finite crossing requires
+\begin{equation}
+    \frac{|a|}{1-\rho}>\vartheta,
+\end{equation}
+because $S_h$ increases toward $1/(1-\rho)$ without attaining the limit at finite $h$. Solving
+\begin{equation}
+    \rho^h
+    \leq
+    1-\frac{(1-\rho)\vartheta}{|a|}
+\end{equation}
+gives \eqref{eq:t2-hstar-lif}. The $\rho=0$ case follows directly from $\widetilde z_r=a$. Full reset returns the state to zero after each event, so the same block repeats.
+\end{proof}
+
+This proposition isolates the deterministic leak deadzone:
+\begin{equation}
+    |a|\leq(1-\rho)\vartheta
+    \quad\Longrightarrow\quad
+    \text{no deterministic firing for }0<\rho<1.
+    \label{eq:t2-leak-deadzone}
+\end{equation}
+Increasing $\rho$ lengthens the evidence memory and shrinks this deadzone. Increasing $\vartheta$ reduces communication but increases first-passage time. Neither quantity determines the model displacement per event; that role belongs to $q_r$.
+
+\subsection{Stochastic sign reliability over one reset block}
+
+A general FedAvg evidence sequence is nonstationary and coupled to the server model. A rigorous sign statement therefore needs a local signal model. Consider one reset-to-event block with
+\begin{equation}
+    a_h=\mu+\varepsilon_h,
+    \qquad
+    \mu\neq0,
+    \qquad
+    \rho_h=\rho.
+    \label{eq:t2-signal-noise}
+\end{equation}
+Assume the noises are independent, centered, and $\sigma$-sub-Gaussian:
+\begin{equation}
+    \mathbb{E}\exp(\lambda\varepsilon_h)
+    \leq
+    \exp\left(\frac{\lambda^2\sigma^2}{2}\right)
+    \qquad
+    \text{for all }\lambda\in\mathbb{R}.
+    \label{eq:t2-subgaussian}
+\end{equation}
+Before first passage, define the unreset accumulator
+\begin{equation}
+    V_h
+    =
+    \sum_{k=1}^{h}\rho^{h-k}a_k
+    =
+    \mu S_h+
+    \sum_{k=1}^{h}\rho^{h-k}\varepsilon_k,
+    \label{eq:t2-stochastic-accumulator}
+\end{equation}
+with $S_h$ from \eqref{eq:t2-geometric-sum}, and define
+\begin{equation}
+    Q_h=
+    \begin{cases}
+        h, & \rho=1,\\[1mm]
+        \dfrac{1-\rho^{2h}}{1-\rho^2}, & 0\leq\rho<1.
+    \end{cases}
+    \label{eq:t2-noise-energy}
+\end{equation}
+The centered term in \eqref{eq:t2-stochastic-accumulator} is $\sigma\sqrt{Q_h}$-sub-Gaussian.
+
+\begin{lemma}[Fixed-time sign reliability]
+\label{lem:t2-fixed-sign}
+For every $h\geq1$,
+\begin{equation}
+    \mathbb{P}
+    \left[
+        \operatorname{sign}(V_h)
+        \neq
+        \operatorname{sign}(\mu)
+    \right]
+    \leq
+    \exp\left(
+        -\frac{\mu^2S_h^2}{2\sigma^2Q_h}
+    \right).
+    \label{eq:t2-fixed-sign-bound}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Multiply $V_h$ by $\operatorname{sign}(\mu)$. A wrong sign requires the centered weighted noise sum to be no larger than $-|\mu|S_h$. The standard sub-Gaussian lower-tail inequality gives \eqref{eq:t2-fixed-sign-bound}.
+\end{proof}
+
+The ratio
+\begin{equation}
+    n_{\mathrm{eff}}(h,\rho)
+    =
+    \frac{S_h^2}{Q_h}
+    \label{eq:t2-effective-samples}
+\end{equation}
+acts as an effective temporal sample size. It satisfies
+\begin{align}
+    n_{\mathrm{eff}}(h,1)&=h,\\
+    \lim_{h\rightarrow\infty}n_{\mathrm{eff}}(h,\rho)
+    &=
+    \frac{1+\rho}{1-\rho},
+    \qquad 0\leq\rho<1.
+    \label{eq:t2-effective-sample-limit}
+\end{align}
+Finite memory therefore provides a finite noise-averaging horizon rather than unlimited averaging.
+
+To address the event sign itself, assume without loss of generality that $\mu>0$ and define
+\begin{align}
+    \tau_+
+    &=
+    \inf\{h\geq1:V_h\geq\vartheta\},\\
+    \tau_-
+    &=
+    \inf\{h\geq1:V_h\leq-\vartheta\}.
+\end{align}
+The first event is correct if $\tau_+<\tau_-$ and wrong if $\tau_-<\tau_+$. The two thresholds cannot be reached simultaneously because $\vartheta>0$.
+
+\begin{proposition}[Finite-horizon wrong-event bound]
+\label{prop:t2-wrong-event}
+For every horizon $L\geq1$,
+\begin{equation}
+    \mathbb{P}
+    \left[
+        \tau_-\leq\min\{\tau_+,L\}
+    \right]
+    \leq
+    \sum_{h=1}^{L}
+    \exp\left(
+        -\frac{(\vartheta+|\mu|S_h)^2}
+        {2\sigma^2Q_h}
+    \right).
+    \label{eq:t2-wrong-event-bound}
+\end{equation}
+If $|\mu|S_L>\vartheta$, then
+\begin{align}
+    \mathbb{P}
+    \left[
+        \tau_+\leq\min\{\tau_-,L\}
+    \right]
+    \geq
+    1
+    &-
+    \exp\left(
+        -\frac{(|\mu|S_L-\vartheta)^2}
+        {2\sigma^2Q_L}
+    \right)
+    \nonumber\\
+    &-
+    \sum_{h=1}^{L}
+    \exp\left(
+        -\frac{(\vartheta+|\mu|S_h)^2}
+        {2\sigma^2Q_h}
+    \right).
+    \label{eq:t2-correct-event-bound}
+\end{align}
+The lower bound may be clipped at zero.
+\end{proposition}
+
+\begin{proof}
+A wrong first event by time $L$ implies that $V_h\leq-\vartheta$ for at least one $h\leq L$. At a fixed $h$, this requires the centered weighted noise to be at most $-(\vartheta+\mu S_h)$. Applying the sub-Gaussian tail inequality and a union bound proves \eqref{eq:t2-wrong-event-bound}.
+
+For the second statement, if $V_L\geq\vartheta$ and no negative threshold crossing occurred by time $L$, then a correct crossing must have occurred no later than $L$. The complement of $V_L\geq\vartheta$ has probability at most the first exponential term in \eqref{eq:t2-correct-event-bound}; the probability of any negative crossing is bounded by \eqref{eq:t2-wrong-event-bound}. A union bound completes the proof. The case $\mu<0$ follows after multiplying the process by $\operatorname{sign}(\mu)$.
+\end{proof}
+
+\begin{remark}[Threshold--memory trade-off]
+The wrong-event bound improves as the negative threshold becomes harder to reach. The correct-event bound simultaneously requires the mean accumulated evidence $|\mu|S_L$ to exceed $\vartheta$. Thus a larger threshold improves directional reliability only at the cost of firing latency, while a larger $\rho$ increases the effective temporal sample size and reduces the deterministic deadzone.
+\end{remark}
+
+\begin{remark}[Conditional use after random reset times]
+If the future noise sequence is independent of the history at a reset time and the mean evidence remains $\mu$ over the next block, Proposition~\ref{prop:t2-wrong-event} applies conditionally to that block. It can then be combined across blocks by another union bound. This does not hold automatically for nonstationary or model-coupled FedAvg deltas.
+\end{remark}
+
+\subsection{Why this is not yet an optimization theorem}
+
+The T2 properties are conditional on the realized evidence-input path. In the full learning loop,
+\begin{equation}
+    a_i^r
+    =
+    \frac{p_i}{\eta_r}\delta_i^r
+\end{equation}
+depends on $w^r$, while $w^r$ depends on all previous pulses and on the schedule $q_r$. Three gaps therefore remain before claiming convergence:
+\begin{enumerate}
+    \item the local mean evidence direction can change within an inter-event block;
+    \item different clients can emit opposing pulses on the same coordinate;
+    \item a directionally correct local pulse need not be a descent direction for the global objective under heterogeneity.
+\end{enumerate}
+The strict local and immediate-global certificates investigated in Part~I are not reintroduced to close these gaps. The next theory stage should instead combine smoothness with an explicit aggregate event-alignment or trajectory-perturbation statement.
+
+The encoder is also stateful:
+\begin{equation}
+    c_r=c(z_r,a_r),
+\end{equation}
+not a memoryless compressor $C(a_r)$. Standard unbiased-compressor or contraction assumptions cannot simply be quoted without showing how the persistent state and full reset satisfy an appropriate replacement property.
+
+\subsection{T2 conclusions}
+
+The established encoder properties are:
+\begin{enumerate}
+    \item the post-reset state remains strictly inside the threshold region;
+    \item threshold overshoot is bounded by the current evidence insertion;
+    \item discounted accumulated input decomposes exactly into retained state and discarded firing states;
+    \item the total event stream is pathwise bounded by accumulated $\ell_1$ evidence variation divided by the threshold;
+    \item packetized uplink complexity inherits the same bound;
+    \item constant persistent input has an exact first-passage time and exposes the leak deadzone;
+    \item under a locally persistent mean plus independent sub-Gaussian noise, temporal accumulation admits explicit fixed-time and first-passage sign-reliability bounds.
+\end{enumerate}
+
+These results mathematically support the interpretation already suggested by the experiments:
+\begin{center}
+\begin{adjustbox}{max width=0.96\linewidth}
+\begin{tabular}{p{0.22\linewidth}p{0.67\linewidth}}
+\toprule
+Design quantity & Encoder-level role established by T2\\
+\midrule
+$\rho$ & Memory length, effective temporal sample size, and deterministic deadzone.\\
+$\vartheta$ & Event budget, first-passage latency, and sign-reliability trade-off.\\
+$q_r$ & Absent from the trigger bounds for a fixed input path; controls model displacement and enters only after coupling to optimization.\\
+Full reset & Produces a bounded state and disjoint first-passage blocks, while discarding rather than conserving the fired evidence.\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+The appropriate next task is a scoped optimization result for the frozen full-participation Event-FedAvg transition. Its assumptions must expose, rather than hide, the aggregate pulse-alignment error and the effect of the independent $q_r$ schedule.

@@ -1,11 +1,11 @@
 name: Experiment 14C Instrumentation Repro Check
 
 on:
-  push:
-    paths:
-      - '.github/workflows/exp14c_repro_check.yml'
-      - 'experiments/14c_instrumentation_repro_check.py'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

@@ -1,0 +1,53 @@
+name: IJCNN Manuscript Check
+
+on:
+  pull_request:
+    paths:
+      - 'paper/ijcnn2027/main.tex'
+      - 'paper/ijcnn2027/references.bib'
+      - 'paper/ijcnn2027/figures/**'
+      - 'paper/ijcnn2027/generated/**'
+      - '.github/workflows/ijcnn_manuscript_check.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  manuscript:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install IEEE LaTeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y latexmk poppler-utils texlive-latex-extra texlive-publishers
+      - name: Reject internal drafting language
+        run: |
+          if grep -En 'P[0-9]|T[1-5]|Q[1-3]|Experiment~?[0-9]|TODO|FIXME|placeholder|next task' paper/ijcnn2027/main.tex; then
+            echo 'Internal project language remains in the manuscript.' >&2
+            exit 1
+          fi
+      - name: Compile manuscript
+        working-directory: paper/ijcnn2027
+        run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+      - name: Enforce manuscript layout contract
+        working-directory: paper/ijcnn2027
+        run: |
+          pages="$(pdfinfo main.pdf | awk '/^Pages:/ {print $2}')"
+          test -n "$pages"
+          test "$pages" -le 6
+          if grep -Eq 'Overfull \\[hv]box|Citation .* undefined|Reference .* undefined' main.log; then
+            echo 'LaTeX layout or reference warning detected.' >&2
+            grep -En 'Overfull \\[hv]box|Citation .* undefined|Reference .* undefined' main.log
+            exit 1
+          fi
+          echo "Compiled manuscript: ${pages} pages."
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: ijcnn-manuscript
+          path: paper/ijcnn2027/main.pdf
+          if-no-files-found: error

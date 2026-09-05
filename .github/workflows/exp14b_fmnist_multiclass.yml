@@ -1,10 +1,11 @@
 name: Experiment 14B Fashion-MNIST Multiclass
 
 on:
-  push:
-    paths:
-      - '.github/workflows/exp14b_fmnist_multiclass.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

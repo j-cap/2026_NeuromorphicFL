@@ -138,7 +138,6 @@ This lossy reset is not automatically beneficial. It is precisely the point that
 \caption{Structural comparison of frozen V1 with its closest identified predecessors. ``Coord.'' denotes a coordinate-level operation.}
 \label{tab:q1-structure}
 \begin{adjustbox}{max width=\textwidth}
-\begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{3.6cm}ccccc}
 \toprule
 Property & V1 & Strom & LENA & STC & Level crossing\\
@@ -156,7 +155,6 @@ Asynchronous formulation & yes & yes & not primary & round based & yes\\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
-\end{adjustbox}
 \end{table}
 
 Table~\ref{tab:q1-structure} makes the novelty boundary explicit. V1 does not introduce temporal accumulation, sparse threshold communication, sign compression, event-triggered learning, or level-crossing coding individually. Its candidate distinction is the specific lossy pulse encoder used as a federated client-update communication layer.
@@ -166,28 +164,58 @@ V1 combines leaky coordinate evidence, first-passage triggering, a sign/address 
 
 \subsection{Analytical Q1 verdict}
 
-The literature audit does not identify an exact prior method with the complete frozen V1 recursion and protocol. However, the nearest prior work is sufficiently close that a \emph{strong} novelty pass would be inappropriate at this stage. In particular, Strom already contains the zero-leak, residual-preserving, threshold/sign-pulse sibling of the mechanism, while level-crossing distributed estimation already contains the event-time/direction-code interpretation.
+The literature audit does not identify an exact prior method with the complete frozen V1 recursion and protocol. However, the nearest prior work is sufficiently close that a broad priority claim would be inappropriate. In particular, Strom already contains the zero-leak, residual-preserving, threshold/sign-pulse sibling of the mechanism, while level-crossing distributed estimation already contains the event-time/direction-code interpretation.
 
 The analytical decision is therefore
 \begin{equation}
 \boxed{\text{Q1 analytical audit: QUALIFIED PASS}.}
 \end{equation}
-The defensible novelty claim, if the empirical comparison supports it, is narrow:
+The final matched campaign supports only the following narrow claim:
 \begin{quote}
 The proposed communication layer uses a leaky per-coordinate learning-evidence state and converts first-passage events into fixed signed model quanta whose magnitude is decoupled from the communication threshold and annealed independently; fired evidence is fully reset rather than conserved as compression error.
 \end{quote}
 No manuscript should claim invention of gradient accumulation, error feedback, threshold sparsification, sign/ternary communication, event-triggered FL, or temporal/event coding.
 
-\subsection{Required nearest-neighbor experiment}
+\subsection{P2 literature refresh}
 
-Because the difference from Strom is now the main algorithmic novelty boundary, Q1 requires one focused empirical bridge experiment before it is closed. The experiment should compare, under identical stochastic gradients and client schedules,
-\begin{enumerate}
-    \item \textbf{Strom-1bit:} nonleaky residual, threshold crossing, subtractive residual update, and $q=\Delta$;
-    \item \textbf{leaky subtractive pulse:} add $\rho<1$ while retaining residual subtraction and $q=\Delta$;
-    \item \textbf{full-reset tied pulse:} use full reset but retain $q=\Delta$;
-    \item \textbf{frozen V1:} leaky evidence, full reset, and independently annealed $q_r<\Delta$;
-    \item EF-TopK and dense references already used in Part~I.
-\end{enumerate}
-The purpose is not to create another broad benchmark campaign. It is to determine whether the three differences from the nearest predecessor---leak, full reset, and decoupled update resolution---produce a meaningful Pareto improvement on the established ten-class Fashion-MNIST MLP and compact CNN.
+The operator-level search was refreshed on 2026-09-04.  Recent event-triggered
+learning methods retain the established model- or gradient-deviation pattern:
+DETSGRAD and EventGraD suppress vector communication
+\citep{george2020detsgrad,ghosh2022eventgrad}; SPARQ-SGD combines a
+model-deviation event with quantization and sparsification
+\citep{singh2023sparq}; bidirectional ETFL triggers on differences from the
+last communicated models \citep{he2023etfl}; and 2026 event-triggered gossip
+uses decentralized local-model deviation \citep{zhai2026gossip}.  These works
+do not use the same leaky coordinate evidence, full-clear pulse, and independent
+server resolution.
 
-If a tuned Strom-style method matches V1, Q1 should be downgraded toward a failure for an algorithm-novelty claim and the work should be framed as a neuromorphic/control-theoretic reinterpretation and extensive empirical characterization of an established residual-pulse compressor. If V1 consistently improves the performance--communication frontier, the qualified pass is strengthened and the specific lossy-decoupled pulse mechanism becomes the object to carry into Q3 and Q2.
+Federated SNN work places LIF dynamics inside the trained network and exchanges
+SNN weights, compressed updates, or firing-rate information
+\citep{venkatesha2021fedsnn,chaki2023tradeoffs,tao2026sfedhifi}.  Frozen V1
+instead wraps conventional FedAvg updates in a LIF-inspired communication
+encoder.  Consequently, no claim of ``first neuromorphic FL'' is admissible.
+The complete operator comparison and query protocol are maintained in
+\texttt{paper/ijcnn2027/RELATED\_WORK.md}.  The search found no exact
+predecessor for the full frozen operator, but this is a qualified, dated
+absence-search result and must be refreshed before submission.
+
+\subsection{Completed nearest-neighbor experiment}
+
+The bridge experiment requested by Q1 was completed in
+Section~\ref{sec:final-baseline-campaign}.  Under matched local learning,
+development-only tuning, independent held-out partitions, and symmetric
+end-to-end communication accounting, traffic-matched Event-FedAvg outperformed
+the residual-conserving Strom sibling on both architectures.  On the MLP,
+Event-FedAvg obtained $83.14\%\pm0.14\%$ accuracy at
+$183.5\pm2.0$~Mbit, versus $79.51\%\pm0.86\%$ at
+$181.0\pm6.7$~Mbit for Strom.  On the compact CNN, it obtained
+$81.34\%\pm0.46\%$ at $72.8\pm1.2$~Mbit, versus
+$79.88\%\pm1.56\%$ at $82.0\pm1.7$~Mbit.  A quality-selected Strom point
+reached slightly better CNN accuracy only at approximately $4.94$ times the
+conservative total traffic.
+
+This result strengthens the qualified pass: leakage, full reset, and
+decoupled resolution define an empirically meaningful operating point relative
+to the closest recurrence.  It still does not establish that each ingredient is
+individually necessary, universal dominance, or broad priority over all
+event-triggered learning.

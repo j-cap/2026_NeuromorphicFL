@@ -1,0 +1,341 @@
+\section{Theory Task T1: Frozen Round and Protocol Semantics}
+\label{sec:theory-t1-formal-semantics}
+
+The consolidation phase identifies a complete Event-FedAvg candidate, but a mathematical analysis requires a more precise object than the earlier mechanism-level descriptions. This section freezes that object. It separates the algorithm that is supported by the final experiments from implemented but not yet validated extensions, removes a notation collision between the local model delta and the event threshold, and fixes the round, reset, aggregation, and synchronization semantics used in the next theoretical tasks.
+
+\begin{takeawaybox}[title={Status of this section}]
+T1 is a definition and consistency task, not a new algorithmic contribution. The equations below are the normative specification for subsequent theory. Where earlier prose is ambiguous, this section takes precedence and matches the final FedAvg implementation and bidirectional accounting.
+\end{takeawaybox}
+
+\subsection{Federated objective and round state}
+
+Let there be $M$ clients with local objectives
+\begin{equation}
+    F_i(w)=\mathbb{E}_{\xi\sim\mathcal{D}_i}
+    \bigl[\ell_i(w;\xi)\bigr],
+    \qquad
+    w\in\mathbb{R}^d,
+\end{equation}
+and intended aggregate objective
+\begin{equation}
+    F(w)=\sum_{i=1}^{M}p_iF_i(w),
+    \qquad
+    p_i>0,
+    \qquad
+    \sum_{i=1}^{M}p_i=1.
+    \label{eq:t1-global-objective}
+\end{equation}
+The server model $w^r$ denotes the synchronized model at the \emph{start} of round $r$, before local training. Client $i$ stores a persistent post-reset evidence state
+\begin{equation}
+    z_i^r\in\mathbb{R}^d.
+\end{equation}
+The state $z_i^r$ is local communication memory. It is not a copy of the model, an optimizer momentum, or a conserved compression residual.
+
+Let $\mathcal{A}_r\subseteq\{1,\ldots,M\}$ be the set of clients selected in round $r$. Define the active-client weights
+\begin{equation}
+    \pi_i^r=
+    \frac{p_i}{\sum_{k\in\mathcal{A}_r}p_k},
+    \qquad i\in\mathcal{A}_r.
+    \label{eq:t1-active-weight}
+\end{equation}
+The empirically frozen setting uses full participation,
+\begin{equation}
+    \mathcal{A}_r=\{1,\ldots,M\},
+    \qquad
+    \pi_i^r=p_i.
+    \label{eq:t1-full-participation}
+\end{equation}
+Equation~\eqref{eq:t1-active-weight} records the partial-participation behavior already implemented in the MLP compatibility code, but the final Q3 and matched-baseline claims rely on \eqref{eq:t1-full-participation}.
+
+\subsection{Local FedAvg update}
+
+Every selected client starts from the same synchronized model,
+\begin{equation}
+    w_{i,0}^r=w^r.
+\end{equation}
+It performs $E_r\geq1$ local stochastic-gradient steps with local step size $\eta_r>0$,
+\begin{equation}
+    w_{i,e+1}^r
+    =
+    w_{i,e}^r
+    -
+    \eta_r g_{i,e}^r,
+    \qquad
+    e=0,\ldots,E_r-1,
+    \label{eq:t1-local-sgd}
+\end{equation}
+where
+\begin{equation}
+    g_{i,e}^r
+    =
+    \nabla\ell_i\bigl(w_{i,e}^r;\xi_{i,e}^r\bigr).
+\end{equation}
+To avoid using the same symbol for a model delta and a communication threshold, the local model delta is denoted by lowercase $\delta$:
+\begin{equation}
+    \delta_i^r
+    =
+    w_{i,E_r}^r-w^r.
+    \label{eq:t1-local-delta}
+\end{equation}
+For constant $\eta_r$ within the round,
+\begin{equation}
+    \delta_i^r
+    =
+    -\eta_r\sum_{e=0}^{E_r-1}g_{i,e}^r.
+    \label{eq:t1-delta-gradient-identity}
+\end{equation}
+Thus the representation conversion used by Event-FedAvg is
+\begin{equation}
+    a_i^r
+    =
+    \frac{\pi_i^r}{\eta_r}\delta_i^r
+    =
+    -\pi_i^r\sum_{e=0}^{E_r-1}g_{i,e}^r.
+    \label{eq:t1-evidence-input}
+\end{equation}
+The factor $1/\eta_r$ converts a local model delta into accumulated gradient-evidence units. It is not an additional optimization step size and is not divided by $E_r$.
+
+\subsection{Evidence evolution and event generation}
+
+Let $\rho_r\in[0,1]$ be the evidence-memory factor. The implementation uses a constant $\rho_r=\rho$, but a round-dependent sequence is retained in the notation where it causes no ambiguity. Before thresholding, every client state is leaked once per global round:
+\begin{equation}
+    \widetilde z_i^r
+    =
+    \rho_r z_i^r
+    +
+    \mathbf{1}_{\{i\in\mathcal{A}_r\}}a_i^r.
+    \label{eq:t1-pretrigger-state}
+\end{equation}
+For an inactive client, \eqref{eq:t1-pretrigger-state} reduces to
+\begin{equation}
+    \widetilde z_i^r=\rho_r z_i^r.
+\end{equation}
+Since a post-reset state entering a round is below threshold coordinatewise and $\rho_r\leq1$, an inactive client cannot newly cross the threshold through leakage alone. It therefore emits no event.
+
+Let $\vartheta_j>0$ denote the trigger threshold of coordinate $j$. The empirically frozen method uses a common scalar threshold,
+\begin{equation}
+    \vartheta_j=\vartheta
+    \qquad\text{for all }j.
+    \label{eq:t1-common-threshold}
+\end{equation}
+Define the firing mask and signed coordinate pulse by
+\begin{align}
+    m_{ij}^r
+    &=
+    \mathbf{1}_{\{i\in\mathcal{A}_r\}}
+    \mathbf{1}_{\{|\widetilde z_{ij}^r|\geq\vartheta_j\}},
+    \label{eq:t1-mask}\\
+    c_{ij}^r
+    &=
+    m_{ij}^r\operatorname{sign}(\widetilde z_{ij}^r),
+    \qquad
+    c_i^r\in\{-1,0,+1\}^d.
+    \label{eq:t1-client-pulse}
+\end{align}
+All coordinates are tested exactly once after the round's single evidence insertion. Consequently, a client can generate at most one pulse per coordinate and round. There is no repeated threshold-subtraction loop, even if the pre-trigger state substantially overshoots the threshold.
+
+Fired coordinates undergo full reset, while silent coordinates retain their leaked and updated evidence:
+\begin{equation}
+    z_i^{r+1}
+    =
+    (\mathbf{1}-m_i^r)\odot\widetilde z_i^r.
+    \label{eq:t1-full-reset}
+\end{equation}
+Equation~\eqref{eq:t1-full-reset} discards the entire fired pre-trigger value, including threshold overshoot. It does not subtract $\vartheta_j$, does not subtract the model quantum, and does not preserve a compression-error residual.
+
+If
+\begin{equation}
+    n_i^r=\|m_i^r\|_0>0,
+\end{equation}
+client $i$ sends one packet containing the $n_i^r$ fired coordinate addresses and signs. All fired coordinates of one client are bundled into that packet. If $n_i^r=0$, the client is silent on the uplink and no empty uplink packet is charged.
+
+\subsection{Server aggregation and event resolution}
+
+The event-resolution schedule is
+\begin{equation}
+    q_r
+    =
+    q_0\left(1+\frac{r}{r_0}\right)^{-\alpha},
+    \qquad
+    q_0>0,\quad r_0>0,\quad \alpha\geq0,
+    \label{eq:t1-q-schedule}
+\end{equation}
+with rounds indexed from $r=1$. The value $q_r$ is common to all clients and coordinates within round $r$. The trigger threshold $\vartheta_j$ and model quantum $q_r$ are independent design variables.
+
+The server forms the integer-valued aggregate pulse
+\begin{equation}
+    C^r
+    =
+    \sum_{i\in\mathcal{A}_r}c_i^r
+    \in\mathbb{Z}^d
+    \label{eq:t1-aggregate-pulse}
+\end{equation}
+and applies
+\begin{equation}
+    w^{r+1}
+    =
+    w^r+q_r C^r.
+    \label{eq:t1-server-update}
+\end{equation}
+If several clients fire on the same coordinate, their signed pulses add algebraically. Opposite signs may cancel. Client weights are \emph{not} applied again at the server: $\pi_i^r$ already affects the rate at which client $i$ reaches threshold through \eqref{eq:t1-evidence-input}. There is also no normalization by the number of active clients, packets, or events.
+
+All selected clients compute their local deltas from the same $w^r$. The synchronous algorithm therefore treats \eqref{eq:t1-aggregate-pulse} as a simultaneous sum and applies the aggregate once. Because every event in a round has the same magnitude $q_r$, sequential packet replay produces the same mathematical model in exact arithmetic; client-processing order is not part of the synchronous learning rule.
+
+\subsection{Normative round procedure}
+
+One full synchronous Event-FedAvg round is therefore:
+\begin{enumerate}[label=\textbf{T1.\arabic*}]
+    \item Synchronize every selected client to $w^r$.
+    \item Each selected client independently performs \eqref{eq:t1-local-sgd} and returns the local delta \eqref{eq:t1-local-delta}.
+    \item Leak every client's persistent evidence state once according to \eqref{eq:t1-pretrigger-state}; insert new evidence only for selected clients.
+    \item On each selected client, test every coordinate once using \eqref{eq:t1-mask}, bundle all nonzero entries of \eqref{eq:t1-client-pulse} into one packet, and apply the full-reset map \eqref{eq:t1-full-reset}.
+    \item Sum all client pulses as in \eqref{eq:t1-aggregate-pulse} and update the server once using \eqref{eq:t1-server-update}.
+    \item Append the nonempty client packets to the ordered server-update log and synchronize clients for their next round using sparse replay or checkpoint fallback.
+\end{enumerate}
+
+This ordering fixes an important causal point: local training in round $r$ cannot observe any event generated in the same round. Those events define $w^{r+1}$ and affect local training only after synchronization for a later round.
+
+\subsection{Sparse replay and checkpoint fallback}
+
+Let
+\begin{equation}
+    b_{\mathrm{addr}}=\left\lceil\log_2 d\right\rceil
+\end{equation}
+be the coordinate-address length. Each event carries one address and one sign bit. With a packet header of $H=64$ bits, the packetized uplink cost in round $r$ is
+\begin{equation}
+    B_{\uparrow}^r
+    =
+    \sum_{i\in\mathcal{A}_r}
+    \mathbf{1}_{\{n_i^r>0\}}
+    \left[
+        H+n_i^r(b_{\mathrm{addr}}+1)
+    \right].
+    \label{eq:t1-uplink-bits}
+\end{equation}
+The header identifies the logical round or packet sequence needed to recover $q_r$ from the globally known schedule. No floating-point event magnitude is included in the V1 event payload.
+
+The server stores the nonempty packets in an ordered append-only log. Client $i$ records the last applied packet sequence $\ell_i$. At a synchronization opportunity it requests all packets after $\ell_i$. Replaying a packet applies the recorded signed coordinate jumps in order. If the packetized replay would be more expensive than a dense float32 checkpoint, the server sends the checkpoint instead.
+
+For the synchronous full-participation campaign, define
+\begin{equation}
+    B_{\mathrm{ckpt}}=32d+H
+    \label{eq:t1-checkpoint-bits}
+\end{equation}
+and let $B_{\mathrm{req}}=32$ bits denote the conservative catch-up request. The primary unicast accounting charges an initial dense model delivery to every client and, after every round, sends the cheaper of replay and checkpoint independently to every client:
+\begin{equation}
+    B_{\downarrow}^{\mathrm{uni}}
+    =
+    M B_{\mathrm{ckpt}}
+    +
+    M\sum_{r=1}^{R}
+    \left[
+        B_{\mathrm{req}}
+        +
+        \min\{B_{\uparrow}^r,B_{\mathrm{ckpt}}\}
+    \right].
+    \label{eq:t1-unicast-downlink}
+\end{equation}
+The corresponding conservative end-to-end total is
+\begin{equation}
+    B_{\mathrm{total}}^{\mathrm{uni}}
+    =
+    \sum_{r=1}^{R}B_{\uparrow}^r
+    +
+    B_{\downarrow}^{\mathrm{uni}}.
+    \label{eq:t1-total-bits}
+\end{equation}
+This is the headline metric used by the final matched-baseline campaign. It deliberately replays the client packet stream without exploiting possible cross-client cancellation or repacking, so it does not assume an additional server-side compression gain.
+
+In a logical broadcast network, the ordered update stream can instead be charged once. The unicast result is retained as the conservative primary claim. In both modes, a client is mathematically synchronized after catch-up:
+\begin{equation}
+    w_{i,\mathrm{replica}}=w_{\mathrm{server}}
+\end{equation}
+in exact arithmetic. The Q2 shadow and replay checks verify that protocol instrumentation does not alter the learning trajectory.
+
+\subsection{Relation to the asynchronous special case}
+
+The asynchronous experiments in Part~I remain a supported special case of the communication encoder, but they are not the normative Event-FedAvg round model used for the final theory. In that setting, the encoder input is a rate-normalized stochastic-gradient contribution rather than a multi-step local delta. Server packets are applied immediately when computations finish. A client continues its in-flight computation from its start snapshot and catches up through the ordered event log only after completion, before starting its next computation.
+
+The same three communication semantics survive:
+\begin{enumerate}
+    \item persistent leaky evidence,
+    \item one threshold test followed by full reset of fired coordinates,
+    \item sparse signed model jumps with a globally known resolution schedule.
+\end{enumerate}
+A future asynchronous convergence theorem would additionally require explicit delay and wall-clock leakage assumptions. Those assumptions are outside the first theory target.
+
+\subsection{Partial participation boundary}
+
+Partial participation is defined by \eqref{eq:t1-active-weight} and is implemented as follows:
+\begin{enumerate}
+    \item active clients are sampled without replacement;
+    \item their data weights are renormalized to sum to one;
+    \item every client evidence state leaks once per global round;
+    \item only active clients receive new evidence, undergo threshold testing, and transmit;
+    \item inactive clients retain only their leaked subthreshold state.
+\end{enumerate}
+This is a coherent algorithmic extension, but it changes the effective evidence-memory horizon in units of client participations: a rarely selected client's state decays during rounds in which it is absent. Because Q3 and the final closest-baseline campaign use full participation, T2 should first analyze \eqref{eq:t1-full-participation}. Partial-participation theory or experiments should be labeled as an extension rather than silently folded into the established claim.
+
+\subsection{Frozen and excluded design choices}
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Scope of the formal T1 object.}
+\label{tab:t1-scope}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.28\linewidth}p{0.28\linewidth}p{0.36\linewidth}}
+\toprule
+Component & T1 status & Precise interpretation\\
+\midrule
+Multi-step local training & Frozen & Local FedAvg delta with constant step size within a round.\\
+Evidence memory & Frozen & Persistent client state, leaked once per global round.\\
+Threshold & Frozen & Common scalar $\vartheta$ in the evaluated method.\\
+Event multiplicity & Frozen & At most one event per client-coordinate-round; all crossing coordinates are bundled.\\
+Reset & Frozen & Full reset of fired coordinates; overshoot is discarded.\\
+Model quantum & Frozen family & Common prescribed schedule $q_r$, independent of $\vartheta$.\\
+Server aggregation & Frozen & Unweighted algebraic sum of pulses after client weights enter the evidence state.\\
+Downlink & Frozen protocol & Ordered sparse replay with dense-checkpoint fallback.\\
+Partial participation & Defined extension & Implemented active-weight renormalization, not part of the final empirical gate.\\
+Asynchrony & Supported special case & Snapshot computation and catch-up before the next computation.\\
+Adaptive $q_r$ & Excluded & Deferred Experiment~15B.\\
+Certificates and timing decoders & Excluded & Not required by the final empirical mechanism.\\
+Homeostasis, competition, blocks & Excluded & Investigated but not retained in frozen V1.\\
+Clustering and personalization & Excluded & Separate future research direction.\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\subsection{T1 closure and hand-off to T2}
+
+T1 resolves the previously implicit choices:
+\begin{center}
+\begin{adjustbox}{max width=0.96\linewidth}
+\begin{tabular}{p{0.40\linewidth}p{0.48\linewidth}}
+\toprule
+Question & Frozen answer\\
+\midrule
+What drives the encoder? & The weighted local FedAvg delta divided by the local step size.\\
+When does leakage occur? & Once per global round, before evidence insertion and thresholding.\\
+How often is a coordinate tested? & Once per active client and round.\\
+Can overshoot cause multiple events? & No; one pulse is emitted and the coordinate is fully reset.\\
+How are coincident client events combined? & Algebraic sum with no second weighting or event-count normalization.\\
+How is $q_r$ indexed? & By the one-based global round and shared within that round.\\
+What is the established participation regime? & Synchronous full participation.\\
+How do clients recover the model? & Ordered sparse replay, with a dense checkpoint whenever it is cheaper.\\
+What traffic measure supports the headline claim? & Packetized uplink plus conservative unicast replay/checkpoint downlink.\\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{center}
+
+The next mathematical task may therefore treat
+\begin{equation}
+    \boxed{
+    (z^r,w^r)
+    \mapsto
+    (\widetilde z^r,m^r,c^r,z^{r+1},w^{r+1})
+    }
+\end{equation}
+through equations \eqref{eq:t1-pretrigger-state}--\eqref{eq:t1-server-update} as the frozen hybrid state transition. T2 should begin with encoder-level state, overshoot, event-count, and sign-reliability results for this exact transition. It should not replace the full-reset operator by subtractive error feedback or introduce a hard descent certificate merely to make the proof easier.

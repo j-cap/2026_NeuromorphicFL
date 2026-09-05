@@ -1,0 +1,208 @@
+name: P8 Targeted Revision Campaign
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - name: Check server gain, determinism, mechanism variants, and accounting
+        run: PYTHONPATH=src python experiments/p8_targeted_revision.py smoke
+
+  development:
+    needs: smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        config:
+          - dense_gain_0p25
+          - dense_gain_0p5
+          - dense_gain_0p75
+          - dense_gain_1p0
+          - dense_gain_1p5
+          - dense_gain_2p0
+          - dense_gain_4p0
+          - event_frozen
+          - event_no_leak
+          - event_coupled_quantum
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: cifar10-python-c58f30108f718f92721af3b95e74349a
+      - name: Run development-only point
+        run: >-
+          PYTHONPATH=src python experiments/p8_targeted_revision.py point
+          --config "${{ matrix.config }}" --partition-seed 3400 --tag dev
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p8-dev-${{ matrix.config }}
+          path: experiments/results/p8_targeted_revision/*_dev.csv
+
+  select-development:
+    needs: development
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    outputs:
+      dense_config: ${{ steps.freeze.outputs.dense_config }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p8-dev-*
+          merge-multiple: true
+          path: artifacts/p8-development
+      - id: freeze
+        name: Freeze dense gain and mechanism variants
+        run: |
+          PYTHONPATH=src python experiments/p8_targeted_revision.py select --input-dir artifacts/p8-development
+          dense_config="$(python - <<'PY'
+          import json
+          with open("experiments/results/p8_targeted_revision/selection.json") as stream:
+              print(json.load(stream)["dense_selected"])
+          PY
+          )"
+          echo "dense_config=${dense_config}" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p8-selection
+          path: |
+            experiments/results/p8_targeted_revision/selection.json
+            experiments/results/p8_targeted_revision/development_summary.csv
+
+  heldout-dense:
+    needs: select-development
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        partition_seed: [3500, 3600, 3700]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: cifar10-python-c58f30108f718f92721af3b95e74349a
+      - uses: actions/download-artifact@v4
+        with:
+          name: p8-selection
+          path: artifacts/p8-selection
+      - name: Evaluate selected dense gain on held-out seed
+        run: >-
+          PYTHONPATH=src python experiments/p8_targeted_revision.py heldout
+          --selection artifacts/p8-selection/selection.json
+          --config "${{ needs.select-development.outputs.dense_config }}"
+          --partition-seed "${{ matrix.partition_seed }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p8-heldout-dense-${{ matrix.partition_seed }}
+          path: experiments/results/p8_targeted_revision/*_heldout.csv
+
+  heldout-mechanism:
+    needs: select-development
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 9
+      matrix:
+        config: [event_frozen, event_no_leak, event_coupled_quantum]
+        partition_seed: [3500, 3600, 3700]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: cifar10-python-c58f30108f718f92721af3b95e74349a
+      - uses: actions/download-artifact@v4
+        with:
+          name: p8-selection
+          path: artifacts/p8-selection
+      - name: Evaluate frozen mechanism variant on held-out seed
+        run: >-
+          PYTHONPATH=src python experiments/p8_targeted_revision.py heldout
+          --selection artifacts/p8-selection/selection.json
+          --config "${{ matrix.config }}"
+          --partition-seed "${{ matrix.partition_seed }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p8-heldout-${{ matrix.config }}-${{ matrix.partition_seed }}
+          path: experiments/results/p8_targeted_revision/*_heldout.csv
+
+  aggregate:
+    needs: [heldout-dense, heldout-mechanism]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p8-heldout-*
+          merge-multiple: true
+          path: artifacts/p8-heldout
+      - uses: actions/download-artifact@v4
+        with:
+          name: p8-selection
+          path: artifacts/p8-selection
+      - name: Aggregate P8 held-out evidence
+        run: >-
+          PYTHONPATH=src python experiments/p8_targeted_revision.py aggregate
+          --input-dir artifacts/p8-heldout
+          --selection artifacts/p8-selection/selection.json
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p8-targeted-revision-combined
+          path: experiments/results/p8_targeted_revision/*

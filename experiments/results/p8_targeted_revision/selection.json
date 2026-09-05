@@ -1,0 +1,41 @@
+{
+  "development_seed": 3400,
+  "dense_selection_metric": "minimum final_train_ce",
+  "dense_grid": [
+    "dense_gain_0p25",
+    "dense_gain_0p5",
+    "dense_gain_0p75",
+    "dense_gain_1p0",
+    "dense_gain_1p5",
+    "dense_gain_2p0",
+    "dense_gain_4p0"
+  ],
+  "dense_selected": "dense_gain_2p0",
+  "mechanism_variants": [
+    "event_frozen",
+    "event_no_leak",
+    "event_coupled_quantum"
+  ],
+  "heldout_seeds": [
+    3500,
+    3600,
+    3700
+  ],
+  "base_config": {
+    "local_steps": 5,
+    "local_lr": 0.05,
+    "batch_size": 32,
+    "regularization": 0.0005,
+    "rounds": 120,
+    "eval_stride": 30,
+    "rho": 0.999,
+    "threshold": 0.025,
+    "jump0": 0.005,
+    "jump_scale": 100.0,
+    "jump_exponent": 0.2,
+    "topk_fraction": 0.01,
+    "strom_threshold": 0.01,
+    "init_scale": 1.0,
+    "server_gain": 1.0
+  }
+}
