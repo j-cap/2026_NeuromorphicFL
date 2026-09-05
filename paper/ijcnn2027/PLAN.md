@@ -48,13 +48,14 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P9 is complete. The central evidence, tables, figures,
-manuscript claims, and implementation are checksum-frozen, and the bounded
-paper checks regenerate the products in a clean checkout. Details are in
-`P9_REPRODUCIBILITY_AUDIT.md` and `REPRODUCIBILITY.md`. P10 submission checks
-are next. P2 remains valid for the 2026-09-04 search snapshot, with a mandatory
-refresh at P10. The author list remains intentionally deferred to the project
-team.
+**Current status:** P9 and the three-seed P11 alignment-factorial campaign are
+complete. The central evidence, tables, figures, manuscript claims, and
+implementation are checksum-frozen, and the bounded paper checks regenerate
+the products in a clean checkout. The immediate scientific follow-up is to
+extend the P11 factorial beyond three seeds. P10 submission checks follow once
+that extension is incorporated. P2 remains valid for the 2026-09-04 search
+snapshot, with a mandatory refresh at P10. The author list remains
+intentionally deferred to the project team.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -146,12 +147,14 @@ Keep in the main paper:
 - [x] the pathwise event-budget result;
 - [x] the one-step smoothness/descent inequality;
 - [x] the conditional finite-horizon stationarity statement;
-- [x] one concise empirical audit of the aggregate-alignment condition.
+- [x] one concise empirical audit of the aggregate-alignment condition;
+- [x] the exact pulse-level decomposition and a controlled $2\times2$ audit
+      over partition heterogeneity and local-update depth.
 
 Keep in the living report or extended proof material:
 
 - [x] detailed first-passage and sign-reliability derivations;
-- [x] the complete T4 defect decomposition;
+- [x] extended T4 bounds, schedule analysis, and observer-effect details;
 - [x] diagnostic observer-effect details;
 - [x] the negative quantum-schedule experiment;
 - [x] asynchronous and partial-participation extensions.
@@ -164,10 +167,10 @@ The independent mathematical check in `P4_THEORY_AUDIT.md` covers weighting,
 signs, indexing, conditioning, event-energy bounds, schedule assumptions, and
 agreement between the theorem and the implemented full-reset operator.
 
-**Gate:** closed. A reader can distinguish unconditional identities,
-conditional results, and empirical observations without consulting the full
-report. `check_theory_contract.py` guards the core algebra and implementation
-correspondence in CI.
+**Gate:** closed and strengthened by P11. A reader can distinguish
+unconditional identities, conditional results, and empirical observations
+without consulting the full report. `check_theory_contract.py` guards the core
+algebra and implementation correspondence in CI.
 
 ### P5 -- Build the visual argument
 
@@ -208,7 +211,7 @@ Recommended structure:
 - [x] Ensure that the paper is understandable independently of the repository
       history.
 
-**Gate:** closed. A complete five-page draft exists with no placeholders or
+**Gate:** closed. A complete six-page draft exists with no placeholders or
 internal experiment-history language; see `P6_MANUSCRIPT_AUDIT.md`.
 
 ### P7 -- Simulate peer review
@@ -258,6 +261,26 @@ documented submission risk rather than reopening mechanism discovery.
 
 **Gate:** closed by `P9_REPRODUCIBILITY_AUDIT.md`; a clean checkout reproduces
 every central result artifact byte-for-byte from the committed source results.
+
+### P9A -- Test the alignment mechanism under controlled factors
+
+- [x] Cross IID and strong non-IID partitions with $E=1$ and $E=5$.
+- [x] Reuse the three paired held-out seeds and freeze every other operating
+      parameter.
+- [x] Evaluate exact client gradients by independent replay at 31 audited
+      rounds per run.
+- [x] Verify the exact $P_r-R_r+L_r+B_r$ identity, pulse reconstruction, and
+      descent identity on all 372 snapshots.
+- [x] Add a compact factorial table and bounded interpretation to the paper.
+- [ ] Extend the same frozen design to more paired seeds before treating the
+      factor contrasts as stable population-level effects.
+
+**Current finding:** heterogeneity makes $B_r$ strongly more adverse at both
+local-update depths. Increasing $E$ makes $L_r$ more favorable under strong
+non-IID data but increases the gap between positive first-order alignment and
+realized one-round descent. The result motivates coupled analysis of the signed
+terms rather than independent worst-case bounds. Full details are in
+`P11_ALIGNMENT_FACTORIAL.md`.
 
 ### P10 -- Complete submission checks
 

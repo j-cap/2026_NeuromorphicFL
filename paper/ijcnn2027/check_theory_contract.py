@@ -67,6 +67,56 @@ def check_alignment_and_energy() -> None:
         assert energy <= clients * event_count
 
 
+def check_alignment_decomposition() -> None:
+    rng = random.Random(20260906)
+    for _ in range(500):
+        clients = rng.randint(1, 12)
+        dimension = rng.randint(1, 40)
+        weights = [rng.random() for _ in range(clients)]
+        total_weight = sum(weights)
+        weights = [weight / total_weight for weight in weights]
+        local_gradients = [
+            [rng.uniform(-2.0, 2.0) for _ in range(dimension)]
+            for _ in range(clients)
+        ]
+        proxies = [
+            [rng.uniform(-2.0, 2.0) for _ in range(dimension)]
+            for _ in range(clients)
+        ]
+        pulses = [
+            [rng.choice((-1, 0, 0, 1)) for _ in range(dimension)]
+            for _ in range(clients)
+        ]
+        gradient = [
+            sum(weights[i] * local_gradients[i][j] for i in range(clients))
+            for j in range(dimension)
+        ]
+        aggregate = [sum(pulses[i][j] for i in range(clients)) for j in range(dimension)]
+        alignment = -sum(gradient[j] * aggregate[j] for j in range(dimension))
+        ideal = 0.0
+        memory = 0.0
+        drift = 0.0
+        heterogeneity = 0.0
+        for i in range(clients):
+            for j in range(dimension):
+                sign = pulses[i][j]
+                if sign == 0:
+                    continue
+                proxy = proxies[i][j]
+                local_gradient = local_gradients[i][j]
+                ideal += abs(proxy)
+                if sign * proxy < 0.0:
+                    memory += 2.0 * abs(proxy)
+                drift += (-local_gradient - proxy) * sign
+                heterogeneity += (local_gradient - gradient[j]) * sign
+        assert math.isclose(
+            alignment,
+            ideal - memory + drift + heterogeneity,
+            rel_tol=1e-11,
+            abs_tol=1e-11,
+        )
+
+
 def check_implementation_correspondence() -> None:
     source = IMPLEMENTATION.read_text(encoding="utf-8")
     required = (
@@ -87,6 +137,7 @@ def check_implementation_correspondence() -> None:
         "a_i^r=\\frac{p_i}{\\eta_r}\\delta_i^r",
         "C^r=\\sum_{i=1}^M c_i^r",
         "w^{r+1}=w^r+q_rC^r",
+        "A_r=P_r-R_r+L_r+B_r",
         "\\E[A_r\\mid\\mathcal{F}_r]",
         "finite-trajectory diagnostics",
     )
@@ -98,6 +149,7 @@ def check_implementation_correspondence() -> None:
 def main() -> None:
     check_scalar_encoder()
     check_alignment_and_energy()
+    check_alignment_decomposition()
     check_implementation_correspondence()
     print("Event-FedAvg theory contract checks passed")
 

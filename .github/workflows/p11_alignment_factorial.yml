@@ -1,0 +1,96 @@
+name: P11 Alignment Factorial
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - name: Verify P11 identities and trajectory invariance
+        run: PYTHONPATH=src python experiments/p11_alignment_factorial.py --smoke
+
+  experiment:
+    needs: smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        regime: [iid, strong]
+        local_steps: [1, 5]
+        partition_seed: [2500, 2600, 2700]
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      BLIS_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - name: Run one preregistered P11 point
+        run: |
+          TRAIN_SEED=$((70000 + ${{ matrix.partition_seed }}))
+          PYTHONPATH=src python experiments/p11_alignment_factorial.py \
+            --regime "${{ matrix.regime }}" \
+            --local-steps "${{ matrix.local_steps }}" \
+            --partition-seed "${{ matrix.partition_seed }}" \
+            --train-seed "$TRAIN_SEED" \
+            --audit-stride 5 \
+            --reference-per-client 6000
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p11-${{ matrix.regime }}-e${{ matrix.local_steps }}-${{ matrix.partition_seed }}
+          path: experiments/results/p11_alignment_factorial/*_${{ matrix.regime }}_e${{ matrix.local_steps }}_p${{ matrix.partition_seed }}_*.csv
+
+  aggregate:
+    needs: experiment
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned dependencies
+        run: python -m pip install --upgrade pip numpy==2.4.6 pandas==3.0.5 matplotlib==3.10.8
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p11-*
+          merge-multiple: true
+          path: experiments/results/p11_alignment_factorial
+      - name: Aggregate and validate P11 results
+        run: PYTHONPATH=src python experiments/p11_alignment_factorial.py --aggregate
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p11-alignment-factorial-combined
+          path: experiments/results/p11_alignment_factorial/

@@ -43,13 +43,15 @@ statistical significance.
    end-to-end protocol.
 2. **A scoped mathematical characterization.** The encoder has a bounded
    post-reset state and a pathwise event budget. Smoothness yields an exact
-   descent-versus-harm decomposition, and an explicit aggregate-alignment
-   condition yields a finite-horizon stationarity result.
+   descent-versus-harm decomposition, an explicit aggregate-alignment
+   condition yields a finite-horizon stationarity result, and the measured
+   alignment admits an exact pulse-level decomposition into local mass, memory
+   opposition, local drift, and heterogeneity.
 3. **Controlled communication--performance evidence.** Development-only tuning,
    held-out partitions, close residual and error-feedback baselines, and
    symmetric uplink-plus-downlink accounting test the practical operating
-   point. An exact empirical-gradient audit assesses the theory's alignment
-   condition without changing the training rule.
+   point. An exact empirical-gradient $2\times2$ audit varies partition
+   heterogeneity and local-update depth without changing the training rule.
 
 ## Novelty boundary
 
@@ -116,25 +118,25 @@ paper. The budget below is a constraint, not a requirement to fill space.
 | Abstract and introduction | 0.65 | Problem, result, contributions, limits |
 | Related work | 0.40 | Closest operator-level distinctions |
 | Method and protocol | 1.15 | Frozen transition, algorithm, communication |
-| Theory | 0.80 | Encoder properties and conditional optimization result |
+| Theory | 0.95 | Encoder properties, exact alignment identity, and conditional result |
 | Experimental protocol | 0.55 | Fair tuning, partitions, metrics, accounting |
-| Results and discussion | 1.20 | Frontier, matched controls, alignment audit |
+| Results and discussion | 1.30 | Frontier, matched controls, factorial audit |
 | Limitations and conclusion | 0.25 | Precise boundary and takeaway |
 | References | 1.00 | Curated citations only |
 
 ## Visual budget
 
-The main paper should use at most three principal visual elements:
+The main paper should use at most four principal visual elements:
 
 1. **Method figure:** local delta, leaky evidence, event/reset, server update,
    and client synchronization.
 2. **Frontier figure:** predictive performance versus total bidirectional
    communication for both final benchmarks.
-3. **Main result table with compact alignment evidence:** quality-selected and
-   nearest-traffic comparisons plus the minimum diagnostic required to support
-   the conditional theory.
+3. **Main result table:** quality-selected and nearest-traffic comparisons.
+4. **Alignment-factorial table:** exact decomposition summaries for IID versus
+   strong non-IID data and $E=1$ versus $E=5$.
 
-The full T4 decomposition, schedule comparison, observer-effect audit, and
+The extended T4 defect bound, schedule comparison, observer-effect audit, and
 exploratory mechanism figures remain in the living report.
 
 ## Author and review roles

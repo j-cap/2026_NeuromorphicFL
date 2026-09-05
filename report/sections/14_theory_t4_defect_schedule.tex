@@ -314,8 +314,15 @@ T4 closes the requested diagnostic step but not the convergence theorem:
 \end{enumerate}
 
 The next theorem target should therefore be a coupled alignment bound rather
-than four independent worst-case bounds.  Empirically, the smallest decisive
-next experiment is a controlled $2\times2$ decomposition over IID versus
-strong non-IID partitions and $E=1$ versus $E=5$.  That experiment can test
-whether $B_r$ responds to data heterogeneity and whether $L_r$ responds to
-local-update depth before a formal covariance assumption is introduced.
+than four independent worst-case bounds.  The controlled $2\times2$
+decomposition over IID versus strong non-IID partitions and $E=1$ versus
+$E=5$ has now been completed.  Across its initial three paired seeds,
+heterogeneity makes $B_r$ strongly more adverse at both values of $E$.
+Increasing $E$ changes $L_r$ in a regime-dependent direction: it becomes more
+negative under IID data but strongly positive under strong non-IID data.  In
+the strong non-IID, $E=5$ cell, first-order alignment is positive in $98.9\%$
+of audited snapshots while the objective decreases in only $67.7\%$ of them.
+This confirms that a useful analysis must retain both cancellation among
+$P_r,L_r,B_r$ and the finite-step curvature contribution.  Extending the
+frozen factorial beyond three paired seeds is the immediate empirical next
+step before introducing a formal covariance assumption.

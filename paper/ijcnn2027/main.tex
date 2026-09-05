@@ -31,7 +31,9 @@ emit signed coordinate events after first passage, and fully reset fired
 states. The server applies an independently scheduled model quantum and
 synchronizes clients through exact sparse replay or dense checkpoints. We prove
 a pathwise event budget and bounded encoder state, and derive a one-step descent
-decomposition with a conditional finite-horizon stationarity result. Under
+decomposition with a conditional finite-horizon stationarity result. An exact
+pulse-level decomposition and a controlled $2\times2$ audit expose how data
+heterogeneity and local-update depth affect finite-trajectory alignment. Under
 matched local learning, development-only tuning, and conservative
 uplink-plus-downlink accounting, Event-FedAvg is nondominated on held-out
 Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN experiments. On CIFAR-10 it
@@ -80,7 +82,9 @@ Our contributions are threefold. First, we define the complete client encoder,
 server update, and synchronization algorithm for multi-step FedAvg. Second, we
 prove unconditional state and event-budget guarantees. We also give an exact
 one-step descent inequality and a conditional finite-horizon stationarity
-result. Third, we compare Event-FedAvg with dense FedAvg, Sign-EF, EF-TopK, and
+result, then connect its alignment condition to measurable local-update,
+memory, drift, and heterogeneity terms. Third, we compare Event-FedAvg with
+dense FedAvg, Sign-EF, EF-TopK, and
 Strom-style threshold pulses under matched local learning, held-out non-IID
 partitions, and total bidirectional traffic. Event-FedAvg is nondominated in all
 three tested model and dataset settings. On CIFAR-10, it uses $7.9\times$ less
@@ -288,6 +292,35 @@ client pulses opposing and following $g^r$. This identity includes
 same-coordinate cancellation. Cauchy--Schwarz also gives
 $\norm{C^r}_2^2\leq MN_r$.
 
+To expose the mechanisms hidden inside $A_r$, let
+$\mathcal S_i^r=\{j:c_{ij}^r\neq0\}$, write $s_{ij}^r=c_{ij}^r$ on this set,
+and define the current local gradient $g_i^r=\nabla F_i(w^r)$ and local-update
+proxy $v_i^r=\delta_i^r/(\eta_rE_r)$. For emitted client-coordinate pairs, set
+\begin{align}
+ P_r&=\sum_{i,j\in\mathcal S_i^r}|v_{ij}^r|,
+ &R_r&=2\sum_{i,j\in\mathcal S_i^r}|v_{ij}^r|
+ \ind{s_{ij}^rv_{ij}^r<0}, \notag\\
+ L_r&=\sum_{i,j\in\mathcal S_i^r}(-g_{ij}^r-v_{ij}^r)s_{ij}^r,
+ &B_r&=\sum_{i,j\in\mathcal S_i^r}(g_{ij}^r-g_j^r)s_{ij}^r.
+ \label{eq:alignment-components}
+\end{align}
+$P_r$ is the alignment with the current local-update proxy, $R_r$ is the
+penalty from accumulated state firing against that proxy, $L_r$ contains local
+drift and stochastic-gradient mismatch, and $B_r$ contains client-to-global
+heterogeneity.
+
+\begin{proposition}[Exact alignment decomposition]
+For every realized round,
+\begin{equation}
+ A_r=P_r-R_r+L_r+B_r.
+ \label{eq:alignment-decomposition}
+\end{equation}
+\end{proposition}
+The identity follows by adding and subtracting $v_{ij}^r$ and $g_{ij}^r$ for
+each emitted pair. The signs of $L_r$ and $B_r$ are unrestricted, so the
+decomposition identifies the alignment sources but does not by itself prove a
+positive lower bound.
+
 \begin{proposition}[Descent and conditional stationarity]
 If $F$ is $L$-smooth, every realized round obeys
 \begin{equation}
@@ -328,15 +361,10 @@ rule. For audited rounds $\mathcal A$, define the finite-trajectory statistic
  {\sum_{r\in\mathcal A}q_r\norm{\nabla F(w^r)}_2^2}.
  \label{eq:empirical-alignment-ratio}
 \end{equation}
-For the frozen strong-non-IID MLP, exact full-client empirical gradients
-were evaluated at 31 independently replayed rounds for each of three held-out
-partitions. The resulting $\widehat\kappa_{\mathcal A}$ was
-$35.42\pm1.35$. Objective descent occurred on
-$75.27\pm7.45\%$ of audited rounds. At all 93 snapshots, emitted state signs
-agreed with current local-delta signs, while client heterogeneity was the main
-adverse signed term. Large cancellation between heterogeneity and favorable
-local-update terms makes a componentwise worst-case bound vacuous. These are
-finite-trajectory diagnostics, not proof of the conditional expectation in
+Section~\ref{sec:results} evaluates this statistic and
+\eqref{eq:alignment-decomposition} across data heterogeneity and local-update
+depth. These finite-trajectory diagnostics assess the conditional interface.
+They do not prove the conditional expectation in
 \eqref{eq:alignment-assumption-paper}.
 
 \begin{figure*}[t]
@@ -393,6 +421,14 @@ update replay or a float32 checkpoint, whichever is smaller. The same rule is
 applied to every method. Thus a sparse uplink is not credited while omitting the
 communication required to keep all client models synchronized.
 
+\textbf{Alignment factorial.}
+On the Fashion-MNIST MLP, we additionally cross IID and strong non-IID
+partitions with $E\in\{1,5\}$ while keeping all Event-FedAvg settings fixed.
+For each of the same three seed pairs, rounds $1,5,10,\ldots,150$ are
+independently replayed. Exact gradients use all 6,000 examples of every client
+and are evaluated only after the audited event decision, preventing the
+diagnostic computation from perturbing later threshold crossings.
+
 \section{Results and Discussion}
 \label{sec:results}
 
@@ -401,7 +437,9 @@ comparison using total uplink-plus-downlink unicast traffic. Filled controls
 are quality-selected on development partitions. Hollow controls are selected
 for proximity to Event-FedAvg traffic. Table~\ref{tab:main-results} isolates
 the strongest-quality and nearest-traffic controls under those predeclared
-rules and records the compact empirical audit of the theory interface.
+rules.
+
+\input{generated/p11_alignment_table}
 
 On Fashion-MNIST MLP, Event-FedAvg attains
 $83.14\pm0.14\%$ at $183.5\pm2.0$ Mbit. The strongest quality-selected
@@ -433,6 +471,29 @@ $18.42\pm7.33\%$ at $44.8\pm17.7$ Mbit. This supports independent trigger and
 update resolutions for the selected operating point, not a universal claim
 that every coupled schedule fails.
 
+Table~\ref{tab:alignment-factorial} connects the optimization interface to its
+mechanisms. Mean aggregate alignment is positive in all four cells, and
+$95.7$--$100.0\%$ of the audited updates have $A_r>0$. Heterogeneity has the
+predicted adverse effect on $B_r$ for every paired seed. After normalizing
+$q_r$-weighted signed sums by
+$\sum_{r\in\mathcal A}q_r\norm{g^r}_2^2$, its mean changes from $-0.27$ to
+$-360.98$ at $E=1$ and from $-5.37$ to $-700.62$ at $E=5$. Local depth also
+changes $L_r$, but the direction depends on heterogeneity: its normalized mean
+moves from $-21.74$ to $-57.80$ under IID data and from $-95.23$ to $411.36$
+under strong non-IID data. Thus local drift and heterogeneity interact rather
+than contributing independent worst-case penalties.
+
+Positive first-order alignment is not sufficient for monotone descent. Under
+strong non-IID data, the objective-decrease fraction falls from $86.0\%$ at
+$E=1$ to $67.7\%$ at $E=5$, even though aggregate alignment remains positive
+in $98.9\%$ of the latter snapshots. The mean curvature remainder increases
+from $0.0100$ to $0.0166$, and $29$ of the $93$ strong-non-IID, $E=5$ updates
+have positive alignment without objective descent. No emitted pulse opposes
+the current local-update proxy in any of the $372$ audited snapshots. The
+experiment therefore supports the decomposition and identifies a finite-step
+heterogeneity--depth limitation. It does not close the conditional convergence
+assumption.
+
 The frontier is not uniform predictive dominance. On CIFAR-10,
 quality-selected EF-TopK obtains slightly higher mean worst-class accuracy
 ($26.7\%$) than Event-FedAvg ($24.6\%$). Tuned dense FedAvg reaches $23.3\%$.
@@ -446,7 +507,9 @@ statistical significance.
 \label{sec:limitations}
 
 The experiments cover synchronous full participation, ten clients, two image
-datasets, and three held-out seeds per setting. They do not establish
+datasets, and three held-out seeds per setting. The factorial audit varies two
+factors around one Fashion-MNIST operating point and is not a broad robustness
+study. The results do not establish
 statistical significance or broad dataset and model generalization. The theory
 does not prove the aggregate-alignment condition for the coupled learning
 process, and the evaluated quantum schedules do not support an asymptotic

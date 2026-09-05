@@ -2,9 +2,10 @@
 
 ## Outcome
 
-P5 is closed. The main-paper visual package contains exactly three principal
-elements: a method schematic, a cross-benchmark communication--performance
-frontier, and one compact headline table with the minimum alignment diagnostic.
+P5 is closed and was extended by P11. The main-paper visual package contains
+four principal elements: a method schematic, a cross-benchmark
+communication--performance frontier, a compact headline-results table, and a
+compact alignment-factorial table.
 All quantitative content is generated from frozen evidence rather than copied
 into the manuscript by hand.
 
@@ -14,7 +15,8 @@ into the manuscript by hand.
 |---|---|---|---|
 | `figures/event_fedavg_method.pdf` | C1 and C3: complete stateful operator and exact synchronization | Frozen transition in `main.tex` and implementation contract checked in P4 | Diagram does not imply asynchronous or partial-participation support. |
 | `figures/communication_frontier.pdf` | C4 and C9: communication--performance operating point on three benchmark/model settings | `evidence/fmnist_master_results.csv` and `evidence/cifar10_master_results.csv` | Uses total conservative bidirectional unicast traffic; no energy or latency axis. |
-| `generated/main_results_table.tex` | C4, C7, and C9: strongest-quality and nearest-traffic comparisons plus finite-trajectory alignment evidence | The three paper evidence CSVs, with the alignment aggregate traced to the authoritative T4 Actions run | Three seeds are shown as mean $\pm$ sample standard deviation, not significance claims. The alignment audit does not prove the conditional assumption. |
+| `generated/main_results_table.tex` | C4 and C9: strongest-quality and nearest-traffic comparisons | The three paper evidence CSVs | Three seeds are shown as mean $\pm$ sample standard deviation, not significance claims. |
+| `generated/p11_alignment_table.tex` | C7: exact alignment decomposition under controlled heterogeneity and local-depth factors | `evidence/p11_alignment_factorial.csv`, traced to 12 independently audited runs | The three-seed contrasts are descriptive. Positive first-order alignment is not equivalent to realized descent. |
 
 ## Selection rules
 
@@ -46,8 +48,11 @@ measurements.
   0.90 accuracy points but uses 4.9 times more total traffic.
 - At nearby traffic, Event-FedAvg has higher mean accuracy than the selected
   Strom control in all three settings.
-- The table retains the exact-gradient alignment audit only as finite-trajectory
-  support for the conditional theory interface.
+- The factorial table shows that heterogeneity makes the signed $B_r$ term
+  strongly adverse at both local-update depths. Under strong non-IID data,
+  increasing $E$ makes $L_r$ positive while the observed descent fraction
+  falls, exposing the finite-step curvature term that separates positive
+  alignment from realized descent.
 
 ## Readability and reproducibility checks
 
@@ -69,4 +74,5 @@ Rebuild and check with:
 python paper/ijcnn2027/build_evidence.py --check
 python paper/ijcnn2027/build_visuals.py
 python paper/ijcnn2027/build_visuals.py --check
+python paper/ijcnn2027/build_alignment_factorial.py --check
 ```
