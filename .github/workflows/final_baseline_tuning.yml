@@ -2,16 +2,15 @@ name: Final Baseline Tuning
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'src/neuromorphicfl/final_baseline_campaign.py'
-      - 'experiments/final_baseline_point.py'
-      - 'experiments/final_baseline_aggregate.py'
-      - '.github/workflows/final_baseline_tuning.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   tune:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -68,12 +67,14 @@ jobs:
             --tag tune
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: tune-${{ matrix.name }}
           path: experiments/results/final_baseline_campaign/*_tune.csv
 
   aggregate:
     needs: tune
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -89,5 +90,6 @@ jobs:
         run: python experiments/final_baseline_aggregate.py --tag tune
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: final-baseline-tuning-combined
           path: experiments/results/final_baseline_campaign/combined_tune.csv

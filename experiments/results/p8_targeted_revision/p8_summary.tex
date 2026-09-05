@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{P8 held-out server-scale and mechanism audit on CIFAR-10.}
+\label{tab:p8-audit}
+\begin{tabular}{lrrr}
+\toprule
+Configuration & Acc. [\%] & Worst [\%] & Total [Mbit]\\
+\midrule
+Dense, tuned gain & 44.13$\pm$1.12 & 23.3$\pm$5.6 & 1586.6$\pm$0.0\\
+Event-FedAvg & 48.25$\pm$1.07 & 26.7$\pm$7.8 & 200.2$\pm$2.2\\
+Event, $\rho=1$ & 48.32$\pm$1.05 & 25.4$\pm$5.4 & 202.1$\pm$5.6\\
+Event, $q=\vartheta$ & 18.42$\pm$7.33 & 0.0$\pm$0.0 & 44.8$\pm$17.7\\
+\bottomrule
+\end{tabular}
+\end{table}

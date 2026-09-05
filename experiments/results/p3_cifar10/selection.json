@@ -1,0 +1,17 @@
+{
+  "development_seed": 3400,
+  "selection_metric": "minimum final_train_ce",
+  "quality": {
+    "event": "event_t025_q005",
+    "strom": "strom_t0025",
+    "ef_topk": "ef_k05",
+    "sign_ef": "sign_ef",
+    "dense": "dense"
+  },
+  "traffic_target_config": "event_t025_q005",
+  "traffic_target_total_bits": 201952576,
+  "traffic": {
+    "strom": "strom_t01",
+    "ef_topk": "ef_k01"
+  }
+}

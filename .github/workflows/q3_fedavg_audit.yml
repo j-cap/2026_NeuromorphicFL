@@ -1,15 +1,16 @@
 name: Q3 FedAvg Compatibility Audit
 
 on:
-  push:
-    paths:
-      - 'src/neuromorphicfl/fedavg_event_compatibility.py'
-      - 'experiments/q3_fedavg_audit.py'
-      - '.github/workflows/q3_fedavg_audit.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   q3-audit:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -33,5 +34,6 @@ jobs:
       - name: Upload Q3 audit
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: q3-fedavg-E${{ matrix.local_steps }}
           path: experiments/results/q3_fedavg_compatibility/audit_E${{ matrix.local_steps }}.csv

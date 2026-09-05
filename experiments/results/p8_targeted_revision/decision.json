@@ -1,0 +1,11 @@
+{
+  "dense_selected": "dense_gain_2p0",
+  "dense_server_gain": 2.0,
+  "event_minus_dense_accuracy_points": 4.126666666666667,
+  "event_over_dense_unicast_ratio": 0.1261852393142465,
+  "no_leak_minus_frozen_accuracy_points": 0.06333333333333746,
+  "no_leak_over_frozen_unicast_ratio": 1.009402815695174,
+  "coupled_minus_frozen_accuracy_points": -29.836666666666666,
+  "coupled_over_frozen_unicast_ratio": 0.22384616526041926,
+  "interpretation_rule": "Report means and sample standard deviations over the three frozen held-out seeds; do not claim statistical significance."
+}

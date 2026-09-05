@@ -5,6 +5,9 @@ venv/
 .env
 .DS_Store
 
+# Downloaded datasets
+data/cifar-10/
+
 # Generated experiment outputs
 experiments/results/**
 !experiments/results/.gitkeep
@@ -17,3 +20,15 @@ report/*.log
 report/*.out
 report/*.toc
 report/*.synctex.gz
+
+# IJCNN manuscript build products (figures/ contains intentionally tracked PDFs)
+paper/ijcnn2027/*.aux
+paper/ijcnn2027/*.bbl
+paper/ijcnn2027/*.blg
+paper/ijcnn2027/*.fdb_latexmk
+paper/ijcnn2027/*.fls
+paper/ijcnn2027/*.log
+paper/ijcnn2027/*.out
+paper/ijcnn2027/*.pdf
+paper/ijcnn2027/*.synctex.gz
+paper/ijcnn2027/tmp/

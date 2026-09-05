@@ -9,6 +9,7 @@ The central idea is to reinterpret communication-efficient distributed/federated
 - `src/` — reusable objectives, optimizers, scalar and asynchronous simulation utilities, and metrics.
 - `experiments/` — self-contained experiment scripts built on `src/` where appropriate.
 - `report/` — evolving LaTeX knowledge base, bibliography, and figure conventions.
+- `paper/ijcnn2027/` — submission plan and, once extracted, the concise IJCNN manuscript.
 
 ## Current experiment progression
 
@@ -24,8 +25,38 @@ The central idea is to reinterpret communication-efficient distributed/federated
 Two key negative results are now part of the project knowledge base:
 
 - **reduced communication can be caused by silencing slow clients**, especially under wall-clock leakage;
-- **finite LIF memory has not yet demonstrated a robust FL-specific stale-gradient advantage** in the scalar tests, even when true delayed gradients and heterogeneous local objectives are introduced.
+- **finite LIF memory has not demonstrated a robust FL-specific stale-gradient advantage** in the scalar tests, even when true delayed gradients and heterogeneous local objectives are introduced.
 
-The strongest supported mechanisms are currently temporal stochastic-gradient filtering, sparse event communication, and finite-memory event regularization. The next stage is therefore a mechanism-comparator study: test whether the heterogeneous event-suppression effect is genuinely distinctive relative to simpler deadband, proximal, EMA/filtering, reset, and error-feedback mechanisms.
+The project has since consolidated the supported mechanism into Event-FedAvg:
+conventional multi-step local model deltas drive persistent leaky evidence
+states; sparse signed coordinate events update the server; and ordered replay
+with checkpoint fallback provides complete bidirectional synchronization. The
+matched-baseline campaign and theory tasks T1--T4 are complete. The P3
+CIFAR-10 compact-CNN campaign also closes with a pass: Event-FedAvg remains on
+the held-out communication--performance frontier. P4 has now extracted the
+compact operator, encoder bounds, conditional optimization result, and
+exact-gradient alignment audit into the manuscript. P5 has now frozen the
+three-element visual argument: method schematic, cross-benchmark frontier, and
+compact headline table. P6--P9 are complete: the submission-candidate sources,
+products, manuscript claims, and central implementation are checksum-frozen and
+rebuild in a clean checkout. The current priority is P10 submission compliance,
+not open-ended mechanism discovery.
 
-The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which a later manuscript can be distilled, and it records both successful mechanisms and falsified hypotheses.
+## Publication planning
+
+The gate-based plan for extracting the conference paper is maintained in
+[`paper/ijcnn2027/PLAN.md`](paper/ijcnn2027/PLAN.md). It intentionally contains
+no internal calendar dates: progress is controlled by scientific and
+reproducibility gates.
+
+GitHub Actions follow a two-tier execution policy: bounded paper/report checks
+run automatically on pull requests, while all computational experiment
+campaigns require explicit manual dispatch. The policy and resource controls
+are documented in
+[`.github/ACTIONS_POLICY.md`](.github/ACTIONS_POLICY.md).
+
+The minimum clean-checkout commands and the explicit boundary between
+artifact reproduction and full training reruns are documented in
+[`paper/ijcnn2027/REPRODUCIBILITY.md`](paper/ijcnn2027/REPRODUCIBILITY.md).
+
+The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.

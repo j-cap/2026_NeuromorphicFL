@@ -1,15 +1,16 @@
 name: Q1 Decisive CNN Bridge
 
 on:
-  push:
-    paths:
-      - 'experiments/q1_cnn_decisive.py'
-      - '.github/workflows/q1_cnn_decisive.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   q1-cnn-decisive:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
@@ -28,5 +29,6 @@ jobs:
         run: PYTHONPATH=src python experiments/q1_cnn_decisive.py
       - uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: q1-cnn-decisive
           path: experiments/results/q1_nearest_neighbor_focused/cnn_decisive_650.csv

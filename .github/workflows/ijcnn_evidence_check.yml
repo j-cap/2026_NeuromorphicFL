@@ -1,0 +1,51 @@
+name: IJCNN Evidence Check
+
+on:
+  pull_request:
+    paths:
+      - 'experiments/results/final_baseline_campaign/observed_heldout_summary.csv'
+      - 'experiments/results/final_baseline_campaign/observed_traffic_matched_summary.csv'
+      - 'experiments/results/p3_cifar10/heldout_runs.csv'
+      - 'experiments/results/p3_cifar10/master_results.csv'
+      - 'experiments/results/p8_targeted_revision/**'
+      - 'paper/ijcnn2027/build_evidence.py'
+      - 'paper/ijcnn2027/build_visuals.py'
+      - 'paper/ijcnn2027/check_manuscript_claims.py'
+      - 'paper/ijcnn2027/check_theory_contract.py'
+      - 'paper/ijcnn2027/reproduce.py'
+      - 'paper/ijcnn2027/reproducibility_manifest.json'
+      - 'paper/ijcnn2027/requirements-reproduction.txt'
+      - 'paper/ijcnn2027/main.tex'
+      - 'paper/ijcnn2027/evidence/**'
+      - 'paper/ijcnn2027/figures/**'
+      - 'paper/ijcnn2027/generated/**'
+      - '.github/workflows/**'
+      - '.github/scripts/check_actions_policy.py'
+      - '.github/ACTIONS_POLICY.md'
+      - '.github/workflows/ijcnn_evidence_check.yml'
+      - '.gitignore'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned validation dependencies
+        run: python -m pip install -r paper/ijcnn2027/requirements-reproduction.txt
+      - name: Regenerate and validate the frozen paper bundle
+        run: python paper/ijcnn2027/reproduce.py --regenerate --strict-environment
+      - name: Require byte-identical generated products
+        run: |
+          git diff --exit-code -- \
+            paper/ijcnn2027/evidence/ \
+            paper/ijcnn2027/figures/ \
+            paper/ijcnn2027/generated/

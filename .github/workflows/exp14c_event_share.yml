@@ -1,11 +1,11 @@
 name: Experiment 14C Event-Share Fairness
 
 on:
-  push:
-    paths:
-      - '.github/workflows/exp14c_event_share.yml'
-      - 'experiments/14c_event_share_fairness.py'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -33,5 +33,6 @@ jobs:
       - name: Upload Experiment 14C results
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 7
           name: exp14c-results
           path: experiments/results/14c_event_share_fairness/

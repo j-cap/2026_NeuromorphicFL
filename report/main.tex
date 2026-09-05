@@ -6,7 +6,9 @@
 \usepackage{lmodern}
 \usepackage{microtype}
 \usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsthm}
 \usepackage{booktabs}
+\usepackage{float}
 \usepackage{graphicx}
 \usepackage{siunitx}
 \usepackage{enumitem}
@@ -37,6 +39,12 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\sign}{\operatorname{sign}}
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
 
 % Long conclusions must wrap inside the text width. Reserve \boxed{...} for
 % genuinely short mathematical statements and pass/fail labels.
@@ -70,7 +78,7 @@
 \maketitle
 
 \begin{abstract}
-This report is a living technical knowledge base for a research direction that transfers the integrate--threshold--spike principle from neuromorphic control to distributed and federated optimization. The central idea is not to train a spiking neural network. Instead, ordinary stochastic gradients or more general local learning updates are treated as evidence signals that drive persistent leaky integrate-and-fire (LIF) communication states. Communication occurs only when sufficient signed evidence has accumulated, and the global model evolves through sparse signed parameter-update events. The project is motivated by the hybrid-systems viewpoint developed for neuromorphic control, but must be distinguished carefully from established work on one-bit gradients, error feedback, gradient sparsification, lazy/event-triggered distributed learning, and event-based optimization. The experimental program progresses from scalar and vector quadratics through asynchronous heterogeneous optimization, descent-aware certificates, convex logistic regression, nonconvex multilayer networks, real-data Fashion-MNIST classification, and compact convolutional neural networks. The evidence shows that the temporal coordinate-event mechanism remains communication-efficient across this progression, while also exposing explicit limitations in geometry, certificate maintenance, asynchronous class-wise transients, hybrid numerical reproducibility, and late-stage event-update resolution. The consolidation phase then freezes the smallest supported method and resolves three algorithm-level questions: the complete operator is distinct but closely related to residual-pulse predecessors, it remains effective when driven by conventional multi-step FedAvg model deltas, and its communication advantage survives an explicit sparse bidirectional synchronization protocol. A final matched closest-baseline campaign further shows that the frozen Event-FedAvg method occupies a strong communication--performance operating point relative to tuned residual-pulse, error-feedback, sign, and dense alternatives. The remaining core task is therefore theoretical characterization of the frozen lossy stateful compressor before extraction of a separate manuscript.
+This report is a living technical knowledge base for a research direction that transfers the integrate--threshold--spike principle from neuromorphic control to distributed and federated optimization. The central idea is not to train a spiking neural network. Instead, ordinary stochastic gradients or more general local learning updates are treated as evidence signals that drive persistent leaky integrate-and-fire (LIF) communication states. Communication occurs only when sufficient signed evidence has accumulated, and the global model evolves through sparse signed parameter-update events. The project is motivated by the hybrid-systems viewpoint developed for neuromorphic control, but must be distinguished carefully from established work on one-bit gradients, error feedback, gradient sparsification, lazy/event-triggered distributed learning, and event-based optimization. The experimental program progresses from scalar and vector quadratics through asynchronous heterogeneous optimization, descent-aware certificates, convex logistic regression, nonconvex multilayer networks, real-data Fashion-MNIST classification, and compact convolutional neural networks. The evidence shows that the temporal coordinate-event mechanism remains communication-efficient across this progression, while also exposing explicit limitations in geometry, certificate maintenance, asynchronous class-wise transients, hybrid numerical reproducibility, and late-stage event-update resolution. The consolidation phase then freezes the smallest supported method and resolves three algorithm-level questions: the complete operator is distinct but closely related to residual-pulse predecessors, it remains effective when driven by conventional multi-step FedAvg model deltas, and its communication advantage survives an explicit sparse bidirectional synchronization protocol. A final matched closest-baseline campaign further shows that the frozen Event-FedAvg method occupies a strong communication--performance operating point relative to tuned residual-pulse, error-feedback, sign, and dense alternatives. Theory tasks T1--T4 now specify the exact operator, establish encoder bounds and pathwise event complexity, derive a conditional optimization result, and audit its alignment assumptions. The independent CIFAR-10 compact-CNN campaign now confirms a second-dataset communication--performance frontier under the frozen bidirectional protocol. The current publication task is to extract the concise conference manuscript.
 \end{abstract}
 
 \tableofcontents
@@ -138,6 +146,17 @@ This report is a living technical knowledge base for a research direction that t
 \input{sections/10d_bidirectional_protocol}
 \input{sections/10f_final_matched_baseline_campaign}
 \input{sections/10e_final_algorithm_decision}
+
+\part{Theory Development}
+
+\input{sections/11_theory_t1_formal_semantics}
+\input{sections/12_theory_t2_encoder_properties}
+\input{sections/13_theory_t3_optimization_interface}
+\input{sections/14_theory_t4_defect_schedule}
+
+\part{Submission Evidence}
+
+\input{sections/15_p3_cifar10_transfer}
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}

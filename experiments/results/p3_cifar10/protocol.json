@@ -1,0 +1,45 @@
+{
+  "dataset": "CIFAR-10 python version",
+  "dataset_md5": "c58f30108f718f92721af3b95e74349a",
+  "architecture": {
+    "input_channels": 3,
+    "input_hw": 32,
+    "conv1_out": 8,
+    "conv1_kernel": 5,
+    "conv1_stride": 2,
+    "conv2_out": 16,
+    "conv2_kernel": 3,
+    "conv2_stride": 2,
+    "hidden": 32,
+    "n_classes": 10
+  },
+  "dimension": 20570,
+  "partition": {
+    "clients": 10,
+    "samples_per_client": 5000,
+    "dominant_class_fraction": 0.55,
+    "development_seed": 3400,
+    "heldout_seeds": [
+      3500,
+      3600,
+      3700
+    ]
+  },
+  "base_training": {
+    "local_steps": 5,
+    "local_lr": 0.05,
+    "batch_size": 32,
+    "regularization": 0.0005,
+    "rounds": 120,
+    "eval_stride": 30,
+    "rho": 0.999,
+    "threshold": 0.025,
+    "jump0": 0.005,
+    "jump_scale": 100.0,
+    "jump_exponent": 0.2,
+    "topk_fraction": 0.01,
+    "strom_threshold": 0.01,
+    "init_scale": 1.0
+  },
+  "selection_metric": "final_train_ce on development partition"
+}
