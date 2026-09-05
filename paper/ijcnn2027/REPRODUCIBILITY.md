@@ -21,11 +21,11 @@ git diff --exit-code -- \
   paper/ijcnn2027/generated/
 ```
 
-The command regenerates the six evidence products, two vector figures, and
-headline table; checks all 19 empirical prose claims against the source CSVs;
-exercises the theory/implementation contract; validates the Actions policy;
-and verifies SHA-256 hashes for the frozen sources, products, manuscript, and
-central implementation.
+The command regenerates the paper evidence products, two vector figures, the
+headline table, and the alignment-factorial table. It checks every empirical
+prose claim against the source CSVs, exercises the theory/implementation
+contract, validates the Actions policy, and verifies SHA-256 hashes for the
+frozen sources, products, manuscript, and central implementation.
 
 To include a manuscript compile, install `latexmk`, `pdfinfo` (Poppler), and a
 LaTeX distribution containing the standard IEEE dependencies, then run:
@@ -54,11 +54,13 @@ PYTHONPATH=src python experiments/final_baseline_point.py \
   --partition-seed 2500 --train-seed 72500 --tag eval
 ```
 
-The complete Fashion-MNIST, CIFAR-10, P8, and T4 matrices are encoded in their
-manual-only GitHub Actions workflows. Run them only intentionally from the
-Actions tab and retain their per-seed products before aggregating. The source
-run URLs and selected configurations are recorded in `EVIDENCE_FREEZE.md`,
-`P3_DECISION.md`, `P4_THEORY_AUDIT.md`, and `P8_REVISION_AUDIT.md`.
+The complete Fashion-MNIST, CIFAR-10, P8, T4, and P11 matrices are encoded in
+their manual-only GitHub Actions workflows. Run them only intentionally from
+the Actions tab and retain their per-seed products before aggregating. The P11
+campaign can also be reproduced one factorial cell at a time with
+`experiments/p11_alignment_factorial.py`. Source configurations and decisions
+are recorded in the corresponding evidence and audit documents, including
+`P11_ALIGNMENT_FACTORIAL.md`.
 
 The frozen P3 Event-FedAvg headline remains the authoritative CIFAR-10 result.
 The P8 like-for-like rerun reproduced two of three seeds exactly; seed 3500

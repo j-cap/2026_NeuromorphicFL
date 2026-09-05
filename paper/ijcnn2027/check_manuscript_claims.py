@@ -17,7 +17,7 @@ MANUSCRIPT = PAPER / "main.tex"
 FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
 CIFAR10 = PAPER / "evidence" / "cifar10_master_results.csv"
 P8 = PAPER / "evidence" / "p8_targeted_revision.csv"
-ALIGNMENT = PAPER / "evidence" / "t4_alignment_audit.csv"
+P11 = PAPER / "evidence" / "p11_alignment_factorial.csv"
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -56,6 +56,21 @@ def p8_select(source: list[dict[str, str]], config_name: str) -> dict[str, str]:
     return matches[0]
 
 
+def p11_select(
+    source: list[dict[str, str]], regime: str, local_steps: int
+) -> dict[str, str]:
+    matches = [
+        row
+        for row in source
+        if row["regime"] == regime and int(row["local_steps"]) == local_steps
+    ]
+    if len(matches) != 1:
+        raise AssertionError(
+            f"expected one P11 {regime}/E={local_steps} row, found {len(matches)}"
+        )
+    return matches[0]
+
+
 def number(row: dict[str, str], field: str) -> float:
     return float(row[field])
 
@@ -84,7 +99,7 @@ def main() -> None:
     fmnist = rows(FMNIST)
     cifar = rows(CIFAR10)
     mechanism = rows(P8)
-    alignment = {row["metric"]: row for row in rows(ALIGNMENT)}
+    factorial = rows(P11)
 
     mlp_event = select(
         fmnist, comparison="quality-selected", architecture="mlp", method="event"
@@ -216,17 +231,55 @@ def main() -> None:
             )
         )
 
-    ratio = alignment["weighted_alignment_ratio"]
-    descent = alignment["objective_decrease_fraction"]
+    iid_e1 = p11_select(factorial, "iid", 1)
+    iid_e5 = p11_select(factorial, "iid", 5)
+    strong_e1 = p11_select(factorial, "strong", 1)
+    strong_e5 = p11_select(factorial, "strong", 5)
     claims.extend(
         [
             (
-                "finite-trajectory alignment ratio",
-                f"${pm(ratio, 'mean', 'std', scale=1, digits=2)}$",
+                "P11 positive-alignment range",
+                f"${100 * number(iid_e1, 'positive_alignment_fraction_mean'):.1f}$--"
+                f"${100 * number(iid_e5, 'positive_alignment_fraction_mean'):.1f}\\%$",
             ),
             (
-                "finite-trajectory descent frequency",
-                f"${pm(descent, 'mean', 'std', scale=100, digits=2)}\\%$ of audited rounds",
+                "P11 E1 heterogeneity term",
+                f"from ${number(iid_e1, 'heterogeneity_ratio_mean'):.2f}$ to "
+                f"${number(strong_e1, 'heterogeneity_ratio_mean'):.2f}$ at $E=1$",
+            ),
+            (
+                "P11 E5 heterogeneity term",
+                f"from ${number(iid_e5, 'heterogeneity_ratio_mean'):.2f}$ to "
+                f"${number(strong_e5, 'heterogeneity_ratio_mean'):.2f}$ at $E=5$",
+            ),
+            (
+                "P11 IID drift term",
+                f"from ${number(iid_e1, 'local_drift_ratio_mean'):.2f}$ to "
+                f"${number(iid_e5, 'local_drift_ratio_mean'):.2f}$ under IID data",
+            ),
+            (
+                "P11 non-IID drift term",
+                f"from ${number(strong_e1, 'local_drift_ratio_mean'):.2f}$ to "
+                f"${number(strong_e5, 'local_drift_ratio_mean'):.2f}$ under strong non-IID data",
+            ),
+            (
+                "P11 non-IID descent change",
+                f"from ${100 * number(strong_e1, 'objective_decrease_fraction_mean'):.1f}\\%$ at "
+                f"$E=1$ to ${100 * number(strong_e5, 'objective_decrease_fraction_mean'):.1f}\\%$ at $E=5$",
+            ),
+            (
+                "P11 curvature remainder",
+                f"from ${number(strong_e1, 'mean_curvature_remainder_mean'):.4f}$ to "
+                f"${number(strong_e5, 'mean_curvature_remainder_mean'):.4f}$",
+            ),
+            (
+                "P11 positive alignment without descent count",
+                f"${round(31 * 3 * number(strong_e5, 'positive_without_descent_fraction_mean'))}$ "
+                "of the $93$ strong-non-IID, $E=5$ updates",
+            ),
+            (
+                "P11 audited snapshot count",
+                f"the current local-update proxy in any of the ${12 * 31}$ audited snapshots",
             ),
         ]
     )

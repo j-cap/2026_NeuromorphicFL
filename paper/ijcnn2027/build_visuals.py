@@ -1,7 +1,7 @@
 """Generate and validate the frozen IJCNN visual argument.
 
 The two vector figures and compact main-results table are derived only from
-the paper evidence CSVs and the authoritative T4 full-gradient audit.  Run
+the paper evidence CSVs. Run
 with ``--check`` to detect source, selection-rule, or rendered-artifact drift.
 """
 
@@ -25,7 +25,6 @@ REPO = Path(__file__).resolve().parents[2]
 PAPER = REPO / "paper" / "ijcnn2027"
 FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
 CIFAR10 = PAPER / "evidence" / "cifar10_master_results.csv"
-ALIGNMENT = PAPER / "evidence" / "t4_alignment_audit.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -404,32 +403,6 @@ def pm(row: dict[str, str], mean: str, std: str, scale: float, digits: int) -> s
     )
 
 
-def alignment_metrics() -> tuple[float, float, float, float]:
-    rows = read_csv(ALIGNMENT)
-    by_metric = {row["metric"]: row for row in rows}
-    required = {"weighted_alignment_ratio", "objective_decrease_fraction"}
-    if set(by_metric) != required or len(rows) != len(required):
-        raise ValueError("authoritative T4 baseline metrics are missing")
-    for row in rows:
-        counts = (
-            int(row["n_partitions"]),
-            int(row["snapshots_per_partition"]),
-            int(row["total_snapshots"]),
-        )
-        if counts != (3, 31, 93):
-            raise ValueError("T4 alignment-audit sample counts drifted")
-        if not row["source_run"].endswith("/33807650381"):
-            raise ValueError("T4 alignment-audit source run drifted")
-    alignment = by_metric["weighted_alignment_ratio"]
-    descent = by_metric["objective_decrease_fraction"]
-    return (
-        float(alignment["mean"]),
-        float(alignment["std"]),
-        float(descent["mean"]),
-        float(descent["std"]),
-    )
-
-
 def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     dataset_labels = {
         "fmnist_mlp": "Fashion-MNIST MLP",
@@ -474,7 +447,6 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         if index != len(PANELS) - 1:
             lines.append("\\addlinespace[1pt]")
 
-    alignment_mean, alignment_std, descent_mean, descent_std = alignment_metrics()
     lines.extend(
         [
             "\\bottomrule",
@@ -482,13 +454,7 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
             "\\vspace{2pt}",
             "\\parbox{0.99\\textwidth}{\\footnotesize \\emph{Class-wise qualification:} "
             "on CIFAR-10, quality-selected EF-TopK has the highest mean worst-class "
-            "accuracy (26.7$\\pm$0.8\\%), versus 24.6$\\pm$4.6\\% for Event-FedAvg. "
-            "\\emph{Theory-interface audit "
-            "(Fashion-MNIST MLP):} the $q_r$-weighted aggregate-alignment ratio is "
-            f"{alignment_mean:.2f}$\\pm${alignment_std:.2f}, and the objective decreases on "
-            f"{100 * descent_mean:.2f}$\\pm${100 * descent_std:.2f}\\% of 31 independently "
-            "replayed snapshots per partition (93 total). These finite trajectories assess "
-            "the conditional alignment assumption; they do not prove it.}",
+            "accuracy (26.7$\\pm$0.8\\%), versus 24.6$\\pm$4.6\\% for Event-FedAvg.}",
             "\\end{table*}",
             "",
         ]

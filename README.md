@@ -36,11 +36,12 @@ CIFAR-10 compact-CNN campaign also closes with a pass: Event-FedAvg remains on
 the held-out communication--performance frontier. P4 has now extracted the
 compact operator, encoder bounds, conditional optimization result, and
 exact-gradient alignment audit into the manuscript. P5 has now frozen the
-three-element visual argument: method schematic, cross-benchmark frontier, and
-compact headline table. P6--P9 are complete: the submission-candidate sources,
-products, manuscript claims, and central implementation are checksum-frozen and
-rebuild in a clean checkout. The current priority is P10 submission compliance,
-not open-ended mechanism discovery.
+four-element visual argument: method schematic, cross-benchmark frontier,
+compact headline table, and alignment-factorial table. P6--P9 are complete.
+The subsequent P11 campaign crossed IID versus strong non-IID partitions with
+$E=1$ versus $E=5$ and verified the exact pulse decomposition on 372 audited
+snapshots. The immediate scientific priority is extending that frozen design
+to more paired seeds before P10 submission compliance.
 
 ## Publication planning
 
