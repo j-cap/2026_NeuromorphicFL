@@ -40,7 +40,7 @@ jobs:
       matrix:
         regime: [iid, strong]
         local_steps: [1, 5]
-        partition_seed: [2500, 2600, 2700]
+        partition_seed: [2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400]
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'

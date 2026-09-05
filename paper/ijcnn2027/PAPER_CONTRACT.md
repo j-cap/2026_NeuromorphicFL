@@ -34,6 +34,10 @@ software-accounted settings. The three-seed CIFAR-10 result supports transfer
 to a second image dataset and architecture, not broad dataset generalization or
 statistical significance.
 
+The mechanism-level alignment factorial uses ten paired seeds. It supports the
+stability of the measured heterogeneity and local-depth effects at one frozen
+Fashion-MNIST operating point, not generality across tasks or hyperparameters.
+
 ## Contributions
 
 1. **A complete Event-FedAvg communication operator.** Conventional multi-step

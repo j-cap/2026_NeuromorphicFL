@@ -39,9 +39,9 @@ exact-gradient alignment audit into the manuscript. P5 has now frozen the
 four-element visual argument: method schematic, cross-benchmark frontier,
 compact headline table, and alignment-factorial table. P6--P9 are complete.
 The subsequent P11 campaign crossed IID versus strong non-IID partitions with
-$E=1$ versus $E=5$ and verified the exact pulse decomposition on 372 audited
-snapshots. The immediate scientific priority is extending that frozen design
-to more paired seeds before P10 submission compliance.
+$E=1$ versus $E=5$ over ten paired seeds and verified the exact pulse
+decomposition on 1,240 audited snapshots. Its key directional effects hold for
+every seed pair. The current priority is P10 submission compliance.
 
 ## Publication planning
 

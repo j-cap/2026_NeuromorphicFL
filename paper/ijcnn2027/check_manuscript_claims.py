@@ -235,6 +235,13 @@ def main() -> None:
     iid_e5 = p11_select(factorial, "iid", 5)
     strong_e1 = p11_select(factorial, "strong", 1)
     strong_e5 = p11_select(factorial, "strong", 5)
+    strong_e5_snapshots = int(strong_e5["n_seeds"]) * int(
+        strong_e5["snapshots_per_seed"]
+    )
+    total_factorial_snapshots = sum(
+        int(row["n_seeds"]) * int(row["snapshots_per_seed"])
+        for row in factorial
+    )
     claims.extend(
         [
             (
@@ -274,12 +281,14 @@ def main() -> None:
             ),
             (
                 "P11 positive alignment without descent count",
-                f"${round(31 * 3 * number(strong_e5, 'positive_without_descent_fraction_mean'))}$ "
-                "of the $93$ strong-non-IID, $E=5$ updates",
+                f"${round(strong_e5_snapshots * number(strong_e5, 'positive_without_descent_fraction_mean'))}$ "
+                f"of the ${strong_e5_snapshots}$ strong-non-IID, $E=5$ updates",
             ),
             (
                 "P11 audited snapshot count",
-                f"the current local-update proxy in any of the ${12 * 31}$ audited snapshots",
+                "the current local-update proxy in any of the "
+                f"${total_factorial_snapshots:,}$".replace(",", "{,}")
+                + " audited snapshots",
             ),
         ]
     )

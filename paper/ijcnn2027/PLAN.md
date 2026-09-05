@@ -48,12 +48,11 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P9 and the three-seed P11 alignment-factorial campaign are
+**Current status:** P9 and the ten-seed P11 alignment-factorial campaign are
 complete. The central evidence, tables, figures, manuscript claims, and
 implementation are checksum-frozen, and the bounded paper checks regenerate
-the products in a clean checkout. The immediate scientific follow-up is to
-extend the P11 factorial beyond three seeds. P10 submission checks follow once
-that extension is incorporated. P2 remains valid for the 2026-09-04 search
+the products in a clean checkout. P10 submission checks are next. P2 remains
+valid for the 2026-09-04 search
 snapshot, with a mandatory refresh at P10. The author list remains
 intentionally deferred to the project team.
 
@@ -265,21 +264,21 @@ every central result artifact byte-for-byte from the committed source results.
 ### P9A -- Test the alignment mechanism under controlled factors
 
 - [x] Cross IID and strong non-IID partitions with $E=1$ and $E=5$.
-- [x] Reuse the three paired held-out seeds and freeze every other operating
-      parameter.
+- [x] Retain the three original paired seeds, add seven predeclared seed pairs,
+      and freeze every other operating parameter.
 - [x] Evaluate exact client gradients by independent replay at 31 audited
       rounds per run.
 - [x] Verify the exact $P_r-R_r+L_r+B_r$ identity, pulse reconstruction, and
-      descent identity on all 372 snapshots.
+      descent identity on all 1,240 snapshots.
 - [x] Add a compact factorial table and bounded interpretation to the paper.
-- [ ] Extend the same frozen design to more paired seeds before treating the
-      factor contrasts as stable population-level effects.
+- [x] Confirm the directional factor contrasts across all ten paired seeds.
 
-**Current finding:** heterogeneity makes $B_r$ strongly more adverse at both
+**Finding:** heterogeneity makes $B_r$ strongly more adverse at both
 local-update depths. Increasing $E$ makes $L_r$ more favorable under strong
 non-IID data but increases the gap between positive first-order alignment and
 realized one-round descent. The result motivates coupled analysis of the signed
-terms rather than independent worst-case bounds. Full details are in
+terms rather than independent worst-case bounds. All key directions hold for
+all ten seed pairs. Full details are in
 `P11_ALIGNMENT_FACTORIAL.md`.
 
 ### P10 -- Complete submission checks
