@@ -145,7 +145,7 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "3c2d353787184512022514bfe8433d4779a2b8257cf225593c3cfa3e84fe9650"
+      "sha256": "0afb689461851fffdf68375d8db311cc6b20d530aa15439489d5a937ffff412c"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -155,7 +155,47 @@
     {
       "path": "paper/ijcnn2027/IEEE_TEMPLATE.md",
       "role": "template provenance",
-      "sha256": "10874824af2c9cf05d199844b1af78244e32a590570e217b58e70b35c4bfa660"
+      "sha256": "45bfc2d1dc60604f1ff74a5e467fe454f913136915b92486cf092d209c58b585"
+    },
+    {
+      "path": "paper/ijcnn2027/P10_SUBMISSION_COMPLIANCE.md",
+      "role": "submission audit",
+      "sha256": "9bd2b5f2fbe43b4c3450b8d14ad42eb7f2d5dc258e1aef007cd86652b2295d83"
+    },
+    {
+      "path": "paper/ijcnn2027/SUBMISSION_ATTESTATIONS.md",
+      "role": "submission checklist",
+      "sha256": "70acaff899df216e321f512df2282976fe1216e638cb64c774fff2d8d35b4ffc"
+    },
+    {
+      "path": "paper/ijcnn2027/RELATED_WORK.md",
+      "role": "literature audit",
+      "sha256": "c4cbb51a7473a05979df28b04578bb396bb02f16afec8f99f696b29916d1295f"
+    },
+    {
+      "path": "paper/ijcnn2027/PAPER_CONTRACT.md",
+      "role": "paper contract",
+      "sha256": "ac8550212451439c77d54ebeedb8f9710c8201b7fa36d607ca9be7f92a8803f0"
+    },
+    {
+      "path": "paper/ijcnn2027/PLAN.md",
+      "role": "submission plan",
+      "sha256": "5eeab7621ef34f9a600d72a7d774bb50287ac2a1685bf297e6fec11c1065423d"
+    },
+    {
+      "path": "paper/ijcnn2027/check_submission_compliance.py",
+      "role": "submission validation code",
+      "sha256": "90881602f9016ac68d7901b4ca1c0c5b27e34b395b6af23780721f4fbc1c64d7"
+    },
+    {
+      "path": "paper/ijcnn2027/requirements-compliance.txt",
+      "role": "submission validation environment",
+      "sha256": "3ec8922905dc4e3a10c3b46bd7fba023c37ffc309d51c6bed2a13ec3e98177fd"
+    },
+    {
+      "path": ".github/workflows/ijcnn_manuscript_check.yml",
+      "role": "submission validation workflow",
+      "sha256": "a0e25e354f7fcce71253a2dec5d022062f6815d82ca2813fcd73ce145c73ffb2"
     },
     {
       "path": "paper/ijcnn2027/build_evidence.py",
@@ -185,7 +225,7 @@
     {
       "path": "paper/ijcnn2027/reproduce.py",
       "role": "reproduction code",
-      "sha256": "13ecb7bdb9b08f4bcfc5521313155361794ec60a50dfa966bf6d6c2fc6c95e70"
+      "sha256": "cab026b2efbc66c89749e2572f236ef772ed0c90b549af3b18711c9f7234f9a3"
     },
     {
       "path": "paper/ijcnn2027/requirements-evidence.txt",
@@ -195,7 +235,7 @@
     {
       "path": "paper/ijcnn2027/requirements-reproduction.txt",
       "role": "environment",
-      "sha256": "d0190aca4e9fca464baa100d35aa8e5b2d97d3ca78cb4d9ca575432bc7bddb0d"
+      "sha256": "b7005e51cd0a7857a7c78210aa2932b558634634142793619a1933cba82d55d8"
     },
     {
       "path": "experiments/final_baseline_point.py",

@@ -41,7 +41,9 @@ compact headline table, and alignment-factorial table. P6--P9 are complete.
 The subsequent P11 campaign crossed IID versus strong non-IID partitions with
 $E=1$ versus $E=5$ over ten paired seeds and verified the exact pulse
 decomposition on 1,240 audited snapshots. Its key directional effects hold for
-every seed pair. The current priority is P10 submission compliance.
+every seed pair. The repository-verifiable P10 submission checks are complete.
+The remaining gates require the final author instructions, author approval,
+submission-system PDF validation, and tagging the exact submitted commit.
 
 ## Publication planning
 

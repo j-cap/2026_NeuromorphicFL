@@ -1,3 +1,4 @@
 # Exact direct dependencies for rebuilding the frozen paper artifacts.
 matplotlib==3.10.8
+pypdf==6.10.0
 PyYAML==6.0.3

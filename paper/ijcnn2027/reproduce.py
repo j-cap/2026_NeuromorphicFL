@@ -109,6 +109,7 @@ def compile_manuscript() -> None:
     warnings = [marker for marker in forbidden if marker in log]
     if warnings:
         raise AssertionError(f"manuscript log contains forbidden warnings: {warnings}")
+    run(sys.executable, str(PAPER / "check_submission_compliance.py"), cwd=PAPER)
     print(f"compiled manuscript successfully: {pages} pages")
 
 

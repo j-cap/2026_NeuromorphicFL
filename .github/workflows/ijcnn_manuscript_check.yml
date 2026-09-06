@@ -5,6 +5,8 @@ on:
     paths:
       - 'paper/ijcnn2027/main.tex'
       - 'paper/ijcnn2027/references.bib'
+      - 'paper/ijcnn2027/check_submission_compliance.py'
+      - 'paper/ijcnn2027/requirements-compliance.txt'
       - 'paper/ijcnn2027/figures/**'
       - 'paper/ijcnn2027/generated/**'
       - '.github/workflows/ijcnn_manuscript_check.yml'
@@ -24,6 +26,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y latexmk poppler-utils texlive-latex-extra texlive-publishers
+          python -m pip install --disable-pip-version-check -r paper/ijcnn2027/requirements-compliance.txt
       - name: Reject internal drafting language
         run: |
           if grep -En 'P[0-9]|T[1-5]|Q[1-3]|Experiment~?[0-9]|TODO|FIXME|placeholder|next task' paper/ijcnn2027/main.tex; then
@@ -45,6 +48,9 @@ jobs:
             exit 1
           fi
           echo "Compiled manuscript: ${pages} pages."
+      - name: Enforce submission PDF contract
+        working-directory: paper/ijcnn2027
+        run: python check_submission_compliance.py
       - uses: actions/upload-artifact@v4
         with:
           retention-days: 7
