@@ -14,8 +14,11 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 AUTOMATIC = {
     "ijcnn_evidence_check.yml",
     "ijcnn_manuscript_check.yml",
+    "p12_headline_ten_seed.yml",
     "report_compile.yml",
 }
+
+ONE_OFF_CAMPAIGNS = {"p12_headline_ten_seed.yml"}
 
 
 class StrictBaseLoader(yaml.BaseLoader):
@@ -72,7 +75,7 @@ def validate_workflow(path: Path) -> None:
         raise ValueError(f"{path.name}: superseded runs must be cancelled")
 
     jobs = as_mapping(data.get("jobs"), f"{path.name}: jobs")
-    limit = 30 if path.name in AUTOMATIC else 180
+    limit = 30 if path.name in AUTOMATIC and path.name not in ONE_OFF_CAMPAIGNS else 180
     for job_name, job_value in jobs.items():
         job = as_mapping(job_value, f"{path.name}: job {job_name}")
         timeout = int(str(job.get("timeout-minutes", "0")))
@@ -80,7 +83,7 @@ def validate_workflow(path: Path) -> None:
             raise ValueError(
                 f"{path.name}: job {job_name} timeout {timeout} exceeds {limit}"
             )
-        if path.name in AUTOMATIC:
+        if path.name in AUTOMATIC and path.name not in ONE_OFF_CAMPAIGNS:
             strategy = job.get("strategy")
             if isinstance(strategy, dict) and "matrix" in strategy:
                 raise ValueError(f"{path.name}: automatic checks may not use matrices")

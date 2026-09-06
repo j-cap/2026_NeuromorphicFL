@@ -15,6 +15,11 @@ change:
 | IJCNN Manuscript Check | Compile and inspect the conference manuscript | 30 min |
 | Compile LaTeX Report | Compile and inspect the living report | 30 min |
 
+The P12 headline ten-seed campaign is a temporary, one-off exception. Its
+pull-request trigger is restricted to the immutable protocol, runner, workflow,
+and explicit run marker. It executes the user-authorized extension once. The
+trigger and marker are removed when the resulting evidence is frozen.
+
 They do not also run on push. This avoids duplicate push and pull-request jobs.
 Each workflow has a concurrency group that cancels a superseded run for the
 same pull request or branch.

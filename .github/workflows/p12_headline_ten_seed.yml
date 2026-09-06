@@ -1,0 +1,178 @@
+name: P12 Headline Ten-Seed Extension
+
+on:
+  pull_request:
+    paths:
+      - 'paper/ijcnn2027/P12_RUN_REQUEST.md'
+      - 'paper/ijcnn2027/P12_HEADLINE_TEN_SEED_PROTOCOL.md'
+      - 'experiments/p12_headline_ten_seed.py'
+      - '.github/workflows/p12_headline_ten_seed.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  BLIS_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+  PYTHONHASHSEED: '0'
+
+jobs:
+  protocol:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned numerical dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - name: Validate the frozen seed and configuration matrix
+        run: PYTHONPATH=src python experiments/p12_headline_ten_seed.py validate-protocol
+
+  prepare-fmnist:
+    needs: protocol
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned numerical dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/cache@v4
+        with:
+          path: data/fashion-mnist
+          key: p12-fmnist-8d4fb7e6-25c81989-bef4ecab-bb300cfd
+      - name: Prepare checksum-verified Fashion-MNIST
+        run: PYTHONPATH=src python experiments/p12_headline_ten_seed.py prepare-data --dataset fmnist
+
+  prepare-cifar10:
+    needs: protocol
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned numerical dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/cache@v4
+        with:
+          path: data/cifar-10
+          key: p12-cifar10-c58f30108f718f92721af3b95e74349a
+      - name: Prepare checksum-verified CIFAR-10
+        run: PYTHONPATH=src python experiments/p12_headline_ten_seed.py prepare-data --dataset cifar10
+
+  fmnist:
+    needs: prepare-fmnist
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        point:
+          - fmnist_mlp_event
+          - fmnist_mlp_ef_quality
+          - fmnist_mlp_strom_near
+          - fmnist_cnn_event
+          - fmnist_cnn_strom_quality
+          - fmnist_cnn_strom_near
+        seed_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned numerical dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/fashion-mnist
+          key: p12-fmnist-8d4fb7e6-25c81989-bef4ecab-bb300cfd
+          fail-on-cache-miss: true
+      - name: Run frozen Fashion-MNIST point
+        run: >-
+          PYTHONPATH=src python experiments/p12_headline_ten_seed.py point
+          --point-id "${{ matrix.point }}"
+          --seed-index "${{ matrix.seed_index }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p12-${{ matrix.point }}-s${{ matrix.seed_index }}
+          path: experiments/results/p12_headline_ten_seed/*.csv
+
+  cifar10:
+    needs: prepare-cifar10
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        point:
+          - cifar_event
+          - cifar_strom_quality
+          - cifar_strom_near
+          - cifar_ef_quality
+          - cifar_dense_gain2
+        seed_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned numerical dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/cifar-10
+          key: p12-cifar10-c58f30108f718f92721af3b95e74349a
+          fail-on-cache-miss: true
+      - name: Run frozen CIFAR-10 point
+        run: >-
+          PYTHONPATH=src python experiments/p12_headline_ten_seed.py point
+          --point-id "${{ matrix.point }}"
+          --seed-index "${{ matrix.seed_index }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p12-${{ matrix.point }}-s${{ matrix.seed_index }}
+          path: experiments/results/p12_headline_ten_seed/*.csv
+
+  aggregate:
+    needs: [fmnist, cifar10]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned numerical dependencies
+        run: python -m pip install numpy==2.4.6 pandas==3.0.5
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p12-*
+          merge-multiple: true
+          path: artifacts/p12-points
+      - name: Aggregate ten-seed estimates and paired intervals
+        run: >-
+          PYTHONPATH=src python experiments/p12_headline_ten_seed.py aggregate
+          --input-dir artifacts/p12-points
+      - uses: actions/upload-artifact@v4
+        with:
+          retention-days: 7
+          name: p12-headline-ten-seed-results
+          path: experiments/results/p12_headline_ten_seed/*
