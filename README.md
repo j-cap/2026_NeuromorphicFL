@@ -42,6 +42,10 @@ The subsequent P11 campaign crossed IID versus strong non-IID partitions with
 $E=1$ versus $E=5$ over ten paired seeds and verified the exact pulse
 decomposition on 1,240 audited snapshots. Its key directional effects hold for
 every seed pair. The repository-verifiable P10 submission checks are complete.
+The P12 headline extension has also rerun the eleven main-table and supporting
+points over ten paired seeds. All seven newly added pairs preserve the reported
+directions; the manuscript table and frontier now use the internally consistent
+ten-seed campaign.
 The remaining gates require the final author instructions, author approval,
 submission-system PDF validation, and tagging the exact submitted commit.
 

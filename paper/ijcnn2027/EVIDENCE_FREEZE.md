@@ -1,4 +1,20 @@
-# P1 and P3 evidence freeze
+# P1, P3, and P12 evidence freeze
+
+## Current headline authority: P12
+
+P12 supersedes the historical three-seed aggregates below for the manuscript's
+headline table and communication frontier. It reruns eleven frozen points in a
+single pinned environment over ten paired seeds, including seven predeclared
+new pairs. The authoritative source is
+`experiments/results/p12_headline_ten_seed/`; the checked manuscript-facing
+copies are `evidence/p12_headline_ten_seed.csv` and
+`evidence/p12_paired_differences.csv`. Protocol, estimates, paired intervals,
+and the numeric reproduction boundary are recorded in
+`P12_HEADLINE_TEN_SEED_PROTOCOL.md` and
+`P12_HEADLINE_TEN_SEED_RESULTS.md`.
+
+The P1/P3 sections below remain the historical selection and audit trail. Their
+three-seed values must not be substituted into the current main table.
 
 This file records the Fashion-MNIST evidence that may be used in the IJCNN
 manuscript. The freeze is gate-based and has no internal calendar dates.
@@ -85,7 +101,7 @@ synchronization, and request policy is applied to every method. The generated
 evidence build additionally rejects any row that does not satisfy
 `uplink < broadcast total < unicast total`.
 
-## Three-seed decision
+## Historical three-seed decision (superseded for headline reporting)
 
 The existing three held-out seeds are retained for the frozen Fashion-MNIST
 campaign. They are sufficient for the paper's bounded claim about these tested

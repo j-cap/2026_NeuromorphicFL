@@ -24,7 +24,7 @@ same pull request or branch.
 Every experiment, tuning, held-out evaluation, and mechanism-audit workflow is
 manual-only through `workflow_dispatch`. This includes the historical Experiment
 14/15 and Q1--Q3 workflows, the final-baseline campaigns, and P3, P8, T3, T4,
-and the P11 alignment-factorial campaign.
+the P11 alignment-factorial campaign, and the P12 headline ten-seed extension.
 
 To run one intentionally:
 
