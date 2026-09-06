@@ -48,8 +48,9 @@ residual-pulse and conventional compression baselines.
 
 ## Submission pipeline
 
-**Current status:** P9 and the ten-seed P11 alignment-factorial campaign are
-complete. The repository-verifiable P10 checks are also complete: the current
+**Current status:** P9, the ten-seed P11 alignment-factorial campaign, and the
+P12 ten-seed headline extension are complete. The repository-verifiable P10
+checks are also complete: the current
 six-page anonymous PDF, font embedding, PDF structure, reference style,
 AI-use disclosure, repository handling, and refreshed novelty boundary are
 checked automatically. The detailed IJCNN 2027 author instructions are not yet
@@ -302,6 +303,22 @@ all ten seed pairs. Full details are in
 `P10_SUBMISSION_COMPLIANCE.md`: author attestations, the final detailed-policy
 recheck, submission-system/PDF validation, and tagging the exact submitted
 commit.
+
+### P12 -- Extend headline comparisons to ten paired seeds
+
+- [x] Freeze the eleven Table-I and supporting qualification points before
+      execution.
+- [x] Rerun the original three pairs and seven predeclared new pairs in one
+      pinned environment.
+- [x] Retain all 110 seed-level records and compute all-ten and new-seven
+      paired summaries.
+- [x] Regenerate Table I, the communication frontier, and every direct
+      manuscript claim from the checked P12 evidence.
+- [x] Preserve the CNN trade-off and unresolved CIFAR-10 worst-class boundary.
+
+**Gate:** closed by `P12_HEADLINE_TEN_SEED_RESULTS.md`. All seven newly added
+pairs preserve the headline directions; the manuscript reports ten-seed
+mean-plus-standard-deviation estimates and new-seven paired intervals.
 
 ## Scope-control rules
 

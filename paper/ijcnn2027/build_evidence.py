@@ -12,7 +12,9 @@ import argparse
 import csv
 import io
 import json
+import math
 from pathlib import Path
+import statistics
 
 
 REPO = Path(__file__).resolve().parents[2]
@@ -39,6 +41,11 @@ P8_RUNS = P8_ROOT / "heldout_runs.csv"
 P8_SOURCE = P8_ROOT / "heldout_summary.csv"
 P8_SELECTION = P8_ROOT / "selection.json"
 P8_DEVELOPMENT = P8_ROOT / "development_summary.csv"
+P12_ROOT = REPO / "experiments" / "results" / "p12_headline_ten_seed"
+P12_RUNS = P12_ROOT / "heldout_runs.csv"
+P12_SOURCE = P12_ROOT / "summary.csv"
+P12_PAIRED_SOURCE = P12_ROOT / "paired_differences.csv"
+P12_PROTOCOL = P12_ROOT / "protocol.json"
 
 MASTER = PAPER / "evidence" / "fmnist_master_results.csv"
 QUALITY_TEX = PAPER / "generated" / "fmnist_quality_table.tex"
@@ -46,6 +53,8 @@ TRAFFIC_TEX = PAPER / "generated" / "fmnist_traffic_table.tex"
 CIFAR_MASTER = PAPER / "evidence" / "cifar10_master_results.csv"
 CIFAR_TEX = PAPER / "generated" / "cifar10_table.tex"
 P8_EVIDENCE = PAPER / "evidence" / "p8_targeted_revision.csv"
+P12_EVIDENCE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
+P12_PAIRED_EVIDENCE = PAPER / "evidence" / "p12_paired_differences.csv"
 
 PARTITION_SEEDS = "2500;2600;2700"
 TRAIN_SEEDS = "72500;72600;72700"
@@ -73,6 +82,32 @@ METRIC_COLUMNS = [
     "unicast_total_Mbit_mean",
     "unicast_total_Mbit_std",
 ]
+
+P12_POINTS = {
+    "fmnist_mlp_event": ("fmnist_mlp", "event", "event", "fixed"),
+    "fmnist_mlp_ef_quality": ("fmnist_mlp", "quality", "ef_topk", "0.05"),
+    "fmnist_mlp_strom_near": ("fmnist_mlp", "traffic", "strom", "0.02"),
+    "fmnist_cnn_event": ("fmnist_cnn", "event", "event", "fixed"),
+    "fmnist_cnn_strom_quality": ("fmnist_cnn", "quality", "strom", "0.005"),
+    "fmnist_cnn_strom_near": ("fmnist_cnn", "traffic", "strom", "0.02"),
+    "cifar_event": ("cifar_cnn", "event", "event", "event_t025_q005"),
+    "cifar_strom_quality": ("cifar_cnn", "quality", "strom", "strom_t0025"),
+    "cifar_strom_near": ("cifar_cnn", "traffic", "strom", "strom_t01"),
+    "cifar_ef_quality": ("cifar_cnn", "qualification", "ef_topk", "ef_k05"),
+    "cifar_dense_gain2": (
+        "cifar_cnn", "dense_reference", "dense", "dense_gain_2p0"
+    ),
+}
+P12_METRICS = (
+    "final_train_objective",
+    "final_test_ce",
+    "final_test_accuracy",
+    "final_worst_class_accuracy",
+    "uplink_packetized_bits",
+    "broadcast_total_bits",
+    "unicast_hybrid_total_bits",
+    "coordinate_events",
+)
 
 
 def read_rows(path: Path) -> list[dict[str, str]]:
@@ -437,6 +472,112 @@ def validate_p8(rows: list[dict[str, str]]) -> None:
             raise ValueError(f"P8 training-seed drift for {config_name}")
 
 
+def read_plain_rows(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as stream:
+        result = list(csv.DictReader(stream))
+    if not result:
+        raise ValueError(f"empty P12 evidence source: {path}")
+    return result
+
+
+def validate_p12() -> None:
+    runs = read_plain_rows(P12_RUNS)
+    summary = read_plain_rows(P12_SOURCE)
+    paired = read_plain_rows(P12_PAIRED_SOURCE)
+    protocol = json.loads(P12_PROTOCOL.read_text(encoding="utf-8"))
+
+    expected_pairs = {
+        (point_id, seed_index)
+        for point_id in P12_POINTS
+        for seed_index in range(10)
+    }
+    observed_pairs = {
+        (row["point_id"], int(row["seed_index"])) for row in runs
+    }
+    if len(runs) != 110 or observed_pairs != expected_pairs:
+        raise ValueError("P12 runs do not contain the frozen 110-run design")
+
+    grouped: dict[str, list[dict[str, str]]] = {point_id: [] for point_id in P12_POINTS}
+    for row in runs:
+        point_id = row["point_id"]
+        benchmark, role, method, configuration = P12_POINTS[point_id]
+        if (
+            row["benchmark"], row["role"], row["method"], row["configuration"]
+        ) != (benchmark, role, method, configuration):
+            raise ValueError(f"P12 point configuration drift: {point_id}")
+        seed_index = int(row["seed_index"])
+        if benchmark.startswith("fmnist_"):
+            partition_seed = 2500 + 100 * seed_index
+            training_seed = 70000 + partition_seed
+        else:
+            partition_seed = 3500 + 100 * seed_index
+            training_seed = 80000 + partition_seed
+        if (
+            int(row["partition_seed"]), int(row["train_seed"])
+        ) != (partition_seed, training_seed):
+            raise ValueError(f"P12 seed mapping drift: {point_id}/s{seed_index}")
+        if row["seed_subset"] != ("original" if seed_index < 3 else "extension"):
+            raise ValueError(f"P12 seed-subset drift: {point_id}/s{seed_index}")
+        if not (
+            float(row["uplink_packetized_bits"])
+            < float(row["broadcast_total_bits"])
+            < float(row["unicast_hybrid_total_bits"])
+        ):
+            raise ValueError(f"P12 communication ordering failed: {point_id}/s{seed_index}")
+        grouped[point_id].append(row)
+
+    indexed_summary = {row["point_id"]: row for row in summary}
+    if len(summary) != 11 or set(indexed_summary) != set(P12_POINTS):
+        raise ValueError("P12 summary does not contain eleven frozen points")
+    for point_id, point_runs in grouped.items():
+        row = indexed_summary[point_id]
+        if int(row["n_seeds"]) != 10:
+            raise ValueError(f"P12 summary seed count drift: {point_id}")
+        for metric in P12_METRICS:
+            values = [float(item[metric]) for item in point_runs]
+            expected_mean = statistics.fmean(values)
+            expected_std = statistics.stdev(values)
+            if not math.isclose(
+                float(row[f"{metric}_mean"]), expected_mean, rel_tol=5e-9, abs_tol=5e-9
+            ) or not math.isclose(
+                float(row[f"{metric}_std"]), expected_std, rel_tol=5e-9, abs_tol=5e-9
+            ):
+                raise ValueError(f"P12 aggregate drift: {point_id}/{metric}")
+
+    expected_comparisons = {
+        "fmnist_mlp_event_minus_quality_accuracy",
+        "fmnist_mlp_event_minus_near_accuracy",
+        "fmnist_cnn_event_minus_quality_accuracy",
+        "fmnist_cnn_event_minus_near_accuracy",
+        "cifar_event_minus_quality_accuracy",
+        "cifar_event_minus_near_accuracy",
+        "cifar_event_minus_dense_accuracy",
+        "cifar_event_minus_ef_worst_class",
+    }
+    if len(paired) != 16 or {
+        (row["comparison_id"], row["subset"]) for row in paired
+    } != {
+        (comparison, subset)
+        for comparison in expected_comparisons
+        for subset in ("all_ten", "new_seven")
+    }:
+        raise ValueError("P12 paired analysis shape drift")
+    if any(
+        int(row["n"]) != (10 if row["subset"] == "all_ten" else 7)
+        for row in paired
+    ):
+        raise ValueError("P12 paired analysis seed count drift")
+
+    if (
+        protocol.get("fmnist_partition_seeds")
+        != list(range(2500, 3500, 100))
+        or protocol.get("cifar_partition_seeds")
+        != list(range(3500, 4500, 100))
+        or len(protocol.get("points", [])) != 11
+    ):
+        raise ValueError("P12 protocol manifest drift")
+
+
 def merge_tuned_dense(
     rows: list[dict[str, str]], p8_rows: list[dict[str, str]]
 ) -> list[dict[str, str]]:
@@ -586,12 +727,15 @@ def main() -> None:
     validate_cifar(cifar)
     p8 = read_p8_rows(P8_SOURCE)
     validate_p8(p8)
+    validate_p12()
     cifar_with_tuned_dense = merge_tuned_dense(cifar, p8)
     expected.update(
         {
             CIFAR_MASTER: cifar_master_csv(cifar_with_tuned_dense),
             CIFAR_TEX: cifar_latex_table(cifar_with_tuned_dense),
             P8_EVIDENCE: P8_SOURCE.read_text(encoding="utf-8"),
+            P12_EVIDENCE: P12_SOURCE.read_text(encoding="utf-8"),
+            P12_PAIRED_EVIDENCE: P12_PAIRED_SOURCE.read_text(encoding="utf-8"),
         }
     )
 

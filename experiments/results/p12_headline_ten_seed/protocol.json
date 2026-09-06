@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "purpose": "P12 ten-seed extension of frozen headline operating points",
+  "original_seed_indices": [
+    0,
+    1,
+    2
+  ],
+  "extension_seed_indices": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "fmnist_partition_seeds": [
+    2500,
+    2600,
+    2700,
+    2800,
+    2900,
+    3000,
+    3100,
+    3200,
+    3300,
+    3400
+  ],
+  "fmnist_training_seeds": [
+    72500,
+    72600,
+    72700,
+    72800,
+    72900,
+    73000,
+    73100,
+    73200,
+    73300,
+    73400
+  ],
+  "cifar_partition_seeds": [
+    3500,
+    3600,
+    3700,
+    3800,
+    3900,
+    4000,
+    4100,
+    4200,
+    4300,
+    4400
+  ],
+  "cifar_training_seeds": [
+    83500,
+    83600,
+    83700,
+    83800,
+    83900,
+    84000,
+    84100,
+    84200,
+    84300,
+    84400
+  ],
+  "points": [
+    {
+      "point_id": "fmnist_mlp_event",
+      "benchmark": "fmnist_mlp",
+      "role": "event",
+      "method": "event",
+      "configuration": "fixed"
+    },
+    {
+      "point_id": "fmnist_mlp_ef_quality",
+      "benchmark": "fmnist_mlp",
+      "role": "quality",
+      "method": "ef_topk",
+      "configuration": "0.05"
+    },
+    {
+      "point_id": "fmnist_mlp_strom_near",
+      "benchmark": "fmnist_mlp",
+      "role": "traffic",
+      "method": "strom",
+      "configuration": "0.02"
+    },
+    {
+      "point_id": "fmnist_cnn_event",
+      "benchmark": "fmnist_cnn",
+      "role": "event",
+      "method": "event",
+      "configuration": "fixed"
+    },
+    {
+      "point_id": "fmnist_cnn_strom_quality",
+      "benchmark": "fmnist_cnn",
+      "role": "quality",
+      "method": "strom",
+      "configuration": "0.005"
+    },
+    {
+      "point_id": "fmnist_cnn_strom_near",
+      "benchmark": "fmnist_cnn",
+      "role": "traffic",
+      "method": "strom",
+      "configuration": "0.02"
+    },
+    {
+      "point_id": "cifar_event",
+      "benchmark": "cifar_cnn",
+      "role": "event",
+      "method": "event",
+      "configuration": "event_t025_q005"
+    },
+    {
+      "point_id": "cifar_strom_quality",
+      "benchmark": "cifar_cnn",
+      "role": "quality",
+      "method": "strom",
+      "configuration": "strom_t0025"
+    },
+    {
+      "point_id": "cifar_strom_near",
+      "benchmark": "cifar_cnn",
+      "role": "traffic",
+      "method": "strom",
+      "configuration": "strom_t01"
+    },
+    {
+      "point_id": "cifar_ef_quality",
+      "benchmark": "cifar_cnn",
+      "role": "qualification",
+      "method": "ef_topk",
+      "configuration": "ef_k05"
+    },
+    {
+      "point_id": "cifar_dense_gain2",
+      "benchmark": "cifar_cnn",
+      "role": "dense_reference",
+      "method": "dense",
+      "configuration": "dense_gain_2p0"
+    }
+  ],
+  "comparisons": [
+    {
+      "comparison_id": "fmnist_mlp_event_minus_quality_accuracy",
+      "event_point": "fmnist_mlp_event",
+      "comparator_point": "fmnist_mlp_ef_quality",
+      "metric": "accuracy"
+    },
+    {
+      "comparison_id": "fmnist_mlp_event_minus_near_accuracy",
+      "event_point": "fmnist_mlp_event",
+      "comparator_point": "fmnist_mlp_strom_near",
+      "metric": "accuracy"
+    },
+    {
+      "comparison_id": "fmnist_cnn_event_minus_quality_accuracy",
+      "event_point": "fmnist_cnn_event",
+      "comparator_point": "fmnist_cnn_strom_quality",
+      "metric": "accuracy"
+    },
+    {
+      "comparison_id": "fmnist_cnn_event_minus_near_accuracy",
+      "event_point": "fmnist_cnn_event",
+      "comparator_point": "fmnist_cnn_strom_near",
+      "metric": "accuracy"
+    },
+    {
+      "comparison_id": "cifar_event_minus_quality_accuracy",
+      "event_point": "cifar_event",
+      "comparator_point": "cifar_strom_quality",
+      "metric": "accuracy"
+    },
+    {
+      "comparison_id": "cifar_event_minus_near_accuracy",
+      "event_point": "cifar_event",
+      "comparator_point": "cifar_strom_near",
+      "metric": "accuracy"
+    },
+    {
+      "comparison_id": "cifar_event_minus_dense_accuracy",
+      "event_point": "cifar_event",
+      "comparator_point": "cifar_dense_gain2",
+      "metric": "accuracy"
+    },
+    {
+      "comparison_id": "cifar_event_minus_ef_worst_class",
+      "event_point": "cifar_event",
+      "comparator_point": "cifar_ef_quality",
+      "metric": "worst_class_accuracy"
+    }
+  ],
+  "reporting": {
+    "table": "mean plus sample standard deviation over all ten paired seeds",
+    "paired_uncertainty": "two-sided 95% paired t interval",
+    "confirmatory_subset": "new_seven",
+    "selection": "all methods and hyperparameters frozen before extension seeds"
+  }
+}

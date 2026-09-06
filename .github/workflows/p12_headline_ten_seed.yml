@@ -1,12 +1,6 @@
 name: P12 Headline Ten-Seed Extension
 
 on:
-  pull_request:
-    paths:
-      - 'paper/ijcnn2027/P12_RUN_REQUEST.md'
-      - 'paper/ijcnn2027/P12_HEADLINE_TEN_SEED_PROTOCOL.md'
-      - 'experiments/p12_headline_ten_seed.py'
-      - '.github/workflows/p12_headline_ten_seed.yml'
   workflow_dispatch:
 
 concurrency:

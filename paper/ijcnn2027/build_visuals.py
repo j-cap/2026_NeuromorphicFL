@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import csv
 import io
-import math
 from pathlib import Path
 
 import matplotlib
@@ -23,8 +22,7 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 REPO = Path(__file__).resolve().parents[2]
 PAPER = REPO / "paper" / "ijcnn2027"
-FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
-CIFAR10 = PAPER / "evidence" / "cifar10_master_results.csv"
+HEADLINE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -53,7 +51,7 @@ METHODS = {
 PANELS = [
     ("fmnist_mlp", "Fashion-MNIST\nMLP", "mlp", (78.0, 84.0)),
     ("fmnist_cnn", "Fashion-MNIST\nCNN", "cnn", (74.0, 84.0)),
-    ("cifar10_cnn", "CIFAR-10\ncompact CNN", "cifar_cnn", (32.0, 50.5)),
+    ("cifar_cnn", "CIFAR-10\ncompact CNN", "cifar_cnn", (32.0, 50.5)),
 ]
 
 
@@ -66,24 +64,39 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 
 def benchmark_rows() -> dict[str, list[dict[str, str]]]:
-    rows = read_csv(FMNIST) + read_csv(CIFAR10)
+    source = read_csv(HEADLINE)
     required = {
-        "comparison",
-        "architecture",
+        "point_id",
+        "benchmark",
+        "role",
         "method",
         "final_test_accuracy_mean",
         "final_test_accuracy_std",
-        "unicast_total_Mbit_mean",
-        "unicast_total_Mbit_std",
+        "unicast_hybrid_total_bits_mean",
+        "unicast_hybrid_total_bits_std",
     }
-    if required.difference(rows[0]):
-        raise ValueError("paper evidence lacks columns required by P5 visuals")
+    if required.difference(source[0]):
+        raise ValueError("P12 evidence lacks columns required by the visuals")
 
     grouped: dict[str, list[dict[str, str]]] = {}
-    for key, _title, architecture, _ylim in PANELS:
-        selected = [row for row in rows if row["architecture"] == architecture]
-        if len(selected) != 8:
-            raise ValueError(f"{key} does not contain the frozen eight visual rows")
+    for key, _title, _architecture, _ylim in PANELS:
+        selected = []
+        for row in source:
+            if row["benchmark"] != key or row["role"] not in {
+                "event", "quality", "traffic"
+            }:
+                continue
+            converted = dict(row)
+            converted["comparison"] = row["role"]
+            converted["unicast_total_Mbit_mean"] = str(
+                float(row["unicast_hybrid_total_bits_mean"]) / 1e6
+            )
+            converted["unicast_total_Mbit_std"] = str(
+                float(row["unicast_hybrid_total_bits_std"]) / 1e6
+            )
+            selected.append(converted)
+        if len(selected) != 3:
+            raise ValueError(f"{key} does not contain the three frozen P12 points")
         grouped[key] = selected
     return grouped
 
@@ -92,27 +105,10 @@ def value(row: dict[str, str], field: str, scale: float = 1.0) -> float:
     return scale * float(row[field])
 
 
-def unique_points(rows: list[dict[str, str]]) -> list[dict[str, str]]:
-    """Drop the duplicated Event-FedAvg row shared by both selection views."""
-
-    points: list[dict[str, str]] = []
-    seen: set[tuple[str, float, float]] = set()
-    for row in rows:
-        key = (
-            row["method"],
-            value(row, "unicast_total_Mbit_mean"),
-            value(row, "final_test_accuracy_mean"),
-        )
-        if key not in seen:
-            points.append(row)
-            seen.add(key)
-    return points
-
-
 def nondominated(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     """Return points not beaten by lower/equal traffic and higher/equal accuracy."""
 
-    points = unique_points(rows)
+    points = rows
     frontier = []
     for candidate in points:
         cx = value(candidate, "unicast_total_Mbit_mean")
@@ -137,12 +133,11 @@ def validate_visual_contract(grouped: dict[str, list[dict[str, str]]]) -> None:
         raise ValueError("method markers must remain distinct for grayscale output")
 
     for key, rows in grouped.items():
+        quality_method = "ef_topk" if key == "fmnist_mlp" else "strom"
         expected = {
-            ("quality-selected", method)
-            for method in ("event", "strom", "ef_topk", "sign_ef", "dense")
-        } | {
-            ("traffic-matched", method)
-            for method in ("event", "strom", "ef_topk")
+            ("event", "event"),
+            ("quality", quality_method),
+            ("traffic", "strom"),
         }
         observed = {(row["comparison"], row["method"]) for row in rows}
         if observed != expected:
@@ -298,11 +293,8 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         )
 
         for row in rows:
-            # Event is identical in both selection views and is drawn once.
-            if row["method"] == "event" and row["comparison"] == "traffic-matched":
-                continue
             style = METHODS[row["method"]]
-            quality = row["comparison"] == "quality-selected"
+            quality = row["comparison"] != "traffic"
             face = style["color"] if quality else "white"
             size = 7.8 if row["method"] == "event" else 5.5
             ax.errorbar(
@@ -331,6 +323,7 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         ax.set_axisbelow(True)
     axes[0].set_ylabel("Test accuracy [%]")
 
+    displayed_methods = ("event", "strom", "ef_topk")
     method_handles = [
         Line2D(
             [0],
@@ -343,13 +336,14 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
             markeredgewidth=0.65,
             label=style["label"],
         )
-        for method, style in METHODS.items()
+        for method in displayed_methods
+        for style in (METHODS[method],)
     ]
     selection_handles = [
         Line2D(
             [0], [0], marker="o", linestyle="none", markersize=5.0,
             markerfacecolor="#737373", markeredgecolor="#111111",
-            label="quality-selected",
+            label="event/frozen quality",
         ),
         Line2D(
             [0], [0], marker="o", linestyle="none", markersize=5.0,
@@ -373,26 +367,8 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
 def selected_rows(
     rows: list[dict[str, str]], comparison: str
 ) -> tuple[dict[str, str], dict[str, str]]:
-    event = next(
-        row
-        for row in rows
-        if row["comparison"] == "quality-selected" and row["method"] == "event"
-    )
-    controls = [
-        row
-        for row in rows
-        if row["comparison"] == comparison and row["method"] != "event"
-    ]
-    if comparison == "quality-selected":
-        selected = max(controls, key=lambda row: value(row, "final_test_accuracy_mean"))
-    elif comparison == "traffic-matched":
-        event_traffic = value(event, "unicast_total_Mbit_mean")
-        selected = min(
-            controls,
-            key=lambda row: abs(math.log(value(row, "unicast_total_Mbit_mean") / event_traffic)),
-        )
-    else:
-        raise ValueError(comparison)
+    event = next(row for row in rows if row["comparison"] == "event")
+    selected = next(row for row in rows if row["comparison"] == comparison)
     return event, selected
 
 
@@ -407,18 +383,32 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     dataset_labels = {
         "fmnist_mlp": "Fashion-MNIST MLP",
         "fmnist_cnn": "Fashion-MNIST CNN",
-        "cifar10_cnn": "CIFAR-10 CNN",
+        "cifar_cnn": "CIFAR-10 CNN",
     }
+    cnn_event, cnn_quality = selected_rows(grouped["fmnist_cnn"], "quality")
+    cnn_gap = 100.0 * (
+        value(cnn_quality, "final_test_accuracy_mean")
+        - value(cnn_event, "final_test_accuracy_mean")
+    )
+    cnn_ratio = value(cnn_quality, "unicast_total_Mbit_mean") / value(
+        cnn_event, "unicast_total_Mbit_mean"
+    )
+    cifar_ef = next(
+        row for row in read_csv(HEADLINE) if row["point_id"] == "cifar_ef_quality"
+    )
+    cifar_event = next(
+        row for row in read_csv(HEADLINE) if row["point_id"] == "cifar_event"
+    )
     lines = [
         "% Generated by paper/ijcnn2027/build_visuals.py; do not edit by hand.",
         "\\begin{table*}[t]",
         "\\centering",
         "\\caption{Headline held-out comparisons under conservative bidirectional "
         "unicast accounting. Event-FedAvg is nondominated in all three settings. "
-        "It leads the strongest quality-selected baseline on Fashion-MNIST MLP and "
-        "CIFAR-10. On Fashion-MNIST CNN, Strom gains 0.90 accuracy points but uses "
-        "4.9$\\times$ more traffic. Values are mean $\\pm$ sample standard deviation "
-        "over three independently seeded data realizations.}",
+        "It leads the frozen quality baseline on Fashion-MNIST MLP and CIFAR-10. "
+        f"On Fashion-MNIST CNN, Strom gains {cnn_gap:.2f} accuracy points but uses "
+        f"{cnn_ratio:.1f}$\\times$ more traffic. Values are mean $\\pm$ sample "
+        "standard deviation over ten paired data and training seeds.}",
         "\\label{tab:main-results}",
         "\\footnotesize",
         "\\setlength{\\tabcolsep}{4pt}",
@@ -429,11 +419,11 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     ]
     for index, (key, _title, _architecture, _ylim) in enumerate(PANELS):
         rows = grouped[key]
-        event, quality = selected_rows(rows, "quality-selected")
-        _event, traffic = selected_rows(rows, "traffic-matched")
+        event, quality = selected_rows(rows, "quality")
+        _event, traffic = selected_rows(rows, "traffic")
         entries = [
             ("Event operating point", event),
-            ("Best-quality baseline", quality),
+            ("Frozen quality baseline", quality),
             ("Nearest-traffic baseline", traffic),
         ]
         for row_index, (selection, row) in enumerate(entries):
@@ -458,8 +448,13 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
             "EF-TopK with memory~\\cite{stich2018memory,richtarik2021ef21}, and "
             "Strom threshold pulses~\\cite{strom2015distributed}. "
             "\\emph{Class-wise qualification:} "
-            "on CIFAR-10, quality-selected EF-TopK has the highest mean worst-class "
-            "accuracy (26.7$\\pm$0.8\\%), versus 24.6$\\pm$4.6\\% for Event-FedAvg.}",
+            "on CIFAR-10, Event-FedAvg reaches "
+            f"{100 * float(cifar_event['final_worst_class_accuracy_mean']):.1f}"
+            f"$\\pm${100 * float(cifar_event['final_worst_class_accuracy_std']):.1f}\\% "
+            "mean worst-class accuracy, versus "
+            f"{100 * float(cifar_ef['final_worst_class_accuracy_mean']):.1f}"
+            f"$\\pm${100 * float(cifar_ef['final_worst_class_accuracy_std']):.1f}\\% "
+            "for the frozen EF-TopK quality point.}",
             "\\end{table*}",
             "",
         ]

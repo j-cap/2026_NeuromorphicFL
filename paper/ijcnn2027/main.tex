@@ -40,9 +40,10 @@ heterogeneity and local-update depth affect finite-trajectory alignment. Under
 identical local training conditions across methods, development-only tuning,
 and conservative
 uplink-plus-downlink accounting, Event-FedAvg is nondominated on held-out
-Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN experiments. On CIFAR-10 it
-reaches $48.06\pm1.12\%$ accuracy at $201.5\pm4.3$ Mbit, compared with
-$44.13\pm1.12\%$ at $1586.6$ Mbit for development-tuned dense FedAvg. These
+Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN experiments. Across ten paired
+seeds on CIFAR-10, it reaches $48.13\pm0.89\%$ accuracy at
+$201.0\pm4.0$ Mbit, compared with $43.88\pm1.38\%$ at $1586.6$ Mbit for
+development-tuned dense FedAvg. These
 results establish a
 communication--performance operating point in the evaluated synchronous
 setting, not unconditional convergence or hardware-energy savings.
@@ -91,10 +92,10 @@ decompose its alignment term into measurable mechanisms. Finally, we compare
 Event-FedAvg with dense FedAvg, Sign-EF, EF-TopK, and Strom pulses under
 identical local training and total bidirectional traffic. Event-FedAvg is
 nondominated in three tested settings. On CIFAR-10, it uses $7.9\times$ less
-traffic than dense FedAvg while improving mean accuracy by $3.93$ percentage
+traffic than dense FedAvg while improving mean accuracy by $4.25$ percentage
 points.
-Headline comparisons use three held-out seeds and the alignment factorial uses
-ten. All runs are synchronous with full participation.
+Headline comparisons and the alignment factorial each use ten paired seeds.
+All runs are synchronous with full participation.
 
 \section{Related Work and Novelty Boundary}
 \label{sec:related-work}
@@ -417,10 +418,10 @@ explain observed heterogeneity and local-depth effects.
  CNN under conservative bidirectional unicast accounting. It combines lower
  traffic with higher mean accuracy than the strongest quality-selected baseline
  on the MLP and CIFAR-10. The Fashion-MNIST CNN qualification is a
- $0.90$-point accuracy deficit to Strom at $4.9\times$ less traffic. Filled and
+ $0.87$-point accuracy deficit to Strom at $4.9\times$ less traffic. Filled and
  hollow markers denote quality-selected and nearest-traffic baseline settings,
  respectively. Dotted lines connect observed nondominated points. Error bars
- show mean $\pm$ sample standard deviation over three held-out data
+ show mean $\pm$ sample standard deviation over ten paired held-out data
  realizations.}
  \label{fig:communication-frontier}
 \end{figure*}
@@ -460,10 +461,13 @@ the server gain $\gamma$ scales the usual aggregate as
 $\vect{w}^{r+1}=\vect{w}^r+\gamma\sum_i p_i\vect{\delta}_i^r$. On CIFAR-10,
 $\gamma=2$ is selected from $\{0.25,0.5,0.75,1,1.5,2,4\}$. For Strom and
 EF-TopK, we also freeze the development setting closest to Event-FedAvg in log
-total traffic. Final values are mean and sample standard deviation over three
-held-out strong-skew partitions with paired training seeds across methods.
-Test cross-entropy (CE), accuracy, worst-class accuracy, coordinate events, and
-communication are recorded. No held-out result influences selection.
+total traffic. Final values are mean and sample standard deviation over ten
+strong-skew partitions with paired training seeds across methods. The first
+three preserve the original evaluation design; seven further pairs were
+predeclared after all reported method settings had been frozen. Test
+cross-entropy (CE), accuracy, worst-class accuracy, coordinate events, and
+communication are recorded. No evaluation result influences development
+selection.
 
 \textbf{Communication metric.}
 The primary metric, \emph{conservative bidirectional unicast traffic}, counts
@@ -496,27 +500,34 @@ predeclared comparisons.
 \input{generated/p11_alignment_table}
 
 On Fashion-MNIST MLP, Event-FedAvg attains
-$83.14\pm0.14\%$ at $183.5\pm2.0$ Mbit. The strongest quality-selected
-baseline, EF-TopK, reaches $82.45\pm0.19\%$ using $1010.5$ Mbit, whereas the
-nearest-traffic Strom point reaches $79.51\pm0.86\%$ at
-$181.0\pm6.7$ Mbit. The CNN exposes the important qualification. Strom gains
-$0.90$ accuracy points, but requires $359.5\pm4.3$ Mbit versus
-$72.8\pm1.2$ Mbit. At nearby traffic, Event-FedAvg exceeds Strom by
-$1.46$ points.
+$83.05\pm0.42\%$ at $182.8\pm2.4$ Mbit. The frozen quality baseline,
+EF-TopK, reaches $82.40\pm0.24\%$ using $1010.5$ Mbit, whereas the
+nearest-traffic Strom point reaches $78.82\pm1.62\%$ at
+$181.5\pm4.3$ Mbit. The CNN exposes the important qualification. Strom gains
+$0.87$ accuracy points, but requires $357.1\pm5.5$ Mbit versus
+$72.1\pm1.0$ Mbit. At nearby traffic, Event-FedAvg exceeds Strom by
+$2.14$ points.
 
-The separately developed CIFAR-10 experiment tests transfer beyond
-Fashion-MNIST.
+The CIFAR-10 experiment tests transfer beyond Fashion-MNIST.
 Event-FedAvg obtains the best mean accuracy and cross-entropy among the
 quality-selected methods while using the least traffic. Compared with dense
-FedAvg tuned to server gain $2$, its $48.06\pm1.12\%$ accuracy is
-$3.93$ points higher at only $12.7\%$ of the traffic. Tuned dense FedAvg
-reaches $44.13\pm1.12\%$. Quality-selected Strom reaches
-$47.68\pm0.49\%$ but uses
-$4.6\times$ more traffic. Its nearest-traffic variant uses $10.1\%$ more
-traffic and trails by $12.56$ points. The nearest EF-TopK point is a genuine
-trade-off. It uses $32.9\%$ less traffic but trails by $7.10$ points.
+FedAvg tuned to server gain $2$, its $48.13\pm0.89\%$ accuracy is
+$4.25$ points higher at only $12.7\%$ of the traffic. Tuned dense FedAvg
+reaches $43.88\pm1.38\%$. Quality-selected Strom reaches
+$46.98\pm0.84\%$ but uses $4.6\times$ more traffic. Its nearest-traffic
+variant uses $6.5\%$ more traffic and trails by $13.25$ points.
 
-The targeted mechanism audit narrows the LIF interpretation. A like-for-like
+The seven-seed extension was fixed before execution and preserves every
+headline direction. On those new pairs, Event-FedAvg minus the frozen quality
+baseline is $+0.69$ points on the MLP (95\% paired $t$ interval
+$[0.25,1.12]$), $-0.86$ on the Fashion-MNIST CNN
+($[-1.66,-0.05]$), and $+1.14$ on CIFAR-10 ($[0.09,2.19]$). Against tuned
+dense FedAvg on CIFAR-10, the difference is $+4.38$ points
+($[3.18,5.59]$). These intervals test the added pairs directly;
+Table~\ref{tab:main-results} reports all ten seeds.
+
+The separate three-seed targeted mechanism audit narrows the LIF
+interpretation. A like-for-like
 rerun of the frozen Event-FedAvg setting gives $48.25\pm1.07\%$ at
 $200.2\pm2.2$ Mbit. Removing leakage ($\rho=1$) gives
 $48.32\pm1.05\%$ at $202.1\pm5.6$ Mbit. Thus leakage at $\rho=0.999$ has no
@@ -545,24 +556,25 @@ current local-update proxy in the $1{,}240$ snapshots, so $R_r=0$. This explains
 a finite-step heterogeneity--depth limitation without establishing the
 conditional expectation in~\eqref{eq:alignment-assumption-paper}.
 
-The frontier is not uniform predictive dominance. On CIFAR-10,
-quality-selected EF-TopK obtains slightly higher mean worst-class accuracy
-($26.7\%$) than Event-FedAvg ($24.6\%$). Tuned dense FedAvg reaches $23.3\%$.
-All estimates use
-only three held-out seeds. Together with the alignment audit in
-Section~\ref{sec:theory}, the results support the proposed finite-horizon
-communication mechanism, but do not establish the conditional assumption or
-statistical significance.
+The frontier is not uniform predictive dominance. On CIFAR-10, Event-FedAvg
+has $26.0\pm4.0\%$ mean worst-class accuracy and frozen EF-TopK has
+$24.9\pm1.9\%$. Their paired difference is $+1.16$ points with a 95\% interval
+$[-1.72,4.04]$, so these data do not resolve a class-wise advantage. Together
+with the alignment audit in Section~\ref{sec:theory}, the results support the
+proposed finite-horizon communication mechanism, but do not establish the
+conditional assumption.
 
 \section{Limitations}
 \label{sec:limitations}
 
 The experiments cover synchronous full participation, ten clients, and two
-image datasets. The communication--performance comparisons use three held-out
-seeds per setting, while the factorial audit uses ten seeds but varies only two
-factors around one Fashion-MNIST operating point and is not a broad robustness
-study. The results do not establish
-statistical significance or broad dataset and model generalization. The theory
+image datasets. The communication--performance comparisons use ten paired
+seeds per setting, seven of which were added after the configurations were
+frozen. Their paired intervals remain limited by this fixed set and do not
+address multiplicity or post-selection uncertainty from the earlier pilot.
+The factorial audit also uses ten seeds but varies only two factors around one
+Fashion-MNIST operating point and is not a broad robustness study. The results
+do not establish broad dataset and model generalization. The theory
 does not prove the aggregate-alignment condition for the coupled learning
 process, and the evaluated quantum schedules do not support an asymptotic
 convergence claim. Communication is counted in software-level bits under an
@@ -581,8 +593,9 @@ nondominated in the evaluated synchronous ten-client settings. The audit shows
 that quantum decoupling matters for the selected configuration, leakage at
 $\rho=0.999$ has no measurable isolated effect, and heterogeneity can turn
 positive first-order alignment into non-descent. These findings sharpen both
-the contribution and its boundary. Next tests should target more paired seeds,
-partial participation, and measured communication systems.
+the contribution and its boundary. The predeclared seven-seed extension
+preserves the headline directions. Next tests should target partial
+participation and measured communication systems.
 
 \begin{samepage}
 \section*{Acknowledgment}

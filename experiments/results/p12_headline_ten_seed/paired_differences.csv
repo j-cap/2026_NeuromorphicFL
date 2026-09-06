@@ -1,0 +1,17 @@
+comparison_id,event_point,comparator_point,metric,subset,n,mean_difference_points,std_difference_points,ci95_low_points,ci95_high_points,n_positive,n_negative,n_zero
+fmnist_mlp_event_minus_quality_accuracy,fmnist_mlp_event,fmnist_mlp_ef_quality,accuracy,all_ten,10,0.652,0.3974306369,0.3676952697,0.9363047303,9,1,0
+fmnist_mlp_event_minus_quality_accuracy,fmnist_mlp_event,fmnist_mlp_ef_quality,accuracy,new_seven,7,0.6857142857,0.4666496596,0.2541353059,1.117293266,6,1,0
+fmnist_mlp_event_minus_near_accuracy,fmnist_mlp_event,fmnist_mlp_strom_near,accuracy,all_ten,10,4.231,1.84385737,2.911983992,5.550016008,10,0,0
+fmnist_mlp_event_minus_near_accuracy,fmnist_mlp_event,fmnist_mlp_strom_near,accuracy,new_seven,7,4.56,2.092032505,2.625192515,6.494807485,7,0,0
+fmnist_cnn_event_minus_quality_accuracy,fmnist_cnn_event,fmnist_cnn_strom_quality,accuracy,all_ten,10,-0.871,0.7494657356,-1.407135451,-0.3348645488,1,9,0
+fmnist_cnn_event_minus_quality_accuracy,fmnist_cnn_event,fmnist_cnn_strom_quality,accuracy,new_seven,7,-0.8557142857,0.8690005206,-1.659405771,-0.05202280008,1,6,0
+fmnist_cnn_event_minus_near_accuracy,fmnist_cnn_event,fmnist_cnn_strom_near,accuracy,all_ten,10,2.14,1.327487183,1.190372944,3.089627056,10,0,0
+fmnist_cnn_event_minus_near_accuracy,fmnist_cnn_event,fmnist_cnn_strom_near,accuracy,new_seven,7,2.384285714,1.50117573,0.9959296387,3.77264179,7,0,0
+cifar_event_minus_quality_accuracy,cifar_event,cifar_strom_quality,accuracy,all_ten,10,1.145,1.035827635,0.4040136014,1.885986399,9,1,0
+cifar_event_minus_quality_accuracy,cifar_event,cifar_strom_quality,accuracy,new_seven,7,1.137142857,1.133221283,0.08908790792,2.185197806,6,1,0
+cifar_event_minus_near_accuracy,cifar_event,cifar_strom_near,accuracy,all_ten,10,13.254,4.311584396,10.16967855,16.33832145,10,0,0
+cifar_event_minus_near_accuracy,cifar_event,cifar_strom_near,accuracy,new_seven,7,14.74714286,4.318744857,10.75296979,18.74131592,7,0,0
+cifar_event_minus_dense_accuracy,cifar_event,cifar_dense_gain2,accuracy,all_ten,10,4.248,1.353840627,3.279520827,5.216479173,10,0,0
+cifar_event_minus_dense_accuracy,cifar_event,cifar_dense_gain2,accuracy,new_seven,7,4.384285714,1.298792479,3.183102939,5.58546849,7,0,0
+cifar_event_minus_ef_worst_class,cifar_event,cifar_ef_quality,worst_class_accuracy,all_ten,10,1.16,4.02193983,-1.717122226,4.037122226,8,2,0
+cifar_event_minus_ef_worst_class,cifar_event,cifar_ef_quality,worst_class_accuracy,new_seven,7,2.385714286,3.471516754,-0.8249034195,5.596331991,6,1,0
