@@ -49,12 +49,13 @@ residual-pulse and conventional compression baselines.
 ## Submission pipeline
 
 **Current status:** P9 and the ten-seed P11 alignment-factorial campaign are
-complete. The central evidence, tables, figures, manuscript claims, and
-implementation are checksum-frozen, and the bounded paper checks regenerate
-the products in a clean checkout. P10 submission checks are next. P2 remains
-valid for the 2026-09-04 search
-snapshot, with a mandatory refresh at P10. The author list remains
-intentionally deferred to the project team.
+complete. The repository-verifiable P10 checks are also complete: the current
+six-page anonymous PDF, font embedding, PDF structure, reference style,
+AI-use disclosure, repository handling, and refreshed novelty boundary are
+checked automatically. The detailed IJCNN 2027 author instructions are not yet
+published. Author approval, ethics attestations, a submission-system test, and
+the submitted-commit tag remain external gates. See
+`P10_SUBMISSION_COMPLIANCE.md` and `SUBMISSION_ATTESTATIONS.md`.
 
 ### P0 -- Freeze scope and paper structure
 
@@ -283,17 +284,24 @@ all ten seed pairs. Full details are in
 
 ### P10 -- Complete submission checks
 
-- [ ] Recheck the current IJCNN author instructions and IEEE template.
-- [ ] Verify page size, page count, fonts, PDF embedding, and reference format.
-- [ ] Apply the required anonymization policy.
-- [ ] Check repository and self-citation handling for anonymous review.
+- [x] Recheck the current IJCNN author instructions and IEEE template.
+      The live call and selector are recorded; detailed 2027 instructions are
+      not yet published and remain a final recheck.
+- [ ] Verify the final required page size. Page count, fonts, PDF structure,
+      and reference format already pass the automated candidate check.
+- [x] Apply conservative double-blind anonymization pending the detailed 2027
+      instructions.
+- [x] Check repository and self-citation handling for anonymous review.
 - [ ] Verify originality and concurrent-submission requirements.
-- [ ] Add any disclosure required by the applicable IEEE/IJCNN AI-use policy.
+- [x] Add the disclosure required by the applicable IEEE AI-use policy.
 - [ ] Obtain approval from every author.
 - [ ] Upload and inspect a test PDF before final submission.
 - [ ] Tag the exact commit whose PDF is submitted.
 
-**Gate:** the submission system confirms a compliant PDF and complete metadata.
+**Gate:** open on the four external actions in
+`P10_SUBMISSION_COMPLIANCE.md`: author attestations, the final detailed-policy
+recheck, submission-system/PDF validation, and tagging the exact submitted
+commit.
 
 ## Scope-control rules
 
@@ -311,13 +319,13 @@ all ten seed pairs. Full details are in
 
 The work is ready for IJCNN submission when:
 
-- [ ] the complete paper fits the official format and page limit;
-- [ ] every contribution has direct evidence;
-- [ ] every reported value is reproducible and traceable;
-- [ ] the closest predecessors and limitations are represented accurately;
-- [ ] the communication metric is symmetric and consistently defined;
-- [ ] the theory states its assumptions and boundaries explicitly;
+- [ ] the complete paper fits the final official format and page-size rule;
+- [x] every contribution has direct evidence;
+- [x] every reported value is reproducible and traceable;
+- [x] the closest predecessors and limitations are represented accurately;
+- [x] the communication metric is symmetric and consistently defined;
+- [x] the theory states its assumptions and boundaries explicitly;
 - [x] the second benchmark supports at least a defensible qualified-pass claim;
-- [ ] all figures and tables are referenced, readable, and necessary;
-- [ ] independent technical reviews have no unresolved blocking comments;
-- [ ] the final code, results, and manuscript are frozen together.
+- [x] all figures and tables are referenced, readable, and necessary;
+- [x] independent technical reviews have no unresolved blocking comments;
+- [x] the candidate code, results, and manuscript are frozen together.

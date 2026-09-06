@@ -76,8 +76,9 @@ operator audit treats Strom-style residual-conserving pulses as the closest
 algorithmic predecessor, LENA as the closest accumulated-memory/full-clear
 precedent, and model-deviation triggers as a separate event-communication
 family. The defensible wording is that the targeted search did not identify
-the complete frozen operator; this is not a universal priority claim and must
-be rechecked at P10.
+the complete frozen operator; this is not a universal priority claim. The P10
+refresh on 2026-09-06 preserved this boundary, with one additional refresh
+required near the actual submission date.
 
 ## Claim boundary
 

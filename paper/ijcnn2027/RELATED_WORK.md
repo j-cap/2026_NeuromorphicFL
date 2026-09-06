@@ -6,7 +6,8 @@ unindexed equivalent exists.
 
 ## Search snapshot and protocol
 
-- **Snapshot:** 2026-09-04.
+- **P2 snapshot:** 2026-09-04.
+- **P10 refresh:** 2026-09-06.
 - **Sources:** primary publisher pages, proceedings pages, and author/arXiv
   manuscripts when publisher full text was unavailable.
 - **Query families:** event-triggered federated/distributed learning; temporal
@@ -16,9 +17,30 @@ unindexed equivalent exists.
   threshold, pulse, and federated averaging.
 - **Screening rule:** compare update equations and synchronization semantics,
   not titles or use of the words *event*, *spike*, or *neuromorphic*.
-- **Pre-submission action:** repeat the same query families in P10 and append
-  any new close neighbor. This is necessary because the submission date is in
-  the future relative to this snapshot.
+- **Pre-submission action:** the query families were repeated at P10. Repeat
+  them once more near the actual submission date because the deadline remains
+  in the future relative to this refresh.
+
+## P10 refresh result
+
+The P10 search repeated the operator-level and terminology queries and screened
+newly indexed 2026 work. Two representative additions were:
+
+- Qu and Sun's **BKT-DSNN**, a low-communication federated delayed-SNN method
+  based on block knowledge transfer and dynamic model assignment
+  (Neurocomputing 677, article 133111);
+- Kaimal et al.'s **Federated training of spiking neural networks on edge
+  hardware for audio processing**, which trains SNNs on Raspberry Pi clients
+  and compares FedAvg-family aggregation and model compression
+  (Frontiers in Neuroscience 20:1827009, doi:10.3389/fnins.2026.1827009).
+
+Both additions place spikes inside the trained predictive model. Their
+communication objects are model information, compressed updates, or knowledge
+transfer, rather than a persistent leaky coordinate evidence state wrapped
+around conventional FedAvg. Neither combines full-clear first-passage pulses,
+an independent server quantum, and exact replay/checkpoint synchronization.
+The qualified novelty verdict is therefore unchanged. This refresh is still
+an absence search and does not establish universal priority.
 
 ## Frozen operator used for comparison
 
@@ -83,13 +105,13 @@ operator*, never *the first neuromorphic FL method*.
 
 ## Novelty verdict
 
-The targeted search did **not identify a predecessor containing the complete
-frozen operator**: persistent leaky weighted-delta state, coordinate
-first-passage signs, full reset with discarded overshoot, a trigger-independent
-annealed server quantum, algebraic aggregation without second weighting, and
-exact ordered sparse replay with checkpoint fallback. This is a qualified
-search result. It does not establish universal priority and must be rechecked
-at P10.
+The targeted P2 search and P10 refresh did **not identify a predecessor
+containing the complete frozen operator**: persistent leaky weighted-delta
+state, coordinate first-passage signs, full reset with discarded overshoot, a
+trigger-independent annealed server quantum, algebraic aggregation without
+second weighting, and exact ordered sparse replay with checkpoint fallback.
+This is a qualified search result. It does not establish universal priority
+and requires one final refresh near submission.
 
 Closest neighbors are:
 

@@ -106,8 +106,8 @@ numpy==2.4.6
 pandas==3.0.5
 ```
 
-The deterministic paper build additionally pins Matplotlib and PyYAML in
-`paper/ijcnn2027/requirements-reproduction.txt`. The minimum clean-checkout
+The deterministic paper build additionally pins Matplotlib, PyYAML, and pypdf
+in `paper/ijcnn2027/requirements-reproduction.txt`. The minimum clean-checkout
 artifact build is:
 
 ```bash
