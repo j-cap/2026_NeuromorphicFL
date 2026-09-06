@@ -134,12 +134,12 @@ def check_implementation_correspondence() -> None:
 
     paper = PAPER.read_text(encoding="utf-8")
     paper_requirements = (
-        "a_i^r=\\frac{p_i}{\\eta_r}\\delta_i^r",
-        "C^r=\\sum_{i=1}^M c_i^r",
-        "w^{r+1}=w^r+q_rC^r",
+        "\\vect{a}_i^r=\\frac{p_i}{\\eta_r}\\vect{\\delta}_i^r",
+        "\\vect{C}^r=\\sum_{i=1}^M\\vect{c}_i^r",
+        "\\vect{w}^{r+1}=\\vect{w}^r+q_r\\vect{C}^r",
         "A_r=P_r-R_r+L_r+B_r",
         "\\E[A_r\\mid\\mathcal{F}_r]",
-        "finite-trajectory diagnostics",
+        "This dimensionless ratio compares realized first-order descent",
     )
     absent = [snippet for snippet in paper_requirements if snippet not in paper]
     if absent:
