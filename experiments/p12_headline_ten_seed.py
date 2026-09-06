@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 import json
 import math
 from pathlib import Path
@@ -15,11 +15,9 @@ from neuromorphicfl.cifar10_benchmark import (
     download_cifar10,
     make_cifar10_federation,
 )
-from neuromorphicfl.final_baseline_campaign import run_final_baseline
+from neuromorphicfl.final_baseline_campaign import FinalBaselineConfig, run_final_baseline
 from neuromorphicfl.fmnist_event_benchmark import ensure_fashion_mnist
 from neuromorphicfl.fmnist_multiclass_benchmark import make_multiclass_federation
-from p3_cifar10_campaign import CONFIGS as CIFAR_CONFIGS
-from p8_targeted_revision import CONFIGS as P8_CONFIGS
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -30,6 +28,31 @@ FMNIST_PARTITION_SEEDS = tuple(range(2500, 3500, 100))
 CIFAR_PARTITION_SEEDS = tuple(range(3500, 4500, 100))
 ORIGINAL_SEED_INDICES = (0, 1, 2)
 EXTENSION_SEED_INDICES = tuple(range(3, 10))
+
+CIFAR_BASE = FinalBaselineConfig(
+    local_steps=5,
+    local_lr=0.05,
+    batch_size=32,
+    regularization=5e-4,
+    rounds=120,
+    eval_stride=30,
+    rho=0.999,
+    threshold=0.025,
+    jump0=0.005,
+    jump_scale=100.0,
+    jump_exponent=0.2,
+    topk_fraction=0.01,
+    strom_threshold=0.01,
+    init_scale=1.0,
+    server_gain=1.0,
+)
+CIFAR_CONFIGS = {
+    "event_t025_q005": ("event", CIFAR_BASE),
+    "strom_t0025": ("strom", replace(CIFAR_BASE, strom_threshold=0.0025)),
+    "strom_t01": ("strom", replace(CIFAR_BASE, strom_threshold=0.01)),
+    "ef_k05": ("ef_topk", replace(CIFAR_BASE, topk_fraction=0.05)),
+    "dense_gain_2p0": ("dense", replace(CIFAR_BASE, server_gain=2.0)),
+}
 
 Metric = Literal["accuracy", "worst_class_accuracy"]
 
@@ -210,10 +233,7 @@ def run_point(point_id: str, seed_index: int) -> Path:
             seed=train_seed,
         )
     else:
-        if point.configuration in CIFAR_CONFIGS:
-            method, config = CIFAR_CONFIGS[point.configuration]
-        else:
-            method, config = P8_CONFIGS[point.configuration]
+        method, config = CIFAR_CONFIGS[point.configuration]
         if method != point.method:
             raise AssertionError(f"method mismatch for {point_id}")
         federation = make_cifar10_federation(
@@ -429,7 +449,7 @@ def validate_protocol() -> None:
         if point.benchmark.startswith("fmnist_"):
             if point.configuration != "fixed":
                 float(point.configuration)
-        elif point.configuration not in CIFAR_CONFIGS and point.configuration not in P8_CONFIGS:
+        elif point.configuration not in CIFAR_CONFIGS:
             raise AssertionError(f"unknown CIFAR configuration: {point.configuration}")
     expected_fmnist = tuple(range(2500, 3500, 100))
     expected_cifar = tuple(range(3500, 4500, 100))
