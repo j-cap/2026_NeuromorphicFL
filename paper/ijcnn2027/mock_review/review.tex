@@ -1,0 +1,246 @@
+\documentclass[10pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[letterpaper,margin=0.85in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\setlist[itemize]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=*,itemsep=4pt,topsep=3pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+
+\newcommand{\paperTitle}{Event-FedAvg: Stateful Event-Driven Communication for Federated Learning}
+\newcommand{\decision}{Weak reject in the current form}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Independent Mock Reviewer Report}\par
+  \vspace{4pt}
+  {\large IJCNN 2027 submission stress test}\par
+\end{center}
+
+\textbf{Manuscript:} \paperTitle
+
+\textbf{Version reviewed:}
+repository commit \texttt{ee29e78b9a019b307cd2a4afbc366d5432ded725},
+reviewed on 6 September 2026.
+
+\textbf{Status of this document:} This is an internal mock review written from
+the perspective of a technically engaged but skeptical IJCNN reviewer. It is
+not an official conference review. The score labels below are a transparent
+mock scale because the final IJCNN 2027 reviewer form was not available at the
+time of review.
+
+\section*{Recommendation and scores}
+
+\begin{center}
+\begin{tabular}{@{}p{0.43\textwidth}p{0.18\textwidth}p{0.28\textwidth}@{}}
+\toprule
+Criterion & Score & Assessment \\
+\midrule
+Relevance to IJCNN & 4/5 & Clearly in scope \\
+Originality & 3/5 & Distinct operator, incremental ingredients \\
+Technical soundness & 3/5 & Careful but conditional theory \\
+Empirical validation & 2/5 & Promising, presently too narrow \\
+Clarity and organization & 4/5 & Strong draft with local ambiguities \\
+Reproducibility & 4/5 & Unusually good artifact discipline \\
+Overall & 4/10 & \decision \\
+Reviewer confidence & 4/5 & High on FL and compression issues \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The paper is close to the acceptance boundary, but I would not recommend
+acceptance on the current evidence. The main reason is not formatting. It is
+that the central empirical advantage is estimated from only three held-out
+seeds and the experiments do not yet isolate which claimed operator feature
+causes that advantage. A focused revision could plausibly move the paper to a
+weak accept.
+
+\section*{Summary}
+
+The paper proposes Event-FedAvg, a communication layer around conventional
+federated averaging. Each client accumulates weighted local-model deltas in a
+leaky coordinate state, emits an address and sign when a threshold is crossed,
+fully clears the fired state, and lets the server apply an independently
+scheduled model quantum. The protocol includes sparse replay and dense
+checkpoint fallback so that downlink synchronization is not omitted from the
+traffic calculation.
+
+The paper gives a pathwise event-count bound, an exact decomposition of event
+alignment, and a smoothness-based descent inequality under a conditional
+alignment assumption. Experiments compare the method with dense FedAvg,
+Sign-EF, EF-TopK, and Strom-style threshold pulses on Fashion-MNIST and
+CIFAR-10. The reported operating points are communication-efficient within
+the evaluated synchronous ten-client setting. A ten-seed factorial audit also
+shows how heterogeneity and local-step depth change finite-trajectory
+alignment terms.
+
+\section*{Strengths}
+
+\begin{itemize}
+  \item The manuscript defines a complete communication protocol rather than
+  reporting sparse uplink traffic while ignoring the downlink needed to keep
+  clients synchronized.
+  \item The novelty boundary is careful. In particular, the paper distinguishes
+  its communication-layer use of leaky integrate-and-fire ideas from federated
+  training of spiking neural networks.
+  \item The separation between trigger threshold and applied server quantum is
+  conceptually useful and is explained clearly.
+  \item Claims are appropriately scoped. The paper does not claim unconditional
+  convergence, statistical significance, or measured hardware-energy savings.
+  \item The development and held-out partitions are separated, paired streams
+  are used across methods, and the repository provides strong evidence and
+  reproducibility checks.
+\end{itemize}
+
+\section*{Major concerns}
+
+\begin{enumerate}
+  \item \textbf{The primary comparisons are underpowered.}
+  The headline benchmark means and standard deviations use three held-out
+  realizations. Several differences are on the scale of the observed
+  variability. For example, the CIFAR-10 accuracy gap to the strongest Strom
+  point is only 0.38 percentage points, while the reported standard deviations
+  are 1.12 and 0.49 points. The manuscript correctly avoids a significance
+  claim, but still uses language such as ``best mean accuracy'' and
+  ``nondominated'' to carry much of the empirical case. With only three paired
+  observations, the stability of the ranking cannot be assessed credibly.
+
+  The paper should report per-seed paired differences, uncertainty intervals
+  for those differences, and a predeclared paired analysis. Extending the main
+  comparisons to at least ten held-out seeds would be the cleanest remedy. The
+  ten-seed alignment factorial does not replace this because it studies a
+  diagnostic on one Fashion-MNIST operating point rather than the headline
+  method comparisons.
+
+  \item \textbf{The experiments do not isolate the mechanism that supports the
+  novelty claim.}
+  The leakage ablation reports essentially no difference between
+  $\rho=0.999$ and $\rho=1$. The coupled-resolution ablation sets
+  $q_r=\vartheta=0.025$ and performs very poorly, but that comparison changes
+  both the magnitude and schedule of the applied update. It therefore does not
+  by itself show that decoupling is the causal reason for the reported gain.
+  The manuscript also lacks a matched comparison between full reset and
+  conservative threshold subtraction with the same trigger, quantum schedule,
+  tuning budget, and traffic target.
+
+  A convincing mechanism study should cross at least leak versus no leak,
+  full reset versus threshold subtraction, and coupled versus independently
+  tuned quantum. The comparison should control traffic or present a Pareto
+  curve. In the current results, the specifically neuromorphic feature that is
+  easiest to identify, leakage, appears empirically inactive.
+
+  \item \textbf{The baseline set and tuning parity need strengthening.}
+  Strom is the correct closest predecessor, and error-feedback controls are
+  useful. However, STC is discussed as an important bidirectional sparse
+  compressor but is not evaluated. At least one stronger modern
+  bidirectional or event-triggered FL control would make the novelty and
+  performance case more credible. The paper should also give the complete
+  search space and number of development trials for every method in the main
+  text or a compact appendix artifact. It is currently difficult to determine
+  whether Event-FedAvg and all controls received comparable tuning effort.
+
+  \item \textbf{The empirical scope is small for the breadth of the story.}
+  All experiments use ten clients with full participation. The CIFAR-10 model
+  has only 20,570 parameters and reaches about 48\% accuracy. This is useful as
+  a controlled experiment, but it does not yet demonstrate that the address
+  overhead and event dynamics remain favorable for a standard model, a larger
+  client population, or client subsampling. One targeted stress test with
+  partial participation and a more standard CIFAR architecture would add more
+  value than another small variation of the same setting.
+
+  \item \textbf{The optimization result remains an interface condition rather
+  than a convergence explanation.}
+  The descent inequality is valid and the alignment decomposition is
+  informative. However, the stationarity result assumes a positive conditional
+  alignment inequality that already contains the central optimization
+  difficulty. The empirical statistic $\widehat{\kappa}_{\mathcal A}$ measures
+  realized finite-trajectory alignment and does not test the conditional
+  expectation or bound $\beta_r$. As written, the result does not explain how
+  the leak, threshold, reset rule, heterogeneity, and local-step count guarantee
+  the required condition.
+
+  The authors should either derive a non-vacuous sufficient condition for a
+  restricted setting or present the result more explicitly as a diagnostic
+  accounting framework rather than convergence theory. A full proof of the
+  event-budget result and precise measurability assumptions should be included
+  in an archival supplement if the venue permits one.
+\end{enumerate}
+
+\section*{Questions for the authors}
+
+\begin{enumerate}
+  \item How many hyperparameter configurations were evaluated for
+  Event-FedAvg and for each baseline before the operating points were frozen?
+  \item Does full reset still outperform Strom-style residual subtraction when
+  both use the same $q_r$, threshold grid, and total development budget?
+  \item How often does the downlink use sparse replay rather than a dense
+  checkpoint, and how sensitive is total traffic to client count?
+  \item Are the reported per-seed advantages paired consistently across every
+  baseline, and what are the confidence intervals of those paired
+  differences?
+  \item What behavior is expected when only a subset of clients participates
+  and client encoder states become stale for different lengths of time?
+\end{enumerate}
+
+\section*{Minor comments}
+
+\begin{itemize}
+  \item ``First passage'' may suggest a continuously monitored process. The
+  implementation tests each coordinate once per round, so ``round-wise sampled
+  threshold crossing'' would be more precise at first use.
+  \item Algorithm~1 would be easier to audit if client and server state were
+  separated explicitly and the packet/checkpoint decision were written as
+  pseudocode rather than prose inside an enumerated list.
+  \item State whether round identifiers, client identifiers, and any framing
+  needed for ordered replay are included in the 64-bit packet header.
+  \item Report checkpoint frequency and the uplink/downlink split for each
+  headline operating point. A single total hides which part of the protocol
+  produces the saving.
+  \item Explain why division by $\eta_r$ in the encoder is desirable when local
+  learning-rate schedules vary, since it changes which training quantities the
+  threshold treats as comparable over time.
+  \item The current qualification about worst-class CIFAR-10 accuracy is useful
+  and should remain visible in the final version.
+  \item Figure~1 carries many distinct ideas. A simpler visual hierarchy and a
+  separate synchronization inset would improve readability.
+\end{itemize}
+
+\section*{Revision threshold for acceptance}
+
+I would reconsider the paper positively if a revision accomplished the
+following four items:
+
+\begin{enumerate}
+  \item extend the headline comparisons to a defensible number of paired seeds
+  and report paired uncertainty.
+  \item add a controlled reset/leak/quantum ablation that isolates the claimed
+  operator semantics.
+  \item add at least one strong bidirectional compression baseline, preferably
+  STC, with transparent tuning parity.
+  \item either strengthen the link between the encoder and the alignment
+  condition or narrow the theoretical claim to a finite-trajectory diagnostic
+  framework.
+\end{enumerate}
+
+Partial participation or a standard-scale CIFAR model would materially improve
+the paper, but I view either one as a high-value strengthening experiment
+rather than an absolute prerequisite if the four items above are addressed
+convincingly within the venue's space constraints.
+
+\medskip
+\textbf{Confidential note to the area chair.}
+This is a promising and unusually careful artifact. My negative recommendation
+reflects insufficient evidence, not an identified correctness failure. I would
+support discussion at the acceptance boundary if the authors provide stronger
+paired results or if other reviewers verify the mechanism and novelty more
+favorably.
+
+\end{document}
