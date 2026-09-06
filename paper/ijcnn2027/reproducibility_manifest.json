@@ -125,12 +125,12 @@
     {
       "path": "paper/ijcnn2027/generated/main_results_table.tex",
       "role": "generated table",
-      "sha256": "ae36b2d3f0fe8d0fab6de94276e4425060f4727590902a974d64eed1ce109d44"
+      "sha256": "52c8bd443ac682c17a06b7c176ae4bd69bc52f14d6a796d303681ec47fcffcbe"
     },
     {
       "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
       "role": "generated table",
-      "sha256": "f90c34aee55c9fc13690ad793a60409ee8a70387dd2fc119bdd3876019f5f4db"
+      "sha256": "ed1bf3be6ca06531cadbec921b7cafab1686df15b42dfa17589cc72622ae66f4"
     },
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
@@ -145,7 +145,7 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "0afb689461851fffdf68375d8db311cc6b20d530aa15439489d5a937ffff412c"
+      "sha256": "70c37bbe639fdadf34ae6bb7038dc7f1c9e225b893a02e4fa5fc154954a9914c"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -205,22 +205,22 @@
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "1368c88a2d29e8cd60d7fd9b027efcc88cc2a6011ccb691c9aa80e1088764e8d"
+      "sha256": "7622788e968580fd884113ec0bb0f489b61a62a1727d80416e283f448e8f6016"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
       "role": "reproduction code",
-      "sha256": "d1e3d3ff623678d9ae291ffe4f93e7df9ba5735156001e00ed7eab39a36aa2c8"
+      "sha256": "f2ddc2e2896ff60c27db8f29d347df2259f4676039ac783f507647ebafbba79e"
     },
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "4ee5c4742022851f10f2d31d3140effd0ab6a7d0a26d8c24bc1a03b95a150f49"
+      "sha256": "0e9c9ef8d2032de0460ce1e73e81aef99d1bca74495652476eaaefc91ed989e1"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
       "role": "reproduction code",
-      "sha256": "bba31f5870225473430e9417c48ddd1550253d30feffd99b05ac22b10b73fed2"
+      "sha256": "12a87bd4f65665a9b16110be8e475584787bdb6b9e7e0fb811c2322d0d36ee6b"
     },
     {
       "path": "paper/ijcnn2027/reproduce.py",

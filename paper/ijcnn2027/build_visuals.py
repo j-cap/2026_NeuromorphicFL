@@ -415,8 +415,8 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         "\\centering",
         "\\caption{Headline held-out comparisons under conservative bidirectional "
         "unicast accounting. Event-FedAvg is nondominated in all three settings. "
-        "It leads the strongest quality-selected control on Fashion-MNIST MLP and "
-        "CIFAR-10; on Fashion-MNIST CNN, Strom gains 0.90 accuracy points but uses "
+        "It leads the strongest quality-selected baseline on Fashion-MNIST MLP and "
+        "CIFAR-10. On Fashion-MNIST CNN, Strom gains 0.90 accuracy points but uses "
         "4.9$\\times$ more traffic. Values are mean $\\pm$ sample standard deviation "
         "over three independently seeded data realizations.}",
         "\\label{tab:main-results}",
@@ -433,8 +433,8 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         _event, traffic = selected_rows(rows, "traffic-matched")
         entries = [
             ("Event operating point", event),
-            ("Strongest quality control", quality),
-            ("Nearest-traffic control", traffic),
+            ("Best-quality baseline", quality),
+            ("Nearest-traffic baseline", traffic),
         ]
         for row_index, (selection, row) in enumerate(entries):
             benchmark = dataset_labels[key] if row_index == 0 else ""
@@ -452,7 +452,12 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
             "\\bottomrule",
             "\\end{tabular*}",
             "\\vspace{2pt}",
-            "\\parbox{0.99\\textwidth}{\\footnotesize \\emph{Class-wise qualification:} "
+            "\\parbox{0.99\\textwidth}{\\footnotesize \\emph{Baseline sources:} "
+            "dense FedAvg~\\cite{mcmahan2017fedavg}, Sign-EF based on sign "
+            "quantization and error feedback~\\cite{seide2014onebit,bernstein2018signsgd}, "
+            "EF-TopK with memory~\\cite{stich2018memory,richtarik2021ef21}, and "
+            "Strom threshold pulses~\\cite{strom2015distributed}. "
+            "\\emph{Class-wise qualification:} "
             "on CIFAR-10, quality-selected EF-TopK has the highest mean worst-class "
             "accuracy (26.7$\\pm$0.8\\%), versus 24.6$\\pm$4.6\\% for Event-FedAvg.}",
             "\\end{table*}",
