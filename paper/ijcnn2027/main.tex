@@ -124,7 +124,7 @@ for its individual ingredients.
 
 \begin{figure*}[!t]
  \centering
- \includegraphics[width=\textwidth]{figures/event_fedavg_method.pdf}
+ \includegraphics[width=0.94\textwidth]{figures/event_fedavg_method.pdf}
  \caption{Event-FedAvg is a stateful communication layer around conventional
  multi-step FedAvg. Weighted local deltas drive leaky evidence. A model entry
  emits only when its sampled state first crosses the threshold after the
@@ -413,16 +413,17 @@ explain observed heterogeneity and local-depth effects.
 \begin{figure*}[t]
  \centering
  \includegraphics[width=\textwidth]{figures/communication_frontier.pdf}
- \caption{Held-out communication--performance operating points. Event-FedAvg
+ \caption{Frozen held-out communication--performance comparison. Event-FedAvg
  is nondominated on Fashion-MNIST MLP, Fashion-MNIST CNN, and CIFAR-10 compact
  CNN under conservative bidirectional unicast accounting. It combines lower
- traffic with higher mean accuracy than the strongest quality-selected baseline
- on the MLP and CIFAR-10. The Fashion-MNIST CNN qualification is a
- $0.87$-point accuracy deficit to Strom at $4.9\times$ less traffic. Filled and
+ traffic with higher mean accuracy than every quality-selected baseline on the
+ MLP and CIFAR-10. On Fashion-MNIST CNN, Strom gains $0.90$ accuracy points but
+ uses $4.9\times$ more traffic. Filled and
  hollow markers denote quality-selected and nearest-traffic baseline settings,
  respectively. Dotted lines connect observed nondominated points. Error bars
- show mean $\pm$ sample standard deviation over ten paired held-out data
- realizations.}
+ show mean $\pm$ sample standard deviation over three independently seeded
+ held-out data realizations. Table~\ref{tab:main-results} reports the later
+ ten-seed headline confirmation.}
  \label{fig:communication-frontier}
 \end{figure*}
 

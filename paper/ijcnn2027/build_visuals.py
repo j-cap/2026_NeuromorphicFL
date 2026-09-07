@@ -1,8 +1,9 @@
-"""Generate and validate the frozen IJCNN visual argument.
+"""Generate and validate the frozen IJCNN comparison figure and main table.
 
-The two vector figures and compact main-results table are derived only from
-the paper evidence CSVs. Run
-with ``--check`` to detect source, selection-rule, or rendered-artifact drift.
+Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the full
+frozen comparison campaign, while Table 1 uses the later ten-seed headline
+campaign. Run with ``--check`` to detect source, selection-rule, or
+rendered-artifact drift.
 """
 
 from __future__ import annotations
@@ -23,6 +24,8 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 REPO = Path(__file__).resolve().parents[2]
 PAPER = REPO / "paper" / "ijcnn2027"
 HEADLINE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
+FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
+CIFAR10 = PAPER / "evidence" / "cifar10_master_results.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -63,7 +66,7 @@ def read_csv(path: Path) -> list[dict[str, str]]:
     return rows
 
 
-def benchmark_rows() -> dict[str, list[dict[str, str]]]:
+def headline_rows() -> dict[str, list[dict[str, str]]]:
     source = read_csv(HEADLINE)
     required = {
         "point_id",
@@ -101,6 +104,31 @@ def benchmark_rows() -> dict[str, list[dict[str, str]]]:
     return grouped
 
 
+def frontier_rows() -> dict[str, list[dict[str, str]]]:
+    """Return the complete frozen comparison campaign used in Figure 2."""
+
+    rows = read_csv(FMNIST) + read_csv(CIFAR10)
+    required = {
+        "comparison",
+        "architecture",
+        "method",
+        "final_test_accuracy_mean",
+        "final_test_accuracy_std",
+        "unicast_total_Mbit_mean",
+        "unicast_total_Mbit_std",
+    }
+    if required.difference(rows[0]):
+        raise ValueError("paper evidence lacks columns required by Figure 2")
+
+    grouped: dict[str, list[dict[str, str]]] = {}
+    for key, _title, architecture, _ylim in PANELS:
+        selected = [row for row in rows if row["architecture"] == architecture]
+        if len(selected) != 8:
+            raise ValueError(f"{key} does not contain the frozen eight visual rows")
+        grouped[key] = selected
+    return grouped
+
+
 def value(row: dict[str, str], field: str, scale: float = 1.0) -> float:
     return scale * float(row[field])
 
@@ -127,7 +155,7 @@ def nondominated(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     return sorted(frontier, key=lambda row: value(row, "unicast_total_Mbit_mean"))
 
 
-def validate_visual_contract(grouped: dict[str, list[dict[str, str]]]) -> None:
+def validate_headline_contract(grouped: dict[str, list[dict[str, str]]]) -> None:
     markers = [style["marker"] for style in METHODS.values()]
     if len(set(markers)) != len(markers):
         raise ValueError("method markers must remain distinct for grayscale output")
@@ -142,6 +170,22 @@ def validate_visual_contract(grouped: dict[str, list[dict[str, str]]]) -> None:
         observed = {(row["comparison"], row["method"]) for row in rows}
         if observed != expected:
             raise ValueError(f"{key} selection rows drifted from the frozen design")
+        if "event" not in {row["method"] for row in nondominated(rows)}:
+            raise ValueError(f"Event-FedAvg is no longer nondominated in {key}")
+
+
+def validate_frontier_contract(grouped: dict[str, list[dict[str, str]]]) -> None:
+    for key, rows in grouped.items():
+        expected = {
+            ("quality-selected", method)
+            for method in ("event", "strom", "ef_topk", "sign_ef", "dense")
+        } | {
+            ("traffic-matched", method)
+            for method in ("event", "strom", "ef_topk")
+        }
+        observed = {(row["comparison"], row["method"]) for row in rows}
+        if observed != expected:
+            raise ValueError(f"{key} comparison rows drifted from the frozen design")
         if "event" not in {row["method"] for row in nondominated(rows)}:
             raise ValueError(f"Event-FedAvg is no longer nondominated in {key}")
 
@@ -293,8 +337,11 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         )
 
         for row in rows:
+            # Event is identical in both selection views and is drawn once.
+            if row["method"] == "event" and row["comparison"] == "traffic-matched":
+                continue
             style = METHODS[row["method"]]
-            quality = row["comparison"] != "traffic"
+            quality = row["comparison"] == "quality-selected"
             face = style["color"] if quality else "white"
             size = 7.8 if row["method"] == "event" else 5.5
             ax.errorbar(
@@ -323,7 +370,6 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         ax.set_axisbelow(True)
     axes[0].set_ylabel("Test accuracy [%]")
 
-    displayed_methods = ("event", "strom", "ef_topk")
     method_handles = [
         Line2D(
             [0],
@@ -336,14 +382,13 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
             markeredgewidth=0.65,
             label=style["label"],
         )
-        for method in displayed_methods
-        for style in (METHODS[method],)
+        for method, style in METHODS.items()
     ]
     selection_handles = [
         Line2D(
             [0], [0], marker="o", linestyle="none", markersize=5.0,
             markerfacecolor="#737373", markeredgecolor="#111111",
-            label="event/frozen quality",
+            label="quality-selected",
         ),
         Line2D(
             [0], [0], marker="o", linestyle="none", markersize=5.0,
@@ -372,11 +417,18 @@ def selected_rows(
     return event, selected
 
 
-def pm(row: dict[str, str], mean: str, std: str, scale: float, digits: int) -> str:
-    return (
+def pm(
+    row: dict[str, str], mean: str, std: str, scale: float, digits: int,
+    bold: bool = False,
+) -> str:
+    rendered = (
         f"{scale * value(row, mean):.{digits}f}"
         f"$\\pm${scale * value(row, std):.{digits}f}"
     )
+    if bold:
+        rendered = rendered.replace("$\\pm$", "$\\boldsymbol{\\pm}$")
+        return f"\\textbf{{{rendered}}}"
+    return rendered
 
 
 def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
@@ -408,7 +460,8 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         "It leads the frozen quality baseline on Fashion-MNIST MLP and CIFAR-10. "
         f"On Fashion-MNIST CNN, Strom gains {cnn_gap:.2f} accuracy points but uses "
         f"{cnn_ratio:.1f}$\\times$ more traffic. Values are mean $\\pm$ sample "
-        "standard deviation over ten paired data and training seeds.}",
+        "standard deviation over ten paired data and training seeds. Bold marks "
+        "the best mean in each benchmark and metric; lower is better for traffic.}",
         "\\label{tab:main-results}",
         "\\footnotesize",
         "\\setlength{\\tabcolsep}{4pt}",
@@ -426,13 +479,16 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
             ("Frozen quality baseline", quality),
             ("Nearest-traffic baseline", traffic),
         ]
+        best_accuracy = max(value(row, "final_test_accuracy_mean") for _, row in entries)
+        best_worst = max(value(row, "final_worst_class_accuracy_mean") for _, row in entries)
+        best_traffic = min(value(row, "unicast_total_Mbit_mean") for _, row in entries)
         for row_index, (selection, row) in enumerate(entries):
             benchmark = dataset_labels[key] if row_index == 0 else ""
             lines.append(
                 f"{benchmark} & {selection} & {METHODS[row['method']]['label']} & "
-                f"{pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', 100.0, 2)} & "
-                f"{pm(row, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', 100.0, 1)} & "
-                f"{pm(row, 'unicast_total_Mbit_mean', 'unicast_total_Mbit_std', 1.0, 1)} \\\\"
+                f"{pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', 100.0, 2, value(row, 'final_test_accuracy_mean') == best_accuracy)} & "
+                f"{pm(row, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', 100.0, 1, value(row, 'final_worst_class_accuracy_mean') == best_worst)} & "
+                f"{pm(row, 'unicast_total_Mbit_mean', 'unicast_total_Mbit_std', 1.0, 1, value(row, 'unicast_total_Mbit_mean') == best_traffic)} \\\\"
             )
         if index != len(PANELS) - 1:
             lines.append("\\addlinespace[1pt]")
@@ -464,12 +520,13 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
 
 def products() -> dict[Path, bytes]:
     configure_matplotlib()
-    grouped = benchmark_rows()
-    validate_visual_contract(grouped)
+    headline = headline_rows()
+    frontier = frontier_rows()
+    validate_headline_contract(headline)
+    validate_frontier_contract(frontier)
     return {
-        METHOD_FIGURE: method_figure(),
-        FRONTIER_FIGURE: frontier_figure(grouped),
-        MAIN_TABLE: main_table(grouped).encode("utf-8"),
+        FRONTIER_FIGURE: frontier_figure(frontier),
+        MAIN_TABLE: main_table(headline).encode("utf-8"),
     }
 
 
