@@ -130,45 +130,32 @@ def main() -> None:
         ("introduction traffic fold", f"${c_traffic_fold:.1f}\\times$ less traffic"),
         ("introduction accuracy gap", f"${c_accuracy_gap:.2f}$ percentage points"),
         (
-            "MLP Event point",
-            f"${pm(mlp_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ at "
-            f"${pm(mlp_event, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-6, digits=1)}$ Mbit",
+            "MLP quality tradeoff",
+            f"gains ${100 * (number(mlp_event, 'final_test_accuracy_mean') - number(mlp_topk, 'final_test_accuracy_mean')):.2f}$ points over the quality baseline with "
+            f"${traffic_mbit(mlp_topk) / traffic_mbit(mlp_event):.1f}\\times$ less traffic",
         ),
         (
-            "MLP quality control",
-            f"${pm(mlp_topk, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ using "
-            f"${traffic_mbit(mlp_topk):.1f}$ Mbit",
-        ),
-        (
-            "MLP nearest-traffic control",
-            f"${pm(mlp_near, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ at "
-            f"${pm(mlp_near, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-6, digits=1)}$ Mbit",
+            "MLP nearest-traffic gap",
+            f"gains ${100 * (number(mlp_event, 'final_test_accuracy_mean') - number(mlp_near, 'final_test_accuracy_mean')):.2f}$ points over Strom at comparable traffic",
         ),
         (
             "CNN quality qualification",
-            f"Strom gains ${100 * (number(cnn_strom, 'final_test_accuracy_mean') - number(cnn_event, 'final_test_accuracy_mean')):.2f}$ accuracy points, but requires "
-            f"${pm(cnn_strom, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-6, digits=1)}$ Mbit versus "
-            f"${pm(cnn_event, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-6, digits=1)}$ Mbit",
+            f"Strom gains ${100 * (number(cnn_strom, 'final_test_accuracy_mean') - number(cnn_event, 'final_test_accuracy_mean')):.2f}$ points but uses "
+            f"${traffic_mbit(cnn_strom) / traffic_mbit(cnn_event):.1f}\\times$ more traffic",
         ),
         (
             "CNN nearest-traffic gap",
-            f"Event-FedAvg exceeds Strom by ${100 * (number(cnn_event, 'final_test_accuracy_mean') - number(cnn_near, 'final_test_accuracy_mean')):.2f}$ points",
+            f"Event-FedAvg gains ${100 * (number(cnn_event, 'final_test_accuracy_mean') - number(cnn_near, 'final_test_accuracy_mean')):.2f}$ points at nearby traffic",
         ),
         (
             "CIFAR tuned-dense comparison",
-            f"its ${pm(c_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ accuracy is "
-            f"${c_accuracy_gap:.2f}$ points higher at only ${c_traffic_fraction:.1f}\\%$ of the traffic. Tuned dense FedAvg reaches "
-            f"${pm(c_dense, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$",
+            f"leads tuned dense FedAvg by ${c_accuracy_gap:.2f}$ points using only "
+            f"${c_traffic_fraction:.1f}\\%$ of its traffic",
         ),
         (
             "CIFAR quality Strom",
-            f"${pm(c_strom, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ but uses "
-            f"${traffic_mbit(c_strom) / traffic_mbit(c_event):.1f}\\times$ more traffic",
-        ),
-        (
-            "CIFAR nearest Strom",
-            f"uses ${100 * (traffic_mbit(c_near_strom) / traffic_mbit(c_event) - 1):.1f}\\%$ more traffic and trails by "
-            f"${100 * (number(c_event, 'final_test_accuracy_mean') - number(c_near_strom, 'final_test_accuracy_mean')):.2f}$ points",
+            f"leads quality-selected Strom by ${100 * (number(c_event, 'final_test_accuracy_mean') - number(c_strom, 'final_test_accuracy_mean')):.2f}$ points with "
+            f"${traffic_mbit(c_strom) / traffic_mbit(c_event):.1f}\\times$ less traffic",
         ),
         (
             "CIFAR worst-class qualification",
@@ -181,7 +168,6 @@ def main() -> None:
         ("fmnist_mlp_event_minus_quality_accuracy", "+0.69", "[0.25,1.12]"),
         ("fmnist_cnn_event_minus_quality_accuracy", "-0.86", "[-1.66,-0.05]"),
         ("cifar_event_minus_quality_accuracy", "+1.14", "[0.09,2.19]"),
-        ("cifar_event_minus_dense_accuracy", "+4.38", "[3.18,5.59]"),
     )
     for comparison_id, displayed_mean, displayed_interval in paired_specs:
         row = paired(differences, comparison_id, "new_seven")
@@ -211,16 +197,15 @@ def main() -> None:
     frozen = p8_select(mechanism, "event_frozen")
     no_leak = p8_select(mechanism, "event_no_leak")
     coupled = p8_select(mechanism, "event_coupled_quantum")
-    for label, row, traffic_digits in (
-        ("P8 frozen rerun", frozen, 1),
-        ("P8 no-leak ablation", no_leak, 1),
-        ("P8 coupled-resolution ablation", coupled, 1),
+    for label, row in (
+        ("P8 frozen rerun", frozen),
+        ("P8 no-leak ablation", no_leak),
+        ("P8 coupled-resolution ablation", coupled),
     ):
         claims.append(
             (
                 label,
-                f"${pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ at "
-                f"${pm(row, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-6, digits=traffic_digits)}$ Mbit",
+                f"${pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$",
             )
         )
 

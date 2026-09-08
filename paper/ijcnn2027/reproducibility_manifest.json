@@ -155,7 +155,7 @@
     {
       "path": "paper/ijcnn2027/generated/main_results_table.tex",
       "role": "generated table",
-      "sha256": "34e3507e5c7730e211e28e4e2799d8168603f983fd5a158213fe3d2505fce7c4"
+      "sha256": "59ac8b74c0c449fc54634a125aca565d595389ace478981b0ceaff083ac51a88"
     },
     {
       "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
@@ -165,17 +165,22 @@
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
       "role": "generated figure",
-      "sha256": "75ff12c52a34fd6b8c9345d3b27882ff55ce55a5f8a1e7eb5b2e7a0bc213d7dc"
+      "sha256": "a0d8808e3fb84cf98f24a2eb564857f6ea48f5a8468633e862bb78b628e83b4b"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/event_fedavg_method.drawio",
+      "role": "editable figure source",
+      "sha256": "d2e3418db79254b99d9acc818a081e2d82e27574e49e9b53b713c378d3fefec7"
     },
     {
       "path": "paper/ijcnn2027/figures/communication_frontier.pdf",
       "role": "generated figure",
-      "sha256": "b62f09b15c3fd90269a54aa272a9cd48fd9813143ddf3d531f4a758aa68f9982"
+      "sha256": "88cacc5dc163166f17e7082245cd2661db8e3796eb44362dfeaf309705eee7a4"
     },
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "7c255df0af8adbdece737c061205963ccf41703189ce60629a04cd3c43a81968"
+      "sha256": "c3db716b8bec64b70e7f1a2c8f4402ee7d1872a155e259367f4f999cd5d1793d"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -245,7 +250,7 @@
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "9e8d4dcc5ba1c1bb295d0e3fe162a5df3ebc7e4d90503feb50d7c36dfa69e8f0"
+      "sha256": "40fab7f2915150868c3423dffe0fb562da091b33a2a37b1ebc3aa11a55e87472"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
@@ -255,12 +260,12 @@
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "e4a9fe77be3909b417e647b15b0fa7ec81fa9d3fbeb3822348ab8d93d45405c7"
+      "sha256": "0e05dc2d1da66bece97751516954ec26945a689bd4b9e89dc6b54a76de673050"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
       "role": "reproduction code",
-      "sha256": "12a87bd4f65665a9b16110be8e475584787bdb6b9e7e0fb811c2322d0d36ee6b"
+      "sha256": "45959efc5b3cc33ea75415e6ebd4b1b65e592453cfcba37afc63901b2741d3ff"
     },
     {
       "path": "paper/ijcnn2027/reproduce.py",

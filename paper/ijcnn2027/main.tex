@@ -34,7 +34,7 @@ the server model by an independently scheduled step magnitude. The server then
 sends either the sparse update sequence or, when cheaper, the complete model.
 We prove
 a pathwise event budget and bounded encoder state, and derive a one-step descent
-decomposition with a conditional finite-horizon stationarity result. An exact
+decomposition with a conditional finite-horizon gradient-norm bound. An exact
 pulse-level decomposition and a controlled $2\times2$ audit expose how data
 heterogeneity and local-update depth affect finite-trajectory alignment. Under
 identical local training conditions across methods, development-only tuning,
@@ -87,7 +87,7 @@ model instead. Both choices exactly synchronize the next client model.
 
 Our contributions are threefold. We define the complete encoder, server update,
 and synchronization algorithm. We prove pathwise state and event-budget
-guarantees, derive a conditional finite-horizon optimization result, and
+guarantees, derive a conditional finite-horizon gradient-norm bound, and
 decompose its alignment term into measurable mechanisms. Finally, we compare
 Event-FedAvg with dense FedAvg, Sign-EF, EF-TopK, and Strom pulses under
 identical local training and total bidirectional traffic. Event-FedAvg is
@@ -353,7 +353,7 @@ local-update agreement, memory opposition, local mismatch, and heterogeneity.
 Because $L_r$ and $B_r$ have unrestricted signs, the identity does not prove
 positive alignment.
 
-\begin{proposition}[Descent and conditional stationarity]
+\begin{proposition}[Descent and conditional gradient-norm bound]
 If $F$ is $L$-smooth, every realized round obeys
 \begin{equation}
  F(\vect{w}^{r+1})\leq F(\vect{w}^r)-q_rA_r+\frac{LM}{2}q_r^2N_r.
@@ -366,6 +366,8 @@ computation, and suppose, for $\kappa>0$ and deterministic $\beta_r\geq0$,
  \kappa\norm{\nabla F(\vect{w}^r)}_2^2-\beta_r .
  \label{eq:alignment-assumption-paper}
 \end{equation}
+This alignment inequality is the unresolved learning condition; it does not
+follow from the pathwise encoder properties above.
 If the objective has finite lower bound $F_{\inf}$, meaning
 $F(\vect{w})\geq F_{\inf}$ for every $\vect{w}$, and $\vect{w}^1$ is
 deterministic, define
@@ -403,7 +405,7 @@ or later crossings. For audited rounds $\mathcal A$, define
  {\sum_{r\in\mathcal A}q_r\norm{\nabla F(\vect{w}^r)}_2^2}.
  \label{eq:empirical-alignment-ratio}
 \end{equation}
-This dimensionless ratio compares realized first-order descent with
+This normalized trajectory ratio compares realized first-order descent with
 global-gradient energy. A positive value means average $q_r$-weighted descent
 alignment. It is neither mean $A_r$ nor the theoretical $\kappa$, except as an
 empirical analogue when $\beta_r=0$, and it does not prove the conditional
@@ -413,17 +415,11 @@ explain observed heterogeneity and local-depth effects.
 \begin{figure*}[t]
  \centering
  \includegraphics[width=\textwidth]{figures/communication_frontier.pdf}
- \caption{Frozen held-out communication--performance comparison. Event-FedAvg
- is nondominated on Fashion-MNIST MLP, Fashion-MNIST CNN, and CIFAR-10 compact
- CNN under conservative bidirectional unicast accounting. It combines lower
- traffic with higher mean accuracy than every quality-selected baseline on the
- MLP and CIFAR-10. On Fashion-MNIST CNN, Strom gains $0.90$ accuracy points but
- uses $4.9\times$ more traffic. Filled and
- hollow markers denote quality-selected and nearest-traffic baseline settings,
- respectively. Dotted lines connect observed nondominated points. Error bars
- show mean $\pm$ sample standard deviation over three independently seeded
- held-out data realizations. Table~\ref{tab:main-results} reports the later
- ten-seed headline confirmation.}
+ \caption{Broad three-seed held-out comparison containing all five method
+ families. Filled and hollow markers denote quality-selected and
+ nearest-traffic settings; dotted lines connect observed nondominated points.
+ Error bars show mean $\pm$ sample standard deviation. The ten-seed campaign
+ reruns only the predeclared headline subset in Table~\ref{tab:main-results}.}
  \label{fig:communication-frontier}
 \end{figure*}
 
@@ -445,6 +441,16 @@ Fashion-MNIST and $0.05$ on CIFAR-10. The Event-FedAvg settings
 use $r_0=100$ and quantum exponents $\alpha=0.1$, $0.3$, and $0.2$ for the
 Fashion-MNIST MLP, Fashion-MNIST CNN, and CIFAR-10 CNN, respectively, in the
 schedule after~\eqref{eq:server-update}.
+The corresponding frozen tuples
+$(\rho,\vartheta,q_0,\alpha)$ are
+$(0.999,0.025,0.005,0.1)$, $(0.999,0.025,0.010,0.3)$, and
+$(0.999,0.025,0.005,0.2)$. Across the broad comparison, EF-TopK uses
+quality/nearest-traffic fractions $0.05/0.01$, while Strom uses thresholds
+$0.00125/0.02$ on the Fashion-MNIST MLP, $0.005/0.02$ on the Fashion-MNIST
+CNN, and $0.0025/0.01$ on CIFAR-10. The ten-seed subset comprises the points
+identified in Table~\ref{tab:main-results}; its EF-TopK CIFAR-10 reference
+uses class-wise fraction $0.05$, and its dense CIFAR-10 reference uses server
+gain $\gamma=2$.
 
 \textbf{Selection and evaluation.}
 We compare Event-FedAvg with dense FedAvg~\cite{mcmahan2017fedavg}, Sign-EF
@@ -477,6 +483,9 @@ discount. It includes headers, addresses, signs or values, initial
 synchronization, a 32-bit per-round request, and the smaller of replay and a
 float32 checkpoint. Applying one rule to every method prevents an omitted
 downlink from making sparse communication appear artificially cheap.
+Recomputing the P12 headline points with one logical broadcast preserves every
+reported Pareto direction; on CIFAR-10, Event-FedAvg uses $36.0$ Mbit versus
+$869.6$ Mbit for tuned dense FedAvg under that alternative accounting.
 
 \textbf{Alignment factorial.}
 On the Fashion-MNIST MLP, we run a full $2\times2$ factorial: every paired seed
@@ -491,61 +500,44 @@ diagnostic computation from perturbing later threshold crossings.
 \section{Results and Discussion}
 \label{sec:results}
 
-Figure~\ref{fig:communication-frontier} gives the primary cross-benchmark
-comparison using total uplink-plus-downlink unicast traffic. Filled markers
+Figure~\ref{fig:communication-frontier} gives the broad cross-benchmark
+comparison using total uplink-plus-downlink unicast traffic. It retains the
+three-seed campaign because only that campaign contains every method family in
+every benchmark. Filled markers
 identify development-selected quality settings, while hollow markers identify
 baseline settings selected for traffic proximity. Each marker is one frozen
-method--hyperparameter setting. Table~\ref{tab:main-results} isolates these
-predeclared comparisons.
+method--hyperparameter setting. Table~\ref{tab:main-results} then reports the
+predeclared ten-seed headline subset.
 
 \input{generated/p11_alignment_table}
 
-On Fashion-MNIST MLP, Event-FedAvg attains
-$83.05\pm0.42\%$ at $182.8\pm2.4$ Mbit. The frozen quality baseline,
-EF-TopK, reaches $82.40\pm0.24\%$ using $1010.5$ Mbit, whereas the
-nearest-traffic Strom point reaches $78.82\pm1.62\%$ at
-$181.5\pm4.3$ Mbit. The CNN exposes the important qualification. Strom gains
-$0.87$ accuracy points, but requires $357.1\pm5.5$ Mbit versus
-$72.1\pm1.0$ Mbit. At nearby traffic, Event-FedAvg exceeds Strom by
-$2.14$ points.
+Table~\ref{tab:main-results} makes the ten-seed tradeoffs explicit. On the
+Fashion-MNIST MLP, Event-FedAvg gains $0.65$ points over the quality baseline
+with $5.5\times$ less traffic and gains $4.23$ points over Strom at comparable
+traffic. On the CNN, Strom gains $0.87$ points but uses $4.9\times$ more
+traffic, whereas Event-FedAvg gains $2.14$ points at nearby traffic. On
+CIFAR-10, Event-FedAvg leads tuned dense FedAvg by $4.25$ points using only
+$12.7\%$ of its traffic and leads quality-selected Strom by $1.14$ points with
+$4.6\times$ less traffic.
 
-The CIFAR-10 experiment tests transfer beyond Fashion-MNIST.
-Event-FedAvg obtains the best mean accuracy and cross-entropy among the
-quality-selected methods while using the least traffic. Compared with dense
-FedAvg tuned to server gain $2$, its $48.13\pm0.89\%$ accuracy is
-$4.25$ points higher at only $12.7\%$ of the traffic. Tuned dense FedAvg
-reaches $43.88\pm1.38\%$. Quality-selected Strom reaches
-$46.98\pm0.84\%$ but uses $4.6\times$ more traffic. Its nearest-traffic
-variant uses $6.5\%$ more traffic and trails by $13.25$ points.
-
-The seven-seed extension was fixed before execution and preserves every
-headline direction. On those new pairs, Event-FedAvg minus the frozen quality
-baseline is $+0.69$ points on the MLP (95\% paired $t$ interval
-$[0.25,1.12]$), $-0.86$ on the Fashion-MNIST CNN
-($[-1.66,-0.05]$), and $+1.14$ on CIFAR-10 ($[0.09,2.19]$). Against tuned
-dense FedAvg on CIFAR-10, the difference is $+4.38$ points
-($[3.18,5.59]$). These intervals test the added pairs directly;
+The seven-seed extension, fixed before execution, preserves every headline
+direction. Event-FedAvg minus the quality baseline is $+0.69$, $-0.86$, and
+$+1.14$ points on the MLP, Fashion-MNIST CNN, and CIFAR-10, respectively; the
+95\% paired intervals are $[0.25,1.12]$, $[-1.66,-0.05]$, and $[0.09,2.19]$.
 Table~\ref{tab:main-results} reports all ten seeds.
 
-The separate three-seed targeted mechanism audit narrows the LIF
-interpretation. A like-for-like
-rerun of the frozen Event-FedAvg setting gives $48.25\pm1.07\%$ at
-$200.2\pm2.2$ Mbit. Removing leakage ($\rho=1$) gives
-$48.32\pm1.05\%$ at $202.1\pm5.6$ Mbit. Thus leakage at $\rho=0.999$ has no
-material isolated effect at this resolution. In contrast, coupling the server
-quantum to the trigger as $q_r=\vartheta=0.025$ reduces accuracy to
-$18.42\pm7.33\%$ at $44.8\pm17.7$ Mbit. This supports independent trigger and
-update resolutions for the selected operating point, not a universal claim
-that every coupled schedule fails.
+The three-seed mechanism audit narrows the LIF interpretation. Removing leakage
+($\rho=1$) is indistinguishable from the frozen setting at this resolution
+($48.32\pm1.05\%$ versus $48.25\pm1.07\%$). Coupling the quantum and trigger
+at $0.025$ instead reduces accuracy to $18.42\pm7.33\%$. This supports their
+independence for the selected operating point, not a universal claim that every
+coupled schedule fails.
 
-Table~\ref{tab:alignment-factorial} reports the Fashion-MNIST MLP factorial.
-Each row summarizes ten seeds with 31 replayed rounds each. The displayed
-$\widehat\kappa_{\mathcal A}$ is the trajectory ratio in
-\eqref{eq:empirical-alignment-ratio}, not mean $A_r$ and not the theoretical
-$\kappa$ in~\eqref{eq:alignment-assumption-paper}. The next three columns show
-how often the event direction is first-order aligned, how often the objective
-actually decreases, and how often positive alignment nevertheless fails to
-produce descent.
+Table~\ref{tab:alignment-factorial} reports ten seeds and 31 replayed rounds per
+seed. Its $\widehat\kappa_{\mathcal A}$ is the trajectory ratio in
+\eqref{eq:empirical-alignment-ratio}, not mean $A_r$ or the theoretical
+$\kappa$. The next columns separate positive first-order alignment, realized
+descent, and their disagreement.
 
 $\overline B_{\mathcal A}$ exposes the adverse heterogeneity contribution.
 $\overline L_{\mathcal A}$ shows that local depth acts differently under IID

@@ -139,7 +139,7 @@ def check_implementation_correspondence() -> None:
         "\\vect{w}^{r+1}=\\vect{w}^r+q_r\\vect{C}^r",
         "A_r=P_r-R_r+L_r+B_r",
         "\\E[A_r\\mid\\mathcal{F}_r]",
-        "This dimensionless ratio compares realized first-order descent",
+        "This normalized trajectory ratio compares realized first-order descent",
     )
     absent = [snippet for snippet in paper_requirements if snippet not in paper]
     if absent:
