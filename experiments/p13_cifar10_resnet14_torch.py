@@ -11,6 +11,10 @@ import platform
 import subprocess
 import time
 
+# Required by cuBLAS when torch deterministic algorithms are enabled. This must
+# be set before importing torch or creating a CUDA context.
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import numpy as np
 import pandas as pd
 import torch
