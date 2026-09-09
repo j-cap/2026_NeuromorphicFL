@@ -19,6 +19,9 @@ case "${ACTION}" in
   smoke)
     run_python --device cuda smoke --rounds 2
     ;;
+  dense-audit)
+    run_python --device cuda dense-audit --rounds "${2:-900}"
+    ;;
   test)
     run_python --device cuda test-campaign
     run_python --device cuda verify
@@ -34,7 +37,7 @@ case "${ACTION}" in
     run_python --device cpu status
     ;;
   *)
-    echo "Usage: $0 {setup|smoke|test|full|verify|status}"
+    echo "Usage: $0 {setup|smoke|dense-audit [rounds]|test|full|verify|status}"
     exit 2
     ;;
 esac

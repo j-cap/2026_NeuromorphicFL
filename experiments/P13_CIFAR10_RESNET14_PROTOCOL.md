@@ -101,6 +101,20 @@ partition, freezes the selected configuration for each method, and runs one
 held-out seed per selected method:
 
 ```bash
+bash tools/p13_workstation.sh dense-audit 900
+```
+
+This exploratory convergence audit runs the four dense server gains for 900
+rounds on development partition 4100. It uses the distinct tag
+`dense-audit-r900`, writes one history and metadata set per gain, and creates a
+combined `dense-audit-r900_seed4100_summary.csv`. These exploratory results are
+not consumed by development selection. Interrupted runs resume at their latest
+15-round checkpoint. A different horizon can be supplied in place of `900`.
+
+After choosing an adequate fixed horizon from the learning curves, update the
+frozen protocol consistently before running the test campaign:
+
+```bash
 bash tools/p13_workstation.sh test
 ```
 

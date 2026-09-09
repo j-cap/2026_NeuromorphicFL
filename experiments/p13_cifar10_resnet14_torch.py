@@ -169,7 +169,9 @@ def run_point(
         raise ValueError("the torch ResNet runner currently requires init_scale=1")
     if max_rounds is not None:
         from dataclasses import replace
-        config = replace(config, rounds=min(max_rounds, original_config.rounds))
+        if max_rounds < 1:
+            raise ValueError("max_rounds must be positive")
+        config = replace(config, rounds=max_rounds)
     device = _device(device_name)
     torch.use_deterministic_algorithms(True)
     torch.backends.cudnn.benchmark = False
@@ -562,6 +564,35 @@ def select_development() -> None:
     protocol.select()
 
 
+def dense_audit(device: str, rounds: int, partition_seed: int) -> None:
+    """Run the dense-gain grid at an exploratory convergence horizon."""
+    tag = f"dense-audit-r{rounds}"
+    result_paths = []
+    for config_name in ("dense_g05", "dense_g10", "dense_g15", "dense_g20"):
+        result_paths.append(
+            run_point(
+                config_name,
+                partition_seed,
+                tag,
+                device,
+                max_rounds=rounds,
+            )
+        )
+    summary = pd.concat(
+        [pd.read_csv(result_path) for result_path in result_paths],
+        ignore_index=True,
+    ).sort_values("server_gain")
+    summary_path = OUT / f"{tag}_seed{partition_seed}_summary.csv"
+    _atomic_csv(summary, summary_path)
+    print("\nDense convergence-audit summary")
+    print(summary[[
+        "config_name", "server_gain", "rounds", "final_train_ce",
+        "final_test_accuracy", "final_worst_class_accuracy",
+        "seconds_per_round", "elapsed_seconds",
+    ]].to_string(index=False))
+    print(f"saved {summary_path}")
+
+
 def run_frozen_method(method: str, partition_seed: int, device: str) -> None:
     selection_path = OUT / "selection.json"
     if not selection_path.exists():
@@ -601,7 +632,7 @@ def verify_outputs() -> None:
     for result_path in OUT.glob("*.csv"):
         if result_path.name.endswith(("_history.csv", "_activity.csv")):
             continue
-        if result_path.name in {"development_summary.csv", "heldout_summary.csv"}:
+        if result_path.name.endswith("_summary.csv"):
             continue
         run_path = result_path.with_name(result_path.stem + "_run.json")
         history_path = result_path.with_name(result_path.stem + "_history.csv")
@@ -651,7 +682,7 @@ def status() -> None:
     result_files = [
         path for path in OUT.glob("*.csv")
         if not path.name.endswith(("_history.csv", "_activity.csv"))
-        and path.name not in {"development_summary.csv", "heldout_summary.csv"}
+        and not path.name.endswith("_summary.csv")
     ]
     elapsed = [float(item["elapsed_seconds"]) for item in completed]
     print(f"completed points: {len(result_files)}")
@@ -674,6 +705,11 @@ def build_parser() -> argparse.ArgumentParser:
     point.add_argument("--tag", default="dev")
     point.add_argument("--max-rounds", type=int)
     point.add_argument("--force", action="store_true")
+    dense_audit_parser = commands.add_parser("dense-audit")
+    dense_audit_parser.add_argument("--rounds", type=int, default=900)
+    dense_audit_parser.add_argument(
+        "--partition-seed", type=int, default=protocol.DEVELOPMENT_SEED
+    )
     commands.add_parser("select")
     heldout = commands.add_parser("heldout")
     heldout.add_argument("--method", choices=METHODS, required=True)
@@ -697,6 +733,8 @@ def main() -> None:
             args.config, args.partition_seed, args.tag, args.device,
             force=args.force, max_rounds=args.max_rounds,
         )
+    elif args.command == "dense-audit":
+        dense_audit(args.device, args.rounds, args.partition_seed)
     elif args.command == "select":
         select_development()
     elif args.command == "heldout":
