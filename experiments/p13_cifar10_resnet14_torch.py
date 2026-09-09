@@ -36,7 +36,7 @@ METHODS = protocol.METHODS
 def _device(requested: str) -> torch.device:
     if requested == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but torch.cuda.is_available() is false")
-    device = torch.device(requested)
+    device = torch.device("cuda:0" if requested == "cuda" else requested)
     if device.type == "cuda":
         torch.cuda.set_device(device)
     return device
