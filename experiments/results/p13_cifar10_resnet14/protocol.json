@@ -1,0 +1,793 @@
+{
+  "status": "predeclared_before_resnet14_results",
+  "dataset": "CIFAR-10 python version",
+  "partition": {
+    "clients": 10,
+    "dominant_class_fraction": 0.55,
+    "development_seed": 4100,
+    "pilot_seeds": [
+      4200,
+      4300,
+      4400
+    ],
+    "extension_seeds": [
+      4500,
+      4600,
+      4700,
+      4800,
+      4900,
+      5000,
+      5100
+    ]
+  },
+  "architecture": {
+    "family": "CIFAR ResNet-14",
+    "normalization": "GroupNorm with 4 groups",
+    "depth_rule": "6n+2 with n=2",
+    "dimension": 175258,
+    "tensor_layout": [
+      {
+        "name": "stem.conv",
+        "shape": [
+          16,
+          3,
+          3,
+          3
+        ],
+        "size": 432
+      },
+      {
+        "name": "stem.gn_weight",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stem.gn_bias",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block1.conv1",
+        "shape": [
+          16,
+          16,
+          3,
+          3
+        ],
+        "size": 2304
+      },
+      {
+        "name": "stage1.block1.gn1_weight",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block1.gn1_bias",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block1.conv2",
+        "shape": [
+          16,
+          16,
+          3,
+          3
+        ],
+        "size": 2304
+      },
+      {
+        "name": "stage1.block1.gn2_weight",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block1.gn2_bias",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block2.conv1",
+        "shape": [
+          16,
+          16,
+          3,
+          3
+        ],
+        "size": 2304
+      },
+      {
+        "name": "stage1.block2.gn1_weight",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block2.gn1_bias",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block2.conv2",
+        "shape": [
+          16,
+          16,
+          3,
+          3
+        ],
+        "size": 2304
+      },
+      {
+        "name": "stage1.block2.gn2_weight",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage1.block2.gn2_bias",
+        "shape": [
+          16
+        ],
+        "size": 16
+      },
+      {
+        "name": "stage2.block1.conv1",
+        "shape": [
+          32,
+          16,
+          3,
+          3
+        ],
+        "size": 4608
+      },
+      {
+        "name": "stage2.block1.gn1_weight",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block1.gn1_bias",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block1.conv2",
+        "shape": [
+          32,
+          32,
+          3,
+          3
+        ],
+        "size": 9216
+      },
+      {
+        "name": "stage2.block1.gn2_weight",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block1.gn2_bias",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block1.shortcut",
+        "shape": [
+          32,
+          16,
+          1,
+          1
+        ],
+        "size": 512
+      },
+      {
+        "name": "stage2.block1.shortcut_gn_weight",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block1.shortcut_gn_bias",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block2.conv1",
+        "shape": [
+          32,
+          32,
+          3,
+          3
+        ],
+        "size": 9216
+      },
+      {
+        "name": "stage2.block2.gn1_weight",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block2.gn1_bias",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block2.conv2",
+        "shape": [
+          32,
+          32,
+          3,
+          3
+        ],
+        "size": 9216
+      },
+      {
+        "name": "stage2.block2.gn2_weight",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage2.block2.gn2_bias",
+        "shape": [
+          32
+        ],
+        "size": 32
+      },
+      {
+        "name": "stage3.block1.conv1",
+        "shape": [
+          64,
+          32,
+          3,
+          3
+        ],
+        "size": 18432
+      },
+      {
+        "name": "stage3.block1.gn1_weight",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block1.gn1_bias",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block1.conv2",
+        "shape": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "size": 36864
+      },
+      {
+        "name": "stage3.block1.gn2_weight",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block1.gn2_bias",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block1.shortcut",
+        "shape": [
+          64,
+          32,
+          1,
+          1
+        ],
+        "size": 2048
+      },
+      {
+        "name": "stage3.block1.shortcut_gn_weight",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block1.shortcut_gn_bias",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block2.conv1",
+        "shape": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "size": 36864
+      },
+      {
+        "name": "stage3.block2.gn1_weight",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block2.gn1_bias",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block2.conv2",
+        "shape": [
+          64,
+          64,
+          3,
+          3
+        ],
+        "size": 36864
+      },
+      {
+        "name": "stage3.block2.gn2_weight",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "stage3.block2.gn2_bias",
+        "shape": [
+          64
+        ],
+        "size": 64
+      },
+      {
+        "name": "head.weight",
+        "shape": [
+          64,
+          10
+        ],
+        "size": 640
+      },
+      {
+        "name": "head.bias",
+        "shape": [
+          10
+        ],
+        "size": 10
+      }
+    ]
+  },
+  "base_training": {
+    "local_steps": 5,
+    "local_lr": 0.05,
+    "batch_size": 32,
+    "regularization": 0.0005,
+    "rounds": 180,
+    "eval_stride": 15,
+    "rho": 0.999,
+    "threshold": 0.025,
+    "jump0": 0.005,
+    "jump_scale": 100.0,
+    "jump_exponent": 0.3,
+    "topk_fraction": 0.01,
+    "strom_threshold": 0.01,
+    "init_scale": 1.0,
+    "server_gain": 1.0
+  },
+  "candidate_configs": {
+    "dense_g05": {
+      "method": "dense",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 0.5
+      }
+    },
+    "dense_g10": {
+      "method": "dense",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "dense_g15": {
+      "method": "dense",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.5
+      }
+    },
+    "dense_g20": {
+      "method": "dense",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 2.0
+      }
+    },
+    "event_t0125_q0025": {
+      "method": "event",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.0125,
+        "jump0": 0.0025,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "event_t0125_q005": {
+      "method": "event",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.0125,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "event_t025_q0025": {
+      "method": "event",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.0025,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "event_t025_q005": {
+      "method": "event",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "event_t025_q01": {
+      "method": "event",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.01,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "event_t05_q005": {
+      "method": "event",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.05,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "event_t05_q01": {
+      "method": "event",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.05,
+        "jump0": 0.01,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "sign_ef": {
+      "method": "sign_ef",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "ef_k005": {
+      "method": "ef_topk",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.005,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "ef_k01": {
+      "method": "ef_topk",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "ef_k025": {
+      "method": "ef_topk",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.025,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "strom_t005": {
+      "method": "strom",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.005,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "strom_t01": {
+      "method": "strom",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    },
+    "strom_t02": {
+      "method": "strom",
+      "config": {
+        "local_steps": 5,
+        "local_lr": 0.05,
+        "batch_size": 32,
+        "regularization": 0.0005,
+        "rounds": 180,
+        "eval_stride": 15,
+        "rho": 0.999,
+        "threshold": 0.025,
+        "jump0": 0.005,
+        "jump_scale": 100.0,
+        "jump_exponent": 0.3,
+        "topk_fraction": 0.01,
+        "strom_threshold": 0.02,
+        "init_scale": 1.0,
+        "server_gain": 1.0
+      }
+    }
+  },
+  "selection": "minimum final training CE on development partition only",
+  "pilot_gate": {
+    "all_metrics_finite": true,
+    "dense_mean_test_accuracy_minimum": 0.2,
+    "all_semantic_parameter_groups_emit_at_least_one event": true,
+    "each_method_final_20_percent_absolute_mean_relative_train_ce_improvement_below": 0.01,
+    "outcome_independence": "Event-FedAvg need not outperform a baseline"
+  }
+}

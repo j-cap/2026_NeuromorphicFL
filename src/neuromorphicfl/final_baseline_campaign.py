@@ -26,9 +26,15 @@ from .cifar10_benchmark import (
     loss_and_gradient as cifar_cnn_loss_and_gradient,
     predictive_metrics as cifar_cnn_predictive_metrics,
 )
+from .cifar10_resnet import (
+    LAYOUT as CIFAR_RESNET14_LAYOUT,
+    initialize_resnet14,
+    loss_and_gradient as cifar_resnet14_loss_and_gradient,
+    predictive_metrics as cifar_resnet14_predictive_metrics,
+)
 
 
-Architecture = Literal["mlp", "cnn", "cifar_cnn"]
+Architecture = Literal["mlp", "cnn", "cifar_cnn", "cifar_resnet14"]
 Method = Literal["event", "strom", "ef_topk", "sign_ef", "dense"]
 
 
@@ -62,6 +68,13 @@ def _architecture_ops(architecture: Architecture):
             initialize_cifar_cnn,
             cifar_cnn_loss_and_gradient,
             cifar_cnn_predictive_metrics,
+        )
+    if architecture == "cifar_resnet14":
+        return (
+            CIFAR_RESNET14_LAYOUT,
+            initialize_resnet14,
+            cifar_resnet14_loss_and_gradient,
+            cifar_resnet14_predictive_metrics,
         )
     raise ValueError(architecture)
 
@@ -103,6 +116,7 @@ def run_final_baseline(
     alignment_client_reference_size: int | None = None,
     alignment_audit_rounds: tuple[int, ...] | None = None,
     record_history: bool = False,
+    record_group_activity: bool = False,
 ) -> dict[str, float | int | str | pd.DataFrame]:
     """Run one frozen FedAvg baseline and account for exact bidirectional replay.
 
@@ -138,6 +152,8 @@ def run_final_baseline(
             raise ValueError("alignment_client_reference_size must be positive")
     if not np.isfinite(config.server_gain) or config.server_gain <= 0.0:
         raise ValueError("server_gain must be finite and positive")
+    if record_group_activity and method != "event":
+        raise ValueError("group activity is defined only for method='event'")
 
     layout, initialize, loss_grad, metrics = _architecture_ops(architecture)
     rng = np.random.default_rng(seed)
@@ -161,7 +177,12 @@ def run_final_baseline(
     delta_norms: list[float] = []
     history_rows: list[dict[str, float | int]] = []
     alignment_rows: list[dict[str, float | int]] = []
+    group_activity_rows: list[dict[str, float | int | str]] = []
     round_replay_packetized: list[int] = []
+    activity_groups = (
+        layout.activity_groups() if hasattr(layout, "activity_groups")
+        else layout.groups()
+    )
 
     evidence_gain = 1.0 / config.local_lr
     alignment_reference_size = (
@@ -225,9 +246,21 @@ def run_final_baseline(
         if method == "event":
             event_state *= config.rho
             jump = config.jump0 * (1.0 + rnd / config.jump_scale) ** (-config.jump_exponent)
+            group_events = np.zeros(len(activity_groups), dtype=np.int64)
+            group_active_clients = np.zeros(len(activity_groups), dtype=np.int64)
+            group_abs_evidence = np.zeros(len(activity_groups), dtype=np.float64)
             for client in range(n_clients):
                 event_state[client] += evidence_gain * float(weights[client]) * deltas[client]
                 mask = np.abs(event_state[client]) >= config.threshold
+                if record_group_activity:
+                    for group_index, (_, group_slice, _) in enumerate(activity_groups):
+                        group_mask = mask[group_slice]
+                        group_count = int(np.sum(group_mask))
+                        group_events[group_index] += group_count
+                        group_active_clients[group_index] += int(group_count > 0)
+                        group_abs_evidence[group_index] += float(
+                            np.sum(np.abs(event_state[client, group_slice]))
+                        )
                 count = int(np.sum(mask))
                 if count:
                     signs = np.sign(event_state[client, mask]).astype(np.int8)
@@ -256,6 +289,21 @@ def run_final_baseline(
                     replay_this_round += packet
                     messages += 1
                     coordinate_events += count
+            if record_group_activity:
+                for group_index, (group_name, _, group_size) in enumerate(activity_groups):
+                    group_activity_rows.append({
+                        "round": rnd,
+                        "group": group_name,
+                        "parameter_count": group_size,
+                        "coordinate_events": int(group_events[group_index]),
+                        "active_clients": int(group_active_clients[group_index]),
+                        "firing_fraction": float(
+                            group_events[group_index] / (n_clients * group_size)
+                        ),
+                        "mean_abs_pre_reset_evidence": float(
+                            group_abs_evidence[group_index] / (n_clients * group_size)
+                        ),
+                    })
 
         elif method == "strom":
             tau = float(config.strom_threshold)
@@ -654,4 +702,6 @@ def run_final_baseline(
         result["alignment_audit"] = pd.DataFrame(alignment_rows)
     if record_history:
         result["history"] = history
+    if record_group_activity:
+        result["group_activity"] = pd.DataFrame(group_activity_rows)
     return result

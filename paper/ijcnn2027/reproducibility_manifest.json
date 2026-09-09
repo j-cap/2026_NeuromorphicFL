@@ -165,12 +165,12 @@
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
       "role": "generated figure",
-      "sha256": "a0d8808e3fb84cf98f24a2eb564857f6ea48f5a8468633e862bb78b628e83b4b"
+      "sha256": "e78776b3bbef56b8b4f3cd781a5b009b866d16fe571c8f1153da6468d94b0f85"
     },
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.drawio",
       "role": "editable figure source",
-      "sha256": "d2e3418db79254b99d9acc818a081e2d82e27574e49e9b53b713c378d3fefec7"
+      "sha256": "73112ccabd3869eafd8ef3a3c7919eeba5832f9c9fd3776fb9efd0bce3674d4c"
     },
     {
       "path": "paper/ijcnn2027/figures/communication_frontier.pdf",
@@ -180,7 +180,7 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "c3db716b8bec64b70e7f1a2c8f4402ee7d1872a155e259367f4f999cd5d1793d"
+      "sha256": "aa2e35dbb52ea71c9904a3f2d39c50fc11764b2afb04a96b06e37c18554d8561"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -325,7 +325,7 @@
     {
       "path": "src/neuromorphicfl/final_baseline_campaign.py",
       "role": "experiment code",
-      "sha256": "dbc65dc06def2e1da21ba42064c63829ddf325761f403b490ef161ffa5ff308a"
+      "sha256": "50bdd67621ea0f5c82167c39e39f9b7383bcf59583095785a87f9137803fd1b8"
     }
   ]
 }

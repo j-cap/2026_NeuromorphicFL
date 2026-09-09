@@ -79,11 +79,11 @@ and emits a signed event on crossing. A separate \emph{model quantum} specifies
 how far that event moves the server parameter, so evidence threshold and update
 magnitude need not coincide.
 
-Sparse uploads alone are not a complete FL protocol because the server update
-must return to every client. In \emph{ordered replay}, a client applies the same
-sparse packet sequence in the same order as the server. If replay costs more
-than the complete float32 model, a \emph{dense-checkpoint fallback} sends that
-model instead. Both choices exactly synchronize the next client model.
+After every server update--including a no-event round--the server must
+synchronize all clients before the next round. It returns either \emph{ordered
+replay}, the sparse packet sequence in server order, or, when cheaper, a
+\emph{dense-checkpoint fallback} containing the complete float32 model. Both
+choices exactly synchronize the next client model.
 
 Our contributions are threefold. We define the complete encoder, server update,
 and synchronization algorithm. We prove pathwise state and event-budget
@@ -129,8 +129,9 @@ for its individual ingredients.
  multi-step FedAvg. Weighted local deltas drive leaky evidence. A model entry
  emits only when its sampled state first crosses the threshold after the
  previous reset. The trigger resolution
- $\vartheta$ is independent of the model-update resolution $q_r$, and ordered
- replay or checkpoint fallback synchronizes every client exactly.}
+ $\vartheta$ is independent of the model-update resolution $q_r$. After every
+ server update, ordered replay or checkpoint fallback exactly synchronizes all
+ clients before the next round.}
  \label{fig:event-fedavg-method}
 \end{figure*}
 
@@ -261,9 +262,9 @@ round $r=1,\ldots,R$:
   \item \textbf{Server update:} The server forms
   $\vect{C}^r=\sum_i\vect{c}_i^r$ and sets
   $\vect{w}^{r+1}=\vect{w}^r+q_r\vect{C}^r$.
-  \item \textbf{Synchronization:} The server returns the ordered sparse packet
-  stream or, when smaller, a dense checkpoint. Every client then holds
-  $\vect{w}^{r+1}$.
+  \item \textbf{Synchronization after every round:} Including when no event
+  fires, the server returns the ordered sparse stream or a smaller dense
+  checkpoint. Every client then holds $\vect{w}^{r+1}$.
 \end{enumerate}
 \end{algorithm}
 \vspace{-2pt}
@@ -273,8 +274,8 @@ round $r=1,\ldots,R$:
 \section{Scoped Theoretical Characterization}
 \label{sec:theory}
 
-We separate encoder properties that hold for every realized input sequence
-from the assumption needed to connect emitted events to optimization.
+We establish pathwise encoder guarantees and an exact pulse-alignment
+decomposition, then derive a conditional finite-horizon optimization bound.
 
 \begin{proposition}[State and pathwise event budget]
 Assume $|z_{ij}^1|<\vartheta$ initially. The full-reset encoder keeps
@@ -289,12 +290,13 @@ $N_R^{\rm coord}=\sum_{r=1}^R\sum_{i,j}m_{ij}^r$, then
 Consequently, if $P_R$ is the number of nonempty packets, the exact event
 uplink is $64P_R+(\lceil\log_2d\rceil+1)N_R^{\rm coord}$ bits.
 \end{proposition}
-The state claim follows immediately from the threshold test and full reset.
-For~\eqref{eq:event-budget}, expand the leaky recurrence over each disjoint
-reset-to-event block. Every leak product is at most one, while threshold
-crossing requires at least $\vartheta$ total absolute evidence in that block.
-This bound is deterministic and permits biased, dependent, or nonstationary
-inputs. It is an upper bound, not a guarantee that weak evidence fires.
+The threshold test and reset prove the state claim. Partition each coordinate
+trajectory into disjoint reset-to-event blocks. On a block $s{:}t$, the
+recurrence and $0\leq\rho_r\leq1$ give
+$|\widetilde z_{ij}^{t}|\leq|z_{ij}^{s}|+\sum_{\tau=s}^{t}|a_{ij}^{\tau}|$.
+At an event the left side is at least $\vartheta$. Summing the blocks, of which
+only the first uses the initial state, proves~\eqref{eq:event-budget}. The bound
+is pathwise and allows dependent inputs; it does not force weak evidence to fire.
 
 Write $\vect{g}^r=\nabla F(\vect{w}^r)$ and let
 $N_r=\sum_i\norm{\vect{c}_i^r}_0$ denote the number of client-coordinate events in
@@ -309,20 +311,19 @@ The realized aggregate alignment is then
  A_r=-\langle\vect{g}^r,\vect{C}^r\rangle=D_r-H_r,
  \label{eq:alignment}
 \end{equation}
-where $D_r$ and $H_r$ are respectively the global-gradient mass carried by
-client pulses opposing and following $\vect{g}^r$. This definition already
-accounts for reinforcement and cancellation on a shared coordinate. It also
-defines the same $A_r$ used below in~\eqref{eq:alignment-decomposition}. For
-each coordinate, Cauchy--Schwarz gives
+Here $D_r$ and $H_r$ are helpful and harmful global-gradient mass.
+Aggregation includes same-coordinate reinforcement and cancellation; this is
+the same $A_r$ as in~\eqref{eq:alignment-decomposition}. Coordinatewise,
+Cauchy--Schwarz gives
 $(\sum_i c_{ij}^r)^2\leq M\sum_i(c_{ij}^r)^2$. Because
 $(c_{ij}^r)^2=m_{ij}^r$, summing over $j$ yields
 $\norm{\vect{C}^r}_2^2\leq MN_r$. This bounds the squared server-update norm
 using only the number of transmitted events.
 
-To expose the mechanisms hidden inside $A_r$, let
+To resolve the mechanisms inside $A_r$, let
 $\mathcal S_i^r=\{j:c_{ij}^r\neq0\}$, write $s_{ij}^r=c_{ij}^r$ on this set,
-and define the current local gradient
-$\vect{g}_i^r=\nabla F_i(\vect{w}^r)$ and local-update proxy
+and define the local gradient
+$\vect{g}_i^r=\nabla F_i(\vect{w}^r)$ and update proxy
 $\vect{v}_i^r=\vect{\delta}_i^r/(\eta_rE_r)$. For emitted client-coordinate
 pairs, set
 \begin{align}
@@ -333,10 +334,8 @@ pairs, set
  &B_r&=\sum_{i,j\in\mathcal S_i^r}(g_{ij}^r-g_j^r)s_{ij}^r.
  \label{eq:alignment-components}
 \end{align}
-$P_r$ is the alignment with the current local-update proxy, $R_r$ is the
-penalty from accumulated state firing against that proxy, $L_r$ contains local
-drift and stochastic-gradient mismatch, and $B_r$ contains client-to-global
-heterogeneity.
+$P_r$ measures current-proxy agreement, $R_r$ memory-induced opposition,
+$L_r$ local drift and gradient noise, and $B_r$ client heterogeneity.
 
 \begin{proposition}[Exact alignment decomposition]
 For every realized round,
@@ -345,33 +344,64 @@ For every realized round,
  \label{eq:alignment-decomposition}
 \end{equation}
 \end{proposition}
-For each emitted pair, add and subtract $v_{ij}^r$ and $g_{ij}^r$ in
-$-g_j^rs_{ij}^r$, then use $v_{ij}^rs_{ij}^r=
-|v_{ij}^r|-2|v_{ij}^r|\ind{s_{ij}^rv_{ij}^r<0}$. Summing gives
-\eqref{eq:alignment-decomposition}. Its terms respectively describe current
-local-update agreement, memory opposition, local mismatch, and heterogeneity.
-Because $L_r$ and $B_r$ have unrestricted signs, the identity does not prove
-positive alignment.
+For each emitted pair, introduce the two intermediate quantities in separate
+exact steps. First, adding and subtracting the local gradient gives
+\begin{align*}
+-g_j^rs_{ij}^r
+&=-g_{ij}^rs_{ij}^r+(g_{ij}^r-g_j^r)s_{ij}^r.
+\end{align*}
+The second term is the client-to-global heterogeneity contribution. Next,
+adding and subtracting the local-update proxy gives
+\begin{align*}
+-g_{ij}^rs_{ij}^r
+&=v_{ij}^rs_{ij}^r+(-g_{ij}^r-v_{ij}^r)s_{ij}^r.
+\end{align*}
+Here $\vect{v}_i^r$ is the negative average stochastic gradient along the
+local trajectory, so the second term measures its mismatch with the current
+negative local gradient. Combining both steps yields
+\begin{align*}
+-g_j^rs_{ij}^r
+&=v_{ij}^rs_{ij}^r+(-g_{ij}^r-v_{ij}^r)s_{ij}^r
+ +(g_{ij}^r-g_j^r)s_{ij}^r.
+\end{align*}
+Finally, because $s_{ij}^r\in\{-1,+1\}$,
+\begin{equation*}
+v_{ij}^rs_{ij}^r
+=|v_{ij}^r|-2|v_{ij}^r|\ind{s_{ij}^rv_{ij}^r<0}.
+\end{equation*}
+The factor two changes the nominal $+|v_{ij}^r|$ contribution into
+$-|v_{ij}^r|$ when the pulse opposes the proxy. Summing over emitted pairs
+therefore produces $P_r-R_r+L_r+B_r$ and proves
+\eqref{eq:alignment-decomposition}. The terms isolate current-update
+agreement, memory opposition, local mismatch, and heterogeneity. Since $L_r$
+and $B_r$ have unrestricted signs, the identity alone cannot ensure alignment.
 
 \begin{proposition}[Descent and conditional gradient-norm bound]
-If $F$ is $L$-smooth, every realized round obeys
-\begin{equation}
- F(\vect{w}^{r+1})\leq F(\vect{w}^r)-q_rA_r+\frac{LM}{2}q_r^2N_r.
+If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
+\vspace{-3pt}
+\begin{align}
+ F(\vect{w}^{r+1})
+ &\leq F(\vect{w}^r)+q_r\langle\nabla F(\vect{w}^r),\vect{C}^r\rangle
+ +\frac{L}{2}q_r^2\norm{\vect{C}^r}_2^2 \notag\\
+ &\leq F(\vect{w}^r)-q_rA_r+\frac{LM}{2}q_r^2N_r.
  \label{eq:descent}
-\end{equation}
+\end{align}
+This holds pathwise. An optimization guarantee additionally requires the
+emitted aggregate to align with global descent.
 Let $\mathcal{F}_r$ contain all randomness revealed before round-$r$ local
-computation, and suppose, for $\kappa>0$ and deterministic $\beta_r\geq0$,
+computation, and assume, for $\kappa>0$ and deterministic $\beta_r\geq0$,
 \begin{equation}
  \E[A_r\mid\mathcal{F}_r]\geq
  \kappa\norm{\nabla F(\vect{w}^r)}_2^2-\beta_r .
  \label{eq:alignment-assumption-paper}
 \end{equation}
-This alignment inequality is the unresolved learning condition; it does not
-follow from the pathwise encoder properties above.
+Here $\kappa$ is the useful expected alignment per unit gradient energy and
+$\beta_r$ permits round-dependent error. This unresolved learning condition
+does not follow from the encoder guarantees.
 If the objective has finite lower bound $F_{\inf}$, meaning
 $F(\vect{w})\geq F_{\inf}$ for every $\vect{w}$, and $\vect{w}^1$ is
 deterministic, define
-$Q_R=\sum_{r=1}^Rq_r$ and independently draw $J_R$ with
+$Q_R=\sum_{r=1}^Rq_r$ and, for analysis only, independently draw $J_R$ with
 $\Pr(J_R=r)=q_r/Q_R$. Then
 \begin{align}
  \kappa Q_R\E\norm{\nabla F(\vect{w}^{J_R})}_2^2
@@ -380,25 +410,29 @@ $\Pr(J_R=r)=q_r/Q_R$. Then
  \label{eq:stationarity}
 \end{align}
 \end{proposition}
-Equation~\eqref{eq:descent} applies $L$-smoothness to $q_r\vect{C}^r$, uses
-$A_r$ for the first-order term, and bounds the quadratic term by
-$\norm{\vect{C}^r}_2^2\leq MN_r$. For~\eqref{eq:stationarity}, take conditional
-expectations, insert~\eqref{eq:alignment-assumption-paper}, sum, telescope the
-objectives, and apply $F\geq F_{\inf}$. The choice of $J_R$ gives
+Taking expectations in~\eqref{eq:descent} and applying
+\eqref{eq:alignment-assumption-paper} yields the one-round inequality
+\vspace{-3pt}
+\begin{align*}
+ \kappa q_r\E\norm{\nabla F(\vect{w}^r)}_2^2
+ &\leq \E F(\vect{w}^r)-\E F(\vect{w}^{r+1})+q_r\beta_r\\
+ &\quad+\frac{LM}{2}q_r^2\E N_r.
+\end{align*}
+Summing telescopes the objectives; $F\geq F_{\inf}$ gives
+\eqref{eq:stationarity}. The analysis-only choice of $J_R$ gives
 $\E\norm{\nabla F(\vect{w}^{J_R})}_2^2=Q_R^{-1}\sum_rq_r
 \E\norm{\nabla F(\vect{w}^r)}_2^2$. It reports one weighted-random iterate
-without assuming that the final iterate is best.
+without changing the algorithm or assuming that the final iterate is best.
 
-The result is deliberately conditional. Silence, leakage, stale evidence,
-local drift, sign errors, and heterogeneity may all require a larger $\beta_r$.
-The empirical quantum-schedule exponents $0.1$, $0.2$, and $0.3$ are used only
-over the reported finite horizons. We therefore make no asymptotic convergence
+The result is conditional: silence, leakage, stale evidence, drift, sign
+errors, and heterogeneity may enlarge $\beta_r$. Because exponents $0.1$,
+$0.2$, and $0.3$ are evaluated only at finite horizons, we make no asymptotic
 claim.
 
-At selected rounds, we replay the recorded state and compute full client and
-global gradients at $\vect{w}^r$ after the event decision. These gradients
-evaluate $A_r$ and~\eqref{eq:alignment-decomposition}, but cannot alter training
-or later crossings. For audited rounds $\mathcal A$, define
+At selected rounds, we replay recorded states and compute full client and
+global gradients after the event decision. They evaluate $A_r$ and
+\eqref{eq:alignment-decomposition} without altering training or later events.
+For audited rounds $\mathcal A$, define
 \begin{equation}
  \widehat\kappa_{\mathcal A}=
  \frac{\sum_{r\in\mathcal A}q_rA_r}
@@ -406,11 +440,11 @@ or later crossings. For audited rounds $\mathcal A$, define
  \label{eq:empirical-alignment-ratio}
 \end{equation}
 This normalized trajectory ratio compares realized first-order descent with
-global-gradient energy. A positive value means average $q_r$-weighted descent
-alignment. It is neither mean $A_r$ nor the theoretical $\kappa$, except as an
-empirical analogue when $\beta_r=0$, and it does not prove the conditional
-expectation. Section~\ref{sec:results} combines it with the decomposition to
-explain observed heterogeneity and local-depth effects.
+gradient energy; positivity means average $q_r$-weighted alignment. It is
+neither mean $A_r$ nor theoretical
+$\kappa$ (only an analogue when $\beta_r=0$), and cannot prove
+\eqref{eq:alignment-assumption-paper}. Section~\ref{sec:results} uses its
+decomposition to interpret heterogeneity and local-depth effects.
 
 \begin{figure*}[t]
  \centering
@@ -444,7 +478,23 @@ schedule after~\eqref{eq:server-update}.
 The corresponding frozen tuples
 $(\rho,\vartheta,q_0,\alpha)$ are
 $(0.999,0.025,0.005,0.1)$, $(0.999,0.025,0.010,0.3)$, and
-$(0.999,0.025,0.005,0.2)$. Across the broad comparison, EF-TopK uses
+$(0.999,0.025,0.005,0.2)$.
+
+\textbf{Practical parameter selection.}
+For constant retention, $\rho$ sets an approximate encoder-memory horizon of
+$1/(1-\rho)$ rounds. The threshold $\vartheta$ controls when coordinates fire
+and hence the communication rate, whereas $q_0$ controls the server displacement
+caused by each pulse. We therefore evaluate candidate $(\vartheta,q_0)$ pairs
+on the development partition, select the pair with the lowest final training
+loss, and freeze it before held-out evaluation. The exponent $\alpha$ controls
+how quickly pulse-induced server updates shrink over the finite training
+horizon. Although $\vartheta$ and $q_r$ have distinct roles, they are selected
+jointly because the threshold changes both the number and timing of server
+updates. The choice $\rho=0.999$ gives long evidence retention; the mechanism
+audit below found no measurable difference from $\rho=1$ at the selected
+finite-horizon operating point.
+
+Across the broad comparison, EF-TopK uses
 quality/nearest-traffic fractions $0.05/0.01$, while Strom uses thresholds
 $0.00125/0.02$ on the Fashion-MNIST MLP, $0.005/0.02$ on the Fashion-MNIST
 CNN, and $0.0025/0.01$ on CIFAR-10. The ten-seed subset comprises the points

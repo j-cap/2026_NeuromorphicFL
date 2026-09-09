@@ -137,6 +137,33 @@ Smoke test:
 PYTHONPATH=src python experiments/08_heterogeneous_delayed_async.py --quick
 ```
 
+## P13 — CIFAR-10 ResNet-14 architecture extension
+
+**Question.** Does Event-FedAvg retain a useful communication--quality trade-off
+on a deeper residual model without starving complete parameter groups?
+
+**Protocol.** A 175,258-parameter CIFAR-style ResNet-14 with GroupNorm uses the
+same strong-skew CIFAR-10 federation and matched local-SGD interface as P3. A
+development-only grid is followed by a three-seed validity gate and, only after
+that gate passes, seven frozen extension seeds. Layer-level event activity and
+final-horizon stability are audited explicitly. See
+[`P13_CIFAR10_RESNET14_PROTOCOL.md`](P13_CIFAR10_RESNET14_PROTOCOL.md).
+
+```bash
+PYTHONPATH=src python experiments/p13_cifar10_resnet14.py smoke
+PYTHONPATH=src python experiments/p13_cifar10_resnet14.py protocol
+```
+
+For an NVIDIA workstation, use the CUDA-native PyTorch runner:
+
+```bash
+bash tools/p13_workstation.sh setup
+bash tools/p13_workstation.sh smoke
+bash tools/p13_workstation.sh test
+# After inspecting timing and test outputs:
+bash tools/p13_workstation.sh full
+```
+
 ## Conventions
 
 - Use fixed random seeds and Monte Carlo ensembles.
