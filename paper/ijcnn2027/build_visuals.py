@@ -1,8 +1,8 @@
 """Generate and validate the frozen IJCNN comparison figure and main table.
 
-Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the broad
-three-seed campaign because it is the only campaign containing every method
-family in every benchmark. Table 1 uses the later ten-seed headline campaign.
+Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the P14
+ten-seed extension containing every method family in every benchmark. Table 1
+uses the P12 ten-seed headline campaign.
 Run with ``--check`` to detect source, selection-rule, or rendered-artifact
 drift.
 """
@@ -26,7 +26,7 @@ REPO = Path(__file__).resolve().parents[2]
 PAPER = REPO / "paper" / "ijcnn2027"
 HEADLINE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
-CIFAR10 = PAPER / "evidence" / "cifar10_master_results.csv"
+P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -112,12 +112,22 @@ def headline_rows() -> dict[str, list[dict[str, str]]]:
 
 
 def frontier_rows() -> dict[str, list[dict[str, str]]]:
-    """Return the complete frozen comparison campaign used in Figure 2."""
+    """Return the complete ten-seed frozen comparison used in Figure 2."""
 
-    rows = read_csv(FMNIST) + read_csv(CIFAR10)
+    source = read_csv(P14)
+    rows = []
+    for row in source:
+        converted = dict(row)
+        converted["unicast_total_Mbit_mean"] = str(
+            float(row["unicast_hybrid_total_bits_mean"]) / 1e6
+        )
+        converted["unicast_total_Mbit_std"] = str(
+            float(row["unicast_hybrid_total_bits_std"]) / 1e6
+        )
+        rows.append(converted)
     required = {
         "comparison",
-        "architecture",
+        "benchmark",
         "method",
         "final_test_accuracy_mean",
         "final_test_accuracy_std",
@@ -129,9 +139,9 @@ def frontier_rows() -> dict[str, list[dict[str, str]]]:
 
     grouped: dict[str, list[dict[str, str]]] = {}
     for key, _title, architecture, _ylim in PANELS:
-        selected = [row for row in rows if row["architecture"] == architecture]
-        if len(selected) != 8:
-            raise ValueError(f"{key} does not contain the frozen eight visual rows")
+        selected = [row for row in rows if row["benchmark"] == key]
+        if len(selected) != 7:
+            raise ValueError(f"{key} does not contain the seven unique visual rows")
         grouped[key] = selected
     return grouped
 
@@ -188,7 +198,7 @@ def validate_frontier_contract(grouped: dict[str, list[dict[str, str]]]) -> None
             for method in ("event", "strom", "ef_topk", "sign_ef", "dense")
         } | {
             ("traffic-matched", method)
-            for method in ("event", "strom", "ef_topk")
+            for method in ("strom", "ef_topk")
         }
         observed = {(row["comparison"], row["method"]) for row in rows}
         if observed != expected:
@@ -344,9 +354,6 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         )
 
         for row in rows:
-            # Event is identical in both selection views and is drawn once.
-            if row["method"] == "event" and row["comparison"] == "traffic-matched":
-                continue
             style = METHODS[row["method"]]
             quality = row["comparison"] == "quality-selected"
             face = style["color"] if quality else "white"

@@ -46,6 +46,9 @@ P12_RUNS = P12_ROOT / "heldout_runs.csv"
 P12_SOURCE = P12_ROOT / "summary.csv"
 P12_PAIRED_SOURCE = P12_ROOT / "paired_differences.csv"
 P12_PROTOCOL = P12_ROOT / "protocol.json"
+P14_ROOT = REPO / "experiments" / "results" / "p14_figure2_ten_seed"
+P14_RUNS = P14_ROOT / "heldout_runs.csv"
+P14_SOURCE = P14_ROOT / "summary.csv"
 
 MASTER = PAPER / "evidence" / "fmnist_master_results.csv"
 QUALITY_TEX = PAPER / "generated" / "fmnist_quality_table.tex"
@@ -55,6 +58,7 @@ CIFAR_TEX = PAPER / "generated" / "cifar10_table.tex"
 P8_EVIDENCE = PAPER / "evidence" / "p8_targeted_revision.csv"
 P12_EVIDENCE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 P12_PAIRED_EVIDENCE = PAPER / "evidence" / "p12_paired_differences.csv"
+P14_EVIDENCE = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
 
 PARTITION_SEEDS = "2500;2600;2700"
 TRAIN_SEEDS = "72500;72600;72700"
@@ -578,6 +582,28 @@ def validate_p12() -> None:
         raise ValueError("P12 protocol manifest drift")
 
 
+def validate_p14() -> None:
+    runs = read_plain_rows(P14_RUNS)
+    summary = read_plain_rows(P14_SOURCE)
+    if len(runs) != 210 or len(summary) != 21:
+        raise ValueError("P14 must contain 210 runs and 21 summary points")
+    if {int(row["n_seeds"]) for row in summary} != {10}:
+        raise ValueError("every P14 Figure 2 point must contain ten seeds")
+    keys = {(row["point_id"], int(row["seed_index"])) for row in runs}
+    if len(keys) != 210:
+        raise ValueError("duplicate P14 point/seed rows")
+    for row in runs:
+        benchmark = row["benchmark"]
+        seed_index = int(row["seed_index"])
+        partition_start = 2500 if benchmark.startswith("fmnist_") else 3500
+        partition_seed = partition_start + 100 * seed_index
+        training_offset = 70000 if benchmark.startswith("fmnist_") else 80000
+        if int(row["partition_seed"]) != partition_seed:
+            raise ValueError(f"P14 partition-seed drift: {row['point_id']}/{seed_index}")
+        if int(row["train_seed"]) != training_offset + partition_seed:
+            raise ValueError(f"P14 training-seed drift: {row['point_id']}/{seed_index}")
+
+
 def merge_tuned_dense(
     rows: list[dict[str, str]], p8_rows: list[dict[str, str]]
 ) -> list[dict[str, str]]:
@@ -728,6 +754,7 @@ def main() -> None:
     p8 = read_p8_rows(P8_SOURCE)
     validate_p8(p8)
     validate_p12()
+    validate_p14()
     cifar_with_tuned_dense = merge_tuned_dense(cifar, p8)
     expected.update(
         {
@@ -736,6 +763,7 @@ def main() -> None:
             P8_EVIDENCE: P8_SOURCE.read_text(encoding="utf-8"),
             P12_EVIDENCE: P12_SOURCE.read_text(encoding="utf-8"),
             P12_PAIRED_EVIDENCE: P12_PAIRED_SOURCE.read_text(encoding="utf-8"),
+            P14_EVIDENCE: P14_SOURCE.read_text(encoding="utf-8"),
         }
     )
 

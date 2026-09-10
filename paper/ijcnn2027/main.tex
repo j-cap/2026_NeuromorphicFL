@@ -506,11 +506,11 @@ assumption has been proved.}
 \begin{figure*}[t]
  \centering
  \includegraphics[width=\textwidth]{figures/communication_frontier.pdf}
- \caption{Broad three-seed held-out comparison containing all five method
- families. Filled and hollow markers denote quality-selected and
+ \caption{\rev{Broad ten-seed held-out comparison containing all five method
+ families.} Filled and hollow markers denote quality-selected and
  nearest-traffic settings; dotted lines connect observed nondominated points.
- Error bars show mean $\pm$ sample standard deviation. The ten-seed campaign
- reruns only the predeclared headline subset in Table~\ref{tab:main-results}.}
+ \rev{Error bars show mean $\pm$ sample standard deviation over the same ten
+ matched partition and training seeds used in Table~\ref{tab:main-results}.}}
  \label{fig:communication-frontier}
 \end{figure*}
 
@@ -558,10 +558,10 @@ finite-horizon operating point.
 Across the broad comparison, EF-TopK uses
 quality/nearest-traffic fractions $0.05/0.01$, while Strom uses thresholds
 $0.00125/0.02$ on the Fashion-MNIST MLP, $0.005/0.02$ on the Fashion-MNIST
-CNN, and $0.0025/0.01$ on CIFAR-10. The ten-seed subset comprises the points
+CNN, and $0.0025/0.01$ on CIFAR-10. \rev{The headline subset comprises the points
 identified in Table~\ref{tab:main-results}; its EF-TopK CIFAR-10 reference
 uses class-wise fraction $0.05$, and its dense CIFAR-10 reference uses server
-gain $\gamma=2$.
+gain $\gamma=2$.}
 
 \textbf{Selection and evaluation.}
 We compare Event-FedAvg with dense FedAvg~\cite{mcmahan2017fedavg}, Sign-EF
@@ -584,9 +584,9 @@ included in the ten-seed extension. For each of these points, final values are
 the mean and sample standard deviation over ten strong-skew partitions with
 paired training seeds across methods. The extension reran the three original
 seed pairs and seven additional pairs in one pinned campaign after all reported
-method settings had been frozen. Figure~\ref{fig:communication-frontier}
-retains the broader three-seed grid because configurations outside the
-headline subset were not rerun for ten seeds.} Test
+method settings had been frozen. The subsequent
+Figure~\ref{fig:communication-frontier} extension reran all remaining frozen
+comparison settings on those same ten seed pairs.} Test
 cross-entropy (CE), accuracy, worst-class accuracy, coordinate events, and
 communication are recorded. No evaluation result influences development
 selection.
@@ -618,16 +618,13 @@ diagnostic computation from perturbing later threshold crossings.
 \label{sec:results}
 
 Figure~\ref{fig:communication-frontier} gives the broad cross-benchmark
-comparison using total uplink-plus-downlink unicast traffic. \rev{This figure
-uses the original three held-out seeds because that campaign is the only one
-that evaluates every method family and every displayed hyperparameter setting
-on all three model--dataset combinations.} Filled markers
+comparison using total uplink-plus-downlink unicast traffic. \rev{Every point
+uses the same ten matched partition and training seeds.} Filled markers
 identify development-selected quality settings, while hollow markers identify
 baseline settings selected for traffic proximity. Each marker is one frozen
-method--hyperparameter setting. \rev{Table~\ref{tab:main-results} reports all
-11 configurations that were rerun in the ten-seed extension; the remaining
-broad-grid configurations have only three-seed estimates and therefore remain
-in the figure rather than being mixed into the table.}
+method--hyperparameter setting. \rev{Table~\ref{tab:main-results} focuses on
+the 11 predeclared headline configurations, whereas the figure shows all 21
+frozen operating points evaluated in the ten-seed campaign.}
 
 \input{generated/p11_alignment_table}
 
