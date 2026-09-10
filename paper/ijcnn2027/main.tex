@@ -461,10 +461,12 @@ and deterministic $\beta_r\geq0$ such that
 computation in round $r$. Define $Q_R=\sum_{r=1}^Rq_r$ and independently draw
 $J_R$ with $\Pr(J_R=r)=q_r/Q_R$. Then}
 \begin{align}
- {\color{blue}\kappa Q_R\E\norm{\nabla F(\vect{w}^{J_R})}_2^2}
- &\mathrel{\color{blue}\leq} {\color{blue}F(\vect{w}^1)-F_{\inf}
- +\sum_{r=1}^Rq_r\beta_r} \notag\\
- &\quad {\color{blue}+\frac{LM}{2}\sum_{r=1}^Rq_r^2\E N_r .}
+ {\color{blue}\E\norm{\nabla F(\vect{w}^{J_R})}_2^2}
+ &\mathrel{\color{blue}\leq}
+ {\color{blue}\frac{F(\vect{w}^1)-F_{\inf}}{\kappa Q_R}
+ +\frac{\sum_{r=1}^Rq_r\beta_r}{\kappa Q_R}} \notag\\
+ &\quad {\color{blue}+\frac{LM}{2\kappa Q_R}
+ \sum_{r=1}^Rq_r^2\E N_r .}
  \label{eq:stationarity}
 \end{align}
 \end{theorem}
@@ -476,16 +478,28 @@ $\beta_r$. The encoder guarantees state boundedness and an event budget, but it
 does not guarantee this alignment. The theorem therefore states precisely what
 follows when the optimization dynamics provide sufficient alignment.}
 
+\rev{The three terms on the right of~\eqref{eq:stationarity} have distinct
+roles. The first is the initial optimization gap divided by the cumulative
+effective update mass $\kappa Q_R$. The second is the accumulated alignment
+defect, averaged with the same $q_r$ weights used to select $J_R$. The third is
+the smoothness cost of discrete event updates. It grows with the expected event
+count $N_r$ and is weighted by $q_r^2$, so reducing the model quantum lowers
+this curvature penalty. Consequently, a small bound requires enough cumulative
+update mass, controlled alignment defects, and a quantum schedule for which the
+event-curvature sum remains small relative to $Q_R$.}
+
 \rev{Taking expectations in~\eqref{eq:descent} and applying
-\eqref{eq:alignment-assumption-paper} yields}
+\eqref{eq:alignment-assumption-paper}, then dividing by $\kappa q_r$, yields}
 \vspace{-3pt}
 \begin{align*}
- \kappa q_r\E\norm{\nabla F(\vect{w}^r)}_2^2
- &\leq \E F(\vect{w}^r)-\E F(\vect{w}^{r+1})+q_r\beta_r\\
- &\quad+\frac{LM}{2}q_r^2\E N_r.
+ \E\norm{\nabla F(\vect{w}^r)}_2^2
+ &\leq \frac{\E F(\vect{w}^r)-\E F(\vect{w}^{r+1})}
+ {\kappa q_r}+\frac{\beta_r}{\kappa}\\
+ &\quad+\frac{LMq_r}{2\kappa}\E N_r.
 \end{align*}
-\rev{Summing over $r$ telescopes the objective values. The lower bound
-$F\geq F_{\inf}$ then gives~\eqref{eq:stationarity}. Moreover,
+\rev{Multiplying this inequality by $q_r$ and summing over $r$ telescopes the
+objective values. The lower bound $F\geq F_{\inf}$ and division by $Q_R$ then
+give~\eqref{eq:stationarity}. Moreover,
 $\E\norm{\nabla F(\vect{w}^{J_R})}_2^2=Q_R^{-1}\sum_rq_r
 \E\norm{\nabla F(\vect{w}^r)}_2^2$. Thus, $J_R$ reports a
 $q_r$-weighted random iterate for analysis without changing the algorithm or
