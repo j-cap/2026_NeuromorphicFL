@@ -12,6 +12,7 @@
 \newcommand{\ind}[1]{\mathbf{1}_{\{#1\}}}
 \newcommand{\vect}[1]{\boldsymbol{#1}}
 \newcommand{\rev}[1]{{\color{blue}#1}}
+\newcommand{\prov}[1]{{\color{red}#1}}
 \newtheorem{proposition}{Proposition}
 \newtheorem{algorithm}{Algorithm}
 
@@ -510,7 +511,9 @@ assumption has been proved.}
  families.} Filled and hollow markers denote quality-selected and
  nearest-traffic settings; dotted lines connect observed nondominated points.
  \rev{Error bars show mean $\pm$ sample standard deviation over the same ten
- matched partition and training seeds used in Table~\ref{tab:main-results}.}}
+ matched partition and training seeds used in Table~\ref{tab:main-results}.}
+ \prov{The red-framed ResNet-14 panel is provisional development-partition
+ evidence from one seed ($n=1$); its ten-seed held-out evaluation is pending.}}
  \label{fig:communication-frontier}
 \end{figure*}
 
@@ -636,6 +639,12 @@ traffic, whereas Event-FedAvg gains $2.14$ points at nearby traffic. On
 CIFAR-10, Event-FedAvg leads tuned dense FedAvg by $4.25$ points using only
 $12.7\%$ of its traffic and leads quality-selected Strom by $1.14$ points with
 $4.6\times$ less traffic.
+
+\prov{For the provisional ResNet-14 development run, Event-FedAvg reaches
+$75.43\%$ accuracy and $59.8\%$ worst-class accuracy using $21.09$ Gbit, versus
+$69.71\%$, $47.4\%$, and $201.96$ Gbit for dense FedAvg. These $n=1$ values
+define the planned figure and table structure only. Confirmatory conclusions
+await the frozen ten-seed held-out campaign.}
 
 \rev{Looking only at the seven seed pairs whose outcomes were unavailable when
 the configurations were frozen, every headline comparison keeps the same

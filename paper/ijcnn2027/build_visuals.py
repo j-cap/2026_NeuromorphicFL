@@ -1,8 +1,9 @@
 """Generate and validate the frozen IJCNN comparison figure and main table.
 
 Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the P14
-ten-seed extension containing every method family in every benchmark. Table 1
-uses the P12 ten-seed headline campaign.
+ten-seed extension plus the provisional P13 ResNet-14 development run. Table 1
+uses the P12 headline campaign, P14 dense references, and the provisional P13
+block.
 Run with ``--check`` to detect source, selection-rule, or rendered-artifact
 drift.
 """
@@ -27,6 +28,7 @@ PAPER = REPO / "paper" / "ijcnn2027"
 HEADLINE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
 P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
+RESNET14 = PAPER / "evidence" / "p13_resnet14_development.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -52,10 +54,13 @@ METHODS = {
     "dense": {"label": "Dense FedAvg", "marker": "o", "color": "#4d4d4d"},
 }
 
-PANELS = [
+CORE_PANELS = [
     ("fmnist_mlp", "Fashion-MNIST\nMLP", "mlp", (78.0, 84.0)),
     ("fmnist_cnn", "Fashion-MNIST\nCNN", "cnn", (74.0, 84.0)),
     ("cifar_cnn", "CIFAR-10\ncompact CNN", "cifar_cnn", (32.0, 50.5)),
+]
+PANELS = CORE_PANELS + [
+    ("cifar_resnet14", "CIFAR-10\nResNet-14 ($n=1$)", "cifar_resnet14", (40.0, 78.0)),
 ]
 
 
@@ -97,7 +102,7 @@ def headline_rows() -> dict[str, list[dict[str, str]]]:
         raise ValueError("P12 evidence lacks columns required by the visuals")
 
     grouped: dict[str, list[dict[str, str]]] = {}
-    for key, _title, _architecture, _ylim in PANELS:
+    for key, _title, _architecture, _ylim in CORE_PANELS:
         selected = []
         for row in source:
             if row["benchmark"] != key or row["role"] not in {
@@ -138,11 +143,28 @@ def frontier_rows() -> dict[str, list[dict[str, str]]]:
         raise ValueError("paper evidence lacks columns required by Figure 2")
 
     grouped: dict[str, list[dict[str, str]]] = {}
-    for key, _title, architecture, _ylim in PANELS:
+    for key, _title, architecture, _ylim in CORE_PANELS:
         selected = [row for row in rows if row["benchmark"] == key]
         if len(selected) != 7:
             raise ValueError(f"{key} does not contain the seven unique visual rows")
         grouped[key] = selected
+    resnet = read_csv(RESNET14)
+    required_resnet = {
+        "benchmark", "comparison", "method", "n_seeds",
+        "final_test_accuracy_mean", "final_test_accuracy_std",
+        "final_worst_class_accuracy_mean", "final_worst_class_accuracy_std",
+        "unicast_hybrid_total_bits_mean", "unicast_hybrid_total_bits_std",
+    }
+    if required_resnet.difference(resnet[0]) or len(resnet) != 5:
+        raise ValueError("provisional ResNet-14 evidence must contain five rows")
+    for row in resnet:
+        if row["benchmark"] != "cifar_resnet14" or int(row["n_seeds"]) != 1:
+            raise ValueError("ResNet-14 panel must remain a single development seed")
+        row["unicast_total_Mbit_mean"] = str(
+            float(row["unicast_hybrid_total_bits_mean"]) / 1e6
+        )
+        row["unicast_total_Mbit_std"] = "0"
+    grouped["cifar_resnet14"] = resnet
     return grouped
 
 
@@ -193,6 +215,16 @@ def validate_headline_contract(grouped: dict[str, list[dict[str, str]]]) -> None
 
 def validate_frontier_contract(grouped: dict[str, list[dict[str, str]]]) -> None:
     for key, rows in grouped.items():
+        if key == "cifar_resnet14":
+            expected = {
+                ("quality-selected", method) for method in METHODS
+            }
+            observed = {(row["comparison"], row["method"]) for row in rows}
+            if observed != expected:
+                raise ValueError("ResNet-14 provisional rows drifted")
+            if "event" not in {row["method"] for row in nondominated(rows)}:
+                raise ValueError("Event-FedAvg is not nondominated on ResNet-14")
+            continue
         expected = {
             ("quality-selected", method)
             for method in ("event", "strom", "ef_topk", "sign_ef", "dense")
@@ -339,7 +371,7 @@ def method_figure() -> bytes:
 
 
 def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
-    fig, axes = plt.subplots(1, 3, figsize=(7.08, 2.58))
+    fig, axes = plt.subplots(1, 4, figsize=(7.08, 2.62))
 
     for ax, (key, title, _architecture, ylim) in zip(axes, PANELS):
         rows = grouped[key]
@@ -377,12 +409,17 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
 
         ax.set_xscale("log")
         ax.set_ylim(*ylim)
-        ax.set_title(title, weight="bold", pad=3)
-        ax.set_xlabel("Total bidirectional traffic [Mbit]")
+        provisional = key == "cifar_resnet14"
+        title_color = "#b2182b" if provisional else "black"
+        ax.set_title(title, weight="bold", pad=3, color=title_color)
+        if provisional:
+            for spine in ax.spines.values():
+                spine.set_color("#b2182b")
         ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
         ax.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
         ax.set_axisbelow(True)
     axes[0].set_ylabel("Test accuracy [%]")
+    fig.supxlabel("Total bidirectional traffic [Mbit]", y=0.205)
 
     method_handles = [
         Line2D(
@@ -419,7 +456,7 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         handletextpad=0.35,
         columnspacing=0.75,
     )
-    fig.subplots_adjust(left=0.066, right=0.995, top=0.88, bottom=0.28, wspace=0.28)
+    fig.subplots_adjust(left=0.062, right=0.997, top=0.88, bottom=0.28, wspace=0.38)
     return save_pdf(fig)
 
 
@@ -445,11 +482,16 @@ def pm(
     return rendered
 
 
+def provisional_value(row: dict[str, str], field: str, scale: float, digits: int) -> str:
+    return f"\\prov{{{scale * value(row, field):.{digits}f}}}"
+
+
 def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     dataset_labels = {
         "fmnist_mlp": "Fashion-MNIST MLP",
         "fmnist_cnn": "Fashion-MNIST CNN",
         "cifar_cnn": "CIFAR-10 CNN",
+        "cifar_resnet14": "CIFAR-10 ResNet-14",
     }
     cnn_event, cnn_quality = selected_rows(grouped["fmnist_cnn"], "quality")
     cnn_gap = 100.0 * (
@@ -465,33 +507,37 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     cifar_event = normalized_headline_row(next(
         row for row in read_csv(HEADLINE) if row["point_id"] == "cifar_event"
     ))
-    cifar_dense = normalized_headline_row(next(
-        row for row in read_csv(HEADLINE) if row["point_id"] == "cifar_dense_gain2"
-    ))
+    p14_rows = frontier_rows()
+    dense_references = {
+        key: next(row for row in p14_rows[key] if row["method"] == "dense")
+        for key, _title, _architecture, _ylim in CORE_PANELS
+    }
+    resnet_rows = p14_rows["cifar_resnet14"]
     lines = [
         "% Generated by paper/ijcnn2027/build_visuals.py; do not edit by hand.",
         "\\begin{table*}[t]",
         "\\centering",
-        "\\caption{\\rev{All configurations evaluated in the ten-seed extension "
-        "under conservative bidirectional unicast accounting. Values are mean "
-        "$\\pm$ sample standard deviation. The CIFAR-10 block includes the dense "
-        "headline and EF-TopK class-wise references. Bold marks the best mean per "
-        "benchmark and metric; lower traffic is better.}}",
+        "\\caption{\\rev{All frozen headline configurations under conservative "
+        "bidirectional unicast accounting. Values are mean "
+        "$\\pm$ sample standard deviation over ten matched seeds, including a dense "
+        "reference for every benchmark. Bold marks the best mean per benchmark and "
+        "metric; lower traffic is better.} \\prov{The ResNet-14 block is provisional "
+        "development-partition evidence ($n=1$); no uncertainty or confirmatory "
+        "claim is attached to it.}}",
         "\\label{tab:main-results}",
-        "\\footnotesize",
-        "\\setlength{\\tabcolsep}{4pt}",
+        "\\scriptsize",
+        "\\setlength{\\tabcolsep}{3pt}",
         "\\begin{tabular*}{0.99\\textwidth}{@{\\extracolsep{\\fill}}lllrrr@{}}",
         "\\toprule",
         "Benchmark & Selection rule & Method & Accuracy [\\%] & Worst [\\%] & Total [Mbit] \\\\",
         "\\midrule",
     ]
-    for index, (key, _title, _architecture, _ylim) in enumerate(PANELS):
+    for index, (key, _title, _architecture, _ylim) in enumerate(CORE_PANELS):
         rows = grouped[key]
         event, quality = selected_rows(rows, "quality")
         _event, traffic = selected_rows(rows, "traffic")
         entries = [("Event operating point", event)]
-        if key == "cifar_cnn":
-            entries.append(("Dense headline reference", cifar_dense))
+        entries.append(("Dense reference", dense_references[key]))
         entries.append(("Frozen quality baseline", quality))
         if key == "cifar_cnn":
             entries.append(("Class-wise reference", cifar_ef))
@@ -507,8 +553,24 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
                 f"{pm(row, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', 100.0, 1, value(row, 'final_worst_class_accuracy_mean') == best_worst)} & "
                 f"{pm(row, 'unicast_total_Mbit_mean', 'unicast_total_Mbit_std', 1.0, 1, value(row, 'unicast_total_Mbit_mean') == best_traffic)} \\\\"
             )
-        if index != len(PANELS) - 1:
-            lines.append("\\addlinespace[1pt]")
+        lines.append("\\midrule")
+
+    entries = [
+        ("Event operating point", next(row for row in resnet_rows if row["method"] == "event")),
+        ("Dense reference", next(row for row in resnet_rows if row["method"] == "dense")),
+        ("Frozen quality baseline", next(row for row in resnet_rows if row["method"] == "ef_topk")),
+        ("Frozen quality baseline", next(row for row in resnet_rows if row["method"] == "sign_ef")),
+        ("Frozen quality baseline", next(row for row in resnet_rows if row["method"] == "strom")),
+    ]
+    for row_index, (selection, row) in enumerate(entries):
+        benchmark = dataset_labels["cifar_resnet14"] if row_index == 0 else ""
+        lines.append(
+            f"\\prov{{{benchmark}}} & \\prov{{{selection}}} & "
+            f"\\prov{{{METHODS[row['method']]['label']}}} & "
+            f"{provisional_value(row, 'final_test_accuracy_mean', 100.0, 2)} & "
+            f"{provisional_value(row, 'final_worst_class_accuracy_mean', 100.0, 1)} & "
+            f"{provisional_value(row, 'unicast_total_Mbit_mean', 1.0, 1)} \\\\"
+        )
 
     lines.extend(
         [
