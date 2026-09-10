@@ -47,11 +47,22 @@ PDF_METADATA = {
 }
 
 METHODS = {
-    "event": {"label": "Event-FedAvg", "marker": "*", "color": "#b2182b"},
-    "strom": {"label": "Strom", "marker": "s", "color": "#2166ac"},
-    "ef_topk": {"label": "EF-TopK", "marker": "^", "color": "#1b7837"},
-    "sign_ef": {"label": "Sign-EF", "marker": "D", "color": "#762a83"},
-    "dense": {"label": "Dense FedAvg", "marker": "o", "color": "#4d4d4d"},
+    # Okabe--Ito-derived, color-vision-deficiency-safe method palette. Distinct
+    # marker shapes remain the primary redundant encoding for grayscale print.
+    "event": {"label": "Event-FedAvg", "marker": "*", "color": "#D55E00"},
+    "strom": {"label": "Strom", "marker": "s", "color": "#0072B2"},
+    "ef_topk": {"label": "EF-TopK", "marker": "^", "color": "#009E73"},
+    "sign_ef": {"label": "Sign-EF", "marker": "D", "color": "#CC79A7"},
+    "dense": {"label": "Dense FedAvg", "marker": "o", "color": "#595959"},
+}
+
+# Explicit log-axis limits and labelled ticks keep communication scale readable
+# in the narrow four-panel layout while retaining every observed point.
+TRAFFIC_AXES = {
+    "fmnist_mlp": {"limits": (150.0, 3500.0), "ticks": (200.0, 1000.0)},
+    "fmnist_cnn": {"limits": (50.0, 1000.0), "ticks": (100.0, 500.0)},
+    "cifar_cnn": {"limits": (150.0, 2200.0), "ticks": (200.0, 1000.0)},
+    "cifar_resnet14": {"limits": (7000.0, 300000.0), "ticks": (10000.0, 100000.0)},
 }
 
 CORE_PANELS = [
@@ -408,6 +419,9 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
             )
 
         ax.set_xscale("log")
+        ax.set_xlim(*TRAFFIC_AXES[key]["limits"])
+        ax.set_xticks(TRAFFIC_AXES[key]["ticks"])
+        ax.set_xticklabels([f"{tick:g}" for tick in TRAFFIC_AXES[key]["ticks"]])
         ax.set_ylim(*ylim)
         provisional = key == "cifar_resnet14"
         title_color = "#b2182b" if provisional else "black"
@@ -419,7 +433,7 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
         ax.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
         ax.set_axisbelow(True)
     axes[0].set_ylabel("Test accuracy [%]")
-    fig.supxlabel("Total bidirectional traffic [Mbit]", y=0.205)
+    fig.supxlabel("Total bidirectional traffic [Mbit]", y=0.145)
 
     method_handles = [
         Line2D(
