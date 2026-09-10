@@ -67,7 +67,7 @@ METHODS = {
 TRAFFIC_AXES = {
     "fmnist_mlp": {"limits": (150.0, 3500.0), "ticks": (200.0, 1000.0)},
     "fmnist_cnn": {"limits": (50.0, 1000.0), "ticks": (100.0, 500.0)},
-    "cifar_cnn": {"limits": (150.0, 2200.0), "ticks": (200.0, 1000.0)},
+    "cifar_cnn": {"limits": (100.0, 2200.0), "ticks": (200.0, 1000.0)},
     "cifar_resnet14": {"limits": (7000.0, 300000.0), "ticks": (10000.0, 100000.0)},
 }
 
