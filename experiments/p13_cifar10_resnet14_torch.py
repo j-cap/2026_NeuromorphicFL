@@ -598,14 +598,26 @@ def run_frozen_method(method: str, partition_seed: int, device: str) -> None:
     if not selection_path.exists():
         raise RuntimeError("selection.json is missing; complete and select development first")
     selection = json.loads(selection_path.read_text())
-    run_point(selection["quality"][method], partition_seed, "heldout", device)
+    run_point(
+        selection["quality"][method], partition_seed, protocol.HELDOUT_TAG, device
+    )
+
+
+def development_campaign(device: str) -> None:
+    """Run the amended single-seed grid and freeze one setting per method."""
+    protocol.write_protocol()
+    for config_name in protocol.DEVELOPMENT_CONFIGS:
+        run_point(
+            config_name,
+            protocol.DEVELOPMENT_SEED,
+            protocol.DEVELOPMENT_TAG,
+            device,
+        )
+    select_development()
 
 
 def test_campaign(device: str) -> None:
-    protocol.write_protocol()
-    for config_name in protocol.CONFIGS:
-        run_point(config_name, protocol.DEVELOPMENT_SEED, "dev", device)
-    select_development()
+    development_campaign(device)
     for method in METHODS:
         run_frozen_method(method, protocol.PILOT_SEEDS[0], device)
     protocol.assess(OUT / "selection.json")
@@ -710,6 +722,7 @@ def build_parser() -> argparse.ArgumentParser:
     dense_audit_parser.add_argument(
         "--partition-seed", type=int, default=protocol.DEVELOPMENT_SEED
     )
+    commands.add_parser("development-campaign")
     commands.add_parser("select")
     heldout = commands.add_parser("heldout")
     heldout.add_argument("--method", choices=METHODS, required=True)
@@ -735,6 +748,8 @@ def main() -> None:
         )
     elif args.command == "dense-audit":
         dense_audit(args.device, args.rounds, args.partition_seed)
+    elif args.command == "development-campaign":
+        development_campaign(args.device)
     elif args.command == "select":
         select_development()
     elif args.command == "heldout":

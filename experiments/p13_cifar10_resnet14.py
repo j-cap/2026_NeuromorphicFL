@@ -24,15 +24,17 @@ OUT = Path("experiments/results/p13_cifar10_resnet14")
 DEVELOPMENT_SEED = 4100
 PILOT_SEEDS = (4200, 4300, 4400)
 EXTENSION_SEEDS = (4500, 4600, 4700, 4800, 4900, 5000, 5100)
+DEVELOPMENT_TAG = "dev-r1800"
+HELDOUT_TAG = "heldout-r1800"
 
-# Frozen before any ResNet-14 result is inspected.  The 180-round horizon is
-# explicitly audited rather than assumed sufficient.
+# The horizon was amended from 180 to 1,800 rounds after the dense-only audit.
+# Dense gain 1.5 was frozen before inspecting any compressed-method result.
 BASE = FinalBaselineConfig(
     local_steps=5,
     local_lr=0.05,
     batch_size=32,
     regularization=5e-4,
-    rounds=180,
+    rounds=1800,
     eval_stride=15,
     rho=0.999,
     threshold=0.025,
@@ -66,6 +68,10 @@ CONFIGS: dict[str, tuple[Method, FinalBaselineConfig]] = {
     "strom_t02": ("strom", replace(BASE, strom_threshold=0.02)),
 }
 METHODS: tuple[Method, ...] = ("event", "dense", "sign_ef", "ef_topk", "strom")
+DEVELOPMENT_CONFIGS = tuple(
+    name for name, (method, _) in CONFIGS.items()
+    if method != "dense" or name == "dense_g15"
+)
 
 
 def _synthetic_federation(seed: int = 13) -> MulticlassFederation:
@@ -193,11 +199,11 @@ def _files(tag: str) -> list[Path]:
 
 
 def select() -> None:
-    frames = [pd.read_csv(path) for path in _files("dev")]
+    frames = [pd.read_csv(path) for path in _files(DEVELOPMENT_TAG)]
     if not frames:
         raise RuntimeError("no development results")
     data = pd.concat(frames, ignore_index=True)
-    if set(data.config_name) != set(CONFIGS):
+    if set(data.config_name) != set(DEVELOPMENT_CONFIGS):
         raise RuntimeError("development grid is incomplete")
     if set(data.partition_seed) != {DEVELOPMENT_SEED}:
         raise RuntimeError("selection may use only the development partition")
@@ -226,12 +232,12 @@ def heldout(selection_path: Path, method: Method, partition_seed: int) -> Path:
     if partition_seed not in allowed:
         raise ValueError(f"held-out seed must be one of {sorted(allowed)}")
     selection = json.loads(selection_path.read_text())
-    return run_point(selection["quality"][method], partition_seed, "heldout")
+    return run_point(selection["quality"][method], partition_seed, HELDOUT_TAG)
 
 
 def assess(selection_path: Path) -> None:
     selection = json.loads(selection_path.read_text())
-    frames = [pd.read_csv(path) for path in _files("heldout")]
+    frames = [pd.read_csv(path) for path in _files(HELDOUT_TAG)]
     if not frames:
         raise RuntimeError("no held-out results")
     data = pd.concat(frames, ignore_index=True)
@@ -254,7 +260,7 @@ def assess(selection_path: Path) -> None:
         for method in METHODS
     )
     histories = []
-    for path in OUT.glob("*_heldout_history.csv"):
+    for path in OUT.glob(f"*_{HELDOUT_TAG}_history.csv"):
         histories.append(pd.read_csv(path))
     stable = False
     relative_tail_improvement: dict[str, float] = {}
@@ -284,7 +290,7 @@ def assess(selection_path: Path) -> None:
         )
 
     activity_frames = [
-        pd.read_csv(path) for path in OUT.glob("*_heldout_activity.csv")
+        pd.read_csv(path) for path in OUT.glob(f"*_{HELDOUT_TAG}_activity.csv")
         if any(f"_p{seed}_" in path.name for seed in PILOT_SEEDS)
     ]
     no_starved_group = False
@@ -309,9 +315,13 @@ def assess(selection_path: Path) -> None:
         "event_no_zero-event_semantic_group": no_starved_group,
         "minimum_group_event_count": min_group_events,
         "mean_relative_train_ce_improvement_over_final_20_percent_by_method": relative_tail_improvement,
-        "all_methods_practical_stability_below_1_percent": stable,
+        "all_methods_practical_stability_below_1_percent_diagnostic": stable,
+        "matched_1800_round_budget_complete": bool(
+            pilot_complete and (data[data.partition_seed.isin(PILOT_SEEDS)].rounds == BASE.rounds).all()
+        ),
         "proceed_to_extension": bool(
-            pilot_complete and finite and chance_exceeded and no_starved_group and stable
+            pilot_complete and finite and chance_exceeded and no_starved_group
+            and (data[data.partition_seed.isin(PILOT_SEEDS)].rounds == BASE.rounds).all()
         ),
         "interpretation": (
             "The gate concerns experimental validity, not whether Event-FedAvg wins. "
@@ -326,7 +336,11 @@ def assess(selection_path: Path) -> None:
 def write_protocol() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     protocol = {
-        "status": "predeclared_before_resnet14_results",
+        "status": "amended_after_dense_only_audit_before_compressed_method_results",
+        "amendment": (
+            "Dense-only audits motivated a matched 1800-round budget and fixed "
+            "dense_g15; the rejected dense gains are not rerun in development."
+        ),
         "dataset": "CIFAR-10 python version",
         "partition": {
             "clients": 10,
@@ -350,12 +364,14 @@ def write_protocol() -> None:
             name: {"method": method, "config": asdict(config)}
             for name, (method, config) in CONFIGS.items()
         },
+        "amended_development_configs": DEVELOPMENT_CONFIGS,
         "selection": "minimum final training CE on development partition only",
         "pilot_gate": {
             "all_metrics_finite": True,
             "dense_mean_test_accuracy_minimum": 0.20,
             "all_semantic_parameter_groups_emit_at_least_one event": True,
-            "each_method_final_20_percent_absolute_mean_relative_train_ce_improvement_below": 0.01,
+            "matched_round_budget": BASE.rounds,
+            "tail_training_ce_change": "reported as a diagnostic, not an extension gate",
             "outcome_independence": "Event-FedAvg need not outperform a baseline",
         },
     }

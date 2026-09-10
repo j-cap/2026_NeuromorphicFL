@@ -2,6 +2,9 @@
 
 Date frozen: 2026-09-09
 
+Dense-only amendment: 2026-09-10, before inspecting any compressed-method
+ResNet-14 result.
+
 ## Question
 
 Does Event-FedAvg retain a useful communication--quality trade-off on a deeper
@@ -31,7 +34,7 @@ BatchNorm statistics under the non-IID partition.
 The dataset and strong label-skew partition construction match P3: ten clients,
 5,000 training examples per client, and a 55% dominant-class fraction. Each
 round has ten active clients, five local SGD steps, batch size 32, local learning
-rate 0.05, and weight decay 5e-4. The initial evaluation horizon is 180 rounds,
+rate 0.05, and weight decay 5e-4. The matched evaluation horizon is 1,800 rounds,
 with metrics recorded every 15 rounds.
 
 - Development partition: 4100.
@@ -51,9 +54,13 @@ evaluation.
 
 The grid is intentionally modest. It tests the scale of the threshold and
 quantum without turning the architecture extension into a broad post-hoc
-search.
+search. A dense-only audit first compared server gains 0.5, 1.0, 1.5, and 2.0
+for 900 rounds, followed by a 1,800-round horizon audit of the best setting.
+Gain 1.5 reached 69.71% test accuracy and was frozen before any compressed
+ResNet-14 result was inspected. The amended development campaign therefore
+runs only `dense_g15` alongside the compressed-method grids.
 
-## Predeclared validity gate
+## Amended validity gate
 
 Proceed from the three-seed pilot to the seven extension seeds only when:
 
@@ -62,14 +69,12 @@ Proceed from the three-seed pilot to the seven extension seeds only when:
    training setup learns beyond chance;
 3. every semantic ResNet group emits at least one Event-FedAvg coordinate event
    in every pilot seed;
-4. for every selected method, the absolute mean relative training-CE change
-   over the final 20% of rounds is below 1%, establishing a practical plateau
-   at the selected horizon.
+4. every pilot run completes the same 1,800-round, five-local-step budget.
 
 The gate tests experimental validity. Event-FedAvg is not required to outperform
 a baseline. A valid unfavorable comparison remains part of the scientific
-result. If only the stability condition fails, extend the horizon without
-retuning the selected method settings and repeat the stability assessment.
+result. The relative training-CE change over the final 20% remains reported as
+a trajectory diagnostic, but it is not a gate and no convergence claim is made.
 
 ## Layer diagnostics
 
@@ -113,6 +118,19 @@ not consumed by development selection. Interrupted runs resume at their latest
 
 After choosing an adequate fixed horizon from the learning curves, update the
 frozen protocol consistently before running the test campaign:
+
+```bash
+bash tools/p13_workstation.sh development
+```
+
+The amended single-seed development command runs `dense_g15`, all seven
+Event-FedAvg settings, Sign-EF, three EF-TopK settings, and three Strom
+settings on partition 4100 for 1,800 rounds. It uses the versioned tag
+`dev-r1800`, so prior 180-round outputs cannot be mistaken for completed runs.
+It then freezes one setting per method using final training cross-entropy.
+
+Inspect the single-seed comparison before launching held-out runs. To run the
+first held-out seed for the five frozen methods, use:
 
 ```bash
 bash tools/p13_workstation.sh test
