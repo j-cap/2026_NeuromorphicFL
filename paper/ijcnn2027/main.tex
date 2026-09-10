@@ -15,6 +15,7 @@
 \newcommand{\rev}[1]{{\color{blue}#1}}
 \newcommand{\prov}[1]{{\color{red}#1}}
 \newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
 
 \title{Event-FedAvg: Stateful Event-Driven Communication for Federated Learning}
@@ -34,7 +35,7 @@ introduce Event-FedAvg, a stateful communication layer inspired by leaky
 integrate-and-fire dynamics. Clients accumulate weighted local-model deltas,
 emit a signed event when an individual model entry first crosses a threshold
 after its previous reset, and reset the corresponding state. \rev{The server
-sums simultaneous signed events coordinatewise; agreeing events reinforce,
+sums simultaneous signed events coordinatewise. Agreeing events reinforce,
 opposing events cancel, and the resulting net event count moves the model by an
 independently scheduled quantum.} The server then
 sends either the sparse update sequence or, when cheaper, the complete model.
@@ -68,11 +69,11 @@ message that brings all clients to the next common model. For bandwidth-limited
 edge systems, this repeated exchange can become the main scaling bottleneck of
 federated averaging (FedAvg) \cite{mcmahan2017fedavg}.
 
-\rev{We call one scalar entry of the model vector a \emph{coordinate}.} The
-difficulty is not only that one update vector is large. A coordinate can be
-too weak to justify transmission in a single round while remaining consistent
-over several rounds. Round-wise compression does not directly exploit this
-temporal persistence. Error-feedback methods preserve discarded residuals for
+\rev{A \emph{coordinate} is one scalar entry of the model vector. Its change
+may be too small to justify transmission in one round, even when changes in the
+same direction persist and accumulate into meaningful evidence over several
+rounds.} Round-wise compression does not directly exploit this temporal
+persistence. Error-feedback methods preserve discarded residuals for
 later correction \rev{\cite{stich2018memory,richtarik2021ef21}}, but their
 purpose is to conserve compression error. This
 leads to a different design question: \emph{Can each client integrate weak
@@ -82,7 +83,8 @@ crosses a threshold?}
 We answer this question with Event-FedAvg, a stateful communication layer for a
 conventional model and optimizer. The \emph{client encoder} maps local changes
 and retained state to sparse coordinate addresses and signs. \rev{The design is
-inspired by a leaky integrate-and-fire (LIF) neuron, which retains part of its
+inspired by a leaky integrate-and-fire (LIF) neuron~\cite{gerstner2014neuronal},
+which retains part of its
 membrane state, adds new
 input, fires at a threshold, and resets. Here, each coordinate has such a state
 and emits a signed event on crossing. A separate \emph{model quantum} specifies
@@ -189,14 +191,17 @@ change supplied to the communication layer.
 
 \subsection{Client event encoder}
 
-\rev{Figure~\ref{fig:event-fedavg-method} summarizes the round transition and
-the two quantities carried into the next round: client $i$ retains its
-post-reset encoder state $\vect{z}_i^{r+1}$, while every client receives the
+\rev{Each client maintains one encoder-state entry per model coordinate.
+At the start of round $r$, client $i$ carries the post-reset state
+$\vect{z}_i^r\in\mathbb{R}^d$ forward from the preceding round. All experiments
+initialize this state as $\vect{z}_i^1=\vect{0}$. The client converts its local
+model change into weighted evidence and combines that evidence with the retained
+state before testing the threshold. Figure~\ref{fig:event-fedavg-method}
+summarizes this transition. It also shows the two quantities carried into the
+next round. Client $i$ retains $\vect{z}_i^{r+1}$, and every client receives the
 exactly synchronized server model $\vect{w}^{r+1}$.}
 
-Client $i$ carries a post-reset encoder state
-$\vect{z}_i^r\in\mathbb{R}^d$ into round $r$. All experiments initialize
-$\vect{z}_i^1=\vect{0}$. The weighted evidence input $\vect{a}_i^r$ and state
+The weighted evidence input $\vect{a}_i^r$ and state
 immediately before the threshold test, $\widetilde{\vect{z}}_i^r$, are
 \begin{equation}
  \vect{a}_i^r=\frac{p_i}{\eta_r}\vect{\delta}_i^r,
@@ -257,7 +262,7 @@ indices. The header is an accounting convention, not part of the mathematical
 operator. The server returns the ordered packet stream or, when smaller, a
 \rev{dense checkpoint containing $\vect{w}^{r+1}$. In the conservative traffic
 metric, every client is charged for the initial model synchronization and for
-one complete synchronization response after each round; a small request packet
+one complete synchronization response after each round. A small request packet
 is also counted when a client asks for the response.} These choices affect
 traffic, not the update in
 \eqref{eq:server-update}. Algorithm~\ref{alg:event-fedavg} states the complete
@@ -297,7 +302,7 @@ round $r=1,\ldots,R$:
 \label{sec:theory}
 
 \rev{This section answers three questions in sequence: how many coordinate
-events the encoder can emit along a realized trajectory, how those events
+events the encoder can emit along a realized optimization trajectory, how those events
 align with the current global descent direction, and what additional alignment
 condition is sufficient for a finite-horizon optimization bound.}
 
@@ -353,7 +358,7 @@ Here $D_r$ and $H_r$ are helpful and harmful global-gradient mass.
 opposite the gradient and hence toward first-order descent, whereas
 $c_{ij}^rg_j^r>0$ means that it points with the gradient and is harmful to
 first order.}
-Aggregation includes same-coordinate reinforcement and cancellation; this is
+Aggregation includes same-coordinate reinforcement and cancellation. This is
 the same $A_r$ as in~\eqref{eq:alignment-decomposition}. Coordinatewise,
 \rev{the aggregate entry is $C_j^r=\sum_i c_{ij}^r$. Applying
 Cauchy--Schwarz to the vectors $(1,\ldots,1)$ and
@@ -426,7 +431,7 @@ therefore produces $P_r-R_r+L_r+B_r$ and proves
 agreement, memory opposition, local mismatch, and heterogeneity. Since $L_r$
 and $B_r$ have unrestricted signs, the identity alone cannot ensure alignment.
 
-\begin{proposition}[Descent and conditional gradient-norm bound]
+\begin{proposition}[One-round descent]
 If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
 \vspace{-3pt}
 \begin{align}
@@ -436,53 +441,55 @@ If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
  &\leq F(\vect{w}^r)-q_rA_r+\frac{LM}{2}q_r^2N_r.
  \label{eq:descent}
 \end{align}
-This holds pathwise. An optimization guarantee additionally requires the
-emitted aggregate to align with global descent. \rev{The encoder guarantees
-above control state and traffic for any realized update sequence, but they do
-not by themselves ensure that the emitted signs follow the global gradient. We
-therefore state the required learning-side condition explicitly.}
-Let $\mathcal{F}_r$ contain all randomness revealed before round-$r$ local
-computation, and assume, for $\kappa>0$ and deterministic $\beta_r\geq0$,
+\end{proposition}
+This inequality holds pathwise. A stationarity result additionally requires
+the emitted aggregate to align with global descent.
+
+\begin{theorem}[Conditional finite-horizon stationarity]
+\label{thm:conditional-stationarity}
+\rev{Fix a horizon $R$ and assume that (i) $F$ is $L$-smooth and bounded below by
+$F_{\inf}$, (ii) $\vect{w}^1$ and the positive schedule
+$q_1,\ldots,q_R$ are deterministic, and (iii) there are constants $\kappa>0$
+and deterministic $\beta_r\geq0$ such that
+}
 \begin{equation}
- \E[A_r\mid\mathcal{F}_r]\geq
- \kappa\norm{\nabla F(\vect{w}^r)}_2^2-\beta_r .
+ \rev{\E[A_r\mid\mathcal{F}_r]\geq
+ \kappa\norm{\nabla F(\vect{w}^r)}_2^2-\beta_r,}
  \label{eq:alignment-assumption-paper}
 \end{equation}
-Here $\kappa$ is the useful expected alignment per unit gradient energy and
-$\beta_r$ permits round-dependent error. \rev{Assumption
-\eqref{eq:alignment-assumption-paper} is sufficient for the optimization bound
-below; establishing it from particular data, objectives, and local-training
-dynamics remains outside the encoder analysis.}
-If the objective has finite lower bound $F_{\inf}$, meaning
-$F(\vect{w})\geq F_{\inf}$ for every $\vect{w}$, and $\vect{w}^1$ is
-deterministic, define
-$Q_R=\sum_{r=1}^Rq_r$ and, for analysis only, independently draw $J_R$ with
-$\Pr(J_R=r)=q_r/Q_R$. Then
+\rev{where $\mathcal{F}_r$ contains all randomness revealed before the local
+computation in round $r$. Define $Q_R=\sum_{r=1}^Rq_r$ and independently draw
+$J_R$ with $\Pr(J_R=r)=q_r/Q_R$. Then}
 \begin{align}
- \kappa Q_R\E\norm{\nabla F(\vect{w}^{J_R})}_2^2
- &\leq F(\vect{w}^1)-F_{\inf}+\sum_rq_r\beta_r \notag\\
- &\quad+\frac{LM}{2}\sum_rq_r^2\E N_r .
+ {\color{blue}\kappa Q_R\E\norm{\nabla F(\vect{w}^{J_R})}_2^2}
+ &\mathrel{\color{blue}\leq} {\color{blue}F(\vect{w}^1)-F_{\inf}
+ +\sum_{r=1}^Rq_r\beta_r} \notag\\
+ &\quad {\color{blue}+\frac{LM}{2}\sum_{r=1}^Rq_r^2\E N_r .}
  \label{eq:stationarity}
 \end{align}
-\end{proposition}
+\end{theorem}
+
+\rev{The first two assumptions are standard finite-horizon smoothness,
+lower-boundedness, and scheduling conditions. The third is the learning-side
+condition. It requires positive expected aggregate alignment up to the defect
+$\beta_r$. The encoder guarantees state boundedness and an event budget, but it
+does not guarantee this alignment. The theorem therefore states precisely what
+follows when the optimization dynamics provide sufficient alignment.}
+
 Taking expectations in~\eqref{eq:descent} and applying
-\eqref{eq:alignment-assumption-paper} yields the one-round inequality
+\eqref{eq:alignment-assumption-paper} yields
 \vspace{-3pt}
 \begin{align*}
  \kappa q_r\E\norm{\nabla F(\vect{w}^r)}_2^2
  &\leq \E F(\vect{w}^r)-\E F(\vect{w}^{r+1})+q_r\beta_r\\
  &\quad+\frac{LM}{2}q_r^2\E N_r.
 \end{align*}
-Summing telescopes the objectives; $F\geq F_{\inf}$ gives
-\eqref{eq:stationarity}. The analysis-only choice of $J_R$ gives
+Summing over $r$ telescopes the objective values. The lower bound
+$F\geq F_{\inf}$ then gives~\eqref{eq:stationarity}. Moreover,
 $\E\norm{\nabla F(\vect{w}^{J_R})}_2^2=Q_R^{-1}\sum_rq_r
-\E\norm{\nabla F(\vect{w}^r)}_2^2$. It reports one weighted-random iterate
-without changing the algorithm or assuming that the final iterate is best.
-
-The result is conditional: silence, leakage, stale evidence, drift, sign
-errors, and heterogeneity may enlarge $\beta_r$. \rev{Accordingly, the theorem
-describes what follows when the expected aggregate alignment is sufficiently
-positive; it does not assert that the encoder enforces this condition.}
+\E\norm{\nabla F(\vect{w}^r)}_2^2$. Thus, $J_R$ reports a
+$q_r$-weighted random iterate for analysis without changing the algorithm or
+claiming that the final iterate is best.
 
 At selected rounds, we \rev{independently rerun training from the same seed to
 the audited round} and compute full client and global gradients after the event
@@ -496,7 +503,7 @@ For audited rounds $\mathcal A$, define
  \label{eq:empirical-alignment-ratio}
 \end{equation}
 This normalized trajectory ratio compares realized first-order descent with
-gradient energy; positivity means average $q_r$-weighted alignment. It is
+gradient energy. Positivity means average $q_r$-weighted alignment. It is
 neither mean $A_r$ nor theoretical
 $\kappa$ (only an analogue when $\beta_r=0$). \rev{It provides a descriptive
 check of alignment along the recorded finite trajectories, but it cannot
@@ -520,11 +527,11 @@ assumption has been proved.}
  \par\vspace{0.5mm}
  \caption{\rev{Broad ten-seed held-out comparison containing all five method
  families.} Filled and hollow markers denote quality-selected and
- nearest-traffic settings; dotted lines connect observed nondominated points.
+ nearest-traffic settings. Dotted lines connect observed nondominated points.
  \rev{Error bars show mean $\pm$ sample standard deviation over the same ten
  matched partition and training seeds used in Table~\ref{tab:main-results}.}
  \prov{The red-framed ResNet-14 panel is provisional development-partition
- evidence from one seed ($n=1$); its ten-seed held-out evaluation is pending.}}
+ evidence from one seed ($n=1$). Its ten-seed held-out evaluation is pending.}}
  \label{fig:communication-frontier}
 \end{figure*}
 
@@ -565,7 +572,7 @@ loss, and freeze it before held-out evaluation. The exponent $\alpha$ controls
 how quickly pulse-induced server updates shrink over the finite training
 horizon. Although $\vartheta$ and $q_r$ have distinct roles, they are selected
 jointly because the threshold changes both the number and timing of server
-updates. The choice $\rho=0.999$ gives long evidence retention; the mechanism
+updates. The choice $\rho=0.999$ gives long evidence retention. The mechanism
 audit below found no measurable difference from $\rho=1$ at the selected
 finite-horizon operating point.
 
@@ -573,7 +580,7 @@ Across the broad comparison, EF-TopK uses
 quality/nearest-traffic fractions $0.05/0.01$, while Strom uses thresholds
 $0.00125/0.02$ on the Fashion-MNIST MLP, $0.005/0.02$ on the Fashion-MNIST
 CNN, and $0.0025/0.01$ on CIFAR-10. \rev{The headline subset comprises the points
-identified in Table~\ref{tab:main-results}; its EF-TopK CIFAR-10 reference
+identified in Table~\ref{tab:main-results}. Its EF-TopK CIFAR-10 reference
 uses class-wise fraction $0.05$, and its dense CIFAR-10 reference uses server
 gain $\gamma=2$.}
 
@@ -660,7 +667,7 @@ await the frozen ten-seed held-out campaign.}
 \rev{Looking only at the seven seed pairs whose outcomes were unavailable when
 the configurations were frozen, every headline comparison keeps the same
 direction as in the full ten-seed summary.} Event-FedAvg minus the quality baseline is $+0.69$, $-0.86$, and
-$+1.14$ points on the MLP, Fashion-MNIST CNN, and CIFAR-10, respectively; the
+$+1.14$ points on the MLP, Fashion-MNIST CNN, and CIFAR-10, respectively. The
 95\% paired intervals are $[0.25,1.12]$, $[-1.66,-0.05]$, and $[0.09,2.19]$.
 Table~\ref{tab:main-results} reports all ten seeds.
 
@@ -675,7 +682,7 @@ coupled schedule fails.
 Table~\ref{tab:alignment-factorial} reports ten seeds and \rev{31 diagnostic
 checkpoints per seed: rounds $1,5,10,\ldots,150$. For each checkpoint, training
 is rerun from the same initialization and seed only to compute the audit
-quantities; these are not 31 additional rounds in one training run and are
+quantities. These are not 31 additional rounds in one training run and are
 unrelated to ordered downlink replay.} Its
 $\widehat\kappa_{\mathcal A}$ is the trajectory ratio in
 \eqref{eq:empirical-alignment-ratio}, not mean $A_r$ or the theoretical
@@ -714,7 +721,7 @@ conditional-expectation statement required across the learning process.}
 clients and two image datasets. The communication--performance comparisons use
 ten paired seeds per reported setting, including seven seed pairs added only
 after the configurations were frozen. The resulting paired intervals quantify
-variation across these ten matched runs; they do not correct simultaneously for
+variation across these ten matched runs. They do not correct simultaneously for
 all comparisons or for the fact that the headline configurations originated
 from an earlier development and pilot process. The factorial audit likewise
 uses ten seeds and deliberately varies only data partitioning and the number of
@@ -724,7 +731,7 @@ evaluated. The theoretical result makes aggregate alignment an explicit
 condition rather than proving it for the coupled learning dynamics, and the
 finite-horizon quantum schedules are not used to claim asymptotic convergence.
 Finally, communication is evaluated through reproducible software-level bit
-counts under exact synchronization; latency, packet loss, asynchronous
+counts under exact synchronization. Latency, packet loss, asynchronous
 execution, and hardware energy require system-level experiments.}
 
 \section{Conclusion}
