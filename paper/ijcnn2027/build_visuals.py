@@ -32,7 +32,13 @@ RESNET14 = PAPER / "evidence" / "p13_resnet14_development.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
-FRONTIER_FIGURE = FIGURES / "communication_frontier.pdf"
+FRONTIER_PANEL_FILES = {
+    "fmnist_mlp": FIGURES / "communication_frontier_fmnist_mlp.pdf",
+    "fmnist_cnn": FIGURES / "communication_frontier_fmnist_cnn.pdf",
+    "cifar_cnn": FIGURES / "communication_frontier_cifar_cnn.pdf",
+    "cifar_resnet14": FIGURES / "communication_frontier_cifar_resnet14.pdf",
+}
+FRONTIER_LEGEND = FIGURES / "communication_frontier_legend.pdf"
 MAIN_TABLE = PAPER / "generated" / "main_results_table.tex"
 
 PDF_METADATA = {
@@ -267,15 +273,10 @@ def configure_matplotlib() -> None:
     )
 
 
-def save_pdf(fig: plt.Figure) -> bytes:
+def save_pdf(fig: plt.Figure, *, tight: bool = True) -> bytes:
     stream = io.BytesIO()
-    fig.savefig(
-        stream,
-        format="pdf",
-        bbox_inches="tight",
-        pad_inches=0.02,
-        metadata=PDF_METADATA,
-    )
+    options = {"bbox_inches": "tight", "pad_inches": 0.02} if tight else {}
+    fig.savefig(stream, format="pdf", metadata=PDF_METADATA, **options)
     plt.close(fig)
     return stream.getvalue()
 
@@ -381,60 +382,49 @@ def method_figure() -> bytes:
     return save_pdf(fig)
 
 
-def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
-    fig, axes = plt.subplots(1, 4, figsize=(7.08, 2.62))
-
-    for ax, (key, title, _architecture, ylim) in zip(axes, PANELS):
-        rows = grouped[key]
-        frontier = nondominated(rows)
-        ax.plot(
-            [value(row, "unicast_total_Mbit_mean") for row in frontier],
-            [value(row, "final_test_accuracy_mean", 100.0) for row in frontier],
-            color="#737373",
-            linestyle=":",
-            linewidth=0.9,
-            zorder=1,
+def frontier_panel(key: str, rows: list[dict[str, str]], ylim: tuple[float, float]) -> bytes:
+    """Render one title-free panel for assembly and labelling in LaTeX."""
+    fig, ax = plt.subplots(figsize=(1.77, 2.02))
+    frontier = nondominated(rows)
+    ax.plot(
+        [value(row, "unicast_total_Mbit_mean") for row in frontier],
+        [value(row, "final_test_accuracy_mean", 100.0) for row in frontier],
+        color="#737373", linestyle=":", linewidth=0.9, zorder=1,
+    )
+    for row in rows:
+        style = METHODS[row["method"]]
+        quality = row["comparison"] == "quality-selected"
+        ax.errorbar(
+            value(row, "unicast_total_Mbit_mean"),
+            value(row, "final_test_accuracy_mean", 100.0),
+            xerr=value(row, "unicast_total_Mbit_std"),
+            yerr=value(row, "final_test_accuracy_std", 100.0),
+            fmt=style["marker"],
+            markersize=7.8 if row["method"] == "event" else 5.5,
+            markerfacecolor=style["color"] if quality else "white",
+            markeredgecolor="#111111", markeredgewidth=0.65,
+            color="#4d4d4d", ecolor="#8c8c8c", elinewidth=0.65,
+            capsize=1.6, zorder=4 if row["method"] == "event" else 3,
         )
+    ax.set_xscale("log")
+    ax.set_xlim(*TRAFFIC_AXES[key]["limits"])
+    ax.set_xticks(TRAFFIC_AXES[key]["ticks"])
+    ax.set_xticklabels([f"{tick:g}" for tick in TRAFFIC_AXES[key]["ticks"]])
+    ax.set_ylim(*ylim)
+    ax.set_xlabel("Traffic [Mbit]")
+    ax.set_ylabel("Test accuracy [%]")
+    ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
+    ax.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
+    ax.set_axisbelow(True)
+    if key == "cifar_resnet14":
+        for spine in ax.spines.values():
+            spine.set_color("#b2182b")
+    fig.subplots_adjust(left=0.26, right=0.98, top=0.98, bottom=0.19)
+    return save_pdf(fig, tight=False)
 
-        for row in rows:
-            style = METHODS[row["method"]]
-            quality = row["comparison"] == "quality-selected"
-            face = style["color"] if quality else "white"
-            size = 7.8 if row["method"] == "event" else 5.5
-            ax.errorbar(
-                value(row, "unicast_total_Mbit_mean"),
-                value(row, "final_test_accuracy_mean", 100.0),
-                xerr=value(row, "unicast_total_Mbit_std"),
-                yerr=value(row, "final_test_accuracy_std", 100.0),
-                fmt=style["marker"],
-                markersize=size,
-                markerfacecolor=face,
-                markeredgecolor="#111111",
-                markeredgewidth=0.65,
-                color="#4d4d4d",
-                ecolor="#8c8c8c",
-                elinewidth=0.65,
-                capsize=1.6,
-                zorder=4 if row["method"] == "event" else 3,
-            )
 
-        ax.set_xscale("log")
-        ax.set_xlim(*TRAFFIC_AXES[key]["limits"])
-        ax.set_xticks(TRAFFIC_AXES[key]["ticks"])
-        ax.set_xticklabels([f"{tick:g}" for tick in TRAFFIC_AXES[key]["ticks"]])
-        ax.set_ylim(*ylim)
-        provisional = key == "cifar_resnet14"
-        title_color = "#b2182b" if provisional else "black"
-        ax.set_title(title, weight="bold", pad=3, color=title_color)
-        if provisional:
-            for spine in ax.spines.values():
-                spine.set_color("#b2182b")
-        ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
-        ax.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
-        ax.set_axisbelow(True)
-    axes[0].set_ylabel("Test accuracy [%]")
-    fig.supxlabel("Total bidirectional traffic [Mbit]", y=0.145)
-
+def frontier_legend() -> bytes:
+    """Render the method and operating-point legend shared by all panels."""
     method_handles = [
         Line2D(
             [0],
@@ -461,16 +451,15 @@ def frontier_figure(grouped: dict[str, list[dict[str, str]]]) -> bytes:
             label="nearest-traffic",
         ),
     ]
+    fig = plt.figure(figsize=(7.08, 0.24))
     fig.legend(
         handles=method_handles + selection_handles,
-        loc="lower center",
+        loc="center",
         ncol=7,
         frameon=False,
-        bbox_to_anchor=(0.5, -0.005),
         handletextpad=0.35,
         columnspacing=0.75,
     )
-    fig.subplots_adjust(left=0.062, right=0.997, top=0.88, bottom=0.28, wspace=0.38)
     return save_pdf(fig)
 
 
@@ -617,10 +606,13 @@ def products() -> dict[Path, bytes]:
     frontier = frontier_rows()
     validate_headline_contract(headline)
     validate_frontier_contract(frontier)
-    return {
-        FRONTIER_FIGURE: frontier_figure(frontier),
-        MAIN_TABLE: main_table(headline).encode("utf-8"),
+    products = {
+        FRONTIER_PANEL_FILES[key]: frontier_panel(key, frontier[key], ylim)
+        for key, _title, _architecture, ylim in PANELS
     }
+    products[FRONTIER_LEGEND] = frontier_legend()
+    products[MAIN_TABLE] = main_table(headline).encode("utf-8")
+    return products
 
 
 def main() -> None:

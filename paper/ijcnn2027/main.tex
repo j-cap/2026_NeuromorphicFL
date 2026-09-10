@@ -3,6 +3,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{microtype}
 \usepackage{url}
 \usepackage{xcolor}
@@ -506,7 +507,17 @@ assumption has been proved.}
 
 \begin{figure*}[t]
  \centering
- \includegraphics[width=\textwidth]{figures/communication_frontier.pdf}
+ \subfloat[Fashion-MNIST MLP]{%
+  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_fmnist_mlp.pdf}}\hfill
+ \subfloat[Fashion-MNIST CNN]{%
+  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_fmnist_cnn.pdf}}\hfill
+ \subfloat[CIFAR-10 compact CNN]{%
+  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_cnn.pdf}}\hfill
+ \subfloat[\prov{CIFAR-10 ResNet-14 ($n=1$)}]{%
+  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_resnet14.pdf}}
+ \vspace{-1mm}
+ \includegraphics[width=0.92\textwidth]{figures/communication_frontier_legend.pdf}
+ \vspace{-1mm}
  \caption{\rev{Broad ten-seed held-out comparison containing all five method
  families.} Filled and hollow markers denote quality-selected and
  nearest-traffic settings; dotted lines connect observed nondominated points.
