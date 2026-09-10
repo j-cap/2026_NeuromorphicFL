@@ -358,8 +358,8 @@ Here $D_r$ and $H_r$ are helpful and harmful global-gradient mass.
 opposite the gradient and hence toward first-order descent, whereas
 $c_{ij}^rg_j^r>0$ means that it points with the gradient and is harmful to
 first order.}
-Aggregation includes same-coordinate reinforcement and cancellation. This is
-the same $A_r$ as in~\eqref{eq:alignment-decomposition}. Coordinatewise,
+\rev{Aggregation includes same-coordinate reinforcement and cancellation. This
+is the same $A_r$ as in~\eqref{eq:alignment-decomposition}.} Coordinatewise,
 \rev{the aggregate entry is $C_j^r=\sum_i c_{ij}^r$. Applying
 Cauchy--Schwarz to the vectors $(1,\ldots,1)$ and
 $(c_{1j}^r,\ldots,c_{Mj}^r)$ gives}
@@ -431,7 +431,7 @@ therefore produces $P_r-R_r+L_r+B_r$ and proves
 agreement, memory opposition, local mismatch, and heterogeneity. Since $L_r$
 and $B_r$ have unrestricted signs, the identity alone cannot ensure alignment.
 
-\begin{proposition}[One-round descent]
+\begin{proposition}[\rev{One-round descent}]
 If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
 \vspace{-3pt}
 \begin{align}
@@ -442,10 +442,10 @@ If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
  \label{eq:descent}
 \end{align}
 \end{proposition}
-This inequality holds pathwise. A stationarity result additionally requires
-the emitted aggregate to align with global descent.
+\rev{This inequality holds pathwise. A stationarity result additionally
+requires the emitted aggregate to align with global descent.}
 
-\begin{theorem}[Conditional finite-horizon stationarity]
+\begin{theorem}[\rev{Conditional finite-horizon stationarity}]
 \label{thm:conditional-stationarity}
 \rev{Fix a horizon $R$ and assume that (i) $F$ is $L$-smooth and bounded below by
 $F_{\inf}$, (ii) $\vect{w}^1$ and the positive schedule
@@ -476,20 +476,20 @@ $\beta_r$. The encoder guarantees state boundedness and an event budget, but it
 does not guarantee this alignment. The theorem therefore states precisely what
 follows when the optimization dynamics provide sufficient alignment.}
 
-Taking expectations in~\eqref{eq:descent} and applying
-\eqref{eq:alignment-assumption-paper} yields
+\rev{Taking expectations in~\eqref{eq:descent} and applying
+\eqref{eq:alignment-assumption-paper} yields}
 \vspace{-3pt}
 \begin{align*}
  \kappa q_r\E\norm{\nabla F(\vect{w}^r)}_2^2
  &\leq \E F(\vect{w}^r)-\E F(\vect{w}^{r+1})+q_r\beta_r\\
  &\quad+\frac{LM}{2}q_r^2\E N_r.
 \end{align*}
-Summing over $r$ telescopes the objective values. The lower bound
+\rev{Summing over $r$ telescopes the objective values. The lower bound
 $F\geq F_{\inf}$ then gives~\eqref{eq:stationarity}. Moreover,
 $\E\norm{\nabla F(\vect{w}^{J_R})}_2^2=Q_R^{-1}\sum_rq_r
 \E\norm{\nabla F(\vect{w}^r)}_2^2$. Thus, $J_R$ reports a
 $q_r$-weighted random iterate for analysis without changing the algorithm or
-claiming that the final iterate is best.
+claiming that the final iterate is best.}
 
 At selected rounds, we \rev{independently rerun training from the same seed to
 the audited round} and compute full client and global gradients after the event
