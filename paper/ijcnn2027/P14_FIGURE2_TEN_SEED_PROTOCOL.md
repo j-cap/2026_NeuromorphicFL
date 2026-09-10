@@ -37,15 +37,20 @@ Seed mappings are identical to P12:
 
 ## Workstation commands
 
-From the repository root in the prepared environment:
+From Windows Command Prompt in the repository root and the prepared Conda
+environment:
 
 ```text
+set PYTHONPATH=%CD%\src
 python experiments/p14_figure2_ten_seed.py validate-protocol
 python experiments/p12_headline_ten_seed.py prepare-data --dataset fmnist
 python experiments/p12_headline_ten_seed.py prepare-data --dataset cifar10
 python experiments/p14_figure2_ten_seed.py campaign
+python experiments/p14_figure2_ten_seed.py status
 python experiments/p14_figure2_ten_seed.py aggregate
 ```
+
+In Bash, replace the first command with `export PYTHONPATH="$PWD/src"`.
 
 The campaign is restart-safe: completed point files are skipped. To split the
 work into smaller blocks, use `campaign --start-seed 0 --end-seed 4` and then
