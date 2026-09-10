@@ -200,6 +200,19 @@ def validate_protocol() -> None:
     print(json.dumps(manifest, indent=2))
 
 
+def status() -> None:
+    expected = {
+        output_path(point, seed_index)
+        for point in MISSING_POINTS
+        for seed_index in range(10)
+    }
+    completed = {path for path in expected if path.exists()}
+    print(f"P14 complete: {len(completed)}/{len(expected)} runs")
+    for point in MISSING_POINTS:
+        seeds = [seed for seed in range(10) if output_path(point, seed).exists()]
+        print(f"  {point.point_id}: {len(seeds)}/10 seeds {seeds}")
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser()
     sub = root.add_subparsers(dest="command", required=True)
@@ -213,6 +226,7 @@ def parser() -> argparse.ArgumentParser:
     campaign.add_argument("--force", action="store_true")
     sub.add_parser("aggregate")
     sub.add_parser("validate-protocol")
+    sub.add_parser("status")
     return root
 
 
@@ -228,6 +242,8 @@ def main() -> None:
         aggregate()
     elif args.command == "validate-protocol":
         validate_protocol()
+    elif args.command == "status":
+        status()
 
 
 if __name__ == "__main__":
