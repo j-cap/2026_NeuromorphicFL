@@ -649,14 +649,14 @@ the server gain $\gamma$ scales the usual aggregate as
 $\vect{w}^{r+1}=\vect{w}^r+\gamma\sum_i p_i\vect{\delta}_i^r$. On CIFAR-10,
 $\gamma=2$ is selected from $\{0.25,0.5,0.75,1,1.5,2,4\}$. For Strom and
 EF-TopK, we also freeze the development setting closest to Event-FedAvg in log
-total traffic. \rev{Table~\ref{tab:main-results} reports every configuration
-included in the ten-seed extension. For each of these points, final values are
+ total traffic. \rev{Table~\ref{tab:main-results} reports every configuration
+included in the ten-seed evaluation. For each of these points, final values are
 the mean and sample standard deviation over ten strong-skew partitions with
-paired training seeds across methods. The extension reran the three original
-seed pairs and seven additional pairs in one pinned campaign after all reported
-method settings had been frozen. The subsequent
-Figure~\ref{fig:communication-frontier} extension reran all remaining frozen
-comparison settings on those same ten seed pairs.} Test
+paired training seeds across methods. All configurations were frozen before
+the ten-seed campaign. Because three seed outcomes had been examined during the
+preceding pilot, the remaining seven seeds provide a prospective confirmation
+subset. The subsequent Figure~\ref{fig:communication-frontier} extension reran
+all remaining frozen comparison settings on the same ten seed pairs.} Test
 cross-entropy (CE), accuracy, worst-class accuracy, coordinate events, and
 communication are recorded. No evaluation result influences development
 selection.
@@ -724,13 +724,6 @@ substantial seed sensitivity that its final mean alone would conceal. The
 curves continue to improve late in training, so the plot supports a matched
 finite-horizon efficiency comparison rather than a convergence claim.}
 
-\rev{Looking only at the seven seed pairs whose outcomes were unavailable when
-the configurations were frozen, every headline comparison keeps the same
-direction as in the full ten-seed summary.} Event-FedAvg minus the quality baseline is $+0.69$, $-0.86$, and
-$+1.14$ points on the MLP, Fashion-MNIST CNN, and CIFAR-10, respectively. The
-95\% paired intervals are $[0.25,1.12]$, $[-1.66,-0.05]$, and $[0.09,2.19]$.
-Table~\ref{tab:main-results} reports all ten seeds.
-
 \rev{A separate three-seed ablation tests which encoder choices matter at the
 selected CIFAR-10 operating point.} Removing leakage
 ($\rho=1$) \rev{produces nearly the same result as} the frozen setting at this resolution
@@ -796,11 +789,10 @@ conditional-expectation statement required across the learning process.}
 
 \rev{The present evaluation focuses on synchronous full participation with ten
 clients and two image datasets. The communication--performance comparisons use
-ten paired seeds per reported setting, including seven seed pairs added only
-after the configurations were frozen. The resulting paired intervals quantify
-variation across these ten matched runs. They do not correct simultaneously for
-all comparisons or for the fact that the headline configurations originated
-from an earlier development and pilot process. The factorial audit likewise
+ten paired seeds per reported setting. The resulting paired intervals quantify
+variation across these matched runs, but they do not correct simultaneously for
+all comparisons. The headline configurations were chosen through a preceding
+development and pilot process. The factorial audit likewise
 uses ten seeds and deliberately varies only data partitioning and the number of
 local SGD steps around one Fashion-MNIST operating point. Broader datasets,
 architectures, participation patterns, and hyperparameter regimes remain to be
@@ -823,11 +815,10 @@ nondominated in the evaluated synchronous ten-client settings. The audit shows
 that quantum decoupling matters for the selected configuration, leakage at
 $\rho=0.999$ has no measurable isolated effect, and heterogeneity can turn
 positive first-order alignment into non-descent. These findings sharpen both
-the contribution and its boundary. \rev{The seven seed pairs added after
-configuration freezing preserve the directions observed in the original
-three-seed results, and the separate ten-seed ResNet-14 extension preserves the
-communication--accuracy benefit on a deeper architecture. Next experiments
-should target partial participation and measured communication systems.}
+the contribution and its boundary. \rev{The separate ten-seed ResNet-14
+extension preserves the communication--accuracy benefit on a deeper
+architecture. Next experiments should target partial participation and
+measured communication systems.}
 
 \begin{samepage}
 \section*{Acknowledgment}

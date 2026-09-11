@@ -208,25 +208,6 @@ def main() -> None:
         ),
     ]
 
-    paired_specs = (
-        ("fmnist_mlp_event_minus_quality_accuracy", "+0.69", "[0.25,1.12]"),
-        ("fmnist_cnn_event_minus_quality_accuracy", "-0.86", "[-1.66,-0.05]"),
-        ("cifar_event_minus_quality_accuracy", "+1.14", "[0.09,2.19]"),
-    )
-    for comparison_id, displayed_mean, displayed_interval in paired_specs:
-        row = paired(differences, comparison_id, "new_seven")
-        expected_mean = f"{number(row, 'mean_difference_points'):+.2f}"
-        expected_interval = (
-            f"[{number(row, 'ci95_low_points'):.2f},"
-            f"{number(row, 'ci95_high_points'):.2f}]"
-        )
-        if (displayed_mean, displayed_interval) != (expected_mean, expected_interval):
-            raise AssertionError(f"hard-coded P12 rounding drift for {comparison_id}")
-        claims.append((f"P12 paired mean {comparison_id}", f"${displayed_mean}$"))
-        claims.append(
-            (f"P12 paired interval {comparison_id}", f"${displayed_interval}$")
-        )
-
     worst_difference = paired(
         differences, "cifar_event_minus_ef_worst_class", "all_ten"
     )
