@@ -49,6 +49,8 @@ P12_PROTOCOL = P12_ROOT / "protocol.json"
 P14_ROOT = REPO / "experiments" / "results" / "p14_figure2_ten_seed"
 P14_RUNS = P14_ROOT / "heldout_runs.csv"
 P14_SOURCE = P14_ROOT / "summary.csv"
+P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
+P13_SOURCE = P13_ROOT / "heldout_summary.csv"
 
 MASTER = PAPER / "evidence" / "fmnist_master_results.csv"
 QUALITY_TEX = PAPER / "generated" / "fmnist_quality_table.tex"
@@ -59,6 +61,8 @@ P8_EVIDENCE = PAPER / "evidence" / "p8_targeted_revision.csv"
 P12_EVIDENCE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 P12_PAIRED_EVIDENCE = PAPER / "evidence" / "p12_paired_differences.csv"
 P14_EVIDENCE = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
+P13_EVIDENCE = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
+P13_PAIRED_EVIDENCE = PAPER / "evidence" / "p13_resnet14_paired.csv"
 
 PARTITION_SEEDS = "2500;2600;2700"
 TRAIN_SEEDS = "72500;72600;72700"
@@ -112,6 +116,16 @@ P12_METRICS = (
     "unicast_hybrid_total_bits",
     "coordinate_events",
 )
+
+P13_CONFIGS = {
+    "event": "event_t0125_q005",
+    "dense": "dense_g15",
+    "ef_topk": "ef_k025",
+    "sign_ef": "sign_ef",
+    "strom": "strom_t01",
+}
+P13_SEEDS = tuple(range(4200, 5200, 100))
+T95_CRITICAL_10_PAIRS = 2.2621571627409915
 
 
 def read_rows(path: Path) -> list[dict[str, str]]:
@@ -736,6 +750,112 @@ def cifar_latex_table(rows: list[dict[str, str]]) -> str:
     return "\n".join(lines)
 
 
+def p13_products() -> tuple[str, str]:
+    with P13_SOURCE.open(newline="", encoding="utf-8") as stream:
+        summary = list(csv.DictReader(stream))
+    observed = {(row["method"], row["config_name"]) for row in summary}
+    expected = set(P13_CONFIGS.items())
+    if observed != expected or len(summary) != len(expected):
+        raise AssertionError("P13 summary does not contain the five frozen methods")
+
+    runs: list[dict[str, str]] = []
+    for method, config_name in P13_CONFIGS.items():
+        for seed in P13_SEEDS:
+            path = P13_ROOT / f"{config_name}_p{seed}_heldout-r1800.csv"
+            metadata_path = path.with_name(path.stem + "_run.json")
+            history_path = path.with_name(path.stem + "_history.csv")
+            if not path.exists() or not metadata_path.exists() or not history_path.exists():
+                raise AssertionError(f"incomplete P13 companion set for {path.name}")
+            with path.open(newline="", encoding="utf-8") as stream:
+                rows = list(csv.DictReader(stream))
+            if len(rows) != 1:
+                raise AssertionError(f"invalid P13 result file {path.name}")
+            row = rows[0]
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            with history_path.open(newline="", encoding="utf-8") as stream:
+                history = list(csv.DictReader(stream))
+            if (
+                row["method"] != method
+                or row["config_name"] != config_name
+                or int(row["partition_seed"]) != seed
+                or int(row["rounds"]) != 1800
+                or metadata.get("status") != "completed"
+                or int(history[-1]["round"]) != 1800
+            ):
+                raise AssertionError(f"P13 identity or completion failure for {path.name}")
+            runs.append(row)
+
+    metric_fields = (
+        "final_train_ce",
+        "final_test_ce",
+        "final_test_accuracy",
+        "final_worst_class_accuracy",
+        "coordinate_events",
+        "unicast_hybrid_total_bits",
+    )
+    evidence_rows: list[dict[str, str]] = []
+    for method, config_name in P13_CONFIGS.items():
+        group = [row for row in runs if row["method"] == method]
+        output = {
+            "point_id": f"resnet14_{method}",
+            "benchmark": "cifar_resnet14",
+            "comparison": "quality-selected",
+            "method": method,
+            "config_name": config_name,
+            "n_seeds": str(len(group)),
+            "partition_seeds": ";".join(str(seed) for seed in P13_SEEDS),
+            "training_seeds": ";".join(str(90000 + seed) for seed in P13_SEEDS),
+            "source_artifact": P13_SOURCE.relative_to(REPO).as_posix(),
+        }
+        for metric in metric_fields:
+            values = [float(row[metric]) for row in group]
+            output[f"{metric}_mean"] = f"{statistics.mean(values):.17g}"
+            output[f"{metric}_std"] = f"{statistics.stdev(values):.17g}"
+        evidence_rows.append(output)
+
+    evidence_stream = io.StringIO(newline="")
+    writer = csv.DictWriter(
+        evidence_stream, fieldnames=list(evidence_rows[0]), lineterminator="\n"
+    )
+    writer.writeheader()
+    writer.writerows(evidence_rows)
+
+    indexed = {
+        (row["method"], int(row["partition_seed"])): row for row in runs
+    }
+    paired_rows: list[dict[str, str]] = []
+    for baseline in ("dense", "ef_topk", "sign_ef", "strom"):
+        differences = [
+            100
+            * (
+                float(indexed[("event", seed)]["final_test_accuracy"])
+                - float(indexed[(baseline, seed)]["final_test_accuracy"])
+            )
+            for seed in P13_SEEDS
+        ]
+        mean = statistics.mean(differences)
+        std = statistics.stdev(differences)
+        half_width = T95_CRITICAL_10_PAIRS * std / math.sqrt(len(differences))
+        paired_rows.append(
+            {
+                "comparison": f"event_minus_{baseline}",
+                "n_pairs": str(len(differences)),
+                "mean_accuracy_difference_points": f"{mean:.17g}",
+                "std_accuracy_difference_points": f"{std:.17g}",
+                "ci95_low_points": f"{mean - half_width:.17g}",
+                "ci95_high_points": f"{mean + half_width:.17g}",
+                "event_wins": str(sum(value > 0 for value in differences)),
+            }
+        )
+    paired_stream = io.StringIO(newline="")
+    writer = csv.DictWriter(
+        paired_stream, fieldnames=list(paired_rows[0]), lineterminator="\n"
+    )
+    writer.writeheader()
+    writer.writerows(paired_rows)
+    return evidence_stream.getvalue(), paired_stream.getvalue()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -756,6 +876,7 @@ def main() -> None:
     validate_p12()
     validate_p14()
     cifar_with_tuned_dense = merge_tuned_dense(cifar, p8)
+    p13_evidence, p13_paired = p13_products()
     expected.update(
         {
             CIFAR_MASTER: cifar_master_csv(cifar_with_tuned_dense),
@@ -764,6 +885,8 @@ def main() -> None:
             P12_EVIDENCE: P12_SOURCE.read_text(encoding="utf-8"),
             P12_PAIRED_EVIDENCE: P12_PAIRED_SOURCE.read_text(encoding="utf-8"),
             P14_EVIDENCE: P14_SOURCE.read_text(encoding="utf-8"),
+            P13_EVIDENCE: p13_evidence,
+            P13_PAIRED_EVIDENCE: p13_paired,
         }
     )
 

@@ -1,9 +1,8 @@
 """Generate and validate the frozen IJCNN comparison figure and main table.
 
 Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the P14
-ten-seed extension plus the provisional P13 ResNet-14 development run. Table 1
-uses the P12 headline campaign, P14 dense references, and the provisional P13
-block.
+ten-seed extension and the P13 ResNet-14 ten-seed held-out campaign. Table 1
+uses the same frozen evidence.
 Run with ``--check`` to detect source, selection-rule, or rendered-artifact
 drift.
 """
@@ -28,7 +27,7 @@ PAPER = REPO / "paper" / "ijcnn2027"
 HEADLINE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
 P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
-RESNET14 = PAPER / "evidence" / "p13_resnet14_development.csv"
+RESNET14 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -77,7 +76,7 @@ CORE_PANELS = [
     ("cifar_cnn", "CIFAR-10\ncompact CNN", "cifar_cnn", (32.0, 50.5)),
 ]
 PANELS = CORE_PANELS + [
-    ("cifar_resnet14", "CIFAR-10\nResNet-14 ($n=1$)", "cifar_resnet14", (40.0, 78.0)),
+    ("cifar_resnet14", "CIFAR-10\nResNet-14", "cifar_resnet14", (40.0, 78.0)),
 ]
 
 
@@ -173,14 +172,16 @@ def frontier_rows() -> dict[str, list[dict[str, str]]]:
         "unicast_hybrid_total_bits_mean", "unicast_hybrid_total_bits_std",
     }
     if required_resnet.difference(resnet[0]) or len(resnet) != 5:
-        raise ValueError("provisional ResNet-14 evidence must contain five rows")
+        raise ValueError("ResNet-14 evidence must contain five rows")
     for row in resnet:
-        if row["benchmark"] != "cifar_resnet14" or int(row["n_seeds"]) != 1:
-            raise ValueError("ResNet-14 panel must remain a single development seed")
+        if row["benchmark"] != "cifar_resnet14" or int(row["n_seeds"]) != 10:
+            raise ValueError("ResNet-14 panel must contain ten held-out seeds")
         row["unicast_total_Mbit_mean"] = str(
             float(row["unicast_hybrid_total_bits_mean"]) / 1e6
         )
-        row["unicast_total_Mbit_std"] = "0"
+        row["unicast_total_Mbit_std"] = str(
+            float(row["unicast_hybrid_total_bits_std"]) / 1e6
+        )
     grouped["cifar_resnet14"] = resnet
     return grouped
 
@@ -238,7 +239,7 @@ def validate_frontier_contract(grouped: dict[str, list[dict[str, str]]]) -> None
             }
             observed = {(row["comparison"], row["method"]) for row in rows}
             if observed != expected:
-                raise ValueError("ResNet-14 provisional rows drifted")
+                raise ValueError("ResNet-14 held-out rows drifted")
             if "event" not in {row["method"] for row in nondominated(rows)}:
                 raise ValueError("Event-FedAvg is not nondominated on ResNet-14")
             continue
@@ -416,9 +417,6 @@ def frontier_panel(key: str, rows: list[dict[str, str]], ylim: tuple[float, floa
     ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
     ax.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
     ax.set_axisbelow(True)
-    if key == "cifar_resnet14":
-        for spine in ax.spines.values():
-            spine.set_color("#b2182b")
     fig.subplots_adjust(left=0.26, right=0.98, top=0.98, bottom=0.19)
     return save_pdf(fig, tight=False)
 
@@ -485,10 +483,6 @@ def pm(
     return rendered
 
 
-def provisional_value(row: dict[str, str], field: str, scale: float, digits: int) -> str:
-    return f"\\prov{{{scale * value(row, field):.{digits}f}}}"
-
-
 def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     dataset_labels = {
         "fmnist_mlp": "Fashion-MNIST MLP",
@@ -524,9 +518,7 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         "bidirectional unicast accounting. Values are mean "
         "$\\pm$ sample standard deviation over ten matched seeds, including a dense "
         "reference for every benchmark. Bold marks the best mean per benchmark and "
-        "metric. Lower traffic is better.} \\prov{The ResNet-14 block is provisional "
-        "development-partition evidence ($n=1$). No uncertainty or confirmatory "
-        "claim is attached to it.}}",
+        "metric. Lower traffic is better.}}",
         "\\label{tab:main-results}",
         "\\scriptsize",
         "\\setlength{\\tabcolsep}{3pt}",
@@ -565,14 +557,16 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         ("Frozen quality baseline", next(row for row in resnet_rows if row["method"] == "sign_ef")),
         ("Frozen quality baseline", next(row for row in resnet_rows if row["method"] == "strom")),
     ]
+    best_accuracy = max(value(row, "final_test_accuracy_mean") for _, row in entries)
+    best_worst = max(value(row, "final_worst_class_accuracy_mean") for _, row in entries)
+    best_traffic = min(value(row, "unicast_total_Mbit_mean") for _, row in entries)
     for row_index, (selection, row) in enumerate(entries):
         benchmark = dataset_labels["cifar_resnet14"] if row_index == 0 else ""
         lines.append(
-            f"\\prov{{{benchmark}}} & \\prov{{{selection}}} & "
-            f"\\prov{{{METHODS[row['method']]['label']}}} & "
-            f"{provisional_value(row, 'final_test_accuracy_mean', 100.0, 2)} & "
-            f"{provisional_value(row, 'final_worst_class_accuracy_mean', 100.0, 1)} & "
-            f"{provisional_value(row, 'unicast_total_Mbit_mean', 1.0, 1)} \\\\"
+            f"{benchmark} & {selection} & {METHODS[row['method']]['label']} & "
+            f"{pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', 100.0, 2, value(row, 'final_test_accuracy_mean') == best_accuracy)} & "
+            f"{pm(row, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', 100.0, 1, value(row, 'final_worst_class_accuracy_mean') == best_worst)} & "
+            f"{pm(row, 'unicast_total_Mbit_mean', 'unicast_total_Mbit_std', 1.0, 1, value(row, 'unicast_total_Mbit_mean') == best_traffic)} \\\\"
         )
 
     lines.extend(

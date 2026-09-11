@@ -180,3 +180,28 @@ PYTHONPATH=src python experiments/p13_cifar10_resnet14.py assess --selection exp
 
 The machine-readable protocol is generated at
 `experiments/results/p13_cifar10_resnet14/protocol.json`.
+
+## Final ten-seed result
+
+All 50 held-out runs completed at the matched 1,800-round horizon. The selected
+configuration for each method was frozen on development partition 4100 before
+evaluating partitions 4200 through 5100.
+
+| Method | Accuracy [%] | Worst class [%] | Unicast traffic [Gbit] |
+|---|---:|---:|---:|
+| Event-FedAvg | 75.14 ± 0.46 | 55.2 ± 3.6 | 21.04 ± 0.19 |
+| Dense FedAvg | 69.47 ± 0.62 | 47.6 ± 5.2 | 201.96 ± 0.00 |
+| EF-TopK | 66.12 ± 0.20 | 42.6 ± 2.9 | 43.44 ± 0.00 |
+| Sign-EF | 64.92 ± 0.32 | 40.1 ± 4.9 | 34.78 ± 0.00 |
+| Strom | 42.27 ± 6.67 | 5.4 ± 6.3 | 8.92 ± 0.46 |
+
+Event-FedAvg exceeds dense FedAvg by 5.66 accuracy points with a paired 95%
+interval of [5.05, 6.27] points. The difference is positive for all ten seed
+pairs. Event-FedAvg uses 10.4% of dense FedAvg's conservative bidirectional
+unicast traffic. It also exceeds EF-TopK and Sign-EF on all ten paired seeds.
+Strom is cheaper but substantially less accurate, leaving Event-FedAvg on the
+observed communication--accuracy frontier.
+
+The late histories still improve for several methods. The results therefore
+support a matched finite-horizon comparison and an architecture-extension
+claim, not convergence to an optimized final model.

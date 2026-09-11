@@ -49,10 +49,10 @@ heterogeneity and local-update depth affect finite-trajectory alignment. Under
 identical local training conditions across methods, development-only tuning,
 and conservative
 uplink-plus-downlink accounting, Event-FedAvg is nondominated on held-out
-Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN experiments. Across ten paired
-seeds on CIFAR-10, it reaches $48.13\pm0.89\%$ accuracy at
-$201.0\pm4.0$ Mbit, compared with $43.88\pm1.38\%$ at $1586.6$ Mbit for
-development-tuned dense FedAvg. These
+Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN and ResNet-14 experiments.
+\rev{Across ten paired ResNet-14 seeds, it reaches $75.14\pm0.46\%$ accuracy
+at $21.04\pm0.19$ Gbit, compared with $69.47\pm0.62\%$ at $201.96$ Gbit for
+development-tuned dense FedAvg.} These
 results establish a
 communication--performance operating point in the evaluated synchronous
 setting, not unconditional convergence or hardware-energy savings.
@@ -106,9 +106,9 @@ sign quantization and error feedback~\cite{seide2014onebit,bernstein2018signsgd}
 EF-TopK with memory~\cite{stich2018memory,richtarik2021ef21}, and Strom
 pulses~\cite{strom2015distributed}} under
 identical local training and total bidirectional traffic. Event-FedAvg is
-nondominated in three tested settings. On CIFAR-10, it uses $7.9\times$ less
-traffic than dense FedAvg while improving mean accuracy by $4.25$ percentage
-points.
+nondominated in \rev{all four} tested settings. \rev{On CIFAR-10 ResNet-14, it
+uses $9.6\times$ less traffic than dense FedAvg while improving mean accuracy
+by $5.66$ percentage points.}
 Headline comparisons and the alignment factorial each use ten paired seeds.
 All runs are synchronous with full participation.
 \rev{Figure~\ref{fig:event-fedavg-method} previews one complete communication
@@ -558,16 +558,14 @@ as a numerical convergence certificate.}
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_fmnist_cnn.pdf}}\hfill
  \subfloat[CIFAR-10 compact CNN]{%
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_cnn.pdf}}\hfill
- \subfloat[\prov{CIFAR-10 ResNet-14 ($n=1$)}]{%
+ \subfloat[\rev{CIFAR-10 ResNet-14}]{%
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_resnet14.pdf}}
  \par\vspace{0.5mm}
  \caption{\rev{Broad ten-seed held-out comparison containing all five method
  families.} Filled and hollow markers denote quality-selected and
  nearest-traffic settings. Dotted lines connect observed nondominated points.
- \rev{Error bars show mean $\pm$ sample standard deviation over the same ten
- matched partition and training seeds used in Table~\ref{tab:main-results}.}
- \prov{The red-framed ResNet-14 panel is provisional development-partition
- evidence from one seed ($n=1$). Its ten-seed held-out evaluation is pending.}}
+ \rev{Error bars show mean $\pm$ sample standard deviation over ten matched
+ held-out partition and training seeds within each panel.}}
  \label{fig:communication-frontier}
 \end{figure*}
 
@@ -597,6 +595,10 @@ The corresponding frozen tuples
 $(\rho,\vartheta,q_0,\alpha)$ are
 $(0.999,0.025,0.005,0.1)$, $(0.999,0.025,0.010,0.3)$, and
 $(0.999,0.025,0.005,0.2)$.
+\rev{The ResNet-14 extension uses a 175,258-parameter group-normalized network
+for 1,800 rounds with the same ten-client CIFAR-10 partition rule, five local
+steps, learning rate $0.05$, and minibatch size 32. Its frozen Event-FedAvg
+tuple is $(0.999,0.0125,0.005,0.3)$.}
 
 \textbf{Practical parameter selection.}
 For constant retention, $\rho$ sets an approximate encoder-memory horizon of
@@ -630,7 +632,7 @@ means identical client data, initialization, local steps, learning rate, and
 minibatch order for every method sharing a seed. Only communication and its
 server update differ.
 
-Hyperparameters are selected on one development partition per dataset. The
+Hyperparameters are selected on one development partition per benchmark. The
 best-quality setting minimizes development training loss. For dense FedAvg,
 the server gain $\gamma$ scales the usual aggregate as
 $\vect{w}^{r+1}=\vect{w}^r+\gamma\sum_i p_i\vect{\delta}_i^r$. On CIFAR-10,
@@ -676,12 +678,12 @@ diagnostic computation from perturbing later threshold crossings.
 
 Figure~\ref{fig:communication-frontier} gives the broad cross-benchmark
 comparison using total uplink-plus-downlink unicast traffic. \rev{Every point
-uses the same ten matched partition and training seeds.} Filled markers
+within a panel uses the same ten matched partition and training seeds.} Filled markers
 identify development-selected quality settings, while hollow markers identify
 baseline settings selected for traffic proximity. Each marker is one frozen
 method--hyperparameter setting. \rev{Table~\ref{tab:main-results} focuses on
-the 11 predeclared headline configurations, whereas the figure shows all 21
-frozen operating points evaluated in the ten-seed campaign.}
+the predeclared headline configurations, whereas the figure also shows the
+remaining frozen operating points evaluated in the ten-seed campaigns.}
 
 \input{generated/p11_alignment_table}
 
@@ -694,11 +696,13 @@ CIFAR-10, Event-FedAvg leads tuned dense FedAvg by $4.25$ points using only
 $12.7\%$ of its traffic and leads quality-selected Strom by $1.14$ points with
 $4.6\times$ less traffic.
 
-\prov{For the provisional ResNet-14 development run, Event-FedAvg reaches
-$75.43\%$ accuracy and $59.8\%$ worst-class accuracy using $21.09$ Gbit, versus
-$69.71\%$, $47.4\%$, and $201.96$ Gbit for dense FedAvg. These $n=1$ values
-define the planned figure and table structure only. Confirmatory conclusions
-await the frozen ten-seed held-out campaign.}
+\rev{On ResNet-14, Event-FedAvg reaches $75.14\pm0.46\%$ accuracy and
+$55.2\pm3.6\%$ worst-class accuracy using $21.04\pm0.19$ Gbit. Dense FedAvg
+reaches $69.47\pm0.62\%$ and $47.6\pm5.2\%$, respectively, using $201.96$
+Gbit. The paired Event-FedAvg accuracy advantage is $5.66$ points with a 95\%
+interval of $[5.05,6.27]$ points and holds for all ten seed pairs. Thus the
+architecture extension preserves the communication--accuracy benefit at
+$10.4\%$ of dense traffic.}
 
 \rev{Looking only at the seven seed pairs whose outcomes were unavailable when
 the configurations were frozen, every headline comparison keeps the same
@@ -801,8 +805,9 @@ $\rho=0.999$ has no measurable isolated effect, and heterogeneity can turn
 positive first-order alignment into non-descent. These findings sharpen both
 the contribution and its boundary. \rev{The seven seed pairs added after
 configuration freezing preserve the directions observed in the original
-three-seed results. Next experiments should target partial participation and
-measured communication systems.}
+three-seed results, and the separate ten-seed ResNet-14 extension preserves the
+communication--accuracy benefit on a deeper architecture. Next experiments
+should target partial participation and measured communication systems.}
 
 \begin{samepage}
 \section*{Acknowledgment}

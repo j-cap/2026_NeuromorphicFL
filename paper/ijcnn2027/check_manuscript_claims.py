@@ -18,6 +18,8 @@ P12 = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 P12_PAIRED = PAPER / "evidence" / "p12_paired_differences.csv"
 P8 = PAPER / "evidence" / "p8_targeted_revision.csv"
 P11 = PAPER / "evidence" / "p11_alignment_factorial.csv"
+P13 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
+P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -90,6 +92,8 @@ def main() -> None:
     differences = rows(P12_PAIRED)
     mechanism = rows(P8)
     factorial = rows(P11)
+    resnet = rows(P13)
+    resnet_paired = rows(P13_PAIRED)
 
     mlp_event = point(headline, "fmnist_mlp_event")
     mlp_topk = point(headline, "fmnist_mlp_ef_quality")
@@ -102,6 +106,11 @@ def main() -> None:
     c_strom = point(headline, "cifar_strom_quality")
     c_near_strom = point(headline, "cifar_strom_near")
     c_topk = point(headline, "cifar_ef_quality")
+    resnet_event = next(row for row in resnet if row["method"] == "event")
+    resnet_dense = next(row for row in resnet if row["method"] == "dense")
+    resnet_difference = next(
+        row for row in resnet_paired if row["comparison"] == "event_minus_dense"
+    )
 
     c_accuracy_gap = 100 * (
         number(c_event, "final_test_accuracy_mean")
@@ -118,17 +127,23 @@ def main() -> None:
 
     claims = [
         (
-            "abstract CIFAR Event point",
-            f"${pm(c_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ accuracy at "
-            f"${pm(c_event, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-6, digits=1)}$ Mbit",
+            "abstract ResNet Event point",
+            f"${pm(resnet_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ accuracy at "
+            f"${pm(resnet_event, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-9, digits=2)}$ Gbit",
         ),
         (
-            "abstract tuned dense point",
-            f"${pm(c_dense, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ at "
-            f"${traffic_mbit(c_dense):.1f}$ Mbit",
+            "abstract ResNet dense point",
+            f"${pm(resnet_dense, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ at "
+            f"${number(resnet_dense, 'unicast_hybrid_total_bits_mean') / 1e9:.2f}$ Gbit",
         ),
-        ("introduction traffic fold", f"${c_traffic_fold:.1f}\\times$ less traffic"),
-        ("introduction accuracy gap", f"${c_accuracy_gap:.2f}$ percentage points"),
+        (
+            "introduction ResNet traffic fold",
+            f"${number(resnet_dense, 'unicast_hybrid_total_bits_mean') / number(resnet_event, 'unicast_hybrid_total_bits_mean'):.1f}\\times$ less traffic",
+        ),
+        (
+            "introduction ResNet accuracy gap",
+            f"${number(resnet_difference, 'mean_accuracy_difference_points'):.2f}$ percentage points",
+        ),
         (
             "MLP quality tradeoff",
             f"gains ${100 * (number(mlp_event, 'final_test_accuracy_mean') - number(mlp_topk, 'final_test_accuracy_mean')):.2f}$ points over the quality baseline with "
@@ -192,6 +207,27 @@ def main() -> None:
             f"$[{number(worst_difference, 'ci95_low_points'):.2f},"
             f"{number(worst_difference, 'ci95_high_points'):.2f}]$",
         )
+    )
+
+    claims.extend(
+        [
+            (
+                "ResNet Event accuracy",
+                f"${pm(resnet_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$",
+            ),
+            (
+                "ResNet dense accuracy",
+                f"${pm(resnet_dense, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$",
+            ),
+            (
+                "ResNet paired accuracy difference",
+                f"${number(resnet_difference, 'mean_accuracy_difference_points'):.2f}$ points",
+            ),
+            (
+                "ResNet paired accuracy interval",
+                f"$[{number(resnet_difference, 'ci95_low_points'):.2f},{number(resnet_difference, 'ci95_high_points'):.2f}]$ points",
+            ),
+        ]
     )
 
     frozen = p8_select(mechanism, "event_frozen")

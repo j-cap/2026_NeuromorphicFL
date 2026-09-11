@@ -1,6 +1,0 @@
-point_id,benchmark,comparison,method,configuration,n_seeds,partition_seeds,training_seeds,final_test_accuracy_mean,final_test_accuracy_std,final_worst_class_accuracy_mean,final_worst_class_accuracy_std,unicast_hybrid_total_bits_mean,unicast_hybrid_total_bits_std,source_artifact
-resnet14_dense,cifar_resnet14,quality-selected,dense,dense_g15,1,4100,94100,0.6971,0,0.474,0,201956179200,0,r1800.zip/development_summary.csv
-resnet14_ef,cifar_resnet14,quality-selected,ef_topk,ef_k025,1,4100,94100,0.6575,0,0.464,0,43441231200,0,r1800.zip/development_summary.csv
-resnet14_event,cifar_resnet14,quality-selected,event,event_t0125_q005,1,4100,94100,0.7543,0,0.598,0,21088375719,0,r1800.zip/development_summary.csv
-resnet14_sign,cifar_resnet14,quality-selected,sign_ef,sign_ef,1,4100,94100,0.6519,0,0.435,0,34776751200,0,r1800.zip/development_summary.csv
-resnet14_strom,cifar_resnet14,quality-selected,strom,strom_t01,1,4100,94100,0.4592,0,0.069,0,9160800686,0,r1800.zip/development_summary.csv
