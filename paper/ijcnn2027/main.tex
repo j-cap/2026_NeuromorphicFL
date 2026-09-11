@@ -526,6 +526,28 @@ establish the conditional expectation for unseen rounds or training runs in
 the decomposition to explain observed mechanisms rather than to claim that the
 assumption has been proved.}
 
+\rev{We also assess the two empirical terms that correspond most directly to
+the theorem. We retain the audit value $\kappa_0=8$, fixed before this
+assessment, and define the realized defect
+$\widehat\beta_r=[\kappa_0\norm{\vect{g}^r}_2^2-A_r]_+$. Over the audited
+checkpoints $\mathcal A$, we report the zero-defect frequency and
+\begin{equation}
+ \widehat{\mathcal D}_{\mathcal A}
+ =\frac{\sum_{r\in\mathcal A}q_r\widehat\beta_r}
+ {\kappa_0\sum_{r\in\mathcal A}q_r},\qquad
+ \widehat{\mathcal V}_{\mathcal A}
+ =\frac{M\sum_{r\in\mathcal A}q_r^2N_r}
+ {\sum_{r\in\mathcal A}q_r}.
+ \label{eq:empirical-theorem-diagnostics}
+\end{equation}
+Here $\widehat{\mathcal D}_{\mathcal A}$ is the sampled analogue of the
+alignment-defect term in~\eqref{eq:stationarity}. The observable
+$\widehat{\mathcal V}_{\mathcal A}$ becomes the theorem's curvature term after
+multiplication by $L/(2\kappa_0)$. We do not estimate a global smoothness
+constant or substitute sampled checkpoints for the complete round sequence.
+Thus these quantities diagnose the theorem's mechanism but are not presented
+as a numerical convergence certificate.}
+
 \begin{figure*}[t]
  \centering
  \includegraphics[width=0.92\textwidth]{figures/communication_frontier_legend.pdf}
@@ -716,6 +738,23 @@ empirical statement about the recorded checkpoints, not a general property of
 the encoder.} This explains
 a finite-step heterogeneity--depth limitation without establishing the
 conditional expectation in~\eqref{eq:alignment-assumption-paper}.
+
+\rev{The theorem-facing diagnostic gives the same qualified picture. For
+$\kappa_0=8$, the zero-defect inequality holds at
+$87.7\pm2.0\%$, $91.9\pm3.8\%$, $92.3\pm1.7\%$, and
+$93.5\pm3.4\%$ of checkpoints in the IID $E=1$, IID $E=5$, strong non-IID
+$E=1$, and strong non-IID $E=5$ cells. The corresponding
+$\widehat{\mathcal D}_{\mathcal A}$ values are
+$0.063\pm0.002$, $0.021\pm0.001$, $0.029\pm0.004$, and
+$0.022\pm0.003$. Hence occasional poorly aligned rounds are captured by a
+nonzero defect instead of being hidden by the positive trajectory average.
+The observable event-curvature factors $\widehat{\mathcal V}_{\mathcal A}$
+are $20.0\pm0.6$, $83.7\pm1.9$, $158.1\pm4.3$, and
+$306.6\pm4.6$, respectively. Their increase with non-IID data and five local
+steps is consistent with the observed gap between positive first-order
+alignment and actual objective descent. These are sampled trajectory
+diagnostics, not estimates of the conditional expectation or the unknown
+global smoothness constant.}
 
 \rev{Event-FedAvg does not outperform every comparator on every predictive
 metric.} On CIFAR-10, Event-FedAvg

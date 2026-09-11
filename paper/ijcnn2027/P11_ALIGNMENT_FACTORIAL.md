@@ -34,6 +34,12 @@ where `P_r` is current local-update alignment, `R_r` is memory opposition,
 heterogeneity. Final accuracy and conservative bidirectional traffic remain
 secondary operating-point checks.
 
+The theorem-facing post-analysis retains the frozen audit value `kappa=8`.
+It reports the fraction of sampled rounds satisfying the zero-defect relation,
+the weighted realized defect contribution, and the observable event-curvature
+factor. These diagnostics were added after the campaign and are therefore
+descriptive rather than predeclared outcomes.
+
 ## Audit protocol
 
 Rounds 1, 5, 10, ..., 150 are audited. Each snapshot is reconstructed by an
@@ -124,6 +130,18 @@ No emitted event opposes the current local-update proxy in any of the 1,240
 snapshots, so `R=0` throughout this factorial. The observed limitation is not
 stale-state sign reversal. It is the coupled effect of heterogeneity, local
 depth, event energy, and curvature.
+
+For the retained `kappa=8`, the zero-defect relation holds at 87.7%, 91.9%,
+92.3%, and 93.5% of sampled rounds in the IID `E=1`, IID `E=5`, strong non-IID
+`E=1`, and strong non-IID `E=5` cells. The corresponding weighted defect
+contributions are 0.063, 0.021, 0.029, and 0.022. The observable
+event-curvature factors are 20.0, 83.7, 158.1, and 306.6. The defect diagnostic
+shows that positive average alignment does not erase unfavorable individual
+rounds. The growth of the event-curvature factor is consistent with the lower
+objective-descent frequency under stronger heterogeneity and greater local
+depth. Because only selected rounds are audited and a global smoothness
+constant is not estimated, these values are not a numerical convergence
+certificate.
 
 ## Decision
 

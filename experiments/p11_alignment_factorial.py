@@ -36,6 +36,7 @@ LOCAL_STEPS = (1, 5)
 # design to ten independent partition/training-seed pairs.
 PARTITION_SEEDS = tuple(range(2500, 3500, 100))
 KAPPA = 8.0
+CLIENT_COUNT = 10
 T95_CRITICAL_10_PAIRS = 2.2621571627409915
 
 
@@ -98,6 +99,7 @@ def weighted_ratio(frame: pd.DataFrame, numerator: str, denominator: str) -> flo
 def summarize(audit: pd.DataFrame) -> dict[str, float | int]:
     late = audit[audit["round"] >= 101]
     denominator = "gradient_sq_norm"
+    audit_weight = float(audit["jump"].sum())
     return {
         "audited_rounds": int(len(audit)),
         "weighted_alignment_ratio": weighted_ratio(
@@ -146,6 +148,18 @@ def summarize(audit: pd.DataFrame) -> dict[str, float | int]:
         ),
         "defect_to_target_fraction": weighted_ratio(
             audit, "defect", "kappa_gradient_sq"
+        ),
+        "kappa_condition_fraction": float(
+            np.mean(audit["net_alignment"] >= audit["kappa_gradient_sq"])
+        ),
+        "sampled_defect_contribution": float(
+            np.sum(audit["jump"] * audit["defect"])
+            / (KAPPA * audit_weight)
+        ),
+        "sampled_event_curvature_factor": float(
+            CLIENT_COUNT
+            * np.sum(audit["jump"] ** 2 * audit["coordinate_events"])
+            / audit_weight
         ),
         "max_alignment_identity_error": float(
             audit["alignment_identity_error"].max()
@@ -265,6 +279,9 @@ SUMMARY_METRICS = (
     "mean_cancellation_fraction",
     "max_memory_opposition_penalty",
     "defect_to_target_fraction",
+    "kappa_condition_fraction",
+    "sampled_defect_contribution",
+    "sampled_event_curvature_factor",
     "final_test_ce",
     "final_test_accuracy",
     "final_worst_class_accuracy",

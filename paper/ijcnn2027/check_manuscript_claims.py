@@ -221,6 +221,24 @@ def main() -> None:
         )
     )
 
+    for index, row in enumerate(factorial):
+        claims.extend(
+            [
+                (
+                    f"P11 kappa-condition fraction cell {index}",
+                    f"${pm(row, 'kappa_condition_fraction_mean', 'kappa_condition_fraction_std', scale=100, digits=1)}\\%$",
+                ),
+                (
+                    f"P11 defect contribution cell {index}",
+                    f"${pm(row, 'sampled_defect_contribution_mean', 'sampled_defect_contribution_std', scale=1, digits=3)}$",
+                ),
+                (
+                    f"P11 event-curvature factor cell {index}",
+                    f"${pm(row, 'sampled_event_curvature_factor_mean', 'sampled_event_curvature_factor_std', scale=1, digits=1)}$",
+                ),
+            ]
+        )
+
     for label, fragment in claims:
         require(manuscript, label, fragment)
     print(f"validated {len(claims)} empirical manuscript claims against frozen CSVs")

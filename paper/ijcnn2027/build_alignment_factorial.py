@@ -22,6 +22,8 @@ TABLE = PAPER / "generated" / "p11_alignment_table.tex"
 REGIMES = ("iid", "strong")
 LOCAL_STEPS = (1, 5)
 SEEDS = tuple(range(2500, 3500, 100))
+KAPPA_AUDIT = 8.0
+CLIENT_COUNT = 10
 
 
 def read_rows(path: Path) -> list[dict[str, str]]:
@@ -115,7 +117,42 @@ def validate_design(
             raise AssertionError("non-IID curvature-depth effect changed direction")
 
 
-def build_cells(summaries: list[dict[str, str]]) -> list[dict[str, str]]:
+def theorem_diagnostics(
+    rounds: list[dict[str, str]],
+) -> dict[tuple[str, int, int], dict[str, float]]:
+    grouped: dict[tuple[str, int, int], list[dict[str, str]]] = {}
+    for row in rounds:
+        grouped.setdefault(run_key(row), []).append(row)
+    output: dict[tuple[str, int, int], dict[str, float]] = {}
+    for key, group in grouped.items():
+        q = [float(row["jump"]) for row in group]
+        gradient_sq = [float(row["gradient_sq_norm"]) for row in group]
+        alignment = [float(row["net_alignment"]) for row in group]
+        events = [float(row["coordinate_events"]) for row in group]
+        total_weight = sum(q)
+        defects = [
+            max(KAPPA_AUDIT * squared_norm - aligned, 0.0)
+            for squared_norm, aligned in zip(gradient_sq, alignment)
+        ]
+        output[key] = {
+            "kappa_condition_fraction": statistics.mean(
+                aligned >= KAPPA_AUDIT * squared_norm
+                for squared_norm, aligned in zip(gradient_sq, alignment)
+            ),
+            "sampled_defect_contribution": sum(
+                weight * defect for weight, defect in zip(q, defects)
+            )
+            / (KAPPA_AUDIT * total_weight),
+            "sampled_event_curvature_factor": CLIENT_COUNT
+            * sum(weight**2 * count for weight, count in zip(q, events))
+            / total_weight,
+        }
+    return output
+
+
+def build_cells(
+    summaries: list[dict[str, str]], rounds: list[dict[str, str]]
+) -> list[dict[str, str]]:
     metrics = (
         "weighted_alignment_ratio",
         "positive_alignment_fraction",
@@ -136,6 +173,7 @@ def build_cells(summaries: list[dict[str, str]]) -> list[dict[str, str]]:
     }
     for row in summaries:
         grouped[cell_key(row)].append(row)
+    diagnostics = theorem_diagnostics(rounds)
     cells: list[dict[str, str]] = []
     for regime in REGIMES:
         for steps in LOCAL_STEPS:
@@ -151,6 +189,15 @@ def build_cells(summaries: list[dict[str, str]]) -> list[dict[str, str]]:
             }
             for metric in metrics:
                 mean, std = mean_std([float(row[metric]) for row in group])
+                output[f"{metric}_mean"] = f"{mean:.17g}"
+                output[f"{metric}_std"] = f"{std:.17g}"
+            for metric in (
+                "kappa_condition_fraction",
+                "sampled_defect_contribution",
+                "sampled_event_curvature_factor",
+            ):
+                values = [diagnostics[run_key(row)][metric] for row in group]
+                mean, std = mean_std(values)
                 output[f"{metric}_mean"] = f"{mean:.17g}"
                 output[f"{metric}_std"] = f"{std:.17g}"
             cells.append(output)
@@ -304,7 +351,7 @@ def main() -> None:
     summaries = read_rows(SUMMARY)
     rounds = read_rows(ROUNDS)
     validate_design(summaries, rounds)
-    cells = build_cells(summaries)
+    cells = build_cells(summaries, rounds)
     validate_aggregates(cells)
     validate_paired_effects()
     check_or_write(EVIDENCE, evidence_csv(cells), args.check)
