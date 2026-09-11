@@ -1,0 +1,12 @@
+{
+  "development_seed": 4100,
+  "selection_metric": "minimum final training cross-entropy",
+  "quality": {
+    "event": "event_t0125_q005",
+    "dense": "dense_g15",
+    "sign_ef": "sign_ef",
+    "ef_topk": "ef_k025",
+    "strom": "strom_t01"
+  },
+  "configuration_frozen_before_heldout_evaluation": true
+}

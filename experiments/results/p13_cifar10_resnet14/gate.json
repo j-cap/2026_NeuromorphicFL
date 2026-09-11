@@ -1,0 +1,18 @@
+{
+  "pilot_complete": true,
+  "all_metrics_finite": true,
+  "dense_mean_accuracy_at_least_20_percent": true,
+  "event_no_zero-event_semantic_group": true,
+  "minimum_group_event_count": 1784280,
+  "mean_relative_train_ce_improvement_over_final_20_percent_by_method": {
+    "event": 0.25027744274292835,
+    "dense": 0.11302882324265996,
+    "sign_ef": 0.10750675057580268,
+    "ef_topk": 0.1073961636873647,
+    "strom": 0.06516266432378086
+  },
+  "all_methods_practical_stability_below_1_percent_diagnostic": false,
+  "matched_1800_round_budget_complete": true,
+  "proceed_to_extension": true,
+  "interpretation": "The gate concerns experimental validity, not whether Event-FedAvg wins. A valid unfavorable comparison remains reportable."
+}
