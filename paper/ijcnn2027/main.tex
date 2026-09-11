@@ -569,6 +569,17 @@ as a numerical convergence certificate.}
  \label{fig:communication-frontier}
 \end{figure*}
 
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=0.96\textwidth]{figures/resnet14_communication_trajectory.pdf}
+ \caption{\rev{CIFAR-10 ResNet-14 optimization trajectories in cumulative
+ communication--accuracy space. Thin curves show the ten held-out seeds, thick
+ curves show their matched-round means, open circles mark rounds 300 and 900,
+ and method-specific markers denote round 1,800. Communication includes the
+ conservative bidirectional unicast total used throughout the paper.}}
+ \label{fig:resnet-communication-trajectory}
+\end{figure*}
+
 \input{generated/main_results_table}
 
 \section{Experimental Protocol}
@@ -703,6 +714,15 @@ Gbit. The paired Event-FedAvg accuracy advantage is $5.66$ points with a 95\%
 interval of $[5.05,6.27]$ points and holds for all ten seed pairs. Thus the
 architecture extension preserves the communication--accuracy benefit at
 $10.4\%$ of dense traffic.}
+
+\rev{Figure~\ref{fig:resnet-communication-trajectory} shows that this result is
+not created only by the final checkpoint. The mean Event-FedAvg trajectory
+reaches 65\% accuracy after approximately 9.31 Gbit, compared with 40.19 Gbit
+for EF-TopK and 144.75 Gbit for dense FedAvg. Its advantage therefore develops
+through the optimization trajectory, while the thin Strom curves expose
+substantial seed sensitivity that its final mean alone would conceal. The
+curves continue to improve late in training, so the plot supports a matched
+finite-horizon efficiency comparison rather than a convergence claim.}
 
 \rev{Looking only at the seven seed pairs whose outcomes were unavailable when
 the configurations were frozen, every headline comparison keeps the same

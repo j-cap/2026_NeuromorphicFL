@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
+import statistics
 
 
 REPO = Path(__file__).resolve().parents[2]
@@ -20,6 +21,7 @@ P8 = PAPER / "evidence" / "p8_targeted_revision.csv"
 P11 = PAPER / "evidence" / "p11_alignment_factorial.csv"
 P13 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
+P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -65,6 +67,33 @@ def number(row: dict[str, str], field: str) -> float:
 
 def traffic_mbit(row: dict[str, str], statistic: str = "mean") -> float:
     return number(row, f"unicast_hybrid_total_bits_{statistic}") / 1e6
+
+
+def mean_traffic_to_accuracy(config_name: str, target_percent: float) -> float:
+    histories: list[list[dict[str, str]]] = []
+    for seed in range(4200, 5200, 100):
+        path = P13_ROOT / f"{config_name}_p{seed}_heldout-r1800_history.csv"
+        histories.append(rows(path))
+    reference_rounds = [int(row["round"]) for row in histories[0]]
+    if any(
+        [int(row["round"]) for row in history] != reference_rounds
+        for history in histories[1:]
+    ):
+        raise AssertionError("P13 histories do not use matched evaluation rounds")
+    for index in range(len(reference_rounds)):
+        mean_accuracy = statistics.mean(
+            100 * float(history[index]["test_accuracy"]) for history in histories
+        )
+        if mean_accuracy >= target_percent:
+            return statistics.mean(
+                (
+                    float(history[index]["uplink_packetized_bits"])
+                    + float(history[index]["unicast_hybrid_downlink_bits"])
+                )
+                / 1e9
+                for history in histories
+            )
+    raise AssertionError(f"{config_name} never reaches {target_percent}% mean accuracy")
 
 
 def pm(
@@ -229,6 +258,18 @@ def main() -> None:
             ),
         ]
     )
+
+    for label, config_name in (
+        ("Event-FedAvg", "event_t0125_q005"),
+        ("EF-TopK", "ef_k025"),
+        ("dense FedAvg", "dense_g15"),
+    ):
+        claims.append(
+            (
+                f"ResNet trajectory traffic for {label}",
+                f"{mean_traffic_to_accuracy(config_name, 65):.2f} Gbit",
+            )
+        )
 
     frozen = p8_select(mechanism, "event_frozen")
     no_leak = p8_select(mechanism, "event_no_leak")

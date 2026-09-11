@@ -20,6 +20,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+import numpy as np
 
 
 REPO = Path(__file__).resolve().parents[2]
@@ -38,6 +39,7 @@ FRONTIER_PANEL_FILES = {
     "cifar_resnet14": FIGURES / "communication_frontier_cifar_resnet14.pdf",
 }
 FRONTIER_LEGEND = FIGURES / "communication_frontier_legend.pdf"
+RESNET_TRAJECTORY = FIGURES / "resnet14_communication_trajectory.pdf"
 MAIN_TABLE = PAPER / "generated" / "main_results_table.tex"
 
 PDF_METADATA = {
@@ -60,6 +62,16 @@ METHODS = {
     "sign_ef": {"label": "Sign-EF", "marker": "D", "color": "#CC79A7"},
     "dense": {"label": "Dense FedAvg", "marker": "o", "color": "#595959"},
 }
+
+RESNET_CONFIGS = {
+    "event": "event_t0125_q005",
+    "dense": "dense_g15",
+    "ef_topk": "ef_k025",
+    "sign_ef": "sign_ef",
+    "strom": "strom_t01",
+}
+RESNET_SEEDS = tuple(range(4200, 5200, 100))
+RESNET_RESULTS = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
 
 # Explicit log-axis limits and labelled ticks keep communication scale readable
 # in the narrow four-panel layout while retaining every observed point.
@@ -461,6 +473,125 @@ def frontier_legend() -> bytes:
     return save_pdf(fig)
 
 
+def resnet_trajectory() -> bytes:
+    """Render matched-round communication--accuracy trajectories."""
+
+    histories: dict[str, list[tuple[np.ndarray, np.ndarray, np.ndarray]]] = {
+        method: [] for method in RESNET_CONFIGS
+    }
+    reference_rounds: np.ndarray | None = None
+    for method, config_name in RESNET_CONFIGS.items():
+        for seed in RESNET_SEEDS:
+            path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r1800_history.csv"
+            rows = read_csv(path)
+            rounds = np.array([int(row["round"]) for row in rows])
+            traffic = np.array(
+                [
+                    (
+                        float(row["uplink_packetized_bits"])
+                        + float(row["unicast_hybrid_downlink_bits"])
+                    )
+                    / 1e6
+                    for row in rows
+                ]
+            )
+            accuracy = 100 * np.array(
+                [float(row["test_accuracy"]) for row in rows]
+            )
+            if reference_rounds is None:
+                reference_rounds = rounds
+            elif not np.array_equal(rounds, reference_rounds):
+                raise ValueError("ResNet histories do not share evaluation rounds")
+            if rounds[-1] != 1800 or np.any(np.diff(traffic) < 0):
+                raise ValueError(f"invalid ResNet trajectory {path.name}")
+            histories[method].append((rounds, traffic, accuracy))
+
+    fig, ax = plt.subplots(figsize=(7.08, 3.0))
+    milestone_rounds = (300, 900)
+    for method, method_histories in histories.items():
+        style = METHODS[method]
+        for _rounds, traffic, accuracy in method_histories:
+            ax.plot(
+                traffic,
+                accuracy,
+                color=style["color"],
+                linewidth=0.45,
+                alpha=0.12,
+                zorder=1,
+            )
+        traffic_stack = np.stack([history[1] for history in method_histories])
+        accuracy_stack = np.stack([history[2] for history in method_histories])
+        mean_traffic = traffic_stack.mean(axis=0)
+        mean_accuracy = accuracy_stack.mean(axis=0)
+        ax.plot(
+            mean_traffic,
+            mean_accuracy,
+            color=style["color"],
+            linewidth=1.7,
+            zorder=3,
+        )
+        assert reference_rounds is not None
+        for milestone in milestone_rounds:
+            index = int(np.flatnonzero(reference_rounds == milestone)[0])
+            ax.plot(
+                mean_traffic[index],
+                mean_accuracy[index],
+                marker="o",
+                markersize=3.6,
+                markerfacecolor="white",
+                markeredgecolor=style["color"],
+                markeredgewidth=0.8,
+                linestyle="none",
+                zorder=4,
+            )
+        ax.plot(
+            mean_traffic[-1],
+            mean_accuracy[-1],
+            marker=style["marker"],
+            markersize=8.0 if method == "event" else 6.0,
+            markerfacecolor=style["color"],
+            markeredgecolor="#111111",
+            markeredgewidth=0.65,
+            linestyle="none",
+            zorder=5,
+        )
+
+    handles = [
+        Line2D(
+            [0], [0], color=style["color"], linewidth=1.7,
+            marker=style["marker"], markersize=6.5 if method == "event" else 5.2,
+            markerfacecolor=style["color"], markeredgecolor="#111111",
+            markeredgewidth=0.6, label=style["label"],
+        )
+        for method, style in METHODS.items()
+    ]
+    handles.append(
+        Line2D(
+            [0], [0], color="#666666", linewidth=0, marker="o",
+            markersize=3.6, markerfacecolor="white", markeredgecolor="#666666",
+            label="rounds 300 and 900",
+        )
+    )
+    ax.legend(
+        handles=handles,
+        loc="upper left",
+        ncol=3,
+        frameon=False,
+        handlelength=1.5,
+        columnspacing=1.0,
+    )
+    ax.set_xscale("log")
+    ax.set_xlim(40, 260000)
+    ax.set_ylim(5, 78)
+    ax.set_xlabel("Cumulative traffic [Mbit]")
+    ax.set_ylabel("Test accuracy [%]")
+    ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
+    ax.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
+    ax.set_axisbelow(True)
+    fig.subplots_adjust(left=0.09, right=0.99, top=0.98, bottom=0.17)
+    return save_pdf(fig, tight=False)
+
+
 def selected_rows(
     rows: list[dict[str, str]], comparison: str
 ) -> tuple[dict[str, str], dict[str, str]]:
@@ -605,6 +736,7 @@ def products() -> dict[Path, bytes]:
         for key, _title, _architecture, ylim in PANELS
     }
     products[FRONTIER_LEGEND] = frontier_legend()
+    products[RESNET_TRAJECTORY] = resnet_trajectory()
     products[MAIN_TABLE] = main_table(headline).encode("utf-8")
     return products
 
