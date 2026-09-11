@@ -574,9 +574,11 @@ as a numerical convergence certificate.}
  \includegraphics[width=0.96\textwidth]{figures/resnet14_communication_trajectory.pdf}
  \caption{\rev{CIFAR-10 ResNet-14 optimization trajectories in cumulative
  communication--accuracy space. Thin curves show the ten held-out seeds, thick
- curves show their matched-round means, open circles mark rounds 300 and 900,
- and method-specific markers denote round 1,800. Communication includes the
- conservative bidirectional unicast total used throughout the paper.}}
+ curves show their matched-round means, and open circles mark every 300 rounds
+ through round 1,500. Method-specific markers denote round 1,800. The vertical
+ spacing between consecutive circles shows the accuracy gained during each
+ 300-round interval. Communication includes the conservative bidirectional
+ unicast total used throughout the paper.}}
  \label{fig:resnet-communication-trajectory}
 \end{figure*}
 
@@ -720,9 +722,12 @@ not created only by the final checkpoint. The mean Event-FedAvg trajectory
 reaches 65\% accuracy after approximately 9.31 Gbit, compared with 40.19 Gbit
 for EF-TopK and 144.75 Gbit for dense FedAvg. Its advantage therefore develops
 through the optimization trajectory, while the thin Strom curves expose
-substantial seed sensitivity that its final mean alone would conceal. The
-curves continue to improve late in training, so the plot supports a matched
-finite-horizon efficiency comparison rather than a convergence claim.}
+substantial seed sensitivity that its final mean alone would conceal. For
+Event-FedAvg, EF-TopK, Sign-EF, and dense FedAvg, the vertical spacing between
+successive 300-round markers contracts toward round 1,800. This indicates
+diminishing accuracy gains per interval. The mean curves nevertheless continue
+to improve late in training, so the plot supports a matched finite-horizon
+efficiency comparison rather than a convergence claim.}
 
 \rev{A separate three-seed ablation tests which encoder choices matter at the
 selected CIFAR-10 operating point.} Removing leakage

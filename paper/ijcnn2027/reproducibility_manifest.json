@@ -165,17 +165,17 @@
     {
       "path": "paper/ijcnn2027/generated/fmnist_quality_table.tex",
       "role": "generated table",
-      "sha256": "c96157d713c63bda60a537084a965dd0f7bef57aea82011fa8ec95b29d9100e2"
+      "sha256": "bbc9dc3fcaef6d87fe3d68527605103016c878b039c86a26f545fc388a6695f6"
     },
     {
       "path": "paper/ijcnn2027/generated/fmnist_traffic_table.tex",
       "role": "generated table",
-      "sha256": "73fdcde95bc9f7d6b807cb646f748853c67824288f1a19e276412a4093a11f71"
+      "sha256": "4fff8ab0da457d4508f838b1653555c7c7425704140251f419a07278ddaa8a6e"
     },
     {
       "path": "paper/ijcnn2027/generated/cifar10_table.tex",
       "role": "generated table",
-      "sha256": "1927e23933084deab5058322d150ebaf75564462312d8035d171befa242d0327"
+      "sha256": "70f570f78e0286a5bb085404a15b745e49edae412dc5c7756d4937c779d23efe"
     },
     {
       "path": "paper/ijcnn2027/generated/main_results_table.tex",
@@ -225,12 +225,12 @@
     {
       "path": "paper/ijcnn2027/figures/resnet14_communication_trajectory.pdf",
       "role": "generated trajectory figure",
-      "sha256": "885703013818c6106b107e671a25a096a9b7d74eb9ffa782a7ac4a7c9dc4ea2d"
+      "sha256": "1fd13c2b8a87056faa91fb5ab467ba6c2685cd8362f81687c0a35377529d4b25"
     },
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "ff7b68b57840b08dffb3643baf5f8b0937948b93c58583816f24d7edc600cda8"
+      "sha256": "9dcc8641b12f877a170325bf34b0d2eeaa587a533366d5ad0c81d7e8567864a7"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -295,12 +295,12 @@
     {
       "path": "paper/ijcnn2027/build_evidence.py",
       "role": "reproduction code",
-      "sha256": "acf8ec4fd652e07420128a12c92695ae706b7f9db1d673587c48694ddb43bff2"
+      "sha256": "8b98f67dea717cb41449dcb0e7cb5fbf8db2158ff6f7ea5faf3e7617c1226012"
     },
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "155b2f55e93ca095a6548cd82f774d7c425f818d13a354df443d8afcf2728889"
+      "sha256": "5b0b1810882aa7fe93309d47941bb6d6e9967d66f765802336b3ee78bed015bd"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
@@ -310,7 +310,7 @@
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "5efd04a3239874a0f5f5c3f1b9068603ce4c4513dd244af3403a6e18f229347e"
+      "sha256": "a44804d6bf6c437a3e7d6b474052dbecc30b4a43da7f6dbd0140bb756cc27f51"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",

@@ -507,7 +507,7 @@ def resnet_trajectory() -> bytes:
             histories[method].append((rounds, traffic, accuracy))
 
     fig, ax = plt.subplots(figsize=(7.08, 3.0))
-    milestone_rounds = (300, 900)
+    milestone_rounds = (300, 600, 900, 1200, 1500)
     for method, method_histories in histories.items():
         style = METHODS[method]
         for _rounds, traffic, accuracy in method_histories:
@@ -537,7 +537,7 @@ def resnet_trajectory() -> bytes:
                 mean_traffic[index],
                 mean_accuracy[index],
                 marker="o",
-                markersize=3.6,
+                markersize=3.2,
                 markerfacecolor="white",
                 markeredgecolor=style["color"],
                 markeredgewidth=0.8,
@@ -568,8 +568,8 @@ def resnet_trajectory() -> bytes:
     handles.append(
         Line2D(
             [0], [0], color="#666666", linewidth=0, marker="o",
-            markersize=3.6, markerfacecolor="white", markeredgecolor="#666666",
-            label="rounds 300 and 900",
+            markersize=3.2, markerfacecolor="white", markeredgecolor="#666666",
+            label="every 300 rounds",
         )
     )
     ax.legend(
