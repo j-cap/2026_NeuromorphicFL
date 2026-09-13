@@ -721,8 +721,12 @@ $10.4\%$ of dense traffic.}
 not created only by the final checkpoint. The mean Event-FedAvg trajectory
 reaches 65\% accuracy after approximately 9.31 Gbit, compared with 40.19 Gbit
 for EF-TopK and 144.75 Gbit for dense FedAvg. Its advantage therefore develops
-through the optimization trajectory, while the thin Strom curves expose
-substantial seed sensitivity that its final mean alone would conceal. For
+through the optimization trajectory. Strom exhibits substantially larger
+short-term fluctuations across all ten seeds. Its fixed residual pulse couples
+the transmission threshold to the server-update magnitude, which can produce
+comparatively large synchronous updates in this federated setting. This
+behavior characterizes the evaluated synchronous FL adaptation and does not
+establish a general instability of the original asynchronous method. For
 Event-FedAvg, EF-TopK, Sign-EF, and dense FedAvg, the vertical spacing between
 successive 300-round markers contracts toward round 1,800. This indicates
 diminishing accuracy gains per interval. The mean curves nevertheless continue
