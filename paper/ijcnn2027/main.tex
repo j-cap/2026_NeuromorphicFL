@@ -14,6 +14,7 @@
 \newcommand{\vect}[1]{\boldsymbol{#1}}
 \newcommand{\rev}[1]{{\color{blue}#1}}
 \newcommand{\prov}[1]{{\color{red}#1}}
+\newcommand{\newrev}[1]{{\color{violet}#1}}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
@@ -30,26 +31,28 @@
 
 \begin{abstract}
 Federated learning repeatedly exchanges high-dimensional updates, although
-individual coordinates may carry weak but temporally persistent evidence. We
+individual \newrev{model parameters may change only slightly in one round while
+their changes accumulate consistently over time}. We
 introduce Event-FedAvg, a stateful communication layer inspired by leaky
 integrate-and-fire dynamics. Clients accumulate weighted local-model deltas,
-emit a signed event when an individual model entry first crosses a threshold
+emit a signed event when an individual \newrev{parameter state} first crosses a threshold
 after its previous reset, and reset the corresponding state. \rev{The server
-sums simultaneous signed events coordinatewise. Agreeing events reinforce,
+sums simultaneous signed events \newrev{parameterwise}. Agreeing events reinforce,
 opposing events cancel, and the resulting net event count moves the model by an
 independently scheduled quantum.} The server then
 sends either the sparse update sequence or, when cheaper, the complete model.
-\rev{Our pathwise analysis guarantees a bounded encoder state and relates the
-number of transmitted events directly to accumulated client evidence, without
+\newrev{Our pathwise analysis bounds the encoder state and relates the
+number of transmitted events directly to the accumulated, gradient-scale local
+changes stored by each client, without
 requiring independent or identically distributed updates. We also derive a
 one-step descent decomposition with a conditional finite-horizon gradient-norm
-bound.} An exact pulse-level decomposition and a \rev{factorial alignment audit}
+bound.} An exact pulse-level decomposition and an \newrev{alignment audit}
 expose how data
 heterogeneity and local-update depth affect finite-trajectory alignment. Under
 identical local training conditions across methods, development-only tuning,
 and conservative
 uplink-plus-downlink accounting, Event-FedAvg is nondominated on held-out
-Fashion-MNIST MLP/CNN and CIFAR-10 compact-CNN and ResNet-14 experiments.
+Fashion-MNIST MLP/CNN and CIFAR-10 \newrev{CNN and ResNet-14 experiments}.
 \rev{Across ten paired ResNet-14 seeds, it reaches $75.14\pm0.46\%$ accuracy
 at $21.04\pm0.19$ Gbit, compared with $69.47\pm0.62\%$ at $201.96$ Gbit for
 development-tuned dense FedAvg.} These
@@ -69,33 +72,35 @@ message that brings all clients to the next common model. For bandwidth-limited
 edge systems, this repeated exchange can become the main scaling bottleneck of
 federated averaging (FedAvg) \cite{mcmahan2017fedavg}.
 
-\rev{A \emph{coordinate} is one scalar entry of the model vector. Its change
-may be too small to justify transmission in one round, even when changes in the
-same direction persist and accumulate into meaningful evidence over several
-rounds.} Round-wise compression does not directly exploit this temporal
+\newrev{A single model parameter may change too little to justify transmission
+in one round. When similarly directed changes persist, however, they can
+accumulate into a meaningful update over several rounds.} Round-wise compression does not directly exploit this temporal
 persistence. Error-feedback methods preserve discarded residuals for
 later correction \rev{\cite{stich2018memory,richtarik2021ef21}}, but their
 purpose is to conserve compression error. This
 leads to a different design question: \emph{Can each client integrate weak
-parameter-wise evidence over time and communicate only when that evidence
+\newrev{parameter-wise update information} over time and communicate only when \newrev{its accumulated state}
 crosses a threshold?}
 
 We answer this question with Event-FedAvg, a stateful communication layer for a
 conventional model and optimizer. The \emph{client encoder} maps local changes
-and retained state to sparse coordinate addresses and signs. \rev{The design is
+and \newrev{stored state} to sparse \newrev{parameter indices} and signs. \rev{The design is
 inspired by a leaky integrate-and-fire (LIF) neuron~\cite{gerstner2014neuronal},
-which retains part of its
+which \newrev{keeps part} of its
 membrane state, adds new
-input, fires at a threshold, and resets. Here, each coordinate has such a state
+input, fires at a threshold, and resets. Here, each \newrev{model parameter} has such a state
 and emits a signed event on crossing. A separate \emph{model quantum} specifies
 how far that event moves the server parameter, so evidence threshold and update
 magnitude need not coincide.}
 
-After every server update--including a no-event round--the server must
-synchronize all clients before the next round. It returns either \emph{ordered
+\newrev{The event-driven uplink is only useful if every client subsequently
+starts from the same updated model. After each server update, including a
+no-event round, the server therefore synchronizes all clients before the next
+round.} It returns either \emph{ordered
 replay}, the sparse packet sequence in server order, or, when cheaper, a
-\emph{dense-checkpoint fallback} containing the complete float32 model. Both
-choices exactly synchronize the next client model.
+\emph{dense-checkpoint fallback} containing the complete \newrev{server model}.
+\newrev{Replaying the ordered updates or loading the checkpoint gives every
+client the same model for the next round.}
 
 Our contributions are threefold. We define the complete encoder, server update,
 and synchronization algorithm. We prove pathwise state and event-budget
@@ -109,7 +114,7 @@ identical local training and total bidirectional traffic. Event-FedAvg is
 nondominated in \rev{all four} tested settings. \rev{On CIFAR-10 ResNet-14, it
 uses $9.6\times$ less traffic than dense FedAvg while improving mean accuracy
 by $5.66$ percentage points.}
-Headline comparisons and the alignment factorial each use ten paired seeds.
+\newrev{Primary comparisons and the alignment study each use ten paired seeds.}
 All runs are synchronous with full participation.
 \rev{Figure~\ref{fig:event-fedavg-method} previews one complete communication
 round, including the client-side state, server aggregation, and mandatory
@@ -123,16 +128,16 @@ error feedback preserve compression residuals for later correction
 \cite{seide2014onebit,bernstein2018signsgd,stich2018memory,richtarik2021ef21}.
 \rev{Sparse Ternary Compression (STC) applies residual-corrected ternary
 sparsification in both FL directions}
-\cite{sattler2020stc}. Strom's coordinate residuals and signed threshold pulses
+\cite{sattler2020stc}. Strom's \newrev{per-parameter} residuals and signed threshold pulses
 are our closest algorithmic predecessor \cite{strom2015distributed}. Unlike its
 conservative residual subtraction, Event-FedAvg leaks old evidence, fully
-resets fired coordinates, and decouples the trigger threshold from the applied
+resets fired \newrev{parameter states}, and decouples the trigger threshold from the applied
 model quantum.
 
 Event-triggered learning suppresses a vector message until a model or gradient
 deviation is large enough \cite{ghadikolaei2021lena,singh2023sparq,he2023etfl,
 yoon2025etfl,zhai2026gossip}. \rev{Relative to these approaches, Event-FedAvg
-combines sampled coordinate crossings, leakage, full reset, and an independent
+combines sampled \newrev{parameter-state} crossings, leakage, full reset, and an independent
 server quantum in one exactly synchronized communication protocol.}
 Federated spiking-neural-network (SNN) work instead trains models whose neurons
 exchange discrete spikes and maintain LIF states
@@ -146,7 +151,7 @@ ingredient in isolation.}
  \centering
  \includegraphics[width=0.94\textwidth]{figures/event_fedavg_method.pdf}
  \caption{Event-FedAvg is a stateful communication layer around conventional
- multi-step FedAvg. Weighted local deltas drive leaky evidence. A model entry
+ multi-step FedAvg. Weighted local deltas drive \newrev{a leaky accumulation}. A model entry
  emits only when its sampled state first crosses the threshold after the
  previous reset. The trigger resolution
  $\vartheta$ is independent of the model-update resolution $q_r$. After every
@@ -165,12 +170,13 @@ encoder, and finally the server update and downlink synchronization.
 \subsection{Round notation and local update}
 
 Let rounds be indexed by $r\in\{1,\ldots,R\}$, clients by
-$i\in\{1,\ldots,M\}$, and model coordinates by $j\in\{1,\ldots,d\}$.
+$i\in\{1,\ldots,M\}$, and \newrev{model parameters} by $j\in\{1,\ldots,d\}$.
 The server model at the start of round $r$ is
 $\vect{w}^r\in\mathbb{R}^d$, and every client starts from this same model.
 Client $i$ has local objective $F_i$ and aggregation weight $p_i>0$, with
-$\sum_i p_i=1$. The server supplies $p_i$ at initialization, commonly as
-$n_i/\sum_k n_k$ for $n_i$ local samples. Our equal-size clients use $p_i=1/M$.
+$\sum_i p_i=1$. \newrev{The weights are protocol parameters known to the
+server and clients before training. All experiments use equally sized client
+datasets and therefore set $p_i=1/M$.}
 The global objective is
 \begin{equation}
  F(\vect{w})=\sum_{i=1}^M p_iF_i(\vect{w}).
@@ -191,14 +197,17 @@ change supplied to the communication layer.
 
 \subsection{Client event encoder}
 
-\rev{Each client maintains one encoder-state entry per model coordinate.
+\newrev{Each client keeps one encoder-state entry per model parameter. This
+state stores a leaky accumulation of the client's weighted, gradient-scale
+local changes and is the quantity called \emph{evidence} below.}
+\rev{
 At the start of round $r$, client $i$ carries the post-reset state
 $\vect{z}_i^r\in\mathbb{R}^d$ forward from the preceding round. All experiments
 initialize this state as $\vect{z}_i^1=\vect{0}$. The client converts its local
-model change into weighted evidence and combines that evidence with the retained
+model change into weighted evidence and combines that evidence with the \newrev{stored}
 state before testing the threshold. Figure~\ref{fig:event-fedavg-method}
 summarizes this transition. It also shows the two quantities carried into the
-next round. Client $i$ retains $\vect{z}_i^{r+1}$, and every client receives the
+next round. Client $i$ \newrev{keeps} $\vect{z}_i^{r+1}$, and every client receives the
 exactly synchronized server model $\vect{w}^{r+1}$.}
 
 The weighted evidence input $\vect{a}_i^r$ and state
@@ -213,9 +222,10 @@ immediately before the threshold test, $\widetilde{\vect{z}}_i^r$, are
 The factor $p_i$ weights evidence before thresholding and is not applied again
 at the server. Division by $\eta_r$ removes the local step size because
 $\vect{a}_i^r=-p_i\sum_e\vect{g}_{i,e}^r$, producing comparable
-gradient-scale evidence when $\eta_r$ changes. The leak $\rho_r$ retains part
-of the preceding state. For threshold $\vartheta>0$, every coordinate is tested
+gradient-scale evidence when $\eta_r$ changes. The leak $\rho_r$ \newrev{keeps part}
+of the preceding state. For threshold $\vartheta>0$, every \newrev{parameter} is tested
 once at round end:
+\vspace{-2pt}
 \begin{align}
  m_{ij}^r&=\ind{|\widetilde z_{ij}^r|\geq\vartheta},
  &c_{ij}^r&=m_{ij}^r\operatorname{sign}(\widetilde z_{ij}^r),
@@ -225,32 +235,36 @@ once at round end:
  &\vect{c}_i^r&\in\{-1,0,1\}^d .
  \label{eq:full-reset}
 \end{align}
-The binary mask $\vect{m}_i^r$ records which coordinates fire, while
+\vspace{-2pt}
+The binary mask $\vect{m}_i^r$ records which \newrev{parameters} fire, while
 $\vect{c}_i^r$ contains the signed pulses sent by the client. A sampled
 threshold crossing is the first round after a reset in which
 $|\widetilde z_{ij}^r|\geq\vartheta$. Equation~\eqref{eq:full-reset} is a full
-reset. A fired coordinate discards its entire pre-trigger state, including
+reset. A fired \newrev{parameter state} discards its entire pre-trigger value, including
 overshoot. It neither subtracts the
-threshold nor retains a compression residual. This is the principal semantic
+threshold nor \newrev{keeps} a compression residual. This is the principal semantic
 difference from residual-conserving threshold pulses
 \rev{\cite{stich2018memory,strom2015distributed}}.
 
+\vspace{-3pt}
 \subsection{Server update and synchronization}
 
 The server sums the client pulses into $\vect{C}^r\in\mathbb{Z}^d$. The positive
 model quantum $q_r$ is the server-model change caused by one net signed event.
-It is common to all coordinates in a round but independent of $\vartheta$:
+It is common to all \newrev{parameters} in a round but independent of $\vartheta$:
+\vspace{-2pt}
 \begin{equation}
  \vect{C}^r=\sum_{i=1}^M\vect{c}_i^r,
  \qquad
  \vect{w}^{r+1}=\vect{w}^r+q_r\vect{C}^r .
  \label{eq:server-update}
 \end{equation}
-The experiments prescribe $q_r=q_0(1+r/r_0)^{-\alpha}$, where $q_0>0$ is the
+\vspace{-2pt}
+The experiments \newrev{use} $q_r=q_0(1+r/r_0)^{-\alpha}$, where $q_0>0$ is the
 initial quantum, $r_0>0$ is a round scale, and $\alpha\geq0$ is the decay
 exponent. Clients recover $q_r$
 from the round index and transmit no floating-point event magnitude. If several
-clients fire on the same coordinate in the same round, these \emph{coincident
+clients fire on the same \newrev{parameter} in the same round, these \emph{coincident
 pulses} reinforce when their signs agree and cancel when they disagree. For
 example, $C_j^r=2$ moves parameter $w_j$ by $2q_r$. There is no normalization by
 messages or events.
@@ -263,7 +277,9 @@ operator. The server returns the ordered packet stream or, when smaller, a
 \rev{dense checkpoint containing $\vect{w}^{r+1}$. In the conservative traffic
 metric, every client is charged for the initial model synchronization and for
 one complete synchronization response after each round. A small request packet
-is also counted when a client asks for the response.} These choices affect
+is also counted when a client asks for the response.} \newrev{Thus the metric
+counts every client-to-server upload and a separate server-to-client response
+for every client and round.} These choices affect
 traffic, not the update in
 \eqref{eq:server-update}. Algorithm~\ref{alg:event-fedavg} states the complete
 ordering used in all final experiments.
@@ -301,17 +317,17 @@ round $r=1,\ldots,R$:
 \section{\rev{Finite-Horizon Communication and Alignment Analysis}}
 \label{sec:theory}
 
-\rev{This section answers three questions in sequence: how many coordinate
+\newrev{This section answers three questions in sequence: how many parameter
 events the encoder can emit along a realized optimization trajectory, how those events
 align with the current global descent direction, and what additional alignment
 condition is sufficient for a finite-horizon optimization bound.}
 
-\rev{For the first $R$ rounds, let $N_R^{\rm coord}$ denote the total number of
-client-coordinate events. Every fired coordinate of every client contributes
+\newrev{For the first $R$ rounds, let $N_R^{\rm entry}$ denote the total number of
+client-parameter events. Every fired parameter of every client contributes
 one count, even when another client's opposite event later cancels it at the
 server:}
 \begin{equation}
- \rev{N_R^{\rm coord}=\sum_{r=1}^R\sum_{i=1}^M\sum_{j=1}^d m_{ij}^r.}
+ \newrev{N_R^{\rm entry}=\sum_{r=1}^R\sum_{i=1}^M\sum_{j=1}^d m_{ij}^r.}
  \label{eq:coordinate-event-count}
 \end{equation}
 
@@ -320,15 +336,15 @@ Assume $|z_{ij}^1|<\vartheta$ initially. The full-reset encoder keeps
 $|z_{ij}^r|<\vartheta$ in every round. \rev{The total in
 \eqref{eq:coordinate-event-count} satisfies}
 \begin{equation}
- N_R^{\rm coord}\leq\frac{1}{\vartheta}
+ N_R^{\rm entry}\leq\frac{1}{\vartheta}
  \left(\sum_i\norm{\vect{z}_i^1}_1+
  \sum_{r=1}^R\sum_i\norm{\vect{a}_i^r}_1\right).
  \label{eq:event-budget}
 \end{equation}
 Consequently, if $P_R$ is the number of nonempty packets, the exact event
-uplink is $64P_R+(\lceil\log_2d\rceil+1)N_R^{\rm coord}$ bits.
+uplink is $64P_R+(\lceil\log_2d\rceil+1)N_R^{\rm entry}$ bits.
 \end{proposition}
-The threshold test and reset prove the state claim. Partition each coordinate
+The threshold test and reset prove the state claim. Partition each \newrev{parameter-state}
 trajectory into disjoint reset-to-event blocks. On a block $s{:}t$, the
 recurrence and $0\leq\rho_r\leq1$ give
 $|\widetilde z_{ij}^{t}|\leq|z_{ij}^{s}|+\sum_{\tau=s}^{t}|a_{ij}^{\tau}|$.
@@ -341,7 +357,7 @@ traffic. The result does not imply that weak evidence must eventually fire.}
 
 \rev{Let $\vect{g}^r=\nabla F(\vect{w}^r)$ be the global gradient at the current
 server model,} and let
-$N_r=\sum_i\norm{\vect{c}_i^r}_0$ denote the number of client-coordinate events in
+$N_r=\sum_i\norm{\vect{c}_i^r}_0$ denote the number of client-\newrev{parameter} events in
 round $r$. To distinguish pulses that agree with a descent direction from those
 that oppose it, define
 \begin{align}
@@ -358,7 +374,7 @@ Here $D_r$ and $H_r$ are helpful and harmful global-gradient mass.
 opposite the gradient and hence toward first-order descent, whereas
 $c_{ij}^rg_j^r>0$ means that it points with the gradient and is harmful to
 first order.}
-\rev{Aggregation includes same-coordinate reinforcement and cancellation. This
+\rev{Aggregation includes same-\newrev{parameter} reinforcement and cancellation. This
 is the same $A_r$ as in~\eqref{eq:alignment-decomposition}.} Coordinatewise,
 \rev{the aggregate entry is $C_j^r=\sum_i c_{ij}^r$. Applying
 Cauchy--Schwarz to the vectors $(1,\ldots,1)$ and
@@ -369,13 +385,15 @@ $\norm{\vect{C}^r}_2^2\leq MN_r$. \rev{Thus cancellation can make the actual
 aggregate smaller, while $MN_r$ remains a worst-case bound determined only by
 the transmitted event count.}
 
-\rev{The scalar $A_r$ says whether the aggregate update is helpful, but not why.
-To separate the effects of current local updates, retained encoder memory,
+\newrev{$A_r$ indicates whether the aggregate update follows a first-order
+descent direction, but not which mechanism causes that alignment.
+To separate the effects of current local updates, \newrev{stored} encoder memory,
 local optimization, and client heterogeneity, let}
-$\mathcal S_i^r=\{j:c_{ij}^r\neq0\}$, write $s_{ij}^r=c_{ij}^r$ on this set,
+$\mathcal S_i^r=\{j:c_{ij}^r\neq0\}$, \newrev{the set of parameter indices on
+which client $i$ emits in round $r$}. Write $s_{ij}^r=c_{ij}^r$ on this set,
 and define the local gradient
 $\vect{g}_i^r=\nabla F_i(\vect{w}^r)$ and update proxy
-$\vect{v}_i^r=\vect{\delta}_i^r/(\eta_rE_r)$. For emitted client-coordinate
+$\vect{v}_i^r=\vect{\delta}_i^r/(\eta_rE_r)$. For emitted client-\newrev{parameter}
 pairs, set
 \begin{align}
  P_r&=\sum_{i,j\in\mathcal S_i^r}|v_{ij}^r|,
@@ -387,7 +405,7 @@ pairs, set
 \end{align}
 \rev{$P_r$ is the alignment obtained if every pulse follows the current
 local-update proxy. The correction $R_r$ subtracts twice the proxy magnitude
-when retained memory makes a pulse oppose that proxy. The terms $L_r$ and
+when \newrev{stored} memory makes a pulse oppose that proxy. The terms $L_r$ and
 $B_r$ then account, respectively, for the mismatch between the multi-step
 stochastic update and the current local gradient, and between the local and
 global gradients.}
@@ -526,9 +544,11 @@ establish the conditional expectation for unseen rounds or training runs in
 the decomposition to explain observed mechanisms rather than to claim that the
 assumption has been proved.}
 
-\rev{We also assess the two empirical terms that correspond most directly to
-the theorem. We retain the audit value $\kappa_0=8$, fixed before this
-assessment, and define the realized defect
+\newrev{We also assess the two empirical terms that correspond most directly to
+the theorem. We use the fixed reference $\kappa_0=8$, chosen before this
+assessment as a conservative value below the previously observed aggregate
+trajectory ratios. It is not fitted separately to the four audit cells. We
+define the realized defect
 $\widehat\beta_r=[\kappa_0\norm{\vect{g}^r}_2^2-A_r]_+$. Over the audited
 checkpoints $\mathcal A$, we report the zero-defect frequency and
 \begin{equation}
@@ -556,7 +576,7 @@ as a numerical convergence certificate.}
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_fmnist_mlp.pdf}}\hfill
  \subfloat[Fashion-MNIST CNN]{%
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_fmnist_cnn.pdf}}\hfill
- \subfloat[CIFAR-10 compact CNN]{%
+ \subfloat[CIFAR-10 CNN]{%
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_cnn.pdf}}\hfill
  \subfloat[\rev{CIFAR-10 ResNet-14}]{%
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_resnet14.pdf}}
@@ -577,8 +597,8 @@ as a numerical convergence certificate.}
  curves show their matched-round means, and open circles mark every 300 rounds
  through round 1,500. Method-specific markers denote round 1,800. The vertical
  spacing between consecutive circles shows the accuracy gained during each
- 300-round interval. Communication includes the conservative bidirectional
- unicast total used throughout the paper.}}
+ 300-round interval. \newrev{Communication uses the same separately counted
+ client uploads and downlinks as the rest of the paper.}}}
  \label{fig:resnet-communication-trajectory}
 \end{figure*}
 
@@ -588,9 +608,9 @@ as a numerical convergence certificate.}
 \label{sec:experiments}
 
 \textbf{Tasks and models.}
-We evaluate ten-client image classification under strong label skew. The
-Fashion-MNIST campaign uses a 25,818-parameter MLP for 150 rounds and a
-14,538-parameter compact CNN for 80 rounds. \rev{Each Fashion-MNIST client
+We evaluate ten-client image classification under strong label skew.
+\newrev{The Fashion-MNIST campaign evaluates a 25,818-parameter MLP for 150
+rounds and a 14,538-parameter CNN for 80 rounds.} \rev{Each Fashion-MNIST client
 holds 6,000 examples: 3,300 from its designated dominant class and 300 from
 each of the other nine classes. This preserves equal client sizes and global
 class balance while giving every client a 55\% dominant-class fraction.}
@@ -598,7 +618,7 @@ CIFAR-10 uses a conventional
 20,570-parameter CNN for 120 rounds. It has two strided convolutional layers with
 8 and 16 channels, a 32-unit hidden layer, and a ten-class output. Each
 CIFAR-10 client holds 5,000 examples: 2,750 from its dominant
-class and 250 from every other class. All headline runs use ten active clients,
+class and 250 from every other class. All \newrev{primary runs} use ten active clients,
 five local SGD steps, and minibatches of 32. The local learning rate is $0.1$ on
 Fashion-MNIST and $0.05$ on CIFAR-10. \rev{For Event-FedAvg, every experiment
 uses $r_0=100$ in the quantum schedule after~\eqref{eq:server-update}. The
@@ -608,14 +628,14 @@ The corresponding frozen tuples
 $(\rho,\vartheta,q_0,\alpha)$ are
 $(0.999,0.025,0.005,0.1)$, $(0.999,0.025,0.010,0.3)$, and
 $(0.999,0.025,0.005,0.2)$.
-\rev{The ResNet-14 extension uses a 175,258-parameter group-normalized network
-for 1,800 rounds with the same ten-client CIFAR-10 partition rule, five local
-steps, learning rate $0.05$, and minibatch size 32. Its frozen Event-FedAvg
-tuple is $(0.999,0.0125,0.005,0.3)$.}
+\newrev{The fourth model is a 175,258-parameter group-normalized ResNet-14 on
+CIFAR-10, trained for 1,800 rounds under the same ten-client partition rule,
+five local steps, learning rate $0.05$, and minibatch size 32. Its frozen
+Event-FedAvg tuple is $(0.999,0.0125,0.005,0.3)$.}
 
 \textbf{Practical parameter selection.}
 For constant retention, $\rho$ sets an approximate encoder-memory horizon of
-$1/(1-\rho)$ rounds. The threshold $\vartheta$ controls when coordinates fire
+$1/(1-\rho)$ rounds. The threshold $\vartheta$ controls when \newrev{parameters} fire
 and hence the communication rate, whereas $q_0$ controls the server displacement
 caused by each pulse. We therefore evaluate candidate $(\vartheta,q_0)$ pairs
 on the development partition, select the pair with the lowest final training
@@ -623,16 +643,19 @@ loss, and freeze it before held-out evaluation. The exponent $\alpha$ controls
 how quickly pulse-induced server updates shrink over the finite training
 horizon. Although $\vartheta$ and $q_r$ have distinct roles, they are selected
 jointly because the threshold changes both the number and timing of server
-updates. The choice $\rho=0.999$ gives long evidence retention. The mechanism
+updates. The choice $\rho=0.999$ gives long \newrev{state memory}. The mechanism
 audit below found no measurable difference from $\rho=1$ at the selected
 finite-horizon operating point.
 
-Across the broad comparison, EF-TopK uses
-quality/nearest-traffic fractions $0.05/0.01$, while Strom uses thresholds
-$0.00125/0.02$ on the Fashion-MNIST MLP, $0.005/0.02$ on the Fashion-MNIST
-CNN, and $0.0025/0.01$ on CIFAR-10. \rev{The headline subset comprises the points
-identified in Table~\ref{tab:main-results}. Its EF-TopK CIFAR-10 reference
-uses class-wise fraction $0.05$, and its dense CIFAR-10 reference uses server
+\newrev{For each comparison method, we freeze both a development-selected
+quality setting and, when available, a setting with traffic nearest to
+Event-FedAvg. EF-TopK \newrev{keeps} fractions $0.05$ and $0.01$. Strom uses
+threshold pairs $0.00125/0.02$, $0.005/0.02$, and $0.0025/0.01$ for the
+Fashion-MNIST MLP, Fashion-MNIST CNN, and CIFAR-10 CNN, respectively. The
+first value in each pair is the quality setting and the second is the
+nearest-traffic setting. Table~\ref{tab:main-results} identifies the settings
+used in the primary comparison. The CIFAR-10 EF-TopK reference \newrev{keeps} a
+class-wise fraction of $0.05$, and the dense CIFAR-10 reference uses server
 gain $\gamma=2$.}
 
 \textbf{Selection and evaluation.}
@@ -651,32 +674,28 @@ the server gain $\gamma$ scales the usual aggregate as
 $\vect{w}^{r+1}=\vect{w}^r+\gamma\sum_i p_i\vect{\delta}_i^r$. On CIFAR-10,
 $\gamma=2$ is selected from $\{0.25,0.5,0.75,1,1.5,2,4\}$. For Strom and
 EF-TopK, we also freeze the development setting closest to Event-FedAvg in log
- total traffic. \rev{Table~\ref{tab:main-results} reports every configuration
+ total traffic. \newrev{Table~\ref{tab:main-results} reports every configuration
 included in the ten-seed evaluation. For each of these points, final values are
 the mean and sample standard deviation over ten strong-skew partitions with
 paired training seeds across methods. All configurations were frozen before
-the ten-seed campaign. Because three seed outcomes had been examined during the
-preceding pilot, the remaining seven seeds provide a prospective confirmation
-subset. The subsequent Figure~\ref{fig:communication-frontier} extension reran
-all remaining frozen comparison settings on the same ten seed pairs.} Test
-cross-entropy (CE), accuracy, worst-class accuracy, coordinate events, and
+the ten-seed campaign. Figure~\ref{fig:communication-frontier} evaluates all
+remaining frozen comparison settings on the same ten seed pairs.} Test
+cross-entropy (CE), accuracy, worst-class accuracy, \newrev{parameter events}, and
 communication are recorded. No evaluation result influences development
 selection.
 
 \textbf{Communication metric.}
-The primary metric, \emph{conservative bidirectional unicast traffic}, counts
-uploads plus a separate downlink copy for every client, without a broadcast
-discount. It includes headers, addresses, signs or values, initial
+The primary metric, \newrev{\emph{conservative bidirectional traffic}}, counts
+uploads plus a separate downlink copy for every client, \newrev{as if the server
+sends an individual message to each client rather than one shared broadcast}.
+It includes headers, addresses, signs or values, initial
 synchronization, \rev{a small per-round request, and the smaller of ordered
 replay and a dense checkpoint. Dense model values are counted with the 32-bit
 representation used in the experiments.} Applying one rule to every method prevents an omitted
 downlink from making sparse communication appear artificially cheap.
-\rev{Recomputing the headline points with one logical broadcast preserves every
-reported Pareto direction. The corresponding traffic values are reported with
-the results rather than used for model or hyperparameter selection.}
 
-\textbf{Alignment factorial.}
-On the Fashion-MNIST MLP, we run a full $2\times2$ factorial: every paired seed
+\textbf{Alignment study.}
+On the Fashion-MNIST MLP, we run a full $2\times2$ \newrev{alignment study}. Every paired seed
 is evaluated with either IID or strong non-IID client data and with either one
 or five local steps, while all other Event-FedAvg settings remain fixed.
 For each of ten paired partition and training seeds, rounds
@@ -690,38 +709,36 @@ diagnostic computation from perturbing later threshold crossings.
 \label{sec:results}
 
 Figure~\ref{fig:communication-frontier} gives the broad cross-benchmark
-comparison using total uplink-plus-downlink unicast traffic. \rev{Every point
+comparison using total uplink-plus-downlink \newrev{traffic}. \rev{Every point
 within a panel uses the same ten matched partition and training seeds.} Filled markers
 identify development-selected quality settings, while hollow markers identify
 baseline settings selected for traffic proximity. Each marker is one frozen
-method--hyperparameter setting. \rev{Table~\ref{tab:main-results} focuses on
-the predeclared headline configurations, whereas the figure also shows the
+method--hyperparameter setting. \newrev{Table~\ref{tab:main-results} focuses on
+the primary frozen configurations, whereas the figure also shows the
 remaining frozen operating points evaluated in the ten-seed campaigns.}
 
 \input{generated/p11_alignment_table}
 
-Table~\ref{tab:main-results} makes the ten-seed tradeoffs explicit. On the
-Fashion-MNIST MLP, Event-FedAvg gains $0.65$ points over the quality baseline
-with $5.5\times$ less traffic and gains $4.23$ points over Strom at comparable
-traffic. On the CNN, Strom gains $0.87$ points but uses $4.9\times$ more
-traffic, whereas Event-FedAvg gains $2.14$ points at nearby traffic. On
-CIFAR-10, Event-FedAvg leads tuned dense FedAvg by $4.25$ points using only
-$12.7\%$ of its traffic and leads quality-selected Strom by $1.14$ points with
-$4.6\times$ less traffic.
+\newrev{Table~\ref{tab:main-results} summarizes the ten-seed tradeoffs. Across
+the three smaller models, Event-FedAvg is either the most accurate method or
+within $0.87$ percentage points of it while using substantially less traffic
+than the development-selected comparison. The clearest smaller-model result is
+on the CIFAR-10 CNN, where Event-FedAvg improves on dense FedAvg by $4.25$
+points while using $12.7\%$ of its traffic. The table contains the remaining
+pairwise values.}
 
 \rev{On ResNet-14, Event-FedAvg reaches $75.14\pm0.46\%$ accuracy and
 $55.2\pm3.6\%$ worst-class accuracy using $21.04\pm0.19$ Gbit. Dense FedAvg
 reaches $69.47\pm0.62\%$ and $47.6\pm5.2\%$, respectively, using $201.96$
 Gbit. The paired Event-FedAvg accuracy advantage is $5.66$ points with a 95\%
 interval of $[5.05,6.27]$ points and holds for all ten seed pairs. Thus the
-architecture extension preserves the communication--accuracy benefit at
+\newrev{ResNet-14 result shows the same communication--accuracy benefit} at
 $10.4\%$ of dense traffic.}
 
-\rev{Figure~\ref{fig:resnet-communication-trajectory} shows that this result is
-not created only by the final checkpoint. The mean Event-FedAvg trajectory
-reaches 65\% accuracy after approximately 9.31 Gbit, compared with 40.19 Gbit
-for EF-TopK and 144.75 Gbit for dense FedAvg. Its advantage therefore develops
-through the optimization trajectory. Strom exhibits substantially larger
+\newrev{Figure~\ref{fig:resnet-communication-trajectory} shows that the
+ResNet-14 advantage develops during training rather than appearing only at the
+final checkpoint. Event-FedAvg reaches intermediate accuracy levels with less
+traffic than EF-TopK and dense FedAvg. Strom exhibits substantially larger
 short-term fluctuations across all ten seeds. Its fixed residual pulse couples
 the transmission threshold to the server-update magnitude, which can produce
 comparatively large synchronous updates in this federated setting. This
@@ -733,8 +750,8 @@ diminishing accuracy gains per interval. The mean curves nevertheless continue
 to improve late in training, so the plot supports a matched finite-horizon
 efficiency comparison rather than a convergence claim.}
 
-\rev{A separate three-seed ablation tests which encoder choices matter at the
-selected CIFAR-10 operating point.} Removing leakage
+\newrev{An encoder ablation tests which design choices matter at the selected
+CIFAR-10 operating point.} Removing leakage
 ($\rho=1$) \rev{produces nearly the same result as} the frozen setting at this resolution
 ($48.32\pm1.05\%$ versus $48.25\pm1.07\%$). Coupling the quantum and trigger
 at $0.025$ instead reduces accuracy to $18.42\pm7.33\%$. This supports their
@@ -761,37 +778,26 @@ fewer objective decreases and a larger remainder. No emitted pulse opposes the
 current local-update proxy in the $1{,}240$ snapshots, \rev{so the recorded
 memory-opposition term is exactly zero at every audited checkpoint. This is an
 empirical statement about the recorded checkpoints, not a general property of
-the encoder.} This explains
-a finite-step heterogeneity--depth limitation without establishing the
-conditional expectation in~\eqref{eq:alignment-assumption-paper}.
+the encoder.} \newrev{The audit therefore identifies an interaction between
+heterogeneity and local-update depth on these finite trajectories. It does not
+establish the conditional expectation in~\eqref{eq:alignment-assumption-paper}.}
 
-\rev{The theorem-facing diagnostic gives the same qualified picture. For
-$\kappa_0=8$, the zero-defect inequality holds at
-$87.7\pm2.0\%$, $91.9\pm3.8\%$, $92.3\pm1.7\%$, and
-$93.5\pm3.4\%$ of checkpoints in the IID $E=1$, IID $E=5$, strong non-IID
-$E=1$, and strong non-IID $E=5$ cells. The corresponding
-$\widehat{\mathcal D}_{\mathcal A}$ values are
-$0.063\pm0.002$, $0.021\pm0.001$, $0.029\pm0.004$, and
-$0.022\pm0.003$. Hence occasional poorly aligned rounds are captured by a
-nonzero defect instead of being hidden by the positive trajectory average.
-The observable event-curvature factors $\widehat{\mathcal V}_{\mathcal A}$
-are $20.0\pm0.6$, $83.7\pm1.9$, $158.1\pm4.3$, and
-$306.6\pm4.6$, respectively. Their increase with non-IID data and five local
-steps is consistent with the observed gap between positive first-order
-alignment and actual objective descent. These are sampled trajectory
-diagnostics, not estimates of the conditional expectation or the unknown
-global smoothness constant.}
+\newrev{The diagnostics linked to Theorem~\ref{thm:conditional-stationarity}
+give the same qualified picture. For the fixed reference $\kappa_0=8$, most
+audited checkpoints have zero realized alignment defect. The nonzero values of
+$\widehat{\mathcal D}_{\mathcal A}$ show that the positive trajectory average
+does not hide every unfavorable round. The event-curvature factor
+$\widehat{\mathcal V}_{\mathcal A}$ increases with non-IID data and five local
+steps, consistently with the larger gap between positive first-order alignment
+and actual objective descent. Table~\ref{tab:alignment-factorial} reports the
+numerical values. These are sampled trajectory diagnostics, not estimates of
+the conditional expectation or the unknown global smoothness constant.}
 
-\rev{Event-FedAvg does not outperform every comparator on every predictive
-metric.} On CIFAR-10, Event-FedAvg
-has $26.0\pm4.0\%$ mean worst-class accuracy and frozen EF-TopK has
-$24.9\pm1.9\%$. Their paired difference is $+1.16$ points with a 95\% interval
-$[-1.72,4.04]$, so these data do not resolve a class-wise advantage. Together
-with the alignment audit in Section~\ref{sec:theory}, the results support the
-proposed finite-horizon communication mechanism. \rev{They do not prove
-Assumption~\eqref{eq:alignment-assumption-paper}, because the audit measures
-realized alignment at finitely many checkpoints, whereas the assumption is a
-conditional-expectation statement required across the learning process.}
+\newrev{Together with the alignment study in Section~\ref{sec:theory}, these
+results support the proposed finite-horizon communication mechanism. The audit
+does not prove Assumption~\eqref{eq:alignment-assumption-paper}, because it
+measures realized alignment at finitely many checkpoints rather than the
+conditional expectation required across the learning process.}
 
 \section{Limitations}
 \label{sec:limitations}
@@ -800,8 +806,8 @@ conditional-expectation statement required across the learning process.}
 clients and two image datasets. The communication--performance comparisons use
 ten paired seeds per reported setting. The resulting paired intervals quantify
 variation across these matched runs, but they do not correct simultaneously for
-all comparisons. The headline configurations were chosen through a preceding
-development and pilot process. The factorial audit likewise
+all comparisons. The \newrev{primary configurations} were chosen through a preceding
+development and pilot process. The \newrev{alignment study} likewise
 uses ten seeds and deliberately varies only data partitioning and the number of
 local SGD steps around one Fashion-MNIST operating point. Broader datasets,
 architectures, participation patterns, and hyperparameter regimes remain to be
@@ -815,19 +821,19 @@ execution, and hardware energy require system-level experiments.}
 \section{Conclusion}
 \label{sec:conclusion}
 
-Event-FedAvg turns temporally accumulated local-update evidence into sparse
-signed events using leakage, full reset, and a trigger-independent model
-quantum. The complete protocol includes the downlink required for exact client
-synchronization. Pathwise guarantees cover encoder state and event count, while
-alignment remains the explicit optimization condition. Event-FedAvg is
-nondominated in the evaluated synchronous ten-client settings. The audit shows
-that quantum decoupling matters for the selected configuration, leakage at
-$\rho=0.999$ has no measurable isolated effect, and heterogeneity can turn
-positive first-order alignment into non-descent. These findings sharpen both
-the contribution and its boundary. \rev{The separate ten-seed ResNet-14
-extension preserves the communication--accuracy benefit on a deeper
-architecture. Next experiments should target partial participation and
-measured communication systems.}
+\newrev{Event-FedAvg introduces a stateful communication layer that converts
+temporally accumulated local-model changes into sparse signed events while
+preserving exact round-to-round client synchronization. The analysis bounds
+the encoder state and event count, and it identifies aggregate alignment as the
+condition connecting sparse events to finite-horizon optimization progress.
+Across four ten-client image-classification settings, Event-FedAvg provides a
+nondominated communication--accuracy operating point. On CIFAR-10 ResNet-14,
+it improves mean accuracy over development-tuned dense FedAvg by $5.66$
+percentage points while using $9.6\times$ less traffic. The alignment study
+also shows why positive first-order alignment need not produce an objective
+decrease under stronger heterogeneity and more local SGD steps. Future work
+should evaluate partial participation, asynchronous operation, and measured
+communication and energy costs on physical systems.}
 
 \begin{samepage}
 \section*{Acknowledgment}
