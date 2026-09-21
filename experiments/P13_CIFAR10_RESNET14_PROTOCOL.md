@@ -116,6 +116,29 @@ combined `dense-audit-r900_seed4100_summary.csv`. These exploratory results are
 not consumed by development selection. Interrupted runs resume at their latest
 15-round checkpoint. A different horizon can be supplied in place of `900`.
 
+The completed 1,800-round runs predate retained final checkpoints, so their
+CSV histories cannot be continued: model parameters and the minibatch RNG state
+cannot be reconstructed from metrics. To audit the selected dense setting at a
+longer horizon, rerun its development seed deterministically from round zero:
+
+```bash
+bash tools/p13_workstation.sh dense-horizon 3600
+```
+
+On Windows Command Prompt with the Conda environment already active, use:
+
+```text
+set PYTHONPATH=src
+python experiments\p13_cifar10_resnet14_torch.py --device cuda:0 dense-horizon --rounds 3600
+```
+
+This runs only `dense_g15` on partition 4100, writes the complete 15-round
+history, a 600-round milestone table, and an overlap check against the existing
+1,800-round history. It retains an ignored PyTorch checkpoint after successful
+completion. Repeating the same command with a larger `--rounds` value then
+continues exactly from that checkpoint instead of restarting. CSV and JSON
+outputs remain suitable for Git, while the larger `.pt` checkpoint stays local.
+
 After choosing an adequate fixed horizon from the learning curves, update the
 frozen protocol consistently before running the test campaign:
 

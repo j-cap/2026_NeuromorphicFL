@@ -9,14 +9,15 @@ conference template selector:
 - Template selector: <https://template-selector.ieee.org/>
 
 The selector path was rechecked on 2026-09-06 and remains **Conferences ->
-Original Research -> LaTeX**. It identified an IEEE conference LaTeX template.
-Its generated download endpoint did not deliver an archive in the automated
-browser, and a direct request returned HTTP 404. Therefore `IEEEtran.cls` is
-intentionally not vendored here: committing a copy from CTAN or another mirror
-would not satisfy the requested IEEE-website provenance.
+Original Research -> LaTeX**. An official `IEEEtran.cls` downloaded through
+that route was supplied by the author on 2026-09-21 and is vendored beside the
+manuscript. It identifies itself as IEEEtran V1.8b dated 2015-08-26. Its SHA-256
+checksum as downloaded is
+`c972aca108fda004c3514d63658e02816da2e54d9a1451e870b9bd970e003f55`.
 
-For local compilation, install the `IEEEtran` package from the system TeX
-distribution. Overleaf also supplies the standard class. Before final
-submission, retry the then-current conference-template download, verify the
-IJCNN-specific author instructions, and record the archive checksum here if the
-official endpoint succeeds. Do not modify or hand-copy `IEEEtran.cls`.
+The supplied file has the same textual contents as IEEEtran V1.8b from the TeX
+installation used for the preceding validation build. The byte-level files
+differed only in line endings: the official download uses CRLF and the TeX
+installation copy uses LF. Keeping the official file in this directory makes
+local and Overleaf builds resolve this verified copy before a system-wide
+installation. Do not modify `IEEEtran.cls` directly.

@@ -240,7 +240,12 @@
     {
       "path": "paper/ijcnn2027/IEEE_TEMPLATE.md",
       "role": "template provenance",
-      "sha256": "45bfc2d1dc60604f1ff74a5e467fe454f913136915b92486cf092d209c58b585"
+      "sha256": "fae6202ac99175af83c59a03fac87246aea08c401e407825e9ba55e630ade377"
+    },
+    {
+      "path": "paper/ijcnn2027/IEEEtran.cls",
+      "role": "official IEEE conference class",
+      "sha256": "c972aca108fda004c3514d63658e02816da2e54d9a1451e870b9bd970e003f55"
     },
     {
       "path": "paper/ijcnn2027/P10_SUBMISSION_COMPLIANCE.md",
@@ -356,6 +361,26 @@
       "path": "experiments/p12_headline_ten_seed.py",
       "role": "experiment code",
       "sha256": "b7f64ebe4b9e0e8923d69a577e22ff50dac2af8aba58c078f2d7d7cb54833235"
+    },
+    {
+      "path": "experiments/p13_cifar10_resnet14_torch.py",
+      "role": "experiment code",
+      "sha256": "93c8ceb0e4cbf368275ae3489eab87a8b392a94bf0a6b9ca7cb6d7dbcbbae488"
+    },
+    {
+      "path": "experiments/P13_CIFAR10_RESNET14_PROTOCOL.md",
+      "role": "experiment protocol",
+      "sha256": "03a66eae7ce2ef7f75449524b9a035fec3d80943dab2fa9cc9185712855e1554"
+    },
+    {
+      "path": "tools/p13_workstation.sh",
+      "role": "experiment launcher",
+      "sha256": "9ec3d7784bb95f2c490429bc88c84436e88cd47d156d8add93f6ced36989f94f"
+    },
+    {
+      "path": "environment-resnet14.yml",
+      "role": "experiment environment",
+      "sha256": "e66fcb1d319cca3172320b154629e77b1d90781611697da3d733c83bcee65704"
     },
     {
       "path": "experiments/p15_operator_ablation.py",

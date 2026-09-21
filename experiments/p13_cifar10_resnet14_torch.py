@@ -73,6 +73,15 @@ def _atomic_csv(frame: pd.DataFrame, path: Path) -> None:
     os.replace(temporary, path)
 
 
+def _resume_config_matches(saved: dict, requested: dict) -> bool:
+    """Allow an exact checkpoint trajectory to be extended to a later round."""
+    saved_without_horizon = {key: value for key, value in saved.items() if key != "rounds"}
+    requested_without_horizon = {
+        key: value for key, value in requested.items() if key != "rounds"
+    }
+    return saved_without_horizon == requested_without_horizon
+
+
 def _copy_vector_to_model(vector: torch.Tensor, model: CIFARResNet14) -> None:
     """Copy values without rebinding parameter storage to the source vector."""
     offset = 0
@@ -160,6 +169,7 @@ def run_point(
     resume: bool = True,
     force: bool = False,
     max_rounds: int | None = None,
+    keep_checkpoint: bool = False,
 ) -> Path:
     if config_name not in protocol.CONFIGS:
         raise ValueError(config_name)
@@ -186,8 +196,20 @@ def run_point(
     if result_path.exists() and metadata_path.exists() and not force:
         existing_metadata = json.loads(metadata_path.read_text())
         if existing_metadata.get("status") == "completed":
-            print(f"skip completed {result_path}")
-            return result_path
+            completed_rounds = int(existing_metadata["config"]["rounds"])
+            can_extend = (
+                resume
+                and checkpoint_path.exists()
+                and config.rounds > completed_rounds
+                and _resume_config_matches(existing_metadata["config"], asdict(config))
+            )
+            if not can_extend:
+                print(f"skip completed {result_path}")
+                return result_path
+            print(
+                f"extend completed {config_name} from {completed_rounds} "
+                f"to {config.rounds} rounds"
+            )
     if force and checkpoint_path.exists():
         checkpoint_path.unlink()
 
@@ -233,8 +255,10 @@ def run_point(
         saved = torch.load(checkpoint_path, map_location=device, weights_only=False)
         if saved["config_name"] != config_name or saved["partition_seed"] != partition_seed:
             raise RuntimeError("checkpoint identity mismatch")
-        if saved["config"] != asdict(config):
+        if not _resume_config_matches(saved["config"], asdict(config)):
             raise RuntimeError("checkpoint configuration mismatch")
+        if int(saved["round"]) >= config.rounds:
+            raise RuntimeError("checkpoint is already at or beyond the requested horizon")
         _copy_vector_to_model(saved["global_vector"], model)
         event_state.copy_(saved["event_state"])
         strom_state.copy_(saved["strom_state"])
@@ -270,6 +294,7 @@ def run_point(
         "tf32_cudnn": torch.backends.cudnn.allow_tf32 if device.type == "cuda" else None,
         "mixed_precision": False,
         "deterministic_algorithms": True,
+        "keep_checkpoint": keep_checkpoint,
         "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
     _atomic_json(metadata_path, metadata)
@@ -550,8 +575,11 @@ def run_point(
         "result_file": result_path.name,
     })
     _atomic_json(metadata_path, metadata)
-    if checkpoint_path.exists():
+    if checkpoint_path.exists() and not keep_checkpoint:
         checkpoint_path.unlink()
+    elif checkpoint_path.exists():
+        metadata["checkpoint_file"] = checkpoint_path.name
+        _atomic_json(metadata_path, metadata)
     print(pd.DataFrame([result])[[
         "config_name", "method", "partition_seed", "final_train_ce",
         "final_test_accuracy", "final_worst_class_accuracy",
@@ -591,6 +619,95 @@ def dense_audit(device: str, rounds: int, partition_seed: int) -> None:
         "seconds_per_round", "elapsed_seconds",
     ]].to_string(index=False))
     print(f"saved {summary_path}")
+
+
+def dense_horizon_audit(device: str, rounds: int, partition_seed: int) -> None:
+    """Extend the selected dense development trajectory and retain its state."""
+    if rounds <= protocol.BASE.rounds:
+        raise ValueError(
+            f"dense horizon audit must exceed the frozen {protocol.BASE.rounds} rounds"
+        )
+    # Keep a stable prefix so a retained completed checkpoint can be extended
+    # by rerunning this command with a larger horizon.
+    tag = "dense-horizon-audit"
+    result_path = run_point(
+        "dense_g15",
+        partition_seed,
+        tag,
+        device,
+        max_rounds=rounds,
+        keep_checkpoint=True,
+    )
+    history_path = result_path.with_name(result_path.stem + "_history.csv")
+    history = pd.read_csv(history_path).sort_values("round")
+    milestones = sorted(
+        set(
+            [protocol.BASE.rounds, rounds]
+            + [round_index for round_index in range(600, rounds + 1, 600)]
+        )
+    )
+    milestone_rows = history[history["round"].isin(milestones)].copy()
+    report_path = result_path.with_name(result_path.stem + "_milestones.csv")
+    _atomic_csv(
+        milestone_rows[
+            [
+                "round",
+                "train_ce",
+                "test_ce",
+                "test_accuracy",
+                "worst_class_accuracy",
+                "unicast_hybrid_downlink_bits",
+                "uplink_packetized_bits",
+                "elapsed_seconds",
+            ]
+        ],
+        report_path,
+    )
+
+    reference_path = OUT / (
+        f"dense_g15_p{partition_seed}_dense-horizon-r{protocol.BASE.rounds}_history.csv"
+    )
+    comparison: dict[str, object] = {
+        "reference_history": reference_path.name,
+        "candidate_history": history_path.name,
+        "reference_available": reference_path.exists(),
+        "overlap_target_round": protocol.BASE.rounds,
+    }
+    if reference_path.exists():
+        reference = pd.read_csv(reference_path).sort_values("round")
+        overlap = history[history["round"] <= protocol.BASE.rounds]
+        if not np.array_equal(reference["round"].to_numpy(), overlap["round"].to_numpy()):
+            raise RuntimeError("existing and rerun histories use different evaluation rounds")
+        continuous_columns = ("train_ce", "test_ce")
+        comparison["accuracy_exact_match"] = bool(
+            np.array_equal(
+                reference["test_accuracy"].to_numpy(),
+                overlap["test_accuracy"].to_numpy(),
+            )
+        )
+        for column in continuous_columns:
+            comparison[f"max_abs_{column}_difference"] = float(
+                np.max(np.abs(reference[column].to_numpy() - overlap[column].to_numpy()))
+            )
+        comparison["numerically_reproduced"] = bool(
+            comparison["accuracy_exact_match"]
+            and all(
+                float(comparison[f"max_abs_{column}_difference"]) <= 1e-6
+                for column in continuous_columns
+            )
+        )
+    comparison_path = result_path.with_name(result_path.stem + "_overlap_check.json")
+    _atomic_json(comparison_path, comparison)
+
+    print("\nDense horizon milestones")
+    print(milestone_rows[["round", "train_ce", "test_ce", "test_accuracy"]].to_string(index=False))
+    print(f"saved {report_path}")
+    print(f"saved {comparison_path}")
+    if comparison.get("reference_available") and not comparison.get("numerically_reproduced"):
+        print(
+            "WARNING: the rerun did not reproduce the existing 1,800-round "
+            "trajectory within the audit tolerance; inspect the environment metadata"
+        )
 
 
 def run_frozen_method(method: str, partition_seed: int, device: str) -> None:
@@ -717,9 +834,15 @@ def build_parser() -> argparse.ArgumentParser:
     point.add_argument("--tag", default="dev")
     point.add_argument("--max-rounds", type=int)
     point.add_argument("--force", action="store_true")
+    point.add_argument("--keep-checkpoint", action="store_true")
     dense_audit_parser = commands.add_parser("dense-audit")
     dense_audit_parser.add_argument("--rounds", type=int, default=900)
     dense_audit_parser.add_argument(
+        "--partition-seed", type=int, default=protocol.DEVELOPMENT_SEED
+    )
+    dense_horizon_parser = commands.add_parser("dense-horizon")
+    dense_horizon_parser.add_argument("--rounds", type=int, default=3600)
+    dense_horizon_parser.add_argument(
         "--partition-seed", type=int, default=protocol.DEVELOPMENT_SEED
     )
     commands.add_parser("development-campaign")
@@ -745,9 +868,12 @@ def main() -> None:
         run_point(
             args.config, args.partition_seed, args.tag, args.device,
             force=args.force, max_rounds=args.max_rounds,
+            keep_checkpoint=args.keep_checkpoint,
         )
     elif args.command == "dense-audit":
         dense_audit(args.device, args.rounds, args.partition_seed)
+    elif args.command == "dense-horizon":
+        dense_horizon_audit(args.device, args.rounds, args.partition_seed)
     elif args.command == "development-campaign":
         development_campaign(args.device)
     elif args.command == "select":

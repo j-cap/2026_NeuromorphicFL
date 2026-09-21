@@ -22,6 +22,9 @@ case "${ACTION}" in
   dense-audit)
     run_python --device cuda dense-audit --rounds "${2:-900}"
     ;;
+  dense-horizon)
+    run_python --device cuda dense-horizon --rounds "${2:-3600}"
+    ;;
   development)
     run_python --device cuda development-campaign
     ;;
@@ -40,7 +43,7 @@ case "${ACTION}" in
     run_python --device cpu status
     ;;
   *)
-    echo "Usage: $0 {setup|smoke|dense-audit [rounds]|development|test|full|verify|status}"
+    echo "Usage: $0 {setup|smoke|dense-audit [rounds]|dense-horizon [rounds]|development|test|full|verify|status}"
     exit 2
     ;;
 esac
