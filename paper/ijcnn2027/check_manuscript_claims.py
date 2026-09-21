@@ -21,6 +21,7 @@ P8 = PAPER / "evidence" / "p8_targeted_revision.csv"
 P11 = PAPER / "evidence" / "p11_alignment_factorial.csv"
 P13 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
+P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
 P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
 
 
@@ -96,6 +97,14 @@ def mean_traffic_to_accuracy(config_name: str, target_percent: float) -> float:
     raise AssertionError(f"{config_name} never reaches {target_percent}% mean accuracy")
 
 
+def resnet_mean(config_name: str, field: str) -> float:
+    values = []
+    for seed in range(4200, 5200, 100):
+        path = P13_ROOT / f"{config_name}_p{seed}_heldout-r1800.csv"
+        values.append(float(rows(path)[0][field]))
+    return statistics.mean(values)
+
+
 def pm(
     row: dict[str, str],
     mean: str,
@@ -123,6 +132,7 @@ def main() -> None:
     factorial = rows(P11)
     resnet = rows(P13)
     resnet_paired = rows(P13_PAIRED)
+    figure2 = rows(P14)
 
     mlp_event = point(headline, "fmnist_mlp_event")
     mlp_topk = point(headline, "fmnist_mlp_ef_quality")
@@ -141,6 +151,35 @@ def main() -> None:
         row for row in resnet_paired if row["comparison"] == "event_minus_dense"
     )
 
+    accounting_ratios = []
+    for event_id, dense_id in (
+        ("fmnist_mlp_event", "fmnist_mlp_dense_quality"),
+        ("fmnist_cnn_event", "fmnist_cnn_dense_quality"),
+        ("cifar_event", "cifar_dense_gain2"),
+    ):
+        event_row = point(figure2, event_id)
+        dense_row = point(figure2, dense_id)
+        accounting_ratios.append(
+            (
+                100
+                * number(event_row, "broadcast_total_bits_mean")
+                / number(dense_row, "broadcast_total_bits_mean"),
+                100
+                * number(event_row, "unicast_hybrid_total_bits_mean")
+                / number(dense_row, "unicast_hybrid_total_bits_mean"),
+            )
+        )
+    accounting_ratios.append(
+        (
+            100
+            * resnet_mean("event_t0125_q005", "broadcast_total_bits")
+            / resnet_mean("dense_g15", "broadcast_total_bits"),
+            100
+            * resnet_mean("event_t0125_q005", "unicast_hybrid_total_bits")
+            / resnet_mean("dense_g15", "unicast_hybrid_total_bits"),
+        )
+    )
+
     c_accuracy_gap = 100 * (
         number(c_event, "final_test_accuracy_mean")
         - number(c_dense, "final_test_accuracy_mean")
@@ -155,6 +194,18 @@ def main() -> None:
     )
 
     claims = [
+        (
+            "broadcast-accounting sensitivity",
+            "they are "
+            + ", ".join(f"${broadcast:.1f}\\%$" for broadcast, _ in accounting_ratios[:-1])
+            + f", and ${accounting_ratios[-1][0]:.1f}\\%$",
+        ),
+        (
+            "unicast-accounting sensitivity",
+            "compared with "
+            + ", ".join(f"${unicast:.1f}\\%$" for _, unicast in accounting_ratios[:-1])
+            + f", and ${accounting_ratios[-1][1]:.1f}\\%$ under conservative unicast",
+        ),
         (
             "abstract ResNet Event point",
             f"${pm(resnet_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ accuracy at "
@@ -311,6 +362,8 @@ def main() -> None:
         "P8 no-leak ablation",
         "P8 coupled-resolution ablation",
         "P11 audited snapshot count",
+        "broadcast-accounting sensitivity",
+        "unicast-accounting sensitivity",
     }
     checked = [(label, fragment) for label, fragment in claims if label in direct_prose_labels]
     for label, fragment in checked:

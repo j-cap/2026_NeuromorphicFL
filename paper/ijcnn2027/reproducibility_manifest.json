@@ -180,12 +180,12 @@
     {
       "path": "paper/ijcnn2027/generated/main_results_table.tex",
       "role": "generated table",
-      "sha256": "f27c581f8104b98e47a76331a56a8c7f3c3ce903c2e29fb6e0596e23f2a37651"
+      "sha256": "282fd4ea9cc914d3c97ce3f53ff027fbed04f0ae97d294681f7eab2c4d246c8d"
     },
     {
       "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
       "role": "generated table",
-      "sha256": "ed1bf3be6ca06531cadbec921b7cafab1686df15b42dfa17589cc72622ae66f4"
+      "sha256": "fcb9d88f9c91eeb385b8e7dc7f9046c7628207ed17e42563d76ebcc4abfd9489"
     },
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
@@ -230,12 +230,12 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "570ad249a04ee44b41208d72ba985a305e88232648676cdfafe094cb3c5d22e9"
+      "sha256": "402fb77da23ca01491e9c63b82c12fa189e76332e91085f0d54f6d76713b7c37"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
       "role": "manuscript",
-      "sha256": "8bbeb9bc1e47c44fe7dff356f9319b94a1e5e550c142a4b1f48e0875d9cacb31"
+      "sha256": "9d7e267f5fb7c0753dede1c8e4d40c95f301548677f1e1d384ac9ffc63426759"
     },
     {
       "path": "paper/ijcnn2027/IEEE_TEMPLATE.md",
@@ -300,17 +300,17 @@
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "d4e33c88ae6878ef67dfd5e1c30a9acf344283abd1da42c8ef68a36bf328e7f7"
+      "sha256": "824de7472d1fc916049cf9a7a5be11b2cecfb0108ca93bbe5c00d14ee34dd955"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
       "role": "reproduction code",
-      "sha256": "45555ccdc193a015f4e9e72a8d70365bf825930394e3d14b3bd02497669afc7e"
+      "sha256": "8e406ac27b66e772b817f263514748d7bd7c9a8344c29dd9663e11dbb1582820"
     },
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "7f23b80b83b75c754f9f1f30cea5c5b438f0da485d00a89a2eaeed2d1d39f4e2"
+      "sha256": "b637142832e19b63394f88ed69c356aa19f29157cfac9a7019e0ea7f691c4ffd"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
@@ -358,6 +358,11 @@
       "sha256": "b7f64ebe4b9e0e8923d69a577e22ff50dac2af8aba58c078f2d7d7cb54833235"
     },
     {
+      "path": "experiments/p15_operator_ablation.py",
+      "role": "future experiment code",
+      "sha256": "7c55e2e3c0d1d4e0ccd2c347bf33838a601f9ec2634541abcb8ee51ad0a13df6"
+    },
+    {
       "path": ".github/workflows/p11_alignment_factorial.yml",
       "role": "campaign workflow",
       "sha256": "913126af2572f96a4bc5c964bad03ce5bb92c6026602feadc0e15828f9781332"
@@ -375,7 +380,7 @@
     {
       "path": "src/neuromorphicfl/final_baseline_campaign.py",
       "role": "experiment code",
-      "sha256": "50bdd67621ea0f5c82167c39e39f9b7383bcf59583095785a87f9137803fd1b8"
+      "sha256": "18c2c450a0b2d151d1b30333763bf1c7385cfb4dbc07c93a62589889bc4067c2"
     }
   ]
 }

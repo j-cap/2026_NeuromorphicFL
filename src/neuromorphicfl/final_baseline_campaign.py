@@ -55,6 +55,8 @@ class FinalBaselineConfig:
     strom_threshold: float = 0.005
     init_scale: float = 0.5
     server_gain: float = 1.0
+    event_memory: Literal["persistent", "memoryless"] = "persistent"
+    event_reset: Literal["full", "subtractive"] = "full"
 
 
 def _architecture_ops(architecture: Architecture):
@@ -152,6 +154,10 @@ def run_final_baseline(
             raise ValueError("alignment_client_reference_size must be positive")
     if not np.isfinite(config.server_gain) or config.server_gain <= 0.0:
         raise ValueError("server_gain must be finite and positive")
+    if config.event_memory not in ("persistent", "memoryless"):
+        raise ValueError(f"unsupported event memory: {config.event_memory}")
+    if config.event_reset not in ("full", "subtractive"):
+        raise ValueError(f"unsupported event reset: {config.event_reset}")
     if record_group_activity and method != "event":
         raise ValueError("group activity is defined only for method='event'")
 
@@ -244,7 +250,10 @@ def run_final_baseline(
         replay_this_round = 0
 
         if method == "event":
-            event_state *= config.rho
+            if config.event_memory == "memoryless":
+                event_state.fill(0.0)
+            else:
+                event_state *= config.rho
             jump = config.jump0 * (1.0 + rnd / config.jump_scale) ** (-config.jump_exponent)
             group_events = np.zeros(len(activity_groups), dtype=np.int64)
             group_active_clients = np.zeros(len(activity_groups), dtype=np.int64)
@@ -281,7 +290,12 @@ def run_final_baseline(
                         np.empty(0, dtype=np.int8),
                     )
                 if count:
-                    event_state[client, mask] = 0.0
+                    if config.event_reset == "full":
+                        event_state[client, mask] = 0.0
+                    else:
+                        event_state[client, mask] -= (
+                            config.threshold * signs.astype(np.float32)
+                        )
                     bits = count * pulse_bits
                     packet = bits + 64
                     uplink_payload += bits
@@ -684,6 +698,8 @@ def run_final_baseline(
         "strom_threshold": float(config.strom_threshold),
         "init_scale": float(config.init_scale),
         "server_gain": float(config.server_gain),
+        "event_memory": config.event_memory,
+        "event_reset": config.event_reset,
     }
     for cls, acc in enumerate(per_class):
         result[f"class_{cls}_accuracy"] = float(acc)
