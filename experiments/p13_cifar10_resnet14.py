@@ -26,6 +26,8 @@ PILOT_SEEDS = (4200, 4300, 4400)
 EXTENSION_SEEDS = (4500, 4600, 4700, 4800, 4900, 5000, 5100)
 DEVELOPMENT_TAG = "dev-r1800"
 HELDOUT_TAG = "heldout-r1800"
+FINAL_HORIZON = 3000
+FINAL_HELDOUT_TAG = f"heldout-r{FINAL_HORIZON}"
 
 # The horizon was amended from 180 to 1,800 rounds after the dense-only audit.
 # Dense gain 1.5 was frozen before inspecting any compressed-method result.

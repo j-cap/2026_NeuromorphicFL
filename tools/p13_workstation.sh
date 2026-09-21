@@ -36,6 +36,14 @@ case "${ACTION}" in
     run_python --device cuda full-campaign
     run_python --device cuda verify
     ;;
+  final)
+    run_python --device cuda --torch-threads "${3:-8}" final-campaign --workers "${2:-2}"
+    run_python --device cpu final-summary
+    run_python --device cpu verify
+    ;;
+  final-dry-run)
+    run_python --device cuda --torch-threads "${3:-8}" final-campaign --workers "${2:-2}" --dry-run
+    ;;
   verify)
     run_python --device cpu verify
     ;;
@@ -43,7 +51,7 @@ case "${ACTION}" in
     run_python --device cpu status
     ;;
   *)
-    echo "Usage: $0 {setup|smoke|dense-audit [rounds]|dense-horizon [rounds]|development|test|full|verify|status}"
+    echo "Usage: $0 {setup|smoke|dense-audit [rounds]|dense-horizon [rounds]|development|test|full|final [workers] [threads-per-worker]|final-dry-run [workers] [threads-per-worker]|verify|status}"
     exit 2
     ;;
 esac

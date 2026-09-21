@@ -5,6 +5,10 @@ Date frozen: 2026-09-09
 Dense-only amendment: 2026-09-10, before inspecting any compressed-method
 ResNet-14 result.
 
+Final-horizon amendment: 2026-09-21, after the dense-only 3,600-round audit
+showed a test-performance plateau. The five already selected method settings
+remain frozen. All ten held-out partitions are rerun for 3,000 rounds.
+
 ## Question
 
 Does Event-FedAvg retain a useful communication--quality trade-off on a deeper
@@ -34,8 +38,9 @@ BatchNorm statistics under the non-IID partition.
 The dataset and strong label-skew partition construction match P3: ten clients,
 5,000 training examples per client, and a 55% dominant-class fraction. Each
 round has ten active clients, five local SGD steps, batch size 32, local learning
-rate 0.05, and weight decay 5e-4. The matched evaluation horizon is 1,800 rounds,
-with metrics recorded every 15 rounds.
+rate 0.05, and weight decay 5e-4. Metrics are recorded every 15 rounds. The
+initial matched evaluation used 1,800 rounds. The final replacement campaign
+uses 3,000 rounds for every method and held-out seed.
 
 - Development partition: 4100.
 - Three-seed pilot: 4200, 4300, 4400.
@@ -228,3 +233,47 @@ observed communication--accuracy frontier.
 The late histories still improve for several methods. The results therefore
 support a matched finite-horizon comparison and an architecture-extension
 claim, not convergence to an optimized final model.
+
+## Replacement 3,000-round campaign
+
+The dense development trajectory reached 69.71% accuracy at round 1,800,
+73.11% at round 2,400, and 74.16% at round 3,000. At round 3,600, accuracy was
+73.53% and test cross-entropy had increased from 0.765 at round 3,000 to 0.812.
+Training cross-entropy continued to decrease. This supports 3,000 rounds as a
+fixed generalization-plateau horizon without selecting the best noisy late
+checkpoint.
+
+The replacement campaign retains the configuration selected previously for
+each method. It does not use the held-out seeds to retune any method. It runs
+five methods on the same ten partitions, producing 50 paired points under the
+new tag `heldout-r3000`. Existing `heldout-r1800` results remain intact for
+provenance and are not consumed by the new summary.
+
+On a single RTX 4090, start with two independent GPU worker processes and eight
+CPU threads per worker:
+
+```bash
+bash tools/p13_workstation.sh final-dry-run 2 8
+bash tools/p13_workstation.sh final 2 8
+```
+
+On Windows Command Prompt with the Conda environment already active, use:
+
+```text
+set PYTHONPATH=src
+python experiments\p13_cifar10_resnet14_torch.py --device cuda:0 --torch-threads 8 final-campaign --workers 2 --dry-run
+python experiments\p13_cifar10_resnet14_torch.py --device cuda:0 --torch-threads 8 final-campaign --workers 2
+```
+
+Each worker is a separate process with its own CUDA context, RNG state, and
+unique result prefix. Two workers are a conservative starting point for a
+24-GB RTX 4090. The 32 virtual CPU cores feed these workers, but they do not
+justify launching 32 GPU jobs. If GPU memory is tight or throughput degrades,
+rerun with one worker. Reissuing either command is safe: completed points are
+skipped, and interrupted points resume from the most recent 15-round
+checkpoint.
+
+The campaign writes `heldout-r3000_campaign.json` as its execution plan and
+`heldout-r3000_summary.csv` after completion. The final CSV, full learning
+history, environment record, and Event-FedAvg group activity are retained for
+each point. PyTorch checkpoints stay local and are excluded from Git.

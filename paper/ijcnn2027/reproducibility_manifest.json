@@ -365,17 +365,17 @@
     {
       "path": "experiments/p13_cifar10_resnet14_torch.py",
       "role": "experiment code",
-      "sha256": "93c8ceb0e4cbf368275ae3489eab87a8b392a94bf0a6b9ca7cb6d7dbcbbae488"
+      "sha256": "ed881ee2c84af6cb3fa9675e41cfa5716db74130015a2bb4d26303e103082afb"
     },
     {
       "path": "experiments/P13_CIFAR10_RESNET14_PROTOCOL.md",
       "role": "experiment protocol",
-      "sha256": "03a66eae7ce2ef7f75449524b9a035fec3d80943dab2fa9cc9185712855e1554"
+      "sha256": "ce7fb64edd0ffba64315112b5f758884f6ac5d70302d139bac06b73df28b7dac"
     },
     {
       "path": "tools/p13_workstation.sh",
       "role": "experiment launcher",
-      "sha256": "9ec3d7784bb95f2c490429bc88c84436e88cd47d156d8add93f6ced36989f94f"
+      "sha256": "5c32229d3d4364342638b8cacc07e7a8b948594861b4b50ff87c428b76feb01d"
     },
     {
       "path": "environment-resnet14.yml",

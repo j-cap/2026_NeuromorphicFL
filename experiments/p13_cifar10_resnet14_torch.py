@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 import hashlib
 import json
@@ -9,6 +10,7 @@ import os
 from pathlib import Path
 import platform
 import subprocess
+import sys
 import time
 
 # Required by cuBLAS when torch deterministic algorithms are enabled. This must
@@ -720,6 +722,179 @@ def run_frozen_method(method: str, partition_seed: int, device: str) -> None:
     )
 
 
+def _final_campaign_tasks() -> list[tuple[str, str, int]]:
+    """Return frozen (method, config, seed) tasks in a stable order."""
+    selection_path = OUT / "selection.json"
+    if not selection_path.exists():
+        raise RuntimeError("selection.json is missing; the frozen method settings are required")
+    selection = json.loads(selection_path.read_text())
+    missing = [method for method in METHODS if method not in selection.get("quality", {})]
+    if missing:
+        raise RuntimeError(f"selection.json is missing frozen methods: {missing}")
+    seeds = (*protocol.PILOT_SEEDS, *protocol.EXTENSION_SEEDS)
+    return [
+        (method, str(selection["quality"][method]), seed)
+        for seed in seeds
+        for method in METHODS
+    ]
+
+
+def _completed_final_tasks() -> set[tuple[str, int]]:
+    completed: set[tuple[str, int]] = set()
+    for metadata_path in OUT.glob(f"*_{protocol.FINAL_HELDOUT_TAG}_run.json"):
+        metadata = json.loads(metadata_path.read_text())
+        if (
+            metadata.get("status") == "completed"
+            and int(metadata.get("config", {}).get("rounds", -1))
+            == protocol.FINAL_HORIZON
+        ):
+            completed.add((str(metadata["config_name"]), int(metadata["partition_seed"])))
+    return completed
+
+
+def _run_final_subprocess(
+    config_name: str,
+    partition_seed: int,
+    device: str,
+    torch_threads: int,
+) -> None:
+    command = [
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--device", device,
+        "--torch-threads", str(torch_threads),
+        "point",
+        "--config", config_name,
+        "--partition-seed", str(partition_seed),
+        "--tag", protocol.FINAL_HELDOUT_TAG,
+        "--max-rounds", str(protocol.FINAL_HORIZON),
+    ]
+    environment = os.environ.copy()
+    environment["OMP_NUM_THREADS"] = str(torch_threads)
+    environment["MKL_NUM_THREADS"] = str(torch_threads)
+    print(f"launch {config_name} seed={partition_seed}", flush=True)
+    subprocess.run(command, check=True, env=environment)
+
+
+def summarize_final_campaign(require_complete: bool = True) -> Path:
+    tasks = _final_campaign_tasks()
+    rows = []
+    missing = []
+    for _, config_name, seed in tasks:
+        result_path = _prefix(config_name, seed, protocol.FINAL_HELDOUT_TAG).with_suffix(".csv")
+        metadata_path = result_path.with_name(result_path.stem + "_run.json")
+        if not result_path.exists() or not metadata_path.exists():
+            missing.append(result_path.name)
+            continue
+        metadata = json.loads(metadata_path.read_text())
+        if metadata.get("status") != "completed":
+            missing.append(result_path.name)
+            continue
+        row = pd.read_csv(result_path)
+        if len(row) != 1 or int(row.iloc[0]["rounds"]) != protocol.FINAL_HORIZON:
+            raise RuntimeError(f"invalid final campaign result: {result_path}")
+        rows.append(row)
+    if require_complete and missing:
+        raise RuntimeError(
+            f"final campaign is incomplete: {len(missing)} of {len(tasks)} points missing"
+        )
+    if not rows:
+        raise RuntimeError("no completed final campaign results")
+    data = pd.concat(rows, ignore_index=True)
+    metrics = (
+        "final_train_ce",
+        "final_test_ce",
+        "final_test_accuracy",
+        "final_worst_class_accuracy",
+        "unicast_hybrid_total_bits",
+        "elapsed_seconds",
+    )
+    summary = data.groupby(["method", "config_name"], as_index=False).agg(**{
+        f"{metric}_{stat}": (metric, stat)
+        for metric in metrics for stat in ("mean", "std")
+    })
+    seed_counts = data.groupby(
+        ["method", "config_name"], as_index=False
+    ).agg(completed_seeds=("partition_seed", "nunique"))
+    summary = summary.merge(seed_counts, on=["method", "config_name"], validate="one_to_one")
+    path = OUT / f"{protocol.FINAL_HELDOUT_TAG}_summary.csv"
+    _atomic_csv(summary, path)
+    print(summary.to_string(index=False))
+    print(f"saved {path}")
+    return path
+
+
+def final_campaign(
+    device: str,
+    workers: int,
+    torch_threads: int,
+    dry_run: bool = False,
+) -> None:
+    """Run the frozen five-method, ten-seed campaign at 3,000 rounds."""
+    if workers < 1:
+        raise ValueError("workers must be positive")
+    if torch_threads < 1:
+        raise ValueError("torch_threads must be positive")
+    tasks = _final_campaign_tasks()
+    completed = _completed_final_tasks()
+    pending = [task for task in tasks if (task[1], task[2]) not in completed]
+    plan = {
+        "status": "dry_run" if dry_run else "running",
+        "horizon": protocol.FINAL_HORIZON,
+        "tag": protocol.FINAL_HELDOUT_TAG,
+        "workers": workers,
+        "torch_threads_per_worker": torch_threads,
+        "device": device,
+        "total_points": len(tasks),
+        "completed_points_before_launch": len(tasks) - len(pending),
+        "pending_points_before_launch": len(pending),
+        "tasks": [
+            {"method": method, "config_name": config, "partition_seed": seed}
+            for method, config, seed in tasks
+        ],
+    }
+    OUT.mkdir(parents=True, exist_ok=True)
+    plan_path = OUT / f"{protocol.FINAL_HELDOUT_TAG}_campaign.json"
+    _atomic_json(plan_path, plan)
+    print(
+        f"final campaign: {len(tasks) - len(pending)}/{len(tasks)} complete, "
+        f"{len(pending)} pending, workers={workers}, threads/worker={torch_threads}"
+    )
+    if dry_run:
+        for method, config, seed in pending:
+            print(f"pending method={method} config={config} seed={seed}")
+        return
+    failures = []
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = {
+            executor.submit(
+                _run_final_subprocess, config, seed, device, torch_threads
+            ): (method, config, seed)
+            for method, config, seed in pending
+        }
+        for future in as_completed(futures):
+            method, config, seed = futures[future]
+            try:
+                future.result()
+                print(f"completed method={method} config={config} seed={seed}", flush=True)
+            except Exception as error:
+                failures.append((method, config, seed, str(error)))
+                print(
+                    f"FAILED method={method} config={config} seed={seed}: {error}",
+                    flush=True,
+                )
+    plan["status"] = "failed" if failures else "completed"
+    plan["failures"] = [
+        {"method": method, "config_name": config, "partition_seed": seed, "error": error}
+        for method, config, seed, error in failures
+    ]
+    plan["completed_points_after_run"] = len(_completed_final_tasks())
+    _atomic_json(plan_path, plan)
+    if failures:
+        raise RuntimeError(f"{len(failures)} final campaign point(s) failed; rerun to resume")
+    summarize_final_campaign(require_complete=True)
+
+
 def development_campaign(device: str) -> None:
     """Run the amended single-seed grid and freeze one setting per method."""
     protocol.write_protocol()
@@ -825,6 +1000,7 @@ def status() -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--torch-threads", type=int, default=8)
     commands = parser.add_subparsers(dest="command", required=True)
     smoke = commands.add_parser("smoke")
     smoke.add_argument("--rounds", type=int, default=2)
@@ -852,6 +1028,10 @@ def build_parser() -> argparse.ArgumentParser:
     heldout.add_argument("--partition-seed", type=int, required=True)
     commands.add_parser("test-campaign")
     commands.add_parser("full-campaign")
+    final = commands.add_parser("final-campaign")
+    final.add_argument("--workers", type=int, default=2)
+    final.add_argument("--dry-run", action="store_true")
+    commands.add_parser("final-summary")
     commands.add_parser("verify")
     commands.add_parser("status")
     return parser
@@ -859,6 +1039,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    torch.set_num_threads(args.torch_threads)
+    torch.set_num_interop_threads(1)
     if args.command == "smoke":
         run_point(
             "dense_g10", protocol.DEVELOPMENT_SEED, "smoke",
@@ -884,6 +1066,15 @@ def main() -> None:
         test_campaign(args.device)
     elif args.command == "full-campaign":
         full_campaign(args.device)
+    elif args.command == "final-campaign":
+        final_campaign(
+            args.device,
+            workers=args.workers,
+            torch_threads=args.torch_threads,
+            dry_run=args.dry_run,
+        )
+    elif args.command == "final-summary":
+        summarize_final_campaign(require_complete=False)
     elif args.command == "verify":
         verify_outputs()
     elif args.command == "status":
