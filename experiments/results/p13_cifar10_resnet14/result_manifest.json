@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-09-22T13:54:57Z",
-  "git_commit": "a2001f6dc33aa41d05ce21b458ab7c4342dec572",
+  "generated_utc": "2026-09-22T16:44:26Z",
+  "git_commit": "def7cd8eab45f16d8cd4935001729d8727f69186",
   "files": [
     {
       "name": "dense-audit-r900_seed4100_summary.csv",
@@ -578,9 +578,19 @@
       "sha256": "cd321e7db127ea85f7da86b91700ac22b15a3da0e50f094d6a5665270dfbe39a"
     },
     {
+      "name": "ef_k025_p4200_heldout-r3000.csv",
+      "bytes": 1357,
+      "sha256": "84b82e29d1aa3d4e77b386c3512a48bad4379a24297b969852889e58a49bfde5"
+    },
+    {
+      "name": "ef_k025_p4200_heldout-r3000_history.csv",
+      "bytes": 51131,
+      "sha256": "cad372853e8f077838795752f99ec6e9c1720ae1abf7392ccd573e0d8115ed0c"
+    },
+    {
       "name": "ef_k025_p4200_heldout-r3000_run.json",
-      "bytes": 1583,
-      "sha256": "65fc9c631d61898c9b88825351319781aa9a52d86d00b2176269463ab898e949"
+      "bytes": 1724,
+      "sha256": "c7ae81ded582d053b9721476c3b044b13212a4bda466a0c6e1e8843f3dcf17bd"
     },
     {
       "name": "ef_k025_p4300_heldout-r1800.csv",
@@ -1534,13 +1544,13 @@
     },
     {
       "name": "heldout-r3000_campaign.json",
-      "bytes": 6236,
-      "sha256": "7f825dc280c7d6846e24c79d083e5cf1119db72bdd5ac4c235b8d28bcab4b361"
+      "bytes": 5699,
+      "sha256": "12950a76d53107c3d347150896b7c0370a366a9ad23da0887419f92783b2ab7c"
     },
     {
       "name": "heldout-r3000_summary.csv",
-      "bytes": 1504,
-      "sha256": "1923ddf5d0a03780e5ffadcf15371af3f435dafe8c37246e7c2a957274475b00"
+      "bytes": 1505,
+      "sha256": "2be9a1411578d6e53bf25dd2ae7aa390c61feeaf257409fc1ba5a9b169e8f9e4"
     },
     {
       "name": "heldout_summary.csv",

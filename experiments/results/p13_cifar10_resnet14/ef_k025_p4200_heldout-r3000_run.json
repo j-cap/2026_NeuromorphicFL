@@ -1,5 +1,5 @@
 {
-  "status": "running",
+  "status": "completed",
   "architecture": "cifar_resnet14_groupnorm_torch",
   "dimension": 175258,
   "method": "ef_topk",
@@ -52,11 +52,14 @@
   "torchvision": "0.20.1",
   "cuda_runtime": "12.1",
   "cudnn": 90100,
-  "git_commit": "b8caa84d58758f6a13c88d8df8b3ff18c7a3e52c",
+  "git_commit": "def7cd8eab45f16d8cd4935001729d8727f69186",
   "tf32_matmul": false,
   "tf32_cudnn": false,
   "mixed_precision": false,
   "deterministic_algorithms": true,
   "keep_checkpoint": false,
-  "started_utc": "2026-09-21T17:15:23Z"
+  "started_utc": "2026-09-22T14:35:08Z",
+  "completed_utc": "2026-09-22T15:05:13Z",
+  "elapsed_seconds": 1805.1089518999215,
+  "result_file": "ef_k025_p4200_heldout-r3000.csv"
 }

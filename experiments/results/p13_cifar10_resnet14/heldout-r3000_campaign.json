@@ -1,13 +1,13 @@
 {
-  "status": "failed",
+  "status": "completed",
   "horizon": 3000,
   "tag": "heldout-r3000",
-  "workers": 2,
+  "workers": 1,
   "torch_threads_per_worker": 8,
   "device": "cuda:0",
   "total_points": 50,
-  "completed_points_before_launch": 0,
-  "pending_points_before_launch": 50,
+  "completed_points_before_launch": 49,
+  "pending_points_before_launch": 1,
   "tasks": [
     {
       "method": "event",
@@ -260,13 +260,6 @@
       "partition_seed": 5100
     }
   ],
-  "failures": [
-    {
-      "method": "ef_topk",
-      "config_name": "ef_k025",
-      "partition_seed": 4200,
-      "error": "Command '['C:\\\\Users\\\\WeberJ\\\\AppData\\\\Local\\\\anaconda3\\\\envs\\\\neuromorphicfl-resnet14\\\\python.exe', 'C:\\\\Users\\\\WeberJ\\\\2026_NeuromorphicFL\\\\experiments\\\\p13_cifar10_resnet14_torch.py', '--device', 'cuda:0', '--torch-threads', '8', 'point', '--config', 'ef_k025', '--partition-seed', '4200', '--tag', 'heldout-r3000', '--max-rounds', '3000']' returned non-zero exit status 3221226505."
-    }
-  ],
-  "completed_points_after_run": 49
+  "failures": [],
+  "completed_points_after_run": 50
 }
