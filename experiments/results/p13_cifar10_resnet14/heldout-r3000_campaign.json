@@ -1,0 +1,272 @@
+{
+  "status": "failed",
+  "horizon": 3000,
+  "tag": "heldout-r3000",
+  "workers": 2,
+  "torch_threads_per_worker": 8,
+  "device": "cuda:0",
+  "total_points": 50,
+  "completed_points_before_launch": 0,
+  "pending_points_before_launch": 50,
+  "tasks": [
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4200
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4200
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4200
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4200
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4200
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4300
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4300
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4300
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4300
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4300
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4400
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4400
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4400
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4400
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4400
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4500
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4500
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4500
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4500
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4500
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4600
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4600
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4600
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4600
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4600
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4700
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4700
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4700
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4700
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4700
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4800
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4800
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4800
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4800
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4800
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 4900
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 4900
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 4900
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4900
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 4900
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 5000
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 5000
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 5000
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 5000
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 5000
+    },
+    {
+      "method": "event",
+      "config_name": "event_t0125_q005",
+      "partition_seed": 5100
+    },
+    {
+      "method": "dense",
+      "config_name": "dense_g15",
+      "partition_seed": 5100
+    },
+    {
+      "method": "sign_ef",
+      "config_name": "sign_ef",
+      "partition_seed": 5100
+    },
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 5100
+    },
+    {
+      "method": "strom",
+      "config_name": "strom_t01",
+      "partition_seed": 5100
+    }
+  ],
+  "failures": [
+    {
+      "method": "ef_topk",
+      "config_name": "ef_k025",
+      "partition_seed": 4200,
+      "error": "Command '['C:\\\\Users\\\\WeberJ\\\\AppData\\\\Local\\\\anaconda3\\\\envs\\\\neuromorphicfl-resnet14\\\\python.exe', 'C:\\\\Users\\\\WeberJ\\\\2026_NeuromorphicFL\\\\experiments\\\\p13_cifar10_resnet14_torch.py', '--device', 'cuda:0', '--torch-threads', '8', 'point', '--config', 'ef_k025', '--partition-seed', '4200', '--tag', 'heldout-r3000', '--max-rounds', '3000']' returned non-zero exit status 3221226505."
+    }
+  ],
+  "completed_points_after_run": 49
+}
