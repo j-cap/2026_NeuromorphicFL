@@ -365,7 +365,7 @@
     {
       "path": "experiments/p13_cifar10_resnet14_torch.py",
       "role": "experiment code",
-      "sha256": "ed881ee2c84af6cb3fa9675e41cfa5716db74130015a2bb4d26303e103082afb"
+      "sha256": "63e137fa57619c51c73cd4777112a7b9763534d1ef5e812ca834dd916b48d92c"
     },
     {
       "path": "experiments/P13_CIFAR10_RESNET14_PROTOCOL.md",

@@ -934,9 +934,9 @@ def full_campaign(device: str) -> None:
 def verify_outputs() -> None:
     problems = []
     for result_path in OUT.glob("*.csv"):
-        if result_path.name.endswith(("_history.csv", "_activity.csv")):
-            continue
-        if result_path.name.endswith("_summary.csv"):
+        if result_path.name.endswith(
+            ("_history.csv", "_activity.csv", "_milestones.csv", "_summary.csv")
+        ):
             continue
         run_path = result_path.with_name(result_path.stem + "_run.json")
         history_path = result_path.with_name(result_path.stem + "_history.csv")
