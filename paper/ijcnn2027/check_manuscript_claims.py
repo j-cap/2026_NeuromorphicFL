@@ -73,7 +73,7 @@ def traffic_mbit(row: dict[str, str], statistic: str = "mean") -> float:
 def mean_traffic_to_accuracy(config_name: str, target_percent: float) -> float:
     histories: list[list[dict[str, str]]] = []
     for seed in range(4200, 5200, 100):
-        path = P13_ROOT / f"{config_name}_p{seed}_heldout-r1800_history.csv"
+        path = P13_ROOT / f"{config_name}_p{seed}_heldout-r3000_history.csv"
         histories.append(rows(path))
     reference_rounds = [int(row["round"]) for row in histories[0]]
     if any(
@@ -100,7 +100,7 @@ def mean_traffic_to_accuracy(config_name: str, target_percent: float) -> float:
 def resnet_mean(config_name: str, field: str) -> float:
     values = []
     for seed in range(4200, 5200, 100):
-        path = P13_ROOT / f"{config_name}_p{seed}_heldout-r1800.csv"
+        path = P13_ROOT / f"{config_name}_p{seed}_heldout-r3000.csv"
         values.append(float(rows(path)[0][field]))
     return statistics.mean(values)
 

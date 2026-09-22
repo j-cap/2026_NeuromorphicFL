@@ -58,8 +58,8 @@ heterogeneity and local-update depth to finite-trajectory behavior. Under
 matched local training, development-only tuning, and bidirectional traffic
 accounting, Event-FedAvg is nondominated across Fashion-MNIST MLP/CNN and
 CIFAR-10 CNN/ResNet-14 experiments. Across ten paired ResNet-14 seeds, it
-reaches $75.14\pm0.46\%$ accuracy at $21.04\pm0.19$ Gbit, compared with
-$69.47\pm0.62\%$ at $201.96$ Gbit for development-tuned dense FedAvg. These
+reaches $75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
+$74.21\pm0.74\%$ at $336.56$ Gbit for development-tuned dense FedAvg. These
 results establish a communication--performance operating point in the evaluated
 synchronous setting, not unconditional convergence or hardware-energy savings.}
 \end{abstract}
@@ -101,8 +101,8 @@ conditional finite-horizon gradient-norm bound, and decompose its alignment
 term into measurable mechanisms. Ten-seed comparisons against four referenced
 baselines use matched local training and total bidirectional traffic.
 Event-FedAvg is nondominated in all four settings. On CIFAR-10 ResNet-14, it
-uses $9.6\times$ less traffic than dense FedAvg while improving mean accuracy
-by $5.66$ percentage points. Figure~\ref{fig:event-fedavg-method} summarizes a
+uses $8.7\times$ less traffic than dense FedAvg while improving mean accuracy
+by $0.93$ percentage points. Figure~\ref{fig:event-fedavg-method} summarizes a
 complete round.}
 
 \section{\rev{Related Work}}
@@ -555,7 +555,7 @@ as a numerical convergence certificate.}
  \includegraphics[width=0.90\textwidth]{figures/resnet14_communication_trajectory.pdf}
  \caption{\spacerev{CIFAR-10 ResNet-14 communication--accuracy trajectories.
  Thin curves show ten seeds, thick curves their matched-round means, open
- circles 300-round intervals, and method markers round 1,800. Traffic counts
+ circles 300-round intervals, and method markers round 3,000. Traffic counts
  uploads and downlinks separately.}}
  \label{fig:resnet-communication-trajectory}
 \end{figure*}
@@ -571,7 +571,7 @@ Fashion-MNIST uses a 25,818-parameter MLP for 150 rounds and a
 14,538-parameter CNN for 80 rounds. Each client has 6,000 examples, with 55\%
 from one dominant class and 5\% from each other class. CIFAR-10 uses a
 20,570-parameter CNN for 120 rounds and a 175,258-parameter group-normalized
-ResNet-14 for 1,800 rounds. Each client has 5,000 examples under the same class
+ResNet-14 for 3,000 rounds. Each client has 5,000 examples under the same class
 proportions. All runs use full participation, five local SGD steps, batch size
 32, and learning rate $0.1$ for Fashion-MNIST or $0.05$ for CIFAR-10. We set
 $r_0=100$. The frozen Event-FedAvg tuples
@@ -611,7 +611,7 @@ the aggregate as
 $\vect{w}^{r+1}=\vect{w}^r+\gamma\sum_i p_i\vect{\delta}_i^r$. For the compact
 CIFAR-10 CNN, $\gamma=2$ is selected from
 $\{0.25,0.5,0.75,1,1.5,2,4\}$. The ResNet-14 choice $\gamma=1.5$ follows a
-separate 900-round convergence audit before its 1,800-round evaluation. For Strom and
+separate 900-round development audit and is frozen for the 3,000-round evaluation. For Strom and
 EF-TopK, we also freeze the setting nearest Event-FedAvg in log traffic.
 Table~\ref{tab:main-results} reports the primary configurations, and
 Fig.~\ref{fig:communication-frontier} adds the remaining frozen points. Values
@@ -653,16 +653,16 @@ pairwise values.}
 
 \actionrev{The Event-FedAvg-to-dense traffic ratios remain favorable under a
 logical-broadcast accounting model. From Fashion-MNIST MLP through ResNet-14,
-they are $2.4\%$, $3.1\%$, $4.1\%$, and $3.4\%$, compared with $7.4\%$,
-$9.6\%$, $12.7\%$, and $10.4\%$ under conservative unicast. This sensitivity
+they are $2.4\%$, $3.1\%$, $4.1\%$, and $3.8\%$, compared with $7.4\%$,
+$9.6\%$, $12.7\%$, and $11.5\%$ under conservative unicast. This sensitivity
 uses the already recorded packet streams and requires no retraining. It does
 not establish the ranking under every network or multicast implementation.}
 
-\spacerev{On ResNet-14, Event-FedAvg reaches $75.14\pm0.46\%$ accuracy and
-$55.2\pm3.6\%$ worst-class accuracy at $21.04\pm0.19$ Gbit. Dense FedAvg
-reaches $69.47\pm0.62\%$ and $47.6\pm5.2\%$ at $201.96$ Gbit. The paired
-accuracy advantage is $5.66$ points with a 95\% interval of $[5.05,6.27]$ points and
-holds for all ten pairs. Thus Event-FedAvg uses $10.4\%$ of dense traffic.}
+\spacerev{On ResNet-14, Event-FedAvg reaches $75.14\pm0.90\%$ accuracy and
+$56.1\pm3.6\%$ worst-class accuracy at $38.66\pm0.36$ Gbit. Dense FedAvg
+reaches $74.21\pm0.74\%$ and $51.7\pm5.5\%$ at $336.56$ Gbit. The paired
+accuracy advantage is $0.93$ points with a 95\% interval of $[0.17,1.69]$ points
+and holds for seven of ten pairs. Thus Event-FedAvg uses $11.5\%$ of dense traffic.}
 
 \actionrev{This is an operating-point comparison, not evidence that sparsity
 alone causes the accuracy gain. Event-FedAvg changes both the transmitted
@@ -670,15 +670,17 @@ representation and the induced server update, including a decaying quantum,
 whereas the dense reference uses the development-selected constant gain from
 the preceding audit.}
 
-\spacerev{Figure~\ref{fig:resnet-communication-trajectory} shows that the
-ResNet-14 advantage develops throughout training. Event-FedAvg reaches
+\spacerev{Figure~\ref{fig:resnet-communication-trajectory} shows that
+Event-FedAvg reaches its accuracy plateau by about round 1,800, while dense
+FedAvg, EF-TopK, and Sign-EF continue to improve. Event-FedAvg reaches
 intermediate accuracy levels with less traffic than EF-TopK and dense FedAvg.
 Strom fluctuates more across all seeds, plausibly because its fixed residual
 pulse couples threshold and update magnitude in this synchronous adaptation.
 This does not imply general instability of the original asynchronous method.
-For the other methods, shrinking 300-round gains indicate slowing progress,
-although late improvement supports only a finite-horizon comparison rather
-than convergence.}
+For the other methods, shrinking 300-round gains indicate slowing progress.
+The fixed 3,000-round endpoint therefore gives the baselines more time to close
+the earlier gap, but it remains a finite-horizon comparison rather than a
+convergence claim.}
 
 \actionrev{A targeted encoder audit tests two choices at the selected compact
 CIFAR-10 operating point.} Removing leakage
@@ -739,7 +741,7 @@ signed events while preserving exact synchronization. We bound its state and
 event count and identify aggregate alignment as the condition connecting events
 to finite-horizon progress. It is nondominated across four ten-client image
 classification settings. On CIFAR-10 ResNet-14, it improves mean accuracy over
-development-tuned dense FedAvg by $5.66$ points with $9.6\times$ less traffic.
+development-tuned dense FedAvg by $0.93$ points with $8.7\times$ less traffic.
 The alignment study shows why positive first-order alignment need not imply an
 objective decrease under stronger heterogeneity and more local steps. Future
 work should test partial participation, asynchronous operation, and measured

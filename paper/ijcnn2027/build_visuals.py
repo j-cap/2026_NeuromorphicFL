@@ -79,7 +79,7 @@ TRAFFIC_AXES = {
     "fmnist_mlp": {"limits": (150.0, 3500.0), "ticks": (200.0, 1000.0)},
     "fmnist_cnn": {"limits": (50.0, 1000.0), "ticks": (100.0, 500.0)},
     "cifar_cnn": {"limits": (100.0, 2200.0), "ticks": (200.0, 1000.0)},
-    "cifar_resnet14": {"limits": (7000.0, 300000.0), "ticks": (10000.0, 100000.0)},
+    "cifar_resnet14": {"limits": (7000.0, 450000.0), "ticks": (10000.0, 100000.0)},
 }
 
 CORE_PANELS = [
@@ -482,7 +482,7 @@ def resnet_trajectory() -> bytes:
     reference_rounds: np.ndarray | None = None
     for method, config_name in RESNET_CONFIGS.items():
         for seed in RESNET_SEEDS:
-            path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r1800_history.csv"
+            path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r3000_history.csv"
             rows = read_csv(path)
             rounds = np.array([int(row["round"]) for row in rows])
             traffic = np.array(
@@ -502,12 +502,12 @@ def resnet_trajectory() -> bytes:
                 reference_rounds = rounds
             elif not np.array_equal(rounds, reference_rounds):
                 raise ValueError("ResNet histories do not share evaluation rounds")
-            if rounds[-1] != 1800 or np.any(np.diff(traffic) < 0):
+            if rounds[-1] != 3000 or np.any(np.diff(traffic) < 0):
                 raise ValueError(f"invalid ResNet trajectory {path.name}")
             histories[method].append((rounds, traffic, accuracy))
 
     fig, ax = plt.subplots(figsize=(7.08, 3.0))
-    milestone_rounds = (300, 600, 900, 1200, 1500)
+    milestone_rounds = (300, 600, 900, 1200, 1500, 1800, 2100, 2400, 2700)
     for method, method_histories in histories.items():
         style = METHODS[method]
         for _rounds, traffic, accuracy in method_histories:
@@ -581,7 +581,7 @@ def resnet_trajectory() -> bytes:
         columnspacing=1.0,
     )
     ax.set_xscale("log")
-    ax.set_xlim(40, 260000)
+    ax.set_xlim(40, 450000)
     ax.set_ylim(5, 78)
     ax.set_xlabel("Cumulative traffic [Mbit]")
     ax.set_ylabel("Test accuracy [%]")

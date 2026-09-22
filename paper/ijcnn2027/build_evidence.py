@@ -50,7 +50,7 @@ P14_ROOT = REPO / "experiments" / "results" / "p14_figure2_ten_seed"
 P14_RUNS = P14_ROOT / "heldout_runs.csv"
 P14_SOURCE = P14_ROOT / "summary.csv"
 P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
-P13_SOURCE = P13_ROOT / "heldout_summary.csv"
+P13_SOURCE = P13_ROOT / "heldout-r3000_summary.csv"
 
 MASTER = PAPER / "evidence" / "fmnist_master_results.csv"
 QUALITY_TEX = PAPER / "generated" / "fmnist_quality_table.tex"
@@ -761,7 +761,7 @@ def p13_products() -> tuple[str, str]:
     runs: list[dict[str, str]] = []
     for method, config_name in P13_CONFIGS.items():
         for seed in P13_SEEDS:
-            path = P13_ROOT / f"{config_name}_p{seed}_heldout-r1800.csv"
+            path = P13_ROOT / f"{config_name}_p{seed}_heldout-r3000.csv"
             metadata_path = path.with_name(path.stem + "_run.json")
             history_path = path.with_name(path.stem + "_history.csv")
             if not path.exists() or not metadata_path.exists() or not history_path.exists():
@@ -778,9 +778,9 @@ def p13_products() -> tuple[str, str]:
                 row["method"] != method
                 or row["config_name"] != config_name
                 or int(row["partition_seed"]) != seed
-                or int(row["rounds"]) != 1800
+                or int(row["rounds"]) != 3000
                 or metadata.get("status") != "completed"
-                or int(history[-1]["round"]) != 1800
+                or int(history[-1]["round"]) != 3000
             ):
                 raise AssertionError(f"P13 identity or completion failure for {path.name}")
             runs.append(row)

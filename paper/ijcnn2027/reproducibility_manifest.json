@@ -155,12 +155,12 @@
     {
       "path": "paper/ijcnn2027/evidence/p13_resnet14_ten_seed.csv",
       "role": "generated evidence",
-      "sha256": "8c440cb5e6852ac242e822f973a781abb422190028a304c53b419b311970ad30"
+      "sha256": "34da24980332d0c0ddb81d0739697e98dacdc581b70eea1337f1ab778a8e18f5"
     },
     {
       "path": "paper/ijcnn2027/evidence/p13_resnet14_paired.csv",
       "role": "generated evidence",
-      "sha256": "bd687a38fa1e3e3df15ea0ca348fe5adab142b42b4e2c3d0f2b69a0071abb028"
+      "sha256": "db22e730a41e72a35fb48e8984a410d78df3185463de70969eb5df04ce3cb085"
     },
     {
       "path": "paper/ijcnn2027/generated/fmnist_quality_table.tex",
@@ -180,7 +180,7 @@
     {
       "path": "paper/ijcnn2027/generated/main_results_table.tex",
       "role": "generated table",
-      "sha256": "282fd4ea9cc914d3c97ce3f53ff027fbed04f0ae97d294681f7eab2c4d246c8d"
+      "sha256": "bb6a802056c0f8cf5ac7565243d9a981362e3e4c6692190b4f5e13c9d7fcbbb9"
     },
     {
       "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
@@ -215,7 +215,7 @@
     {
       "path": "paper/ijcnn2027/figures/communication_frontier_cifar_resnet14.pdf",
       "role": "generated figure panel",
-      "sha256": "05bc2f9042df2966ed08eb21079bfa03a1d8d8d80a0fa5e8dbb55eb354e6f6cd"
+      "sha256": "2a4ef2dc8082e57f7daab308af4c78d1e6681e7af35ed0592be0354859e24426"
     },
     {
       "path": "paper/ijcnn2027/figures/communication_frontier_legend.pdf",
@@ -225,12 +225,12 @@
     {
       "path": "paper/ijcnn2027/figures/resnet14_communication_trajectory.pdf",
       "role": "generated trajectory figure",
-      "sha256": "1fd13c2b8a87056faa91fb5ab467ba6c2685cd8362f81687c0a35377529d4b25"
+      "sha256": "00ed02737fb01d1891d850d448413f8f66b05da9025f86f57685590be6036501"
     },
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "402fb77da23ca01491e9c63b82c12fa189e76332e91085f0d54f6d76713b7c37"
+      "sha256": "0f754e5a03d113f7e45d14181edfd67576598195e9a5bd239b021a48bd334772"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -300,12 +300,12 @@
     {
       "path": "paper/ijcnn2027/build_evidence.py",
       "role": "reproduction code",
-      "sha256": "8b98f67dea717cb41449dcb0e7cb5fbf8db2158ff6f7ea5faf3e7617c1226012"
+      "sha256": "897e1ea60bf0741fd6647c0282b8904b5b98702b2be5d5d19557d58485e0472f"
     },
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "824de7472d1fc916049cf9a7a5be11b2cecfb0108ca93bbe5c00d14ee34dd955"
+      "sha256": "771ac189c33f78363fc71620d34ae621b420cf87d34e471a6d0a82845c256e03"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
@@ -315,7 +315,7 @@
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "b637142832e19b63394f88ed69c356aa19f29157cfac9a7019e0ea7f691c4ffd"
+      "sha256": "b0e8d777107963b5c9a34fbbc2649a31b37a3dab75e08ed593643c8af0af301b"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
