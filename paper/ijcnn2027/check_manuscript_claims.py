@@ -23,6 +23,10 @@ P13 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
 P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
 P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
+P15_ROOT = REPO / "experiments" / "results" / "p15_operator_ablation"
+P15_SUMMARY = P15_ROOT / "summary.csv"
+P15_PAIRED = P15_ROOT / "paired.csv"
+P15_TABLE = PAPER / "generated" / "p15_operator_ablation_table.tex"
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -125,7 +129,13 @@ def require(text: str, label: str, fragment: str) -> None:
 
 
 def main() -> None:
-    manuscript = " ".join(MANUSCRIPT.read_text(encoding="utf-8").split())
+    manuscript = " ".join(
+        (
+            MANUSCRIPT.read_text(encoding="utf-8")
+            + " "
+            + P15_TABLE.read_text(encoding="utf-8")
+        ).split()
+    )
     headline = rows(P12)
     differences = rows(P12_PAIRED)
     mechanism = rows(P8)
@@ -133,6 +143,8 @@ def main() -> None:
     resnet = rows(P13)
     resnet_paired = rows(P13_PAIRED)
     figure2 = rows(P14)
+    p15_summary = rows(P15_SUMMARY)
+    p15_paired = rows(P15_PAIRED)
 
     mlp_event = point(headline, "fmnist_mlp_event")
     mlp_topk = point(headline, "fmnist_mlp_ef_quality")
@@ -318,6 +330,44 @@ def main() -> None:
             )
         )
 
+    p15_by_family = {row["family"]: row for row in p15_summary}
+    p15_by_comparison = {row["comparison"]: row for row in p15_paired}
+    memoryless = p15_by_comparison["memoryless_minus_frozen"]
+    subtractive = p15_by_comparison["subtractive_minus_frozen"]
+    for family, label in (
+        ("frozen", "P15 frozen accuracy"),
+        ("memoryless", "P15 memoryless accuracy"),
+        ("subtractive", "P15 subtractive accuracy"),
+    ):
+        row = p15_by_family[family]
+        claims.append(
+            (
+                label,
+                f"{100 * number(row, 'final_test_accuracy_mean'):.2f}"
+                f"$\\pm${100 * number(row, 'final_test_accuracy_std'):.2f}",
+            )
+        )
+    claims.extend(
+        [
+            (
+                "P15 memoryless paired difference",
+                f"${abs(number(memoryless, 'mean_accuracy_difference_points')):.2f}$ points",
+            ),
+            (
+                "P15 memoryless paired interval",
+                f"$[{number(memoryless, 'ci95_low_points'):.2f},{number(memoryless, 'ci95_high_points'):.2f}]$ points",
+            ),
+            (
+                "P15 subtractive paired difference",
+                f"$+{number(subtractive, 'mean_accuracy_difference_points'):.2f}$ points",
+            ),
+            (
+                "P15 subtractive paired interval",
+                f"$[{number(subtractive, 'ci95_low_points'):.2f},{number(subtractive, 'ci95_high_points'):.2f}]$ points",
+            ),
+        ]
+    )
+
     total_factorial_snapshots = sum(
         int(row["n_seeds"]) * int(row["snapshots_per_seed"])
         for row in factorial
@@ -364,6 +414,13 @@ def main() -> None:
         "P11 audited snapshot count",
         "broadcast-accounting sensitivity",
         "unicast-accounting sensitivity",
+        "P15 frozen accuracy",
+        "P15 memoryless accuracy",
+        "P15 subtractive accuracy",
+        "P15 memoryless paired difference",
+        "P15 memoryless paired interval",
+        "P15 subtractive paired difference",
+        "P15 subtractive paired interval",
     }
     checked = [(label, fragment) for label, fragment in claims if label in direct_prose_labels]
     for label, fragment in checked:

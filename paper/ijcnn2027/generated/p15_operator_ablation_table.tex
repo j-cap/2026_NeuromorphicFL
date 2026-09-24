@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{\actionrev{Compact CIFAR-10 CNN operator audit over ten paired held-out seeds. Values are mean $\pm$ sample standard deviation.}}
+\label{tab:operator-ablation}
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Encoder & Accuracy [\%] & Worst [\%] & Total [Mbit] \\
+\midrule
+Persistent, full reset & 48.13$\pm$0.89 & \textbf{26.0$\pm$4.0} & 201.0$\pm$4.0 \\
+Memoryless, full reset & 36.49$\pm$1.45 & 7.4$\pm$3.4 & \textbf{194.2$\pm$5.4} \\
+Persistent, subtractive & \textbf{48.55$\pm$0.82} & 25.2$\pm$5.3 & 209.2$\pm$4.5 \\
+\bottomrule
+\end{tabular}
+\end{table}

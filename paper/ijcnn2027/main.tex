@@ -633,6 +633,19 @@ paired seeds, rounds $1,5,10,\ldots,150$ are audited by independently rerunning
 the same trajectory. Exact full-client gradients are evaluated after the event
 decision, so diagnostics cannot alter later crossings.}
 
+\textbf{Operator audit.}
+\actionrev{The complete Event-FedAvg operator combines cross-round encoder
+memory with full reset after a threshold crossing. Baseline comparisons cannot
+identify which of these internal choices matters. We therefore isolate them on
+the compact CIFAR-10 CNN. A memoryless encoder discards its state before each
+round, while a subtractive-reset encoder retains threshold overshoot. For each
+ablated family, one threshold is selected on the development partition by
+minimum log-distance to the frozen operator's total traffic. The selected
+thresholds are $0.010$ for the memoryless encoder and $0.025$ for subtractive
+reset. Neither is at a search-grid boundary. They are then frozen for the same
+ten paired held-out seeds. All other training, quantum, and communication
+settings remain unchanged.}
+
 \section{Results and Discussion}
 \label{sec:results}
 
@@ -688,9 +701,22 @@ CIFAR-10 operating point.} Removing leakage
 ($48.32\pm1.05\%$ versus $48.25\pm1.07\%$). Coupling the quantum and trigger
 at $0.025$ instead reduces accuracy to $18.42\pm7.33\%$. This supports their
 independence for the selected operating point, not a universal claim that every
-coupled schedule fails. \actionrev{Full reset and persistent accumulation are
-part of the evaluated complete operator but are not isolated by this audit.
-Accordingly, we do not attribute the measured gain to either choice alone.}
+coupled schedule fails.
+
+\input{generated/p15_operator_ablation_table}
+
+\actionrev{Table~\ref{tab:operator-ablation} asks whether the temporal state or
+reset rule explains the selected operating point. Removing cross-round memory
+reduces paired accuracy by $11.64$ points, with a 95\% confidence interval of
+$[-12.79,-10.49]$ points and a loss on every seed, although traffic is $3.3\%$
+lower. Persistent accumulation therefore contributes information beyond event
+rate control in this audit. Subtractive reset changes accuracy by only $+0.42$
+points, with a 95\% confidence interval of $[-0.01,0.85]$ points, while using
+$4.1\%$ more traffic. Thus the experiment identifies persistence as the
+important mechanism at this operating point. It does not establish predictive
+superiority of full reset. We retain full reset because it defines the tested
+operator and yields the bounded-state invariant and disjoint blocks used in
+the analysis.}
 
 \spacerev{Table~\ref{tab:alignment-factorial} reports ten seeds and 31 audited
 checkpoints per seed at rounds $1,5,10,\ldots,150$. Each audit independently
