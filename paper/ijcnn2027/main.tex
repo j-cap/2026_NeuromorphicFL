@@ -52,12 +52,15 @@ emits signed events only when a parameter state crosses a threshold. The server
 sums simultaneous events parameterwise and applies an independently scheduled
 model quantum, allowing opposing events to cancel. A sparse replay or, when
 cheaper, a complete checkpoint then synchronizes all clients. We prove a
-pathwise state and event-budget bound and a conditional finite-horizon
-gradient-norm result. A pulse-level decomposition and alignment study connect
+pathwise state and event-budget bound and a conditional finite-horizon bridge
+from event alignment to gradient norm. A pulse-level decomposition and alignment study connect
 heterogeneity and local-update depth to finite-trajectory behavior. Under
 matched local training, development-only tuning, and bidirectional traffic
-accounting, Event-FedAvg is nondominated across Fashion-MNIST MLP/CNN and
-CIFAR-10 CNN/ResNet-14 experiments. Across ten paired ResNet-14 seeds, it
+accounting, Event-FedAvg is nondominated in the observed mean
+communication--accuracy plane across Fashion-MNIST MLP/CNN and CIFAR-10
+CNN/ResNet-14 experiments. A matched-traffic operator audit identifies
+cross-round persistence, rather than the precise reset rule, as the influential
+encoder choice at the audited operating point. Across ten paired ResNet-14 seeds, it
 reaches $75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
 $74.21\pm0.74\%$ at $336.56$ Gbit for development-tuned dense FedAvg. These
 results establish a communication--performance operating point in the evaluated
@@ -96,11 +99,15 @@ checkpoint. Thus every client begins the next round from the same model, even
 when no event was emitted.}
 
 \spacerev{We contribute the complete encoder, server update, and synchronization
-algorithm. We establish pathwise state and event-budget guarantees, derive a
-conditional finite-horizon gradient-norm bound, and decompose its alignment
-term into measurable mechanisms. Ten-seed comparisons against four referenced
-baselines use matched local training and total bidirectional traffic.
-Event-FedAvg is nondominated in all four settings. On CIFAR-10 ResNet-14, it
+algorithm rather than claiming its individual ingredients as new. We establish
+pathwise state and event-budget guarantees, derive a conditional bridge from
+event alignment to finite-horizon gradient norm, and decompose alignment into
+measurable mechanisms. A matched-traffic operator audit shows that removing
+cross-round memory reduces accuracy by $11.64$ points on the compact CIFAR-10
+CNN, while subtractive reset changes it by only $+0.42$ points and uses more
+traffic. Ten-seed comparisons against four referenced baselines use matched
+local training and total bidirectional traffic. Event-FedAvg is nondominated
+among the evaluated mean operating points in all four settings. On CIFAR-10 ResNet-14, it
 uses $8.7\times$ less traffic than dense FedAvg while improving mean accuracy
 by $0.93$ percentage points. Figure~\ref{fig:event-fedavg-method} summarizes a
 complete round.}
@@ -154,7 +161,8 @@ server update and downlink synchronization.}
 \subsection{Round notation and local update}
 
 Let rounds be indexed by $r\in\{1,\ldots,R\}$, clients by
-$i\in\{1,\ldots,M\}$, and \newrev{model parameters} by $j\in\{1,\ldots,d\}$.
+$i\in\{1,\ldots,M\}$, and model coordinates by $j\in\{1,\ldots,d\}$, where a
+coordinate is one scalar model parameter.
 The server model at the start of round $r$ is
 $\vect{w}^r\in\mathbb{R}^d$, and every client starts from this same model.
 Client $i$ has local objective $F_i$ and aggregation weight $p_i>0$, with
@@ -279,17 +287,17 @@ round $r=1,\ldots,R$:
 \section{\rev{Finite-Horizon Communication and Alignment Analysis}}
 \label{sec:theory}
 
-\newrev{This section answers three questions in sequence: how many parameter
+\newrev{This section answers three questions in sequence: how many coordinate
 events the encoder can emit along a realized optimization trajectory, how those events
 align with the current global descent direction, and what additional alignment
 condition is sufficient for a finite-horizon optimization bound.}
 
-\newrev{For the first $R$ rounds, let $N_R^{\rm entry}$ denote the total number of
-client-parameter events. Every fired parameter of every client contributes
+\newrev{For the first $R$ rounds, let $N_R^{\rm coord}$ denote the total number of
+client-coordinate events. Every fired coordinate of every client contributes
 one count, even when another client's opposite event later cancels it at the
 server:}
 \begin{equation}
- \newrev{N_R^{\rm entry}=\sum_{r=1}^R\sum_{i=1}^M\sum_{j=1}^d m_{ij}^r.}
+ \newrev{N_R^{\rm coord}=\sum_{r=1}^R\sum_{i=1}^M\sum_{j=1}^d m_{ij}^r.}
  \label{eq:coordinate-event-count}
 \end{equation}
 
@@ -298,15 +306,15 @@ Assume $|z_{ij}^1|<\vartheta$ initially. The full-reset encoder keeps
 $|z_{ij}^r|<\vartheta$ in every round. \rev{The total in
 \eqref{eq:coordinate-event-count} satisfies}
 \begin{equation}
- N_R^{\rm entry}\leq\frac{1}{\vartheta}
+ N_R^{\rm coord}\leq\frac{1}{\vartheta}
  \left(\sum_i\norm{\vect{z}_i^1}_1+
  \sum_{r=1}^R\sum_i\norm{\vect{a}_i^r}_1\right).
  \label{eq:event-budget}
 \end{equation}
 Consequently, if $P_R$ is the number of nonempty packets, the exact event
-uplink is $64P_R+(\lceil\log_2d\rceil+1)N_R^{\rm entry}$ bits.
+uplink is $64P_R+(\lceil\log_2d\rceil+1)N_R^{\rm coord}$ bits.
 \end{proposition}
-The threshold test and reset prove the state claim. Partition each \newrev{parameter-state}
+The threshold test and reset prove the state claim. Partition each \newrev{coordinate-state}
 trajectory into disjoint reset-to-event blocks. On a block $s{:}t$, the
 recurrence and $0\leq\rho_r\leq1$ give
 $|\widetilde z_{ij}^{t}|\leq|z_{ij}^{s}|+\sum_{\tau=s}^{t}|a_{ij}^{\tau}|$.
@@ -319,7 +327,7 @@ traffic. The result does not imply that weak evidence must eventually fire.}
 
 \rev{Let $\vect{g}^r=\nabla F(\vect{w}^r)$ be the global gradient at the current
 server model,} and let
-$N_r=\sum_i\norm{\vect{c}_i^r}_0$ denote the number of client-\newrev{parameter} events in
+$N_r=\sum_i\norm{\vect{c}_i^r}_0$ denote the number of client-coordinate events in
 round $r$. To distinguish pulses that agree with a descent direction from those
 that oppose it, define
 \begin{align}
@@ -425,7 +433,7 @@ If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
 \rev{This inequality holds pathwise. A stationarity result additionally
 requires the emitted aggregate to align with global descent.}
 
-\begin{theorem}[\actionrev{Conditional finite-horizon gradient-norm bound}]
+\begin{theorem}[\actionrev{Conditional communication-to-stationarity bridge}]
 \label{thm:conditional-stationarity}
 \rev{Fix a horizon $R$ and assume that (i) $F$ is $L$-smooth and bounded below by
 $F_{\inf}$, (ii) $\vect{w}^1$ and the positive schedule
@@ -456,7 +464,9 @@ lower-boundedness, and scheduling conditions. The third is the learning-side
 condition. It requires positive expected aggregate alignment up to the defect
 $\beta_r$. The encoder guarantees state boundedness and an event budget, but it
 does not guarantee this alignment. The theorem therefore states precisely what
-follows when the optimization dynamics provide sufficient alignment.}
+follows when the optimization dynamics provide sufficient alignment. It is a
+conditional communication-to-optimization bridge, not an unconditional
+convergence guarantee for the encoder.}
 
 \rev{The three terms on the right of~\eqref{eq:stationarity} have distinct
 roles. The first is the initial optimization gap divided by the cumulative
@@ -545,7 +555,7 @@ as a numerical convergence certificate.}
  \par\vspace{0.5mm}
  \caption{\spacerev{Ten-seed held-out communication--accuracy comparison.
  Filled markers are quality-selected and hollow markers are traffic-matched.
- Dotted lines connect observed nondominated points. Error bars show mean
+ Dotted lines connect points that are nondominated in the observed mean plane. Error bars show mean
  $\pm$ sample standard deviation over matched seeds.}}
  \label{fig:communication-frontier}
 \end{figure*}
@@ -574,7 +584,9 @@ from one dominant class and 5\% from each other class. CIFAR-10 uses a
 ResNet-14 for 3,000 rounds. Each client has 5,000 examples under the same class
 proportions. All runs use full participation, five local SGD steps, batch size
 32, and learning rate $0.1$ for Fashion-MNIST or $0.05$ for CIFAR-10. We set
-$r_0=100$. The frozen Event-FedAvg tuples
+$r_0=100$. Within a benchmark, every method uses the same final-round horizon.
+The horizons differ across benchmarks because they were selected for the
+corresponding architecture and dataset. The frozen Event-FedAvg tuples
 $(\rho,\vartheta,q_0,\alpha)$ are $(0.999,0.025,0.005,0.1)$,
 $(0.999,0.025,0.010,0.3)$, $(0.999,0.025,0.005,0.2)$, and
 $(0.999,0.0125,0.005,0.3)$ in the listed model order.}
@@ -585,7 +597,9 @@ $1/(1-\rho)$. The threshold $\vartheta$ controls firing and traffic, $q_0$
 controls pulse displacement, and $\alpha$ controls its decay. We jointly select
 $(\vartheta,q_0)$ by final development loss and freeze all settings before
 evaluation. We use $\rho=0.999$ for long memory. An ablation finds no measurable
-difference from $\rho=1$ at the selected finite horizon.}
+difference from $\rho=1$ at the selected finite horizon. The complete candidate
+grids, development scores, and frozen selections are included in the
+reproducibility artifact.}
 
 \spacerev{Each comparison method has a development-selected quality setting and,
 when available, a traffic-matched setting. EF-TopK retains fractions $0.05$
@@ -614,12 +628,13 @@ $\{0.25,0.5,0.75,1,1.5,2,4\}$. The ResNet-14 choice $\gamma=1.5$ follows a
 separate 900-round development audit and is frozen for the 3,000-round evaluation. For Strom and
 EF-TopK, we also freeze the setting nearest Event-FedAvg in log traffic.
 Table~\ref{tab:main-results} reports Event-FedAvg, dense FedAvg, and the
-highest-accuracy development-selected sparse baseline for each benchmark.
+highest-accuracy sparse baseline selected exclusively by development loss for
+each benchmark. Held-out accuracy is never used to choose this table entry.
 Figure~\ref{fig:communication-frontier} contains all remaining frozen points,
 including traffic-matched settings and secondary method families. Values
 are means and sample standard deviations over ten paired strong-skew partitions
 and training seeds. We record test cross-entropy, accuracy, worst-class
-accuracy, parameter events, and communication.}
+accuracy, coordinate events, and communication.}
 
 \textbf{Communication metric.}
 \spacerev{Conservative bidirectional traffic counts uploads and an individual
@@ -635,18 +650,18 @@ paired seeds, rounds $1,5,10,\ldots,150$ are audited by independently rerunning
 the same trajectory. Exact full-client gradients are evaluated after the event
 decision, so diagnostics cannot alter later crossings.}
 
-\textbf{Operator audit.}
+\textbf{Mechanism audits.}
 \actionrev{The complete Event-FedAvg operator combines cross-round encoder
-memory with full reset after a threshold crossing. Baseline comparisons cannot
-identify which of these internal choices matters. We therefore isolate them on
-the compact CIFAR-10 CNN. A memoryless encoder discards its state before each
-round, while a subtractive-reset encoder retains threshold overshoot. For each
-ablated family, one threshold is selected on the development partition by
-minimum log-distance to the frozen operator's total traffic. The selected
-thresholds are $0.010$ for the memoryless encoder and $0.025$ for subtractive
-reset. Neither is at a search-grid boundary. They are then frozen for the same
-ten paired held-out seeds. All other training, quantum, and communication
-settings remain unchanged.}
+memory, leakage, full reset, and separate trigger and model-update scales.
+Baseline comparisons cannot identify which internal choice matters. We
+therefore audit four changes at the compact CIFAR-10 CNN operating point:
+memoryless state, no leakage ($\rho=1$), subtractive reset that retains
+overshoot, and coupling $q_r$ to the threshold. For the memoryless and
+subtractive families, one threshold is selected on the development partition
+by minimum log-distance to the frozen operator's total traffic. The selected
+thresholds are $0.010$ and $0.025$, respectively. Neither is at a search-grid
+boundary. They are then frozen for the same ten paired held-out seeds. All
+other training, quantum, and communication settings remain unchanged.}
 
 \section{Results and Discussion}
 \label{sec:results}
@@ -698,8 +713,9 @@ The fixed 3,000-round endpoint therefore gives the baselines more time to close
 the earlier gap, but it remains a finite-horizon comparison rather than a
 convergence claim.}
 
-\actionrev{A targeted encoder audit tests two choices at the selected compact
-CIFAR-10 operating point.} Removing leakage
+\textbf{Mechanism audit.}
+\actionrev{The four controlled changes separate memory, leakage, reset, and
+scale separation at the selected compact CIFAR-10 operating point.} Removing leakage
 ($\rho=1$) \rev{produces nearly the same result as} the frozen setting at this resolution
 ($48.32\pm1.05\%$ versus $48.25\pm1.07\%$). Coupling the quantum and trigger
 at $0.025$ instead reduces accuracy to $18.42\pm7.33\%$. This supports their
@@ -708,7 +724,7 @@ coupled schedule fails.
 
 \input{generated/p15_operator_ablation_table}
 
-\actionrev{Table~\ref{tab:operator-ablation} asks whether the temporal state or
+\actionrev{Table~\ref{tab:operator-ablation} completes the audit by asking whether the temporal state or
 reset rule explains the selected operating point. Removing cross-round memory
 reduces paired accuracy by $11.64$ points, with a 95\% confidence interval of
 $[-12.79,-10.49]$ points and a loss on every seed, although traffic is $3.3\%$
@@ -721,13 +737,17 @@ superiority of full reset. We retain full reset because it defines the tested
 operator and yields the bounded-state invariant and disjoint blocks used in
 the analysis.}
 
-\spacerev{Table~\ref{tab:alignment-factorial} reports ten seeds and 31 audited
+\spacerev{Table~\ref{tab:alignment-factorial} supports two main observations.
+First, aggregate events usually retain positive first-order alignment. Second,
+stronger heterogeneity and more local steps enlarge the gap between alignment
+and realized objective descent. The remaining columns diagnose why this gap
+appears. The table reports ten seeds and 31 audited
 checkpoints per seed at rounds $1,5,10,\ldots,150$. Each audit independently
 reruns training from the same initialization. Its
 $\widehat\kappa_{\mathcal A}$ is the trajectory ratio in
 \eqref{eq:empirical-alignment-ratio}, not mean $A_r$ or theoretical $\kappa$.
-The remaining columns separate first-order alignment, realized descent, and
-\actionrev{the sampled theorem terms and the two signed decomposition
+\actionrev{The diagnostic columns separate first-order alignment, realized
+descent, the sampled theorem terms, and the two signed decomposition
 components most directly affected by local depth and heterogeneity. Across the
 four cells, $96.1$--$99.0\%$ of audited aggregates have positive first-order
 alignment.}}
@@ -756,7 +776,9 @@ global smoothness constant.}
 \spacerev{The evaluation covers synchronous full participation, ten clients,
 two image datasets, and development-selected configurations. Ten paired seeds
 measure matched-run variation but do not provide simultaneous inference over
-all comparisons. The alignment study varies only partitioning and local steps
+all comparisons. Selection on one development partition does not quantify
+hyperparameter-selection uncertainty across alternative development samples.
+The alignment study varies only partitioning and local steps
 around one Fashion-MNIST setting. The theorem assumes rather than proves
 aggregate alignment and makes no asymptotic claim. Broader data, participation,
 and hyperparameter regimes remain open. Finally, software bit counts do not
@@ -768,8 +790,12 @@ measure latency, packet loss, asynchronous behavior, or hardware energy.}
 \spacerev{Event-FedAvg converts accumulated local-model changes into sparse
 signed events while preserving exact synchronization. We bound its state and
 event count and identify aggregate alignment as the condition connecting events
-to finite-horizon progress. It is nondominated across four ten-client image
-classification settings. On CIFAR-10 ResNet-14, it improves mean accuracy over
+to finite-horizon progress. Among the evaluated frozen configurations, it is
+nondominated in the observed mean communication--accuracy plane across four
+ten-client image-classification settings. The mechanism audit identifies
+persistent accumulation and independent update resolution as influential at
+the selected compact-CNN operating point. It does not show predictive
+superiority of full over subtractive reset. On CIFAR-10 ResNet-14, it improves mean accuracy over
 development-tuned dense FedAvg by $0.93$ points with $8.7\times$ less traffic.
 The alignment study shows why positive first-order alignment need not imply an
 objective decrease under stronger heterogeneity and more local steps. Future
