@@ -593,7 +593,7 @@ and $0.01$. Strom's quality/traffic thresholds are $0.00125/0.02$,
 $0.005/0.02$, and $0.0025/0.01$ for the three smaller models. The CIFAR-10
 EF-TopK class-wise reference uses $0.05$. The compact CIFAR-10 CNN uses dense
 server gain $\gamma=2$, while the ResNet-14 dense audit selects $\gamma=1.5$.
-Table~\ref{tab:main-results} identifies the primary settings.}
+Table~\ref{tab:main-results} summarizes the primary final-round endpoints.}
 
 \textbf{Selection and evaluation.}
 We compare Event-FedAvg with dense FedAvg~\cite{mcmahan2017fedavg}, Sign-EF
@@ -613,8 +613,10 @@ CIFAR-10 CNN, $\gamma=2$ is selected from
 $\{0.25,0.5,0.75,1,1.5,2,4\}$. The ResNet-14 choice $\gamma=1.5$ follows a
 separate 900-round development audit and is frozen for the 3,000-round evaluation. For Strom and
 EF-TopK, we also freeze the setting nearest Event-FedAvg in log traffic.
-Table~\ref{tab:main-results} reports the primary configurations, and
-Fig.~\ref{fig:communication-frontier} adds the remaining frozen points. Values
+Table~\ref{tab:main-results} reports Event-FedAvg, dense FedAvg, and the
+highest-accuracy development-selected sparse baseline for each benchmark.
+Figure~\ref{fig:communication-frontier} contains all remaining frozen points,
+including traffic-matched settings and secondary method families. Values
 are means and sample standard deviations over ten paired strong-skew partitions
 and training seeds. We record test cross-entropy, accuracy, worst-class
 accuracy, parameter events, and communication.}
@@ -652,7 +654,8 @@ settings remain unchanged.}
 \spacerev{Figure~\ref{fig:communication-frontier} compares total bidirectional
 traffic and accuracy over the same ten matched seeds per panel. Filled markers
 show quality-selected settings and hollow markers show traffic-matched settings.
-Table~\ref{tab:main-results} reports the primary frozen configurations.}
+Table~\ref{tab:main-results} reports the three primary final-round endpoints
+per benchmark, while the figure retains all evaluated operating points.}
 
 \input{generated/p11_alignment_table}
 
@@ -661,8 +664,8 @@ the three smaller models, Event-FedAvg is either the most accurate method or
 within $0.87$ percentage points of it while using substantially less traffic
 than the development-selected comparison. The clearest smaller-model result is
 on the CIFAR-10 CNN, where Event-FedAvg improves on dense FedAvg by $4.25$
-points while using $12.7\%$ of its traffic. The table contains the remaining
-pairwise values.}
+points while using $12.7\%$ of its traffic. Figure~\ref{fig:communication-frontier}
+provides the broader comparison without duplicating those points in the table.}
 
 \actionrev{The Event-FedAvg-to-dense traffic ratios remain favorable under a
 logical-broadcast accounting model. From Fashion-MNIST MLP through ResNet-14,
