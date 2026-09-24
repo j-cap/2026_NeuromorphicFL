@@ -1,0 +1,4 @@
+family,config_name,n_seeds,final_train_ce_mean,final_train_ce_std,final_test_accuracy_mean,final_test_accuracy_std,final_worst_class_accuracy_mean,final_worst_class_accuracy_std,coordinate_events_mean,coordinate_events_std,broadcast_total_bits_mean,broadcast_total_bits_std,unicast_hybrid_total_bits_mean,unicast_hybrid_total_bits_std
+frozen,frozen_full_persistent,10,1.411795653,0.02127516377,0.48127,0.0089202703,0.2603,0.03956443408,1099543.4,22798.77348,35997292.8,729560.7514,200985878.4,4012584.133
+memoryless,memoryless_t0p01,10,1.789128669,0.07744944461,0.36488,0.01446649769,0.0743,0.03432216647,1061060.2,30615.91107,34765830.4,979709.1542,194212835.2,5388400.348
+subtractive,subtractive_t0p025,10,1.401932788,0.01646405446,0.4855,0.008176388771,0.2522,0.05275267239,1146495.8,25388.97494,37499769.6,812447.198,209249500.8,4468459.589

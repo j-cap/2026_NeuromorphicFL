@@ -1,0 +1,56 @@
+{
+  "development_seed": 2400,
+  "development_train_seed": 82400,
+  "selection_metric": "minimum absolute log-traffic distance to the frozen Event-FedAvg development run within each ablation family; final_train_ce breaks ties",
+  "reference_unicast_hybrid_total_bits": 203378704.0,
+  "heldout_seeds": [
+    3500,
+    3600,
+    3700,
+    3800,
+    3900,
+    4000,
+    4100,
+    4200,
+    4300,
+    4400
+  ],
+  "heldout_train_seeds": [
+    83500,
+    83600,
+    83700,
+    83800,
+    83900,
+    84000,
+    84100,
+    84200,
+    84300,
+    84400
+  ],
+  "selected": {
+    "frozen": "frozen_full_persistent",
+    "memoryless": "memoryless_t0p01",
+    "subtractive": "subtractive_t0p025"
+  },
+  "base_config": {
+    "local_steps": 5,
+    "local_lr": 0.05,
+    "batch_size": 32,
+    "regularization": 0.0005,
+    "rounds": 120,
+    "eval_stride": 30,
+    "rho": 0.999,
+    "threshold": 0.025,
+    "jump0": 0.005,
+    "jump_scale": 100.0,
+    "jump_exponent": 0.2,
+    "topk_fraction": 0.025,
+    "strom_threshold": 0.005,
+    "init_scale": 1.0,
+    "server_gain": 1.0,
+    "event_memory": "persistent",
+    "event_reset": "full"
+  },
+  "configuration_frozen_before_heldout_evaluation": true,
+  "frozen_heldout_source": "experiments\\results\\p12_headline_ten_seed\\heldout_runs.csv"
+}
