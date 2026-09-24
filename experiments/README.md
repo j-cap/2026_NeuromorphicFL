@@ -171,10 +171,14 @@ explained by persistent cross-round state and full reset, rather than by the
 complete Event-FedAvg operator?
 
 The development stage retunes the threshold separately for a memoryless
-encoder, a subtractive-reset encoder, and a coupled threshold/quantum encoder.
-It then evaluates the selected variants on the same ten held-out partition
-seeds used by P12 and P14. Existing files are skipped unless `--force` is
-given.
+encoder and a persistent subtractive-reset encoder. Selection minimizes the
+absolute log-traffic distance to the frozen persistent/full-reset Event-FedAvg
+reference, with final training loss used only to break ties. The selected
+variants are then evaluated on the same ten CIFAR-10 partition and training
+seeds used by P12 and P14. The authoritative frozen Event-FedAvg runs are
+reused, so only twenty new held-out runs are required. The earlier coupled
+threshold/quantum audit remains separate. Existing files are skipped unless
+`--force` is given.
 
 ```bash
 PYTHONPATH=src python experiments/p15_operator_ablation.py smoke
@@ -182,6 +186,8 @@ PYTHONPATH=src python experiments/p15_operator_ablation.py develop
 PYTHONPATH=src python experiments/p15_operator_ablation.py select
 PYTHONPATH=src python experiments/p15_operator_ablation.py heldout
 PYTHONPATH=src python experiments/p15_operator_ablation.py aggregate
+# Or run/resume every stage in order:
+PYTHONPATH=src python experiments/p15_operator_ablation.py campaign
 ```
 
 These experiments are not part of the current frozen manuscript evidence. The
