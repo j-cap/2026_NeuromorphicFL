@@ -550,11 +550,13 @@ as a numerical convergence certificate.}
 
 \begin{figure*}[t]
  \centering
- \includegraphics[width=0.90\textwidth]{figures/resnet14_communication_trajectory.pdf}
- \caption{\spacerev{CIFAR-10 ResNet-14 communication--accuracy trajectories.
- Thin curves show ten seeds, thick curves their matched-round means, open
- circles 300-round intervals, and method markers round 3,000. Traffic counts
- uploads and downlinks separately.}}
+ \includegraphics[width=0.94\textwidth]{figures/resnet14_communication_trajectory.pdf}
+ \caption{\spacerev{CIFAR-10 ResNet-14 learning curves over ten matched seeds.
+ Lines and shaded bands show the mean and pointwise 95\% confidence interval.
+ Panel (a) plots held-out cross-entropy against communication rounds, with the
+ dotted line marking round 1,800. Panel (b) plots held-out accuracy against
+ cumulative bidirectional traffic. Open circles mark round 1,800 and method
+ symbols mark the common 3,000-round endpoint.}}
  \label{fig:resnet-communication-trajectory}
 \end{figure*}
 
@@ -689,14 +691,16 @@ representation and the induced server update, including a decaying quantum,
 whereas the dense reference uses the development-selected constant gain from
 the preceding audit.}
 
-\spacerev{Figure~\ref{fig:resnet-communication-trajectory} shows that
-Event-FedAvg reaches its accuracy plateau by about round 1,800, while dense
-FedAvg, EF-TopK, and Sign-EF continue to improve. Event-FedAvg reaches
-intermediate accuracy levels with less traffic than EF-TopK and dense FedAvg.
+\spacerev{Figure~\ref{fig:resnet-communication-trajectory}(a) shows that
+Event-FedAvg reaches its minimum mean held-out cross-entropy near round 1,800.
+Its training loss continues to decrease thereafter, while held-out loss rises,
+which indicates a generalization plateau rather than incomplete optimization.
+Dense FedAvg approaches a plateau, whereas EF-TopK and Sign-EF continue to
+improve at round 3,000. Panel (b) shows that Event-FedAvg reaches intermediate
+accuracy levels with less traffic than EF-TopK and dense FedAvg.
 Strom fluctuates more across all seeds, plausibly because its fixed residual
 pulse couples threshold and update magnitude in this synchronous adaptation.
 This does not imply general instability of the original asynchronous method.
-For the other methods, shrinking 300-round gains indicate slowing progress.
 The fixed 3,000-round endpoint therefore gives the baselines more time to close
 the earlier gap, but it remains a finite-horizon comparison rather than a
 convergence claim.}

@@ -474,9 +474,11 @@ def frontier_legend() -> bytes:
 
 
 def resnet_trajectory() -> bytes:
-    """Render matched-round communication--accuracy trajectories."""
+    """Render standard optimization and communication-efficiency curves."""
 
-    histories: dict[str, list[tuple[np.ndarray, np.ndarray, np.ndarray]]] = {
+    histories: dict[
+        str, list[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]
+    ] = {
         method: [] for method in RESNET_CONFIGS
     }
     reference_rounds: np.ndarray | None = None
@@ -498,57 +500,83 @@ def resnet_trajectory() -> bytes:
             accuracy = 100 * np.array(
                 [float(row["test_accuracy"]) for row in rows]
             )
+            test_ce = np.array([float(row["test_ce"]) for row in rows])
             if reference_rounds is None:
                 reference_rounds = rounds
             elif not np.array_equal(rounds, reference_rounds):
                 raise ValueError("ResNet histories do not share evaluation rounds")
             if rounds[-1] != 3000 or np.any(np.diff(traffic) < 0):
                 raise ValueError(f"invalid ResNet trajectory {path.name}")
-            histories[method].append((rounds, traffic, accuracy))
+            histories[method].append((rounds, traffic, accuracy, test_ce))
 
-    fig, ax = plt.subplots(figsize=(7.08, 3.0))
-    milestone_rounds = (300, 600, 900, 1200, 1500, 1800, 2100, 2400, 2700)
+    fig, axes = plt.subplots(1, 2, figsize=(7.08, 2.55))
+    ax_round, ax_traffic = axes
+    plateau_round = 1800
     for method, method_histories in histories.items():
         style = METHODS[method]
-        for _rounds, traffic, accuracy in method_histories:
-            ax.plot(
-                traffic,
-                accuracy,
-                color=style["color"],
-                linewidth=0.45,
-                alpha=0.12,
-                zorder=1,
-            )
         traffic_stack = np.stack([history[1] for history in method_histories])
         accuracy_stack = np.stack([history[2] for history in method_histories])
+        test_ce_stack = np.stack([history[3] for history in method_histories])
         mean_traffic = traffic_stack.mean(axis=0)
         mean_accuracy = accuracy_stack.mean(axis=0)
-        ax.plot(
+        mean_test_ce = test_ce_stack.mean(axis=0)
+        accuracy_ci = (
+            1.96 * accuracy_stack.std(axis=0, ddof=1) / np.sqrt(len(method_histories))
+        )
+        test_ce_ci = (
+            1.96 * test_ce_stack.std(axis=0, ddof=1) / np.sqrt(len(method_histories))
+        )
+        assert reference_rounds is not None
+
+        ax_round.fill_between(
+            reference_rounds,
+            mean_test_ce - test_ce_ci,
+            mean_test_ce + test_ce_ci,
+            color=style["color"],
+            alpha=0.12,
+            linewidth=0,
+            zorder=1,
+        )
+        ax_round.plot(
+            reference_rounds,
+            mean_test_ce,
+            color=style["color"],
+            linewidth=1.45,
+            zorder=3,
+        )
+        ax_traffic.fill_between(
+            mean_traffic,
+            mean_accuracy - accuracy_ci,
+            mean_accuracy + accuracy_ci,
+            color=style["color"],
+            alpha=0.12,
+            linewidth=0,
+            zorder=1,
+        )
+        ax_traffic.plot(
             mean_traffic,
             mean_accuracy,
             color=style["color"],
-            linewidth=1.7,
+            linewidth=1.45,
             zorder=3,
         )
-        assert reference_rounds is not None
-        for milestone in milestone_rounds:
-            index = int(np.flatnonzero(reference_rounds == milestone)[0])
-            ax.plot(
-                mean_traffic[index],
-                mean_accuracy[index],
-                marker="o",
-                markersize=3.2,
-                markerfacecolor="white",
-                markeredgecolor=style["color"],
-                markeredgewidth=0.8,
-                linestyle="none",
-                zorder=4,
-            )
-        ax.plot(
+        plateau_index = int(np.flatnonzero(reference_rounds == plateau_round)[0])
+        ax_traffic.plot(
+            mean_traffic[plateau_index],
+            mean_accuracy[plateau_index],
+            marker="o",
+            markersize=3.5,
+            markerfacecolor="white",
+            markeredgecolor=style["color"],
+            markeredgewidth=0.8,
+            linestyle="none",
+            zorder=4,
+        )
+        ax_traffic.plot(
             mean_traffic[-1],
             mean_accuracy[-1],
             marker=style["marker"],
-            markersize=8.0 if method == "event" else 6.0,
+            markersize=7.2 if method == "event" else 5.5,
             markerfacecolor=style["color"],
             markeredgecolor="#111111",
             markeredgewidth=0.65,
@@ -558,37 +586,51 @@ def resnet_trajectory() -> bytes:
 
     handles = [
         Line2D(
-            [0], [0], color=style["color"], linewidth=1.7,
+            [0], [0], color=style["color"], linewidth=1.45,
             marker=style["marker"], markersize=6.5 if method == "event" else 5.2,
             markerfacecolor=style["color"], markeredgecolor="#111111",
             markeredgewidth=0.6, label=style["label"],
         )
         for method, style in METHODS.items()
     ]
-    handles.append(
-        Line2D(
-            [0], [0], color="#666666", linewidth=0, marker="o",
-            markersize=3.2, markerfacecolor="white", markeredgecolor="#666666",
-            label="every 300 rounds",
-        )
-    )
-    ax.legend(
+    fig.legend(
         handles=handles,
-        loc="upper left",
-        ncol=3,
+        loc="upper center",
+        ncol=5,
         frameon=False,
         handlelength=1.5,
-        columnspacing=1.0,
+        columnspacing=1.15,
+        bbox_to_anchor=(0.5, 0.995),
     )
-    ax.set_xscale("log")
-    ax.set_xlim(40, 450000)
-    ax.set_ylim(5, 78)
-    ax.set_xlabel("Cumulative traffic [Mbit]")
-    ax.set_ylabel("Test accuracy [%]")
-    ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
-    ax.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
-    ax.set_axisbelow(True)
-    fig.subplots_adjust(left=0.09, right=0.99, top=0.98, bottom=0.17)
+    ax_round.axvline(
+        plateau_round, color="#737373", linestyle=":", linewidth=0.8, zorder=2
+    )
+    ax_round.text(
+        plateau_round + 45,
+        ax_round.get_ylim()[1],
+        "round 1,800",
+        color="#595959",
+        fontsize=6.0,
+        ha="left",
+        va="top",
+    )
+    ax_round.set_xlim(0, 3000)
+    ax_round.set_xlabel("Communication round")
+    ax_round.set_ylabel("Test cross-entropy")
+    ax_round.set_title("(a) Optimization progress", pad=3.0)
+
+    ax_traffic.set_xscale("log")
+    ax_traffic.set_xlim(40, 450000)
+    ax_traffic.set_ylim(5, 78)
+    ax_traffic.set_xlabel("Cumulative bidirectional traffic [Mbit]")
+    ax_traffic.set_ylabel("Test accuracy [%]")
+    ax_traffic.set_title("(b) Communication efficiency", pad=3.0)
+
+    for ax in axes:
+        ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
+        ax.set_axisbelow(True)
+    ax_traffic.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
+    fig.subplots_adjust(left=0.075, right=0.99, top=0.84, bottom=0.18, wspace=0.27)
     return save_pdf(fig, tight=False)
 
 
