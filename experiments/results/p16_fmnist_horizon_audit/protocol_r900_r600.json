@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "purpose": "select common final horizons before the ten-seed rerun",
+  "partition_seed": 2500,
+  "train_seed": 72500,
+  "points": [
+    {
+      "architecture": "mlp",
+      "method": "event",
+      "value": null,
+      "rounds": 900,
+      "eval_stride": 15,
+      "point_id": "mlp_event"
+    },
+    {
+      "architecture": "mlp",
+      "method": "strom",
+      "value": 0.00125,
+      "rounds": 900,
+      "eval_stride": 15,
+      "point_id": "mlp_strom"
+    },
+    {
+      "architecture": "mlp",
+      "method": "ef_topk",
+      "value": 0.05,
+      "rounds": 900,
+      "eval_stride": 15,
+      "point_id": "mlp_ef_topk"
+    },
+    {
+      "architecture": "mlp",
+      "method": "sign_ef",
+      "value": null,
+      "rounds": 900,
+      "eval_stride": 15,
+      "point_id": "mlp_sign_ef"
+    },
+    {
+      "architecture": "mlp",
+      "method": "dense",
+      "value": null,
+      "rounds": 900,
+      "eval_stride": 15,
+      "point_id": "mlp_dense"
+    },
+    {
+      "architecture": "cnn",
+      "method": "event",
+      "value": null,
+      "rounds": 600,
+      "eval_stride": 10,
+      "point_id": "cnn_event"
+    },
+    {
+      "architecture": "cnn",
+      "method": "strom",
+      "value": 0.005,
+      "rounds": 600,
+      "eval_stride": 10,
+      "point_id": "cnn_strom"
+    },
+    {
+      "architecture": "cnn",
+      "method": "ef_topk",
+      "value": 0.05,
+      "rounds": 600,
+      "eval_stride": 10,
+      "point_id": "cnn_ef_topk"
+    },
+    {
+      "architecture": "cnn",
+      "method": "sign_ef",
+      "value": null,
+      "rounds": 600,
+      "eval_stride": 10,
+      "point_id": "cnn_sign_ef"
+    },
+    {
+      "architecture": "cnn",
+      "method": "dense",
+      "value": null,
+      "rounds": 600,
+      "eval_stride": 10,
+      "point_id": "cnn_dense"
+    }
+  ],
+  "plateau_rule": {
+    "smoothing": "centered five-evaluation moving average",
+    "late_window": "last 20% of communication rounds",
+    "absolute_slope_per_round_at_most": 0.0001,
+    "late_window_improvement_at_most": 0.01,
+    "final_minus_minimum_smoothed_ce_at_most": 0.01
+  }
+}
