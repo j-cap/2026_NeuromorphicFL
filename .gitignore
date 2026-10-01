@@ -20,6 +20,10 @@ experiments/results/**
 !experiments/results/p16_fmnist_horizon_audit/*.json
 !experiments/results/p16_fmnist_horizon_audit/*.pdf
 !experiments/results/p16_fmnist_horizon_audit/*.png
+!experiments/results/p17_fmnist_final_horizons/
+!experiments/results/p17_fmnist_final_horizons/**/
+!experiments/results/p17_fmnist_final_horizons/**/*.csv
+!experiments/results/p17_fmnist_final_horizons/**/*.json
 
 # LaTeX build products
 report/*.aux
