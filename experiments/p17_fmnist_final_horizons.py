@@ -119,35 +119,66 @@ def process_alive(pid: int) -> bool:
 
 @contextmanager
 def dataset_lock(timeout_seconds: float = 300.0):
-    """Serialize dataset validation and recover a lock left by a killed worker."""
-    lock_directory = DATA / ".p17_loader_lock"
-    owner_file = lock_directory / "owner_pid"
+    """Serialize dataset validation using an atomic cross-platform lock file."""
+    lock_file = DATA / ".p17_loader.lock"
     deadline = time.monotonic() + timeout_seconds
     while True:
         try:
-            os.mkdir(lock_directory)
-            owner_file.write_text(str(os.getpid()), encoding="utf-8")
+            descriptor = os.open(lock_file, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(descriptor, str(os.getpid()).encode("ascii"))
+            os.close(descriptor)
             break
         except FileExistsError:
+            # A newly created lock can briefly be empty before its owner PID is
+            # written. Never classify an empty/unreadable lock as stale.
             try:
-                owner = int(owner_file.read_text(encoding="utf-8").strip())
+                owner_text = lock_file.read_text(encoding="ascii").strip()
+                owner = int(owner_text) if owner_text else None
             except (OSError, ValueError):
-                owner = -1
-            if not process_alive(owner):
-                shutil.rmtree(lock_directory, ignore_errors=True)
-                continue
+                owner = None
+            if owner is not None and not process_alive(owner):
+                try:
+                    lock_file.unlink()
+                    continue
+                except (FileNotFoundError, PermissionError):
+                    pass
             if time.monotonic() >= deadline:
-                raise TimeoutError(f"timed out waiting for {lock_directory}, owner={owner}")
+                raise TimeoutError(
+                    f"timed out waiting for {lock_file}; remove it only when no P17 process is running"
+                )
             time.sleep(0.2)
     try:
         yield
     finally:
-        if lock_directory.exists():
-            shutil.rmtree(lock_directory)
+        # Antivirus/indexing software can briefly hold a just-closed file on
+        # Windows. Retry release instead of failing a completed dataset load.
+        for attempt in range(20):
+            try:
+                lock_file.unlink(missing_ok=True)
+                break
+            except PermissionError:
+                if attempt == 19:
+                    raise
+                time.sleep(0.1)
+
+
+def remove_legacy_lock() -> None:
+    """Remove the directory lock used by the first P17 revision."""
+    legacy = DATA / ".p17_loader_lock"
+    if legacy.exists():
+        for attempt in range(20):
+            try:
+                shutil.rmtree(legacy)
+                break
+            except PermissionError:
+                if attempt == 19:
+                    raise
+                time.sleep(0.1)
 
 
 def prepare_data() -> None:
     DATA.mkdir(parents=True, exist_ok=True)
+    remove_legacy_lock()
     with dataset_lock():
         ensure_fashion_mnist(DATA)
     print("Fashion-MNIST is ready")
@@ -251,6 +282,8 @@ def campaign(architecture: str, workers: int, start_seed: int, end_seed: int,
         raise ValueError("workers must be at least one")
     if start_seed > end_seed:
         raise ValueError("start seed must not exceed end seed")
+    # This runs once in the parent process before any Windows workers spawn.
+    remove_legacy_lock()
     pending = jobs(architecture, start_seed, end_seed, force)
     total = len(architecture_points(architecture)) * (end_seed - start_seed + 1)
     print(f"P17 {architecture}: {total-len(pending)}/{total} complete, "
