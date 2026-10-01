@@ -326,14 +326,41 @@ def campaign(architecture: str, workers: int, start_seed: int, end_seed: int,
             print(run_point(*arguments), flush=True)
         return
     with guarded_parent_interrupts():
-        with ProcessPoolExecutor(
+        executor = ProcessPoolExecutor(
             max_workers=workers, initializer=worker_initializer
-        ) as executor:
-            future_to_job = {
-                executor.submit(run_point, *arguments): arguments for arguments in pending
-            }
+        )
+        future_to_job = {
+            executor.submit(run_point, *arguments): arguments for arguments in pending
+        }
+        try:
             for future in as_completed(future_to_job):
-                print(future.result(), flush=True)
+                arguments = future_to_job[future]
+                try:
+                    print(future.result(), flush=True)
+                except BaseException as error:
+                    print(
+                        f"P17 job failed: point={arguments[0]}, seed={arguments[1]}, "
+                        f"error={type(error).__name__}: {error}",
+                        file=sys.stderr,
+                        flush=True,
+                    )
+                    raise
+        except BaseException:
+            for future in future_to_job:
+                future.cancel()
+            # shutdown(wait=True) executes queued jobs before revealing the
+            # first exception. Terminate active workers so failures surface
+            # immediately and incomplete runs remain safely resumable.
+            processes = list(getattr(executor, "_processes", {}).values())
+            executor.shutdown(wait=False, cancel_futures=True)
+            for process in processes:
+                if process.is_alive():
+                    process.terminate()
+            for process in processes:
+                process.join(timeout=5.0)
+            raise
+        else:
+            executor.shutdown(wait=True)
 
 
 def load_architecture(architecture: str) -> tuple[pd.DataFrame, pd.DataFrame]:
