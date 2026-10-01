@@ -16,6 +16,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import sys
 import time
 
@@ -176,6 +177,37 @@ def remove_legacy_lock() -> None:
                 time.sleep(0.1)
 
 
+def worker_initializer() -> None:
+    """Keep Windows console Ctrl+C events out of worker processes."""
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
+@contextmanager
+def guarded_parent_interrupts(double_press_seconds: float = 2.0):
+    """Ignore one stray Ctrl+C; require a quick second press to stop."""
+    previous_handler = signal.getsignal(signal.SIGINT)
+    last_interrupt = 0.0
+
+    def handler(signum, frame):  # noqa: ARG001
+        nonlocal last_interrupt
+        now = time.monotonic()
+        if now - last_interrupt <= double_press_seconds:
+            signal.signal(signal.SIGINT, previous_handler)
+            raise KeyboardInterrupt
+        last_interrupt = now
+        print(
+            "\nP17 received a console interrupt. It was ignored to protect "
+            "the running jobs. Press Ctrl+C again within two seconds to stop.",
+            flush=True,
+        )
+
+    signal.signal(signal.SIGINT, handler)
+    try:
+        yield
+    finally:
+        signal.signal(signal.SIGINT, previous_handler)
+
+
 def prepare_data() -> None:
     DATA.mkdir(parents=True, exist_ok=True)
     remove_legacy_lock()
@@ -230,6 +262,7 @@ def run_point(point_id: str, seed_index: int, force: bool = False) -> str:
         return f"skip {point_id} seed={seed_index}"
     if seed_index == 0 and not force and import_p16_seed_zero(point):
         return f"reuse {point_id} seed=0"
+    print(f"launch {point_id} seed={seed_index}", flush=True)
     partition_seed = PARTITION_SEEDS[seed_index]
     DATA.mkdir(parents=True, exist_ok=True)
     with dataset_lock():
@@ -292,12 +325,15 @@ def campaign(architecture: str, workers: int, start_seed: int, end_seed: int,
         for arguments in pending:
             print(run_point(*arguments), flush=True)
         return
-    with ProcessPoolExecutor(max_workers=workers) as executor:
-        future_to_job = {
-            executor.submit(run_point, *arguments): arguments for arguments in pending
-        }
-        for future in as_completed(future_to_job):
-            print(future.result(), flush=True)
+    with guarded_parent_interrupts():
+        with ProcessPoolExecutor(
+            max_workers=workers, initializer=worker_initializer
+        ) as executor:
+            future_to_job = {
+                executor.submit(run_point, *arguments): arguments for arguments in pending
+            }
+            for future in as_completed(future_to_job):
+                print(future.result(), flush=True)
 
 
 def load_architecture(architecture: str) -> tuple[pd.DataFrame, pd.DataFrame]:
