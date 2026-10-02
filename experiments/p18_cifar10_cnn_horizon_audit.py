@@ -165,12 +165,22 @@ def load_histories() -> pd.DataFrame:
     )
 
 
+def load_summaries() -> pd.DataFrame:
+    missing = [path for point in POINTS if not (path := summary_path(point)).exists()]
+    if missing:
+        raise RuntimeError(f"P18 incomplete: {len(missing)} summaries missing")
+    return pd.concat(
+        [pd.read_csv(summary_path(point)) for point in POINTS], ignore_index=True
+    )
+
+
 def smooth(values: pd.Series) -> pd.Series:
     return values.rolling(window=5, center=True, min_periods=1).mean()
 
 
 def analyze() -> None:
     histories = load_histories()
+    summaries = load_summaries().set_index("point_id")
     analysis_rows = []
     milestone_rows = []
     for point in POINTS:
@@ -205,6 +215,9 @@ def analyze() -> None:
             "final_round": ROUNDS,
             "final_test_ce": float(curve.test_ce.iloc[-1]),
             "final_test_accuracy": float(curve.test_accuracy.iloc[-1]),
+            "unicast_hybrid_total_bits": float(
+                summaries.loc[point.point_id, "unicast_hybrid_total_bits"]
+            ),
             "minimum_smoothed_test_ce": minimum_ce,
             "minimum_smoothed_ce_round": minimum_round,
             "final_minus_minimum_smoothed_ce": final_ce - minimum_ce,
@@ -222,7 +235,7 @@ def analyze() -> None:
                 "observed_round": int(selected["round"]),
                 "test_ce": float(selected["test_ce"]),
                 "test_accuracy": float(selected["test_accuracy"]),
-                "unicast_hybrid_total_bits": float(selected["unicast_hybrid_total_bits"]),
+                "uplink_packetized_bits": float(selected["uplink_packetized_bits"]),
             })
     analysis = pd.DataFrame(analysis_rows)
     milestones = pd.DataFrame(milestone_rows)
