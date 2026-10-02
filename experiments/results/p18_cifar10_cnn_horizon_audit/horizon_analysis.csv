@@ -1,0 +1,8 @@
+point_id,comparison,method,final_round,final_test_ce,final_test_accuracy,unicast_hybrid_total_bits,minimum_smoothed_test_ce,minimum_smoothed_ce_round,final_minus_minimum_smoothed_ce,late_window_ce_improvement,late_window_ce_slope_per_round,plateau_at_final_round,trajectory_status
+cifar_event,quality-selected,event,1800,1.2778828,0.5722,3359142576,1.245785764,1080,0.03109724547,-0.01716825447,5.18268294e-05,False,plateau_or_overfit
+cifar_strom_quality,quality-selected,strom,1800,1.578211539,0.4375,1.405823566e+10,1.370897584,780,0.1784726509,-0.06895256793,0.0001977295426,False,plateau_or_overfit
+cifar_ef_quality,quality-selected,ef_topk,1800,1.23684458,0.5694,9586399040,1.235133326,1800,0,0.006219248067,-1.715368679e-05,True,plateau
+cifar_sign_quality,quality-selected,sign_ef,1800,1.257296027,0.557,4099027040,1.259138093,1740,0.00071550925,0.0081897146,-2.130410351e-05,True,plateau
+cifar_dense_gain2,quality-selected,dense,1800,1.366024918,0.5471,2.370610304e+10,1.270837389,1020,0.07514996547,-0.04514172487,0.0001269754212,False,plateau_or_overfit
+cifar_strom_near,nearest-traffic,strom,1800,1.563313361,0.4723,4394726928,1.513281367,1800,0,0.09307682767,-0.0003016305727,False,still_improving
+cifar_ef_traffic,nearest-traffic,ef_topk,1800,1.227259021,0.5721,1936867040,1.225718787,1800,0,0.01056952213,-2.926022857e-05,False,still_improving

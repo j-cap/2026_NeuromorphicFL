@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "purpose": "select a common compact-CNN horizon before a ten-seed rerun",
+  "partition_seed": 3500,
+  "train_seed": 83500,
+  "rounds": 1800,
+  "eval_stride": 60,
+  "points": [
+    {
+      "point_id": "cifar_event",
+      "comparison": "quality-selected",
+      "method": "event",
+      "configuration": "event_t025_q005"
+    },
+    {
+      "point_id": "cifar_strom_quality",
+      "comparison": "quality-selected",
+      "method": "strom",
+      "configuration": "strom_t0025"
+    },
+    {
+      "point_id": "cifar_ef_quality",
+      "comparison": "quality-selected",
+      "method": "ef_topk",
+      "configuration": "ef_k05"
+    },
+    {
+      "point_id": "cifar_sign_quality",
+      "comparison": "quality-selected",
+      "method": "sign_ef",
+      "configuration": "fixed"
+    },
+    {
+      "point_id": "cifar_dense_gain2",
+      "comparison": "quality-selected",
+      "method": "dense",
+      "configuration": "dense_gain_2p0"
+    },
+    {
+      "point_id": "cifar_strom_near",
+      "comparison": "nearest-traffic",
+      "method": "strom",
+      "configuration": "strom_t01"
+    },
+    {
+      "point_id": "cifar_ef_traffic",
+      "comparison": "nearest-traffic",
+      "method": "ef_topk",
+      "configuration": "ef_k01"
+    }
+  ],
+  "selection": "all operating points frozen before the horizon audit",
+  "diagnostic_window": "final 20% of rounds"
+}
