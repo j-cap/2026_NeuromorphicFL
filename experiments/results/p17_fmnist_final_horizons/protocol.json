@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "purpose": "ten matched seeds at P16-audited final horizons",
+  "horizons": {
+    "mlp": 1500,
+    "cnn": 1800
+  },
+  "seed_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "partition_seeds": [
+    2500,
+    2600,
+    2700,
+    2800,
+    2900,
+    3000,
+    3100,
+    3200,
+    3300,
+    3400
+  ],
+  "training_seed_rule": "70000 + partition_seed",
+  "selection": "all operating points frozen before P17; no P17 tuning",
+  "seed_zero_reuse": "P16 quality-selected seed zero is imported when available",
+  "points": [
+    {
+      "architecture": "mlp",
+      "method": "event",
+      "value": null,
+      "comparison": "quality",
+      "configuration": "fixed",
+      "rounds": 1500,
+      "eval_stride": 15,
+      "point_id": "fmnist_mlp_event_quality"
+    },
+    {
+      "architecture": "mlp",
+      "method": "strom",
+      "value": 0.00125,
+      "comparison": "quality",
+      "configuration": "0.00125",
+      "rounds": 1500,
+      "eval_stride": 15,
+      "point_id": "fmnist_mlp_strom_quality"
+    },
+    {
+      "architecture": "mlp",
+      "method": "ef_topk",
+      "value": 0.05,
+      "comparison": "quality",
+      "configuration": "0.05",
+      "rounds": 1500,
+      "eval_stride": 15,
+      "point_id": "fmnist_mlp_ef_topk_quality"
+    },
+    {
+      "architecture": "mlp",
+      "method": "sign_ef",
+      "value": null,
+      "comparison": "quality",
+      "configuration": "fixed",
+      "rounds": 1500,
+      "eval_stride": 15,
+      "point_id": "fmnist_mlp_sign_ef_quality"
+    },
+    {
+      "architecture": "mlp",
+      "method": "dense",
+      "value": null,
+      "comparison": "quality",
+      "configuration": "fixed",
+      "rounds": 1500,
+      "eval_stride": 15,
+      "point_id": "fmnist_mlp_dense_quality"
+    },
+    {
+      "architecture": "mlp",
+      "method": "strom",
+      "value": 0.02,
+      "comparison": "traffic",
+      "configuration": "0.02",
+      "rounds": 1500,
+      "eval_stride": 15,
+      "point_id": "fmnist_mlp_strom_traffic"
+    },
+    {
+      "architecture": "mlp",
+      "method": "ef_topk",
+      "value": 0.01,
+      "comparison": "traffic",
+      "configuration": "0.01",
+      "rounds": 1500,
+      "eval_stride": 15,
+      "point_id": "fmnist_mlp_ef_topk_traffic"
+    },
+    {
+      "architecture": "cnn",
+      "method": "event",
+      "value": null,
+      "comparison": "quality",
+      "configuration": "fixed",
+      "rounds": 1800,
+      "eval_stride": 10,
+      "point_id": "fmnist_cnn_event_quality"
+    },
+    {
+      "architecture": "cnn",
+      "method": "strom",
+      "value": 0.005,
+      "comparison": "quality",
+      "configuration": "0.005",
+      "rounds": 1800,
+      "eval_stride": 10,
+      "point_id": "fmnist_cnn_strom_quality"
+    },
+    {
+      "architecture": "cnn",
+      "method": "ef_topk",
+      "value": 0.05,
+      "comparison": "quality",
+      "configuration": "0.05",
+      "rounds": 1800,
+      "eval_stride": 10,
+      "point_id": "fmnist_cnn_ef_topk_quality"
+    },
+    {
+      "architecture": "cnn",
+      "method": "sign_ef",
+      "value": null,
+      "comparison": "quality",
+      "configuration": "fixed",
+      "rounds": 1800,
+      "eval_stride": 10,
+      "point_id": "fmnist_cnn_sign_ef_quality"
+    },
+    {
+      "architecture": "cnn",
+      "method": "dense",
+      "value": null,
+      "comparison": "quality",
+      "configuration": "fixed",
+      "rounds": 1800,
+      "eval_stride": 10,
+      "point_id": "fmnist_cnn_dense_quality"
+    },
+    {
+      "architecture": "cnn",
+      "method": "strom",
+      "value": 0.02,
+      "comparison": "traffic",
+      "configuration": "0.02",
+      "rounds": 1800,
+      "eval_stride": 10,
+      "point_id": "fmnist_cnn_strom_traffic"
+    },
+    {
+      "architecture": "cnn",
+      "method": "ef_topk",
+      "value": 0.01,
+      "comparison": "traffic",
+      "configuration": "0.01",
+      "rounds": 1800,
+      "eval_stride": 10,
+      "point_id": "fmnist_cnn_ef_topk_traffic"
+    }
+  ]
+}
