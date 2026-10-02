@@ -22,6 +22,8 @@ P11 = PAPER / "evidence" / "p11_alignment_factorial.csv"
 P13 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
 P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
+P17_ROOT = REPO / "experiments" / "results" / "p17_fmnist_final_horizons"
+P17 = P17_ROOT / "aggregate.csv"
 P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
 P15_ROOT = REPO / "experiments" / "results" / "p15_operator_ablation"
 P15_SUMMARY = P15_ROOT / "summary.csv"
@@ -143,6 +145,7 @@ def main() -> None:
     resnet = rows(P13)
     resnet_paired = rows(P13_PAIRED)
     figure2 = rows(P14)
+    p17 = rows(P17)
     p15_summary = rows(P15_SUMMARY)
     p15_paired = rows(P15_PAIRED)
 
@@ -164,13 +167,13 @@ def main() -> None:
     )
 
     accounting_ratios = []
-    for event_id, dense_id in (
-        ("fmnist_mlp_event", "fmnist_mlp_dense_quality"),
-        ("fmnist_cnn_event", "fmnist_cnn_dense_quality"),
-        ("cifar_event", "cifar_dense_gain2"),
+    for source, event_id, dense_id in (
+        (p17, "fmnist_mlp_event_quality", "fmnist_mlp_dense_quality"),
+        (p17, "fmnist_cnn_event_quality", "fmnist_cnn_dense_quality"),
+        (figure2, "cifar_event", "cifar_dense_gain2"),
     ):
-        event_row = point(figure2, event_id)
-        dense_row = point(figure2, dense_id)
+        event_row = point(source, event_id)
+        dense_row = point(source, dense_id)
         accounting_ratios.append(
             (
                 100

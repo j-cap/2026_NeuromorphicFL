@@ -1,8 +1,8 @@
 """Generate and validate the frozen IJCNN comparison figure and main table.
 
-Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the P14
-ten-seed extension and the P13 ResNet-14 ten-seed held-out campaign. Table 1
-uses the same frozen evidence.
+Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the P17
+final-horizon Fashion-MNIST campaign, the P14 compact-CNN extension, and the
+P13 ResNet-14 held-out campaign. Table 1 uses the same frozen evidence.
 Run with ``--check`` to detect source, selection-rule, or rendered-artifact
 drift.
 """
@@ -29,6 +29,9 @@ HEADLINE = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 FMNIST = PAPER / "evidence" / "fmnist_master_results.csv"
 P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
 RESNET14 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
+P17_ROOT = REPO / "experiments" / "results" / "p17_fmnist_final_horizons"
+P17 = P17_ROOT / "aggregate.csv"
+P17_HISTORIES = P17_ROOT / "histories.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -76,15 +79,15 @@ RESNET_RESULTS = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
 # Explicit log-axis limits and labelled ticks keep communication scale readable
 # in the narrow four-panel layout while retaining every observed point.
 TRAFFIC_AXES = {
-    "fmnist_mlp": {"limits": (150.0, 3500.0), "ticks": (200.0, 1000.0)},
-    "fmnist_cnn": {"limits": (50.0, 1000.0), "ticks": (100.0, 500.0)},
+    "fmnist_mlp": {"limits": (1200.0, 30000.0), "ticks": (2000.0, 10000.0)},
+    "fmnist_cnn": {"limits": (1000.0, 22000.0), "ticks": (2000.0, 10000.0)},
     "cifar_cnn": {"limits": (100.0, 2200.0), "ticks": (200.0, 1000.0)},
     "cifar_resnet14": {"limits": (7000.0, 450000.0), "ticks": (10000.0, 100000.0)},
 }
 
 CORE_PANELS = [
-    ("fmnist_mlp", "Fashion-MNIST\nMLP", "mlp", (78.0, 84.0)),
-    ("fmnist_cnn", "Fashion-MNIST\nCNN", "cnn", (74.0, 84.0)),
+    ("fmnist_mlp", "Fashion-MNIST\nMLP", "mlp", (82.5, 88.5)),
+    ("fmnist_cnn", "Fashion-MNIST\nCNN", "cnn", (85.0, 89.0)),
     ("cifar_cnn", "CIFAR-10\nCNN", "cifar_cnn", (32.0, 50.5)),
 ]
 PANELS = CORE_PANELS + [
@@ -170,9 +173,21 @@ def frontier_rows() -> dict[str, list[dict[str, str]]]:
     if required.difference(rows[0]):
         raise ValueError("paper evidence lacks columns required by Figure 2")
 
+    p17_rows = []
+    for row in read_csv(P17):
+        converted = dict(row)
+        converted["unicast_total_Mbit_mean"] = str(
+            float(row["unicast_hybrid_total_bits_mean"]) / 1e6
+        )
+        converted["unicast_total_Mbit_std"] = str(
+            float(row["unicast_hybrid_total_bits_std"]) / 1e6
+        )
+        p17_rows.append(converted)
+
     grouped: dict[str, list[dict[str, str]]] = {}
     for key, _title, architecture, _ylim in CORE_PANELS:
-        selected = [row for row in rows if row["benchmark"] == key]
+        pool = p17_rows if key.startswith("fmnist_") else rows
+        selected = [row for row in pool if row["benchmark"] == key]
         if len(selected) != 7:
             raise ValueError(f"{key} does not contain the seven unique visual rows")
         grouped[key] = selected
@@ -474,7 +489,7 @@ def frontier_legend() -> bytes:
 
 
 def resnet_trajectory() -> bytes:
-    """Render standard optimization and communication-efficiency curves."""
+    """Render final-horizon loss curves and the ResNet communication curve."""
 
     histories: dict[
         str, list[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]
@@ -509,8 +524,51 @@ def resnet_trajectory() -> bytes:
                 raise ValueError(f"invalid ResNet trajectory {path.name}")
             histories[method].append((rounds, traffic, accuracy, test_ce))
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.08, 2.55))
-    ax_round, ax_traffic = axes
+    fig, axes = plt.subplots(2, 2, figsize=(7.08, 4.55))
+    ax_mlp, ax_cnn = axes[0]
+    ax_round, ax_traffic = axes[1]
+
+    p17_histories = read_csv(P17_HISTORIES)
+    for benchmark, ax, horizon, title in (
+        ("fmnist_mlp", ax_mlp, 1500, "(a) Fashion-MNIST MLP"),
+        ("fmnist_cnn", ax_cnn, 1800, "(b) Fashion-MNIST CNN"),
+    ):
+        for method in METHODS:
+            selected = [
+                row for row in p17_histories
+                if row["benchmark"] == benchmark
+                and row["method"] == method
+                and row["comparison"] == "quality-selected"
+            ]
+            by_seed: dict[int, list[dict[str, str]]] = {}
+            for row in selected:
+                by_seed.setdefault(int(row["seed_index"]), []).append(row)
+            if set(by_seed) != set(range(10)):
+                raise ValueError(f"{benchmark} {method} lacks ten P17 histories")
+            series = []
+            reference = None
+            for seed_rows in by_seed.values():
+                seed_rows.sort(key=lambda row: int(row["round"]))
+                rounds = np.array([int(row["round"]) for row in seed_rows])
+                losses = np.array([float(row["test_ce"]) for row in seed_rows])
+                if reference is None:
+                    reference = rounds
+                elif not np.array_equal(reference, rounds):
+                    raise ValueError(f"{benchmark} histories do not align")
+                series.append(losses)
+            stack = np.stack(series)
+            mean = stack.mean(axis=0)
+            ci = 1.96 * stack.std(axis=0, ddof=1) / np.sqrt(stack.shape[0])
+            style = METHODS[method]
+            ax.fill_between(reference, mean - ci, mean + ci,
+                            color=style["color"], alpha=0.10, linewidth=0)
+            ax.plot(reference, mean, color=style["color"], linewidth=1.25)
+        ax.axvspan(0.8 * horizon, horizon, color="#bdbdbd", alpha=0.12,
+                   linewidth=0, zorder=0)
+        ax.set_xlim(0, horizon)
+        ax.set_xlabel("Communication round")
+        ax.set_ylabel("Test cross-entropy")
+        ax.set_title(title, pad=3.0)
     plateau_round = 1800
     for method, method_histories in histories.items():
         style = METHODS[method]
@@ -617,20 +675,21 @@ def resnet_trajectory() -> bytes:
     ax_round.set_xlim(0, 3000)
     ax_round.set_xlabel("Communication round")
     ax_round.set_ylabel("Test cross-entropy")
-    ax_round.set_title("(a) Optimization progress", pad=3.0)
+    ax_round.set_title("(c) CIFAR-10 ResNet-14", pad=3.0)
 
     ax_traffic.set_xscale("log")
     ax_traffic.set_xlim(40, 450000)
     ax_traffic.set_ylim(5, 78)
     ax_traffic.set_xlabel("Cumulative bidirectional traffic [Mbit]")
     ax_traffic.set_ylabel("Test accuracy [%]")
-    ax_traffic.set_title("(b) Communication efficiency", pad=3.0)
+    ax_traffic.set_title("(d) ResNet-14 communication efficiency", pad=3.0)
 
-    for ax in axes:
+    for ax in axes.flat:
         ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
         ax.set_axisbelow(True)
     ax_traffic.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
-    fig.subplots_adjust(left=0.075, right=0.99, top=0.84, bottom=0.18, wspace=0.27)
+    fig.subplots_adjust(left=0.075, right=0.99, top=0.91, bottom=0.10,
+                        wspace=0.27, hspace=0.42)
     return save_pdf(fig, tight=False)
 
 
@@ -675,7 +734,7 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         "\\centering",
         "\\caption{\\spacerev{Final-round primary endpoints over ten matched "
         "seeds. Each benchmark shows Event-FedAvg, dense FedAvg, and the "
-        "highest-accuracy development-selected sparse baseline. Values are "
+        "preselected quality-oriented sparse comparator. Values are "
         "mean $\\pm$ sample standard deviation. Bold marks the best mean within "
         "each benchmark and metric.}}",
         "\\label{tab:main-results}",
@@ -688,7 +747,13 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     ]
     for index, (key, _title, _architecture, _ylim) in enumerate(CORE_PANELS):
         rows = grouped[key]
-        event, quality = selected_rows(rows, "quality")
+        event = next(row for row in rows if row["method"] == "event")
+        selected_method = "ef_topk" if key == "fmnist_mlp" else "strom"
+        quality = next(
+            row for row in rows
+            if row["comparison"] == "quality-selected"
+            and row["method"] == selected_method
+        )
         entries = [event, dense_references[key], quality]
         best_accuracy = max(value(row, "final_test_accuracy_mean") for row in entries)
         best_worst = max(value(row, "final_worst_class_accuracy_mean") for row in entries)
@@ -733,9 +798,7 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
 
 def products() -> dict[Path, bytes]:
     configure_matplotlib()
-    headline = headline_rows()
     frontier = frontier_rows()
-    validate_headline_contract(headline)
     validate_frontier_contract(frontier)
     products = {
         FRONTIER_PANEL_FILES[key]: frontier_panel(key, frontier[key], ylim)
@@ -743,7 +806,7 @@ def products() -> dict[Path, bytes]:
     }
     products[FRONTIER_LEGEND] = frontier_legend()
     products[RESNET_TRAJECTORY] = resnet_trajectory()
-    products[MAIN_TABLE] = main_table(headline).encode("utf-8")
+    products[MAIN_TABLE] = main_table(frontier).encode("utf-8")
     return products
 
 
