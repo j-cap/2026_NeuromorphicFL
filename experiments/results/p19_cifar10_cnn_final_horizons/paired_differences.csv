@@ -1,0 +1,7 @@
+comparison_id,event_point,comparator_point,n,mean_difference_points,std_difference_points,ci95_low_points,ci95_high_points,n_positive
+cifar_event_minus_cifar_strom_quality,cifar_event,cifar_strom_quality,10,10.685,3.650072298,8.073895763,13.29610424,10
+cifar_event_minus_cifar_ef_quality,cifar_event,cifar_ef_quality,10,0.591,1.100792139,-0.196459202,1.378459202,8
+cifar_event_minus_cifar_sign_quality,cifar_event,cifar_sign_quality,10,0.908,0.6258114732,0.460321473,1.355678527,9
+cifar_event_minus_cifar_dense_gain2,cifar_event,cifar_dense_gain2,10,2.537,1.214798109,1.667985846,3.406014154,9
+cifar_event_minus_cifar_strom_near,cifar_event,cifar_strom_near,10,19.376,15.16416624,8.528209737,30.22379026,10
+cifar_event_minus_cifar_ef_traffic,cifar_event,cifar_ef_traffic,10,0.404,0.9305219563,-0.2616552597,1.06965526,7

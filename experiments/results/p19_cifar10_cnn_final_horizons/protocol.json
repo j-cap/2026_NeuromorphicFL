@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "purpose": "ten matched CIFAR-10 CNN seeds at the P18-audited horizon",
+  "horizon": 1800,
+  "eval_stride": 60,
+  "seed_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "partition_seeds": [
+    3500,
+    3600,
+    3700,
+    3800,
+    3900,
+    4000,
+    4100,
+    4200,
+    4300,
+    4400
+  ],
+  "training_seed_rule": "80000 + partition_seed",
+  "selection": "all operating points and the horizon frozen before P19",
+  "seed_zero_reuse": "P18 seed zero is imported after strict metadata checks",
+  "points": [
+    {
+      "point_id": "cifar_event",
+      "comparison": "quality-selected",
+      "method": "event",
+      "configuration": "event_t025_q005"
+    },
+    {
+      "point_id": "cifar_strom_quality",
+      "comparison": "quality-selected",
+      "method": "strom",
+      "configuration": "strom_t0025"
+    },
+    {
+      "point_id": "cifar_ef_quality",
+      "comparison": "quality-selected",
+      "method": "ef_topk",
+      "configuration": "ef_k05"
+    },
+    {
+      "point_id": "cifar_sign_quality",
+      "comparison": "quality-selected",
+      "method": "sign_ef",
+      "configuration": "fixed"
+    },
+    {
+      "point_id": "cifar_dense_gain2",
+      "comparison": "quality-selected",
+      "method": "dense",
+      "configuration": "dense_gain_2p0"
+    },
+    {
+      "point_id": "cifar_strom_near",
+      "comparison": "nearest-traffic",
+      "method": "strom",
+      "configuration": "strom_t01"
+    },
+    {
+      "point_id": "cifar_ef_traffic",
+      "comparison": "nearest-traffic",
+      "method": "ef_topk",
+      "configuration": "ef_k01"
+    }
+  ],
+  "reporting": {
+    "table": "mean plus sample standard deviation over ten matched seeds",
+    "paired_uncertainty": "two-sided 95% paired t interval",
+    "checkpoint": "final round; no test-selected early stopping"
+  }
+}
