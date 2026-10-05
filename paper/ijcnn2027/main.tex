@@ -6,6 +6,7 @@
 \usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{microtype}
 \usepackage{url}
+\usepackage{xcolor}
 
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
@@ -18,6 +19,8 @@
 \newcommand{\newrev}[1]{#1}
 \newcommand{\spacerev}[1]{#1}
 \newcommand{\actionrev}[1]{#1}
+\definecolor{p19blue}{RGB}{0,85,170}
+\newcommand{\pNineteenRev}[1]{\textcolor{p19blue}{#1}}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
@@ -550,16 +553,12 @@ as a numerical convergence certificate.}
 
 \begin{figure*}[t]
  \centering
- \includegraphics[width=0.94\textwidth]{figures/resnet14_communication_trajectory.pdf}
- \caption{\spacerev{Final-horizon optimization and communication behavior over
- ten matched seeds. Lines and shaded bands show the mean and pointwise 95\%
- confidence interval. Panels (a) and (b) plot Fashion-MNIST held-out
- cross-entropy. The shaded final 20\% of each horizon supports a visual
- saturation check. Panel (c) gives the corresponding ResNet-14 curve, with the
- dotted line at round 1,800. Panel (d) plots ResNet-14 held-out accuracy against
- cumulative bidirectional traffic. Open circles mark round 1,800 and method
- symbols mark the common 3,000-round endpoint.}}
- \label{fig:resnet-communication-trajectory}
+ \includegraphics[width=0.94\textwidth]{figures/convergence_trajectories.pdf}
+ \caption{\pNineteenRev{Held-out convergence behavior over ten matched seeds for all
+ four dataset--model pairs. Lines and shaded bands show the mean and pointwise
+ 95\% confidence interval. The shaded final 20\% of each fixed horizon supports
+ a visual saturation check.}}
+ \label{fig:convergence-trajectories}
 \end{figure*}
 
 \input{generated/main_results_table}
@@ -571,9 +570,9 @@ as a numerical convergence certificate.}
 \spacerev{We evaluate ten-client image classification under strong label skew.
 Fashion-MNIST uses a 25,818-parameter MLP for 1,500 rounds and a
 14,538-parameter CNN for 1,800 rounds. Each client has 6,000 examples, with 55\%
-from one dominant class and 5\% from each other class. CIFAR-10 uses a
-20,570-parameter CNN for 120 rounds and a 175,258-parameter group-normalized
-ResNet-14 for 3,000 rounds. Each client has 5,000 examples under the same class
+from one dominant class and 5\% from each other class. \pNineteenRev{CIFAR-10 uses a
+20,570-parameter CNN for 1,800 rounds and a 175,258-parameter group-normalized
+ResNet-14 for 3,000 rounds.} Each client has 5,000 examples under the same class
 proportions. All runs use full participation, five local SGD steps, batch size
 32, and learning rate $0.1$ for Fashion-MNIST or $0.05$ for CIFAR-10. We set
 $r_0=100$. Within a benchmark, every method uses the same final-round horizon.
@@ -646,7 +645,8 @@ decision, so diagnostics cannot alter later crossings.}
 \actionrev{The complete Event-FedAvg operator combines cross-round encoder
 memory, leakage, full reset, and separate trigger and model-update scales.
 Baseline comparisons cannot identify which internal choice matters. We
-therefore audit four changes at the compact CIFAR-10 CNN operating point:
+therefore audit four changes at the compact CIFAR-10 CNN operating point
+\pNineteenRev{over a controlled 120-round diagnostic horizon}:
 memoryless state, no leakage ($\rho=1$), subtractive reset that retains
 overshoot, and coupling $q_r$ to the threshold. For the memoryless and
 subtractive families, one threshold is selected on the development partition
@@ -672,15 +672,21 @@ dense FedAvg by $0.23$ percentage points for the MLP and $0.20$ points for the
 CNN while using only $6.3\%$ and $7.9\%$ of dense traffic. The paired MLP
 difference is positive on nine of ten seeds. The smaller CNN difference is
 positive on eight seeds and is treated as accuracy preservation rather than a
-claim of statistical superiority. On the compact CIFAR-10 CNN, Event-FedAvg
-improves on dense FedAvg by $4.25$ points while using $12.7\%$ of its traffic.
-Figure~\ref{fig:communication-frontier} provides the broader comparison without
-duplicating those points in the table.}
+claim of statistical superiority. \pNineteenRev{On the compact CIFAR-10 CNN,
+Event-FedAvg reaches $57.15\pm0.71\%$ accuracy and $37.8\pm3.6\%$ worst-class
+accuracy at $3.36\pm0.06$ Gbit. Dense FedAvg reaches $54.62\pm0.75\%$ and
+$35.0\pm5.2\%$ at $23.71$ Gbit. The paired accuracy advantage is $2.54$ points
+with a 95\% interval of $[1.67,3.41]$ points and is positive on nine of ten
+pairs. Event-FedAvg therefore uses $14.2\%$ of dense traffic. Against the
+quality-selected EF-TopK point, its $0.59$-point advantage has interval
+$[-0.20,1.38]$ while using $35.1\%$ of the traffic, so we treat their accuracy
+as statistically comparable.} Figure~\ref{fig:communication-frontier} provides
+the broader comparison without duplicating those points in the table.}
 
 \actionrev{The Event-FedAvg-to-dense traffic ratios remain favorable under a
-logical-broadcast accounting model. From Fashion-MNIST MLP through ResNet-14,
-they are $2.1\%$, $2.6\%$, $4.1\%$, and $3.8\%$, compared with $6.3\%$,
-$7.9\%$, $12.7\%$, and $11.5\%$ under conservative unicast. This sensitivity
+logical-broadcast accounting model. \pNineteenRev{From Fashion-MNIST MLP through
+ResNet-14, they are $2.1\%$, $2.6\%$, $4.7\%$, and $3.8\%$, compared with
+$6.3\%$, $7.9\%$, $14.2\%$, and $11.5\%$ under conservative unicast.} This sensitivity
 uses the already recorded packet streams and requires no retraining. It does
 not establish the ranking under every network or multicast implementation.}
 
@@ -696,26 +702,22 @@ representation and the induced server update, including a decaying quantum,
 whereas the dense reference uses the development-selected constant gain from
 the preceding audit.}
 
-\spacerev{Figure~\ref{fig:resnet-communication-trajectory}(a)--(b) shows that
-the Fashion-MNIST curves have largely flattened by their final horizons. Mean
-Event-FedAvg held-out cross-entropy changes by only $0.0025$ over the final
-20\% of MLP rounds and $0.0013$ over the final 20\% of CNN rounds. Dense
-FedAvg, EF-TopK, and Sign-EF retain small late improvements, so we describe the
-campaigns as practically saturated rather than claiming that every optimizer
-has fully converged. Strom reaches its lowest mean held-out loss earlier and
-then saturates or degrades slightly. Panel (c) shows that Event-FedAvg reaches
-its minimum mean held-out cross-entropy near round 1,800.
-Its training loss continues to decrease thereafter, while held-out loss rises,
-which indicates a generalization plateau rather than incomplete optimization.
-Dense FedAvg approaches a plateau, whereas EF-TopK and Sign-EF continue to
-improve at round 3,000. Panel (d) shows that Event-FedAvg reaches intermediate
-accuracy levels with less traffic than EF-TopK and dense FedAvg.
-Strom fluctuates more across all seeds, plausibly because its fixed residual
-pulse couples threshold and update magnitude in this synchronous adaptation.
-This does not imply general instability of the original asynchronous method.
-The fixed 3,000-round endpoint therefore gives the baselines more time to close
-the earlier gap, but it remains a finite-horizon comparison rather than a
-convergence claim.}
+\pNineteenRev{Figure~\ref{fig:convergence-trajectories} shows held-out cross-entropy
+for all four final-horizon campaigns. The Fashion-MNIST curves have largely
+flattened by their endpoints. On the compact CIFAR-10 CNN, Event-FedAvg accuracy
+is already $57.17\%$ at round 1,200 and remains $57.15\%$ at round 1,800, while
+its held-out loss rises modestly after the accuracy plateau. Dense FedAvg and
+both Strom settings also deteriorate late, whereas EF-TopK and Sign-EF retain
+small improvements. Two nearest-traffic Strom runs collapse to chance-level
+accuracy, which explains its large $15.1$-point standard deviation in
+Figure~\ref{fig:communication-frontier}. On ResNet-14, Event-FedAvg reaches its
+minimum mean held-out loss near round 1,800 and then enters a generalization
+plateau, while EF-TopK and Sign-EF continue improving at round 3,000. We
+therefore describe the campaigns as practically saturated or past their best
+generalization region, not as proof that every optimizer has converged. Strom's
+larger fluctuations are consistent with a fixed residual pulse that couples
+threshold and update magnitude in this synchronous adaptation. They do not
+imply general instability of the original asynchronous method.}
 
 \textbf{Mechanism audit.}
 \actionrev{The four controlled changes separate memory, leakage, reset, and

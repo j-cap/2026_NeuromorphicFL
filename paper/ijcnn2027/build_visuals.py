@@ -1,8 +1,9 @@
 """Generate and validate the frozen IJCNN comparison figure and main table.
 
 Figure 1 is maintained as an editable Draw.io diagram. Figure 2 uses the P17
-final-horizon Fashion-MNIST campaign, the P14 compact-CNN extension, and the
-P13 ResNet-14 held-out campaign. Table 1 uses the same frozen evidence.
+final-horizon Fashion-MNIST campaign, the P19 final-horizon compact-CNN
+campaign, and the P13 ResNet-14 held-out campaign. Table 1 uses the same frozen
+evidence.
 Run with ``--check`` to detect source, selection-rule, or rendered-artifact
 drift.
 """
@@ -32,6 +33,9 @@ RESNET14 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P17_ROOT = REPO / "experiments" / "results" / "p17_fmnist_final_horizons"
 P17 = P17_ROOT / "aggregate.csv"
 P17_HISTORIES = P17_ROOT / "histories.csv"
+P19_ROOT = REPO / "experiments" / "results" / "p19_cifar10_cnn_final_horizons"
+P19 = P19_ROOT / "aggregate.csv"
+P19_HISTORIES = P19_ROOT / "histories.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -42,7 +46,7 @@ FRONTIER_PANEL_FILES = {
     "cifar_resnet14": FIGURES / "communication_frontier_cifar_resnet14.pdf",
 }
 FRONTIER_LEGEND = FIGURES / "communication_frontier_legend.pdf"
-RESNET_TRAJECTORY = FIGURES / "resnet14_communication_trajectory.pdf"
+CONVERGENCE_TRAJECTORIES = FIGURES / "convergence_trajectories.pdf"
 MAIN_TABLE = PAPER / "generated" / "main_results_table.tex"
 
 PDF_METADATA = {
@@ -81,14 +85,14 @@ RESNET_RESULTS = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
 TRAFFIC_AXES = {
     "fmnist_mlp": {"limits": (1200.0, 30000.0), "ticks": (2000.0, 10000.0)},
     "fmnist_cnn": {"limits": (1000.0, 22000.0), "ticks": (2000.0, 10000.0)},
-    "cifar_cnn": {"limits": (100.0, 2200.0), "ticks": (200.0, 1000.0)},
+    "cifar_cnn": {"limits": (1500.0, 30000.0), "ticks": (2000.0, 10000.0)},
     "cifar_resnet14": {"limits": (7000.0, 450000.0), "ticks": (10000.0, 100000.0)},
 }
 
 CORE_PANELS = [
     ("fmnist_mlp", "Fashion-MNIST\nMLP", "mlp", (82.5, 88.5)),
     ("fmnist_cnn", "Fashion-MNIST\nCNN", "cnn", (85.0, 89.0)),
-    ("cifar_cnn", "CIFAR-10\nCNN", "cifar_cnn", (32.0, 50.5)),
+    ("cifar_cnn", "CIFAR-10\nCNN", "cifar_cnn", (20.0, 59.5)),
 ]
 PANELS = CORE_PANELS + [
     ("cifar_resnet14", "CIFAR-10\nResNet-14", "cifar_resnet14", (40.0, 78.0)),
@@ -184,9 +188,27 @@ def frontier_rows() -> dict[str, list[dict[str, str]]]:
         )
         p17_rows.append(converted)
 
+    p19_rows = []
+    for row in read_csv(P19):
+        converted = dict(row)
+        if converted["comparison"] == "nearest-traffic":
+            converted["comparison"] = "traffic-matched"
+        converted["unicast_total_Mbit_mean"] = str(
+            float(row["unicast_hybrid_total_bits_mean"]) / 1e6
+        )
+        converted["unicast_total_Mbit_std"] = str(
+            float(row["unicast_hybrid_total_bits_std"]) / 1e6
+        )
+        p19_rows.append(converted)
+
     grouped: dict[str, list[dict[str, str]]] = {}
     for key, _title, architecture, _ylim in CORE_PANELS:
-        pool = p17_rows if key.startswith("fmnist_") else rows
+        if key.startswith("fmnist_"):
+            pool = p17_rows
+        elif key == "cifar_cnn":
+            pool = p19_rows
+        else:
+            pool = rows
         selected = [row for row in pool if row["benchmark"] == key]
         if len(selected) != 7:
             raise ValueError(f"{key} does not contain the seven unique visual rows")
@@ -488,54 +510,21 @@ def frontier_legend() -> bytes:
     return save_pdf(fig)
 
 
-def resnet_trajectory() -> bytes:
-    """Render final-horizon loss curves and the ResNet communication curve."""
-
-    histories: dict[
-        str, list[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]
-    ] = {
-        method: [] for method in RESNET_CONFIGS
-    }
-    reference_rounds: np.ndarray | None = None
-    for method, config_name in RESNET_CONFIGS.items():
-        for seed in RESNET_SEEDS:
-            path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r3000_history.csv"
-            rows = read_csv(path)
-            rounds = np.array([int(row["round"]) for row in rows])
-            traffic = np.array(
-                [
-                    (
-                        float(row["uplink_packetized_bits"])
-                        + float(row["unicast_hybrid_downlink_bits"])
-                    )
-                    / 1e6
-                    for row in rows
-                ]
-            )
-            accuracy = 100 * np.array(
-                [float(row["test_accuracy"]) for row in rows]
-            )
-            test_ce = np.array([float(row["test_ce"]) for row in rows])
-            if reference_rounds is None:
-                reference_rounds = rounds
-            elif not np.array_equal(rounds, reference_rounds):
-                raise ValueError("ResNet histories do not share evaluation rounds")
-            if rounds[-1] != 3000 or np.any(np.diff(traffic) < 0):
-                raise ValueError(f"invalid ResNet trajectory {path.name}")
-            histories[method].append((rounds, traffic, accuracy, test_ce))
+def convergence_trajectories() -> bytes:
+    """Render ten-seed held-out loss curves for all four benchmarks."""
 
     fig, axes = plt.subplots(2, 2, figsize=(7.08, 4.55))
-    ax_mlp, ax_cnn = axes[0]
-    ax_round, ax_traffic = axes[1]
-
     p17_histories = read_csv(P17_HISTORIES)
-    for benchmark, ax, horizon, title in (
-        ("fmnist_mlp", ax_mlp, 1500, "(a) Fashion-MNIST MLP"),
-        ("fmnist_cnn", ax_cnn, 1800, "(b) Fashion-MNIST CNN"),
-    ):
+    p19_histories = read_csv(P19_HISTORIES)
+    panels = (
+        ("fmnist_mlp", axes[0, 0], 1500, "(a) Fashion-MNIST MLP", p17_histories),
+        ("fmnist_cnn", axes[0, 1], 1800, "(b) Fashion-MNIST CNN", p17_histories),
+        ("cifar_cnn", axes[1, 0], 1800, "(c) CIFAR-10 CNN", p19_histories),
+    )
+    for benchmark, ax, horizon, title, source in panels:
         for method in METHODS:
             selected = [
-                row for row in p17_histories
+                row for row in source
                 if row["benchmark"] == benchmark
                 and row["method"] == method
                 and row["comparison"] == "quality-selected"
@@ -544,9 +533,9 @@ def resnet_trajectory() -> bytes:
             for row in selected:
                 by_seed.setdefault(int(row["seed_index"]), []).append(row)
             if set(by_seed) != set(range(10)):
-                raise ValueError(f"{benchmark} {method} lacks ten P17 histories")
+                raise ValueError(f"{benchmark} {method} lacks ten histories")
             series = []
-            reference = None
+            reference: np.ndarray | None = None
             for seed_rows in by_seed.values():
                 seed_rows.sort(key=lambda row: int(row["round"]))
                 rounds = np.array([int(row["round"]) for row in seed_rows])
@@ -565,129 +554,56 @@ def resnet_trajectory() -> bytes:
             ax.plot(reference, mean, color=style["color"], linewidth=1.25)
         ax.axvspan(0.8 * horizon, horizon, color="#bdbdbd", alpha=0.12,
                    linewidth=0, zorder=0)
-        ax.set_xlim(0, horizon)
+        ax.set_xlim(0, 1.025 * horizon)
+        if horizon == 1500:
+            ax.set_xticks((0, 500, 1000, 1500))
+        else:
+            ax.set_xticks((0, 600, 1200, 1800))
         ax.set_xlabel("Communication round")
         ax.set_ylabel("Test cross-entropy")
         ax.set_title(title, pad=3.0)
-    plateau_round = 1800
-    for method, method_histories in histories.items():
-        style = METHODS[method]
-        traffic_stack = np.stack([history[1] for history in method_histories])
-        accuracy_stack = np.stack([history[2] for history in method_histories])
-        test_ce_stack = np.stack([history[3] for history in method_histories])
-        mean_traffic = traffic_stack.mean(axis=0)
-        mean_accuracy = accuracy_stack.mean(axis=0)
-        mean_test_ce = test_ce_stack.mean(axis=0)
-        accuracy_ci = (
-            1.96 * accuracy_stack.std(axis=0, ddof=1) / np.sqrt(len(method_histories))
-        )
-        test_ce_ci = (
-            1.96 * test_ce_stack.std(axis=0, ddof=1) / np.sqrt(len(method_histories))
-        )
-        assert reference_rounds is not None
 
-        ax_round.fill_between(
-            reference_rounds,
-            mean_test_ce - test_ce_ci,
-            mean_test_ce + test_ce_ci,
-            color=style["color"],
-            alpha=0.12,
-            linewidth=0,
-            zorder=1,
-        )
-        ax_round.plot(
-            reference_rounds,
-            mean_test_ce,
-            color=style["color"],
-            linewidth=1.45,
-            zorder=3,
-        )
-        ax_traffic.fill_between(
-            mean_traffic,
-            mean_accuracy - accuracy_ci,
-            mean_accuracy + accuracy_ci,
-            color=style["color"],
-            alpha=0.12,
-            linewidth=0,
-            zorder=1,
-        )
-        ax_traffic.plot(
-            mean_traffic,
-            mean_accuracy,
-            color=style["color"],
-            linewidth=1.45,
-            zorder=3,
-        )
-        plateau_index = int(np.flatnonzero(reference_rounds == plateau_round)[0])
-        ax_traffic.plot(
-            mean_traffic[plateau_index],
-            mean_accuracy[plateau_index],
-            marker="o",
-            markersize=3.5,
-            markerfacecolor="white",
-            markeredgecolor=style["color"],
-            markeredgewidth=0.8,
-            linestyle="none",
-            zorder=4,
-        )
-        ax_traffic.plot(
-            mean_traffic[-1],
-            mean_accuracy[-1],
-            marker=style["marker"],
-            markersize=7.2 if method == "event" else 5.5,
-            markerfacecolor=style["color"],
-            markeredgecolor="#111111",
-            markeredgewidth=0.65,
-            linestyle="none",
-            zorder=5,
-        )
+    ax_resnet = axes[1, 1]
+    for method, config_name in RESNET_CONFIGS.items():
+        series = []
+        reference: np.ndarray | None = None
+        for seed in RESNET_SEEDS:
+            path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r3000_history.csv"
+            rows = read_csv(path)
+            rounds = np.array([int(row["round"]) for row in rows])
+            losses = np.array([float(row["test_ce"]) for row in rows])
+            if reference is None:
+                reference = rounds
+            elif not np.array_equal(reference, rounds):
+                raise ValueError("ResNet histories do not share evaluation rounds")
+            if rounds[-1] != 3000:
+                raise ValueError(f"invalid ResNet trajectory {path.name}")
+            series.append(losses)
+        stack = np.stack(series)
+        mean = stack.mean(axis=0)
+        ci = 1.96 * stack.std(axis=0, ddof=1) / np.sqrt(stack.shape[0])
+        style = METHODS[method]
+        ax_resnet.fill_between(reference, mean - ci, mean + ci,
+                               color=style["color"], alpha=0.10, linewidth=0)
+        ax_resnet.plot(reference, mean, color=style["color"], linewidth=1.25)
+    ax_resnet.axvspan(2400, 3000, color="#bdbdbd", alpha=0.12,
+                      linewidth=0, zorder=0)
+    ax_resnet.set_xlim(0, 3075)
+    ax_resnet.set_xticks((0, 1000, 2000, 3000))
+    ax_resnet.set_xlabel("Communication round")
+    ax_resnet.set_ylabel("Test cross-entropy")
+    ax_resnet.set_title("(d) CIFAR-10 ResNet-14", pad=3.0)
 
     handles = [
-        Line2D(
-            [0], [0], color=style["color"], linewidth=1.45,
-            marker=style["marker"], markersize=6.5 if method == "event" else 5.2,
-            markerfacecolor=style["color"], markeredgecolor="#111111",
-            markeredgewidth=0.6, label=style["label"],
-        )
-        for method, style in METHODS.items()
+        Line2D([0], [0], color=style["color"], linewidth=1.45,
+               label=style["label"])
+        for style in METHODS.values()
     ]
-    fig.legend(
-        handles=handles,
-        loc="upper center",
-        ncol=5,
-        frameon=False,
-        handlelength=1.5,
-        columnspacing=1.15,
-        bbox_to_anchor=(0.5, 0.995),
-    )
-    ax_round.axvline(
-        plateau_round, color="#737373", linestyle=":", linewidth=0.8, zorder=2
-    )
-    ax_round.text(
-        plateau_round + 45,
-        ax_round.get_ylim()[1],
-        "round 1,800",
-        color="#595959",
-        fontsize=6.0,
-        ha="left",
-        va="top",
-    )
-    ax_round.set_xlim(0, 3000)
-    ax_round.set_xlabel("Communication round")
-    ax_round.set_ylabel("Test cross-entropy")
-    ax_round.set_title("(c) CIFAR-10 ResNet-14", pad=3.0)
-
-    ax_traffic.set_xscale("log")
-    ax_traffic.set_xlim(40, 450000)
-    ax_traffic.set_ylim(5, 78)
-    ax_traffic.set_xlabel("Cumulative bidirectional traffic [Mbit]")
-    ax_traffic.set_ylabel("Test accuracy [%]")
-    ax_traffic.set_title("(d) ResNet-14 communication efficiency", pad=3.0)
-
+    fig.legend(handles=handles, loc="upper center", ncol=5, frameon=False,
+               handlelength=1.5, columnspacing=1.15, bbox_to_anchor=(0.5, 0.995))
     for ax in axes.flat:
         ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
         ax.set_axisbelow(True)
-    ax_traffic.grid(True, which="minor", axis="x", color="#eeeeee", linewidth=0.35)
     fig.subplots_adjust(left=0.075, right=0.99, top=0.91, bottom=0.10,
                         wspace=0.27, hspace=0.42)
     return save_pdf(fig, tight=False)
@@ -748,7 +664,9 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     for index, (key, _title, _architecture, _ylim) in enumerate(CORE_PANELS):
         rows = grouped[key]
         event = next(row for row in rows if row["method"] == "event")
-        selected_method = "ef_topk" if key == "fmnist_mlp" else "strom"
+        selected_method = (
+            "ef_topk" if key in {"fmnist_mlp", "cifar_cnn"} else "strom"
+        )
         quality = next(
             row for row in rows
             if row["comparison"] == "quality-selected"
@@ -760,11 +678,39 @@ def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
         best_traffic = min(value(row, "unicast_total_Mbit_mean") for row in entries)
         for row_index, row in enumerate(entries):
             benchmark = dataset_labels[key] if row_index == 0 else ""
+            method = METHODS[row["method"]]["label"]
+            accuracy = pm(
+                row,
+                "final_test_accuracy_mean",
+                "final_test_accuracy_std",
+                100.0,
+                2,
+                value(row, "final_test_accuracy_mean") == best_accuracy,
+            )
+            worst = pm(
+                row,
+                "final_worst_class_accuracy_mean",
+                "final_worst_class_accuracy_std",
+                100.0,
+                1,
+                value(row, "final_worst_class_accuracy_mean") == best_worst,
+            )
+            traffic = pm(
+                row,
+                "unicast_total_Mbit_mean",
+                "unicast_total_Mbit_std",
+                1.0,
+                1,
+                value(row, "unicast_total_Mbit_mean") == best_traffic,
+            )
+            if key == "cifar_cnn":
+                benchmark = f"\\pNineteenRev{{{benchmark}}}" if benchmark else ""
+                method = f"\\pNineteenRev{{{method}}}"
+                accuracy = f"\\pNineteenRev{{{accuracy}}}"
+                worst = f"\\pNineteenRev{{{worst}}}"
+                traffic = f"\\pNineteenRev{{{traffic}}}"
             lines.append(
-                f"{benchmark} & {METHODS[row['method']]['label']} & "
-                f"{pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', 100.0, 2, value(row, 'final_test_accuracy_mean') == best_accuracy)} & "
-                f"{pm(row, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', 100.0, 1, value(row, 'final_worst_class_accuracy_mean') == best_worst)} & "
-                f"{pm(row, 'unicast_total_Mbit_mean', 'unicast_total_Mbit_std', 1.0, 1, value(row, 'unicast_total_Mbit_mean') == best_traffic)} \\\\"
+                f"{benchmark} & {method} & {accuracy} & {worst} & {traffic} \\\\"
             )
         lines.append("\\midrule")
 
@@ -805,7 +751,7 @@ def products() -> dict[Path, bytes]:
         for key, _title, _architecture, ylim in PANELS
     }
     products[FRONTIER_LEGEND] = frontier_legend()
-    products[RESNET_TRAJECTORY] = resnet_trajectory()
+    products[CONVERGENCE_TRAJECTORIES] = convergence_trajectories()
     products[MAIN_TABLE] = main_table(frontier).encode("utf-8")
     return products
 

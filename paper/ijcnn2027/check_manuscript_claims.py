@@ -24,6 +24,10 @@ P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
 P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
 P17_ROOT = REPO / "experiments" / "results" / "p17_fmnist_final_horizons"
 P17 = P17_ROOT / "aggregate.csv"
+P19_ROOT = REPO / "experiments" / "results" / "p19_cifar10_cnn_final_horizons"
+P19 = P19_ROOT / "aggregate.csv"
+P19_PAIRED = P19_ROOT / "paired_differences.csv"
+P19_HISTORIES = P19_ROOT / "histories.csv"
 P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
 P15_ROOT = REPO / "experiments" / "results" / "p15_operator_ablation"
 P15_SUMMARY = P15_ROOT / "summary.csv"
@@ -59,6 +63,32 @@ def paired(
             f"expected one P12 {comparison_id}/{subset} row, found {len(matches)}"
         )
     return matches[0]
+
+
+def paired_point(
+    source: list[dict[str, str]], comparison_id: str
+) -> dict[str, str]:
+    matches = [row for row in source if row["comparison_id"] == comparison_id]
+    if len(matches) != 1:
+        raise AssertionError(
+            f"expected one {comparison_id} paired row, found {len(matches)}"
+        )
+    return matches[0]
+
+
+def history_mean(
+    source: list[dict[str, str]], point_id: str, round_number: int, field: str
+) -> float:
+    values = [
+        number(row, field)
+        for row in source
+        if row["point_id"] == point_id and int(row["round"]) == round_number
+    ]
+    if not values:
+        raise AssertionError(
+            f"no history rows for {point_id} at round {round_number}"
+        )
+    return statistics.mean(values)
 
 
 def p8_select(source: list[dict[str, str]], config_name: str) -> dict[str, str]:
@@ -146,6 +176,9 @@ def main() -> None:
     resnet_paired = rows(P13_PAIRED)
     figure2 = rows(P14)
     p17 = rows(P17)
+    p19 = rows(P19)
+    p19_paired = rows(P19_PAIRED)
+    p19_histories = rows(P19_HISTORIES)
     p15_summary = rows(P15_SUMMARY)
     p15_paired = rows(P15_PAIRED)
 
@@ -155,11 +188,11 @@ def main() -> None:
     cnn_event = point(headline, "fmnist_cnn_event")
     cnn_strom = point(headline, "fmnist_cnn_strom_quality")
     cnn_near = point(headline, "fmnist_cnn_strom_near")
-    c_event = point(headline, "cifar_event")
-    c_dense = point(headline, "cifar_dense_gain2")
-    c_strom = point(headline, "cifar_strom_quality")
-    c_near_strom = point(headline, "cifar_strom_near")
-    c_topk = point(headline, "cifar_ef_quality")
+    c_event = point(p19, "cifar_event")
+    c_dense = point(p19, "cifar_dense_gain2")
+    c_strom = point(p19, "cifar_strom_quality")
+    c_near_strom = point(p19, "cifar_strom_near")
+    c_topk = point(p19, "cifar_ef_quality")
     resnet_event = next(row for row in resnet if row["method"] == "event")
     resnet_dense = next(row for row in resnet if row["method"] == "dense")
     resnet_difference = next(
@@ -170,7 +203,7 @@ def main() -> None:
     for source, event_id, dense_id in (
         (p17, "fmnist_mlp_event_quality", "fmnist_mlp_dense_quality"),
         (p17, "fmnist_cnn_event_quality", "fmnist_cnn_dense_quality"),
-        (figure2, "cifar_event", "cifar_dense_gain2"),
+        (p19, "cifar_event", "cifar_dense_gain2"),
     ):
         event_row = point(source, event_id)
         dense_row = point(source, dense_id)
@@ -206,6 +239,18 @@ def main() -> None:
     c_traffic_fold = (
         traffic_mbit(c_dense)
         / traffic_mbit(c_event)
+    )
+    c_dense_difference = paired_point(
+        p19_paired, "cifar_event_minus_cifar_dense_gain2"
+    )
+    c_topk_difference = paired_point(
+        p19_paired, "cifar_event_minus_cifar_ef_quality"
+    )
+    c_accuracy_1200 = 100 * history_mean(
+        p19_histories, "cifar_event", 1200, "test_accuracy"
+    )
+    c_accuracy_1800 = 100 * history_mean(
+        p19_histories, "cifar_event", 1800, "test_accuracy"
     )
 
     claims = [
@@ -258,9 +303,42 @@ def main() -> None:
             f"Event-FedAvg gains ${100 * (number(cnn_event, 'final_test_accuracy_mean') - number(cnn_near, 'final_test_accuracy_mean')):.2f}$ points at nearby traffic",
         ),
         (
-            "CIFAR tuned-dense comparison",
-            f"improves on dense FedAvg by ${c_accuracy_gap:.2f}$ points while using "
-            f"${c_traffic_fraction:.1f}\\%$ of its traffic",
+            "compact-CNN Event endpoint",
+            f"Event-FedAvg reaches ${pm(c_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ accuracy and "
+            f"${pm(c_event, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', scale=100, digits=1)}\\%$ worst-class "
+            f"accuracy at ${pm(c_event, 'unicast_hybrid_total_bits_mean', 'unicast_hybrid_total_bits_std', scale=1e-9, digits=2)}$ Gbit",
+        ),
+        (
+            "compact-CNN dense endpoint",
+            f"Dense FedAvg reaches ${pm(c_dense, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ and "
+            f"${pm(c_dense, 'final_worst_class_accuracy_mean', 'final_worst_class_accuracy_std', scale=100, digits=1)}\\%$ at "
+            f"${number(c_dense, 'unicast_hybrid_total_bits_mean') / 1e9:.2f}$ Gbit",
+        ),
+        (
+            "compact-CNN paired dense comparison",
+            f"paired accuracy advantage is ${number(c_dense_difference, 'mean_difference_points'):.2f}$ points "
+            f"with a 95\\% interval of $[{number(c_dense_difference, 'ci95_low_points'):.2f},"
+            f"{number(c_dense_difference, 'ci95_high_points'):.2f}]$ points",
+        ),
+        (
+            "compact-CNN dense traffic fraction",
+            f"uses ${c_traffic_fraction:.1f}\\%$ of dense traffic",
+        ),
+        (
+            "compact-CNN EF-TopK comparison",
+            f"its ${number(c_topk_difference, 'mean_difference_points'):.2f}$-point advantage has interval "
+            f"$[{number(c_topk_difference, 'ci95_low_points'):.2f},"
+            f"{number(c_topk_difference, 'ci95_high_points'):.2f}]$ while using "
+            f"${100 * traffic_mbit(c_event) / traffic_mbit(c_topk):.1f}\\%$ of the traffic",
+        ),
+        (
+            "compact-CNN convergence plateau",
+            f"already ${c_accuracy_1200:.2f}\\%$ at round 1,200 and remains "
+            f"${c_accuracy_1800:.2f}\\%$ at round 1,800",
+        ),
+        (
+            "compact-CNN Strom variability",
+            f"large ${100 * number(c_near_strom, 'final_test_accuracy_std'):.1f}$-point standard deviation",
         ),
         (
             "CIFAR quality Strom",
@@ -406,7 +484,13 @@ def main() -> None:
         "abstract ResNet dense point",
         "introduction ResNet traffic fold",
         "introduction ResNet accuracy gap",
-        "CIFAR tuned-dense comparison",
+        "compact-CNN Event endpoint",
+        "compact-CNN dense endpoint",
+        "compact-CNN paired dense comparison",
+        "compact-CNN dense traffic fraction",
+        "compact-CNN EF-TopK comparison",
+        "compact-CNN convergence plateau",
+        "compact-CNN Strom variability",
         "ResNet Event accuracy",
         "ResNet dense accuracy",
         "ResNet paired accuracy difference",
