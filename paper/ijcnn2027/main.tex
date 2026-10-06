@@ -21,6 +21,8 @@
 \newcommand{\actionrev}[1]{#1}
 \definecolor{p19blue}{RGB}{0,85,170}
 \newcommand{\pNineteenRev}[1]{\textcolor{p19blue}{#1}}
+\definecolor{reviewred}{RGB}{190,0,0}
+\newcommand{\reviewrev}[1]{\textcolor{reviewred}{#1}}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
@@ -42,16 +44,18 @@ instead accumulates weighted local-model changes in leaky client states and
 emits signed events only when a parameter state crosses a threshold. The server
 sums simultaneous events parameterwise and applies an independently scheduled
 model quantum, allowing opposing events to cancel. A sparse replay or, when
-cheaper, a complete checkpoint then synchronizes all clients. We prove a
-pathwise state and event-budget bound and a conditional finite-horizon bridge
-from event alignment to gradient norm. A pulse-level decomposition and alignment study connect
+cheaper, a complete checkpoint then synchronizes all clients.
+\reviewrev{We prove a pathwise state and event-budget bound and, under an
+explicit expected-alignment condition, a finite-horizon expected-gradient
+bound involving the event count.} A pulse-level decomposition and alignment study connect
 heterogeneity and local-update depth to finite-trajectory behavior. Under
 matched local training, development-only tuning, and bidirectional traffic
 accounting, Event-FedAvg is nondominated in the observed mean
 communication--accuracy plane across Fashion-MNIST MLP/CNN and CIFAR-10
-CNN/ResNet-14 experiments. A matched-traffic operator audit identifies
-cross-round persistence, rather than the precise reset rule, as the influential
-encoder choice at the audited operating point. Across ten paired ResNet-14 seeds, it
+CNN/ResNet-14 experiments. \reviewrev{A controlled 120-round, ten-seed
+matched-traffic audit identifies cross-round persistence, rather than the
+precise reset rule, as the influential encoder choice at the audited operating
+point.} Across ten paired ResNet-14 seeds, it
 reaches $75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
 $74.21\pm0.74\%$ at $336.56$ Gbit for development-tuned dense FedAvg. These
 results establish a communication--performance operating point in the evaluated
@@ -91,12 +95,13 @@ when no event was emitted.}
 
 \spacerev{We contribute the complete encoder, server update, and synchronization
 algorithm rather than claiming its individual ingredients as new. We establish
-pathwise state and event-budget guarantees, derive a conditional bridge from
-event alignment to finite-horizon gradient norm, and decompose alignment into
-measurable mechanisms. A matched-traffic operator audit shows that removing
-cross-round memory reduces accuracy by $11.64$ points on the compact CIFAR-10
-CNN, while subtractive reset changes it by only $+0.42$ points and uses more
-traffic. Ten-seed comparisons against four referenced baselines use matched
+pathwise state and event-budget guarantees, \reviewrev{derive a finite-horizon
+gradient-norm bound under an explicit expected-alignment condition}, and
+decompose alignment into measurable mechanisms. \reviewrev{A controlled
+120-round, ten-seed matched-traffic audit shows that removing cross-round
+memory reduces accuracy by $11.64$ points on the compact CIFAR-10 CNN, while
+subtractive reset changes it by only $+0.42$ points and uses more traffic.}
+Ten-seed comparisons against four referenced baselines use matched
 local training and total bidirectional traffic. Event-FedAvg is nondominated
 among the evaluated mean operating points in all four settings. On CIFAR-10 ResNet-14, it
 uses $8.7\times$ less traffic than dense FedAvg while improving mean accuracy
@@ -112,20 +117,18 @@ while memory and error feedback preserve discarded residuals
 Sparse Ternary Compression applies residual-corrected sparsification in both FL
 directions~\cite{sattler2020stc}. Strom's parameter-wise residuals and signed
 threshold pulses are the closest predecessor~\cite{strom2015distributed}.
-Event-FedAvg instead leaks old evidence, fully resets fired states, and separates
-the trigger threshold from the server quantum.
+\reviewrev{Unlike Strom, Event-FedAvg places coordinate pulses in synchronous
+FL with leaky cross-round states, separate trigger and update scales, aggregate
+cancellation, and exact replay-or-checkpoint synchronization.}
 
-\actionrev{Event-triggered learning suppresses a vector until a model or
-gradient deviation is sufficiently large
+\reviewrev{Event-triggered learning suppresses vector messages based on model
+or gradient deviations
 \cite{ghadikolaei2021lena,singh2023sparq,he2023etfl,yoon2025etfl,
-zhai2026gossip}. LENA uploads accumulated vector memory, SPARQ-SGD retains
-stale neighbor estimates, and ETFL-family methods trigger model or gradient
-messages. They do not combine parameter-wise sign events with an independently
-scheduled server quantum and exact replay-or-checkpoint synchronization.
-Event-FedAvg's contribution is this complete operator and protocol. We do not
-claim novelty for accumulation, thresholding, sign transmission, leakage, or
-full reset individually. EF-TopK and Sign-EF cover the retained-residual and
-sign-quantization mechanisms used by STC, although we do not implement STC's
+zhai2026gossip}. These methods exchange complete vectors or decentralized
+neighbor state rather than the synchronized coordinate-event operator above.
+We claim this complete combination, not accumulation, thresholding, sign
+transmission, leakage, or reset individually. EF-TopK and Sign-EF cover the
+retained-residual and sign mechanisms used by STC, although not its
 data-dependent ternary magnitude.}
 Federated spiking-neural-network work trains models whose neurons exchange
 spikes and maintain LIF states
@@ -450,14 +453,13 @@ $J_R$ with $\Pr(J_R=r)=q_r/Q_R$. Then}
 \end{align}
 \end{theorem}
 
-\rev{The first two assumptions are standard finite-horizon smoothness,
-lower-boundedness, and scheduling conditions. The third is the learning-side
-condition. It requires positive expected aggregate alignment up to the defect
-$\beta_r$. The encoder guarantees state boundedness and an event budget, but it
-does not guarantee this alignment. The theorem therefore states precisely what
-follows when the optimization dynamics provide sufficient alignment. It is a
-conditional communication-to-optimization bridge, not an unconditional
-convergence guarantee for the encoder.}
+\reviewrev{The first two assumptions are standard finite-horizon smoothness,
+lower-boundedness, and scheduling conditions. Equation~\eqref{eq:alignment-assumption-paper}
+is an additional learning-side assumption. The encoder guarantees bounded
+state and an event budget, but does not establish this expected alignment. The
+theorem therefore derives the stationarity consequence of sufficient
+alignment. It is a conditional communication-to-optimization bridge, not an
+unconditional convergence theorem for Event-FedAvg.}
 
 \rev{The three terms on the right of~\eqref{eq:stationarity} have distinct
 roles. The first is the initial optimization gap divided by the cumulative
@@ -590,7 +592,9 @@ $(\vartheta,q_0)$ by final development loss and freeze all settings before
 evaluation. We use $\rho=0.999$ for long memory. An ablation finds no measurable
 difference from $\rho=1$ at the selected finite horizon. The complete candidate
 grids, development scores, and frozen selections are included in the
-reproducibility artifact.}
+reproducibility artifact. \reviewrev{Grid sizes are method-specific, but every
+candidate and development score is reported and held-out metrics are excluded
+from selection.}}
 
 \spacerev{Each comparison method has a development-selected quality setting and,
 when available, a nearest-traffic setting. EF-TopK retains fractions $0.05$
@@ -625,7 +629,10 @@ Figure~\ref{fig:communication-frontier} contains all remaining frozen points,
 including nearest-traffic settings and secondary method families. Values
 are means and sample standard deviations over ten paired strong-skew partitions
 and training seeds. We record test cross-entropy, accuracy, worst-class
-accuracy, coordinate events, and communication.}
+accuracy, coordinate events, and communication. \reviewrev{Because the
+event-triggered methods in Section~\ref{sec:related-work} use different message
+or network semantics, they are conceptual prior art rather than
+protocol-matched numerical baselines.}}
 
 \textbf{Communication metric.}
 \spacerev{Conservative bidirectional traffic counts uploads and an individual
@@ -642,18 +649,15 @@ the same trajectory. Exact full-client gradients are evaluated after the event
 decision, so diagnostics cannot alter later crossings.}
 
 \textbf{Mechanism audits.}
-\actionrev{The complete Event-FedAvg operator combines cross-round encoder
-memory, leakage, full reset, and separate trigger and model-update scales.
-Baseline comparisons cannot identify which internal choice matters. We
-therefore audit four changes at the compact CIFAR-10 CNN operating point
-\pNineteenRev{over a controlled 120-round diagnostic horizon}:
-memoryless state, no leakage ($\rho=1$), subtractive reset that retains
-overshoot, and coupling $q_r$ to the threshold. For the memoryless and
-subtractive families, one threshold is selected on the development partition
-by minimum log-distance to the frozen operator's total traffic. The selected
-thresholds are $0.010$ and $0.025$, respectively. Neither is at a search-grid
-boundary. They are then frozen for the same ten paired held-out seeds. All
-other training, quantum, and communication settings remain unchanged.}
+\reviewrev{The selected Event-FedAvg operator uses persistent cross-round state
+and full reset. Baseline comparisons cannot isolate these internal choices, so
+we conduct a controlled 120-round compact CIFAR-10 CNN audit. For the
+memoryless and subtractive-reset families, one threshold is selected on the
+development partition by minimum log-distance to the frozen operator's total
+traffic. The selected thresholds are $0.010$ and $0.025$, respectively, and
+neither lies at a search-grid boundary. The settings are then frozen for the
+same ten paired held-out seeds. All other training, quantum, and communication
+settings remain unchanged.}
 
 \section{Results and Discussion}
 \label{sec:results}
@@ -702,8 +706,8 @@ representation and the induced server update, including a decaying quantum,
 whereas the dense reference uses the development-selected constant gain from
 the preceding audit.}
 
-\pNineteenRev{Figure~\ref{fig:convergence-trajectories} shows held-out cross-entropy
-for all four final-horizon campaigns. The Fashion-MNIST curves have largely
+\pNineteenRev{Figure~\ref{fig:convergence-trajectories} shows held-out
+cross-entropy for all four final-horizon campaigns. The Fashion-MNIST curves have largely
 flattened by their endpoints. On the compact CIFAR-10 CNN, Event-FedAvg accuracy
 is already $57.17\%$ at round 1,200 and remains $57.15\%$ at round 1,800, while
 its held-out loss rises modestly after the accuracy plateau. Dense FedAvg and
@@ -712,26 +716,23 @@ small improvements. Two nearest-traffic Strom runs collapse to chance-level
 accuracy, which explains its large $15.1$-point standard deviation in
 Figure~\ref{fig:communication-frontier}. On ResNet-14, Event-FedAvg reaches its
 minimum mean held-out loss near round 1,800 and then enters a generalization
-plateau, while EF-TopK and Sign-EF continue improving at round 3,000. We
-therefore describe the campaigns as practically saturated or past their best
-generalization region, not as proof that every optimizer has converged. Strom's
+plateau, while EF-TopK and Sign-EF continue improving at round 3,000.
+\reviewrev{We therefore describe the campaigns as practically saturated or
+past their best generalization region, not as fully converged.} Strom's
 larger fluctuations are consistent with a fixed residual pulse that couples
 threshold and update magnitude in this synchronous adaptation. They do not
 imply general instability of the original asynchronous method.}
 
 \textbf{Mechanism audit.}
-\actionrev{The four controlled changes separate memory, leakage, reset, and
-scale separation at the selected compact CIFAR-10 operating point.} Removing leakage
-($\rho=1$) \rev{produces nearly the same result as} the frozen setting at this resolution
-($48.32\pm1.05\%$ versus $48.25\pm1.07\%$). Coupling the quantum and trigger
-at $0.025$ instead reduces accuracy to $18.42\pm7.33\%$. This supports their
-independence for the selected operating point, not a universal claim that every
-coupled schedule fails.
+\reviewrev{The controlled audit focuses on the two operator choices evaluated
+over the full ten-seed held-out set: cross-round state and reset semantics. Its
+120-round horizon is deliberately diagnostic and is not used as evidence of
+long-horizon convergence.}
 
 \input{generated/p15_operator_ablation_table}
 
-\actionrev{Table~\ref{tab:operator-ablation} completes the audit by asking whether the temporal state or
-reset rule explains the selected operating point. Removing cross-round memory
+\reviewrev{Table~\ref{tab:operator-ablation} asks whether the temporal state or
+reset rule explains the selected operating point.} Removing cross-round memory
 reduces paired accuracy by $11.64$ points, with a 95\% confidence interval of
 $[-12.79,-10.49]$ points and a loss on every seed, although traffic is $3.3\%$
 lower. Persistent accumulation therefore contributes information beyond event
@@ -741,7 +742,7 @@ $4.1\%$ more traffic. Thus the experiment identifies persistence as the
 important mechanism at this operating point. It does not establish predictive
 superiority of full reset. We retain full reset because it defines the tested
 operator and yields the bounded-state invariant and disjoint blocks used in
-the analysis.}
+the analysis.
 
 \spacerev{Table~\ref{tab:alignment-factorial} supports two main observations.
 First, aggregate events usually retain positive first-order alignment. Second,
@@ -755,8 +756,8 @@ $\widehat\kappa_{\mathcal A}$ is the trajectory ratio in
 \actionrev{The diagnostic columns separate first-order alignment, realized
 descent, the sampled theorem terms, and the two signed decomposition
 components most directly affected by local depth and heterogeneity. Across the
-four cells, $96.1$--$99.0\%$ of audited aggregates have positive first-order
-alignment.}}
+four cells, \reviewrev{the explicitly reported $A_r>0$ column shows that
+$96.1$--$99.0\%$ of audited aggregates have positive first-order alignment.}}}
 
 \spacerev{$\overline B_{\mathcal A}$ exposes adverse heterogeneity, while
 $\overline L_{\mathcal A}$ shows that increasing local steps from one to five
@@ -798,13 +799,14 @@ signed events while preserving exact synchronization. We bound its state and
 event count and identify aggregate alignment as the condition connecting events
 to finite-horizon progress. Among the evaluated frozen configurations, it is
 nondominated in the observed mean communication--accuracy plane across four
-ten-client image-classification settings. The mechanism audit identifies
-persistent accumulation and independent update resolution as influential at
-the selected compact-CNN operating point. It does not show predictive
+ten-client image-classification settings. \reviewrev{The controlled mechanism
+audit identifies persistent accumulation as influential at the selected
+compact-CNN operating point.} It does not show predictive
 superiority of full over subtractive reset. On CIFAR-10 ResNet-14, it improves mean accuracy over
 development-tuned dense FedAvg by $0.93$ points with $8.7\times$ less traffic.
-The alignment study shows why positive first-order alignment need not imply an
-objective decrease under stronger heterogeneity and more local steps. Future
+\reviewrev{The alignment study provides finite-trajectory evidence that
+positive first-order alignment need not coincide with an objective decrease
+under stronger heterogeneity and more local steps.} Future
 work should test partial participation, asynchronous operation, and measured
 system-level communication and energy.}
 

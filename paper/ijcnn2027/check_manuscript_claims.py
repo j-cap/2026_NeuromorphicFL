@@ -17,7 +17,6 @@ PAPER = REPO / "paper" / "ijcnn2027"
 MANUSCRIPT = PAPER / "main.tex"
 P12 = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 P12_PAIRED = PAPER / "evidence" / "p12_paired_differences.csv"
-P8 = PAPER / "evidence" / "p8_targeted_revision.csv"
 P11 = PAPER / "evidence" / "p11_alignment_factorial.csv"
 P13 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
@@ -89,13 +88,6 @@ def history_mean(
             f"no history rows for {point_id} at round {round_number}"
         )
     return statistics.mean(values)
-
-
-def p8_select(source: list[dict[str, str]], config_name: str) -> dict[str, str]:
-    matches = [row for row in source if row["config_name"] == config_name]
-    if len(matches) != 1:
-        raise AssertionError(f"expected one P8 {config_name} row, found {len(matches)}")
-    return matches[0]
 
 
 def number(row: dict[str, str], field: str) -> float:
@@ -170,7 +162,6 @@ def main() -> None:
     )
     headline = rows(P12)
     differences = rows(P12_PAIRED)
-    mechanism = rows(P8)
     factorial = rows(P11)
     resnet = rows(P13)
     resnet_paired = rows(P13_PAIRED)
@@ -396,21 +387,6 @@ def main() -> None:
             )
         )
 
-    frozen = p8_select(mechanism, "event_frozen")
-    no_leak = p8_select(mechanism, "event_no_leak")
-    coupled = p8_select(mechanism, "event_coupled_quantum")
-    for label, row in (
-        ("P8 frozen rerun", frozen),
-        ("P8 no-leak ablation", no_leak),
-        ("P8 coupled-resolution ablation", coupled),
-    ):
-        claims.append(
-            (
-                label,
-                f"${pm(row, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$",
-            )
-        )
-
     p15_by_family = {row["family"]: row for row in p15_summary}
     p15_by_comparison = {row["comparison"]: row for row in p15_paired}
     memoryless = p15_by_comparison["memoryless_minus_frozen"]
@@ -495,9 +471,6 @@ def main() -> None:
         "ResNet dense accuracy",
         "ResNet paired accuracy difference",
         "ResNet paired accuracy interval",
-        "P8 frozen rerun",
-        "P8 no-leak ablation",
-        "P8 coupled-resolution ablation",
         "P11 audited snapshot count",
         "broadcast-accounting sensitivity",
         "unicast-accounting sensitivity",

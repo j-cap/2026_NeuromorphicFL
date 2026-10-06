@@ -280,10 +280,11 @@ def table_tex(cells: list[dict[str, str]]) -> str:
         "independently audited checkpoints per seed.}}",
         "\\label{tab:alignment-factorial}",
         "\\scriptsize",
-        "\\setlength{\\tabcolsep}{3pt}",
-        "\\begin{tabular*}{0.99\\textwidth}{@{\\extracolsep{\\fill}}lrrrrrrr@{}}",
+        "\\setlength{\\tabcolsep}{2.2pt}",
+        "\\begin{tabular*}{0.99\\textwidth}{@{\\extracolsep{\\fill}}lrrrrrrrr@{}}",
         "\\toprule",
         "Setting & $\\widehat{\\kappa}_{\\mathcal A}$ & "
+        "\\reviewrev{$A_r>0$ [\\%]} & "
         "$\\Delta F_r<0$ [\\%] & $\\widehat\\beta_r=0$ [\\%] & "
         "$\\widehat{\\mathcal D}_{\\mathcal A}$ & "
         "$\\widehat{\\mathcal V}_{\\mathcal A}$ & "
@@ -294,6 +295,7 @@ def table_tex(cells: list[dict[str, str]]) -> str:
         lines.append(
             f"{labels[cell['regime']]}, $E={cell['local_steps']}$ & "
             f"{pm(cell, 'weighted_alignment_ratio', 1.0, 2)} & "
+            f"\\reviewrev{{{pm(cell, 'positive_alignment_fraction', 100.0, 1)}}} & "
             f"{pm(cell, 'objective_decrease_fraction', 100.0, 1)} & "
             f"{pm(cell, 'kappa_condition_fraction', 100.0, 1)} & "
             f"{pm(cell, 'sampled_defect_contribution', 1.0, 3)} & "
@@ -308,6 +310,8 @@ def table_tex(cells: list[dict[str, str]]) -> str:
             "\\vspace{2pt}",
             "\\parbox{0.99\\textwidth}{\\scriptsize "
             "$\\widehat\\beta_r=[8\\lVert\\vect{g}^r\\rVert_2^2-A_r]_+$. "
+            "\\reviewrev{$A_r>0$ reports the fraction of audited aggregates "
+            "with positive first-order alignment.} "
             "$\\widehat{\\mathcal D}_{\\mathcal A}$ and "
             "$\\widehat{\\mathcal V}_{\\mathcal A}$ are the sampled "
             "alignment-defect and event-curvature terms in~"
