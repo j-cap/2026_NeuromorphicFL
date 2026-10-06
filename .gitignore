@@ -7,6 +7,7 @@ venv/
 
 # Downloaded datasets
 data/cifar-10/
+data/fashion-mnist/
 
 # Generated experiment outputs
 experiments/results/**
@@ -14,6 +15,15 @@ experiments/results/**
 !experiments/results/p13_cifar10_resnet14/
 !experiments/results/p13_cifar10_resnet14/*.csv
 !experiments/results/p13_cifar10_resnet14/*.json
+!experiments/results/p16_fmnist_horizon_audit/
+!experiments/results/p16_fmnist_horizon_audit/*.csv
+!experiments/results/p16_fmnist_horizon_audit/*.json
+!experiments/results/p16_fmnist_horizon_audit/*.pdf
+!experiments/results/p16_fmnist_horizon_audit/*.png
+!experiments/results/p17_fmnist_final_horizons/
+!experiments/results/p17_fmnist_final_horizons/**/
+!experiments/results/p17_fmnist_final_horizons/**/*.csv
+!experiments/results/p17_fmnist_final_horizons/**/*.json
 
 # LaTeX build products
 report/*.aux
