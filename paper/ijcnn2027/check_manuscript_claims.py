@@ -272,10 +272,6 @@ def main() -> None:
             f"${number(resnet_dense, 'unicast_hybrid_total_bits_mean') / number(resnet_event, 'unicast_hybrid_total_bits_mean'):.1f}\\times$ less traffic",
         ),
         (
-            "introduction ResNet accuracy gap",
-            f"${number(resnet_difference, 'mean_accuracy_difference_points'):.2f}$ percentage points",
-        ),
-        (
             "MLP quality tradeoff",
             f"gains ${100 * (number(mlp_event, 'final_test_accuracy_mean') - number(mlp_topk, 'final_test_accuracy_mean')):.2f}$ points over the quality baseline with "
             f"${traffic_mbit(mlp_topk) / traffic_mbit(mlp_event):.1f}\\times$ less traffic",
@@ -459,7 +455,6 @@ def main() -> None:
         "abstract ResNet Event point",
         "abstract ResNet dense point",
         "introduction ResNet traffic fold",
-        "introduction ResNet accuracy gap",
         "compact-CNN Event endpoint",
         "compact-CNN dense endpoint",
         "compact-CNN paired dense comparison",

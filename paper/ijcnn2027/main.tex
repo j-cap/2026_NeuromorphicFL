@@ -38,28 +38,25 @@
 \maketitle
 
 \begin{abstract}
-\spacerev{Federated learning repeatedly exchanges high-dimensional updates even
-when individual model parameters change only slightly per round. Event-FedAvg
-instead accumulates weighted local-model changes in leaky client states and
-emits signed events only when a parameter state crosses a threshold. The server
-sums simultaneous events parameterwise and applies an independently scheduled
-model quantum, allowing opposing events to cancel. A sparse replay or, when
-cheaper, a complete checkpoint then synchronizes all clients.
-\reviewrev{We prove a pathwise state and event-budget bound and, under an
-explicit expected-alignment condition, a finite-horizon expected-gradient
-bound involving the event count.} A pulse-level decomposition and alignment study connect
-heterogeneity and local-update depth to finite-trajectory behavior. Under
-matched local training, development-only tuning, and bidirectional traffic
-accounting, Event-FedAvg is nondominated in the observed mean
-communication--accuracy plane across Fashion-MNIST MLP/CNN and CIFAR-10
-CNN/ResNet-14 experiments. \reviewrev{A controlled 120-round, ten-seed
-matched-traffic audit identifies cross-round persistence, rather than the
-precise reset rule, as the influential encoder choice at the audited operating
-point.} Across ten paired ResNet-14 seeds, it
-reaches $75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
+\reviewrev{Federated learning exchanges high-dimensional model updates even
+when individual parameters change only slightly. Event-FedAvg instead
+accumulates weighted local-model changes in leaky client states and emits signed
+coordinate events at threshold crossings. The server sums coincident events,
+applies an independently scheduled model quantum, and returns either sparse
+replay or a smaller checkpoint so that all clients remain synchronized. We
+prove pathwise state and event-budget bounds and, conditional on expected
+aggregate alignment, a finite-horizon expected-gradient bound involving the
+event count. Across ten paired seeds for Fashion-MNIST MLP/CNN and CIFAR-10
+CNN/ResNet-14, Event-FedAvg is nondominated among the observed mean
+communication--accuracy operating points under a stated bidirectional bit
+model. A 120-round matched-traffic audit finds that cross-round state materially
+affects accuracy at the audited operating point, while full reset shows no
+clear advantage over subtractive reset. On ResNet-14, Event-FedAvg reaches
+$75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
 $74.21\pm0.74\%$ at $336.56$ Gbit for development-tuned dense FedAvg. These
-results establish a communication--performance operating point in the evaluated
-synchronous setting, not unconditional convergence or hardware-energy savings.}
+results support a communication--performance operating point in the evaluated
+synchronous setting, not unconditional convergence or measured network and
+energy savings.}
 \end{abstract}
 
 \section{Introduction}
@@ -93,20 +90,17 @@ either the ordered sparse update sequence or, when cheaper, a complete model
 checkpoint. Thus every client begins the next round from the same model, even
 when no event was emitted.}
 
-\spacerev{We contribute the complete encoder, server update, and synchronization
-algorithm rather than claiming its individual ingredients as new. We establish
-pathwise state and event-budget guarantees, \reviewrev{derive a finite-horizon
-gradient-norm bound under an explicit expected-alignment condition}, and
-decompose alignment into measurable mechanisms. \reviewrev{A controlled
-120-round, ten-seed matched-traffic audit shows that removing cross-round
-memory reduces accuracy by $11.64$ points on the compact CIFAR-10 CNN, while
-subtractive reset changes it by only $+0.42$ points and uses more traffic.}
-Ten-seed comparisons against four referenced baselines use matched
-local training and total bidirectional traffic. Event-FedAvg is nondominated
-among the evaluated mean operating points in all four settings. On CIFAR-10 ResNet-14, it
-uses $8.7\times$ less traffic than dense FedAvg while improving mean accuracy
-by $0.93$ percentage points. Figure~\ref{fig:event-fedavg-method} summarizes a
-complete round.}
+\reviewrev{We contribute the complete encoder, server update, and
+synchronization protocol rather than claiming its individual ingredients as
+new. We establish pathwise state and event-budget guarantees, derive a
+finite-horizon gradient-norm bound under an explicit expected-alignment
+condition, and decompose the realized alignment into measurable mechanisms.
+Ten-seed comparisons against four referenced baselines use matched local
+training and total bidirectional traffic. A separate ten-seed audit isolates
+cross-round memory and reset semantics. Event-FedAvg is nondominated among the
+evaluated mean operating points in all four settings and uses $8.7\times$ less
+traffic than dense FedAvg on ResNet-14. Figure~\ref{fig:event-fedavg-method}
+summarizes a complete round.}
 
 \section{\rev{Related Work}}
 \label{sec:related-work}
@@ -427,7 +421,7 @@ If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
 \rev{This inequality holds pathwise. A stationarity result additionally
 requires the emitted aggregate to align with global descent.}
 
-\begin{theorem}[\actionrev{Conditional communication-to-stationarity bridge}]
+\begin{theorem}[\reviewrev{Conditional finite-horizon gradient-norm bound}]
 \label{thm:conditional-stationarity}
 \rev{Fix a horizon $R$ and assume that (i) $F$ is $L$-smooth and bounded below by
 $F_{\inf}$, (ii) $\vect{w}^1$ and the positive schedule
@@ -506,7 +500,7 @@ $\kappa$ (only an analogue when $\beta_r=0$). \rev{It provides a descriptive
 check of alignment along the recorded finite trajectories, but it cannot
 establish the conditional expectation for unseen rounds or training runs in
 \eqref{eq:alignment-assumption-paper}. Section~\ref{sec:results} therefore uses
-the decomposition to explain observed mechanisms rather than to claim that the
+the audit to interpret observed mechanisms rather than to claim that the
 assumption has been proved.}
 
 \newrev{We also assess the two empirical terms that correspond most directly to
@@ -635,11 +629,14 @@ or network semantics, they are conceptual prior art rather than
 protocol-matched numerical baselines.}}
 
 \textbf{Communication metric.}
-\spacerev{Conservative bidirectional traffic counts uploads and an individual
-downlink to every client. It includes headers, addresses, signs or values,
-initial synchronization, per-round requests, and the smaller of ordered replay
-and a checkpoint. Dense values use 32 bits. The same rule applies to every
-method.}
+\reviewrev{Our primary protocol-level counter is conservative bidirectional
+unicast. It charges every upload, the initial model sent separately to each
+client, a 32-bit request per client and round, and a separate
+replay-or-checkpoint response to each client. Headers, addresses, signs, and
+32-bit dense values are included, and the cheaper exact downlink representation
+is used each round. The logical-broadcast sensitivity instead charges one
+shared downlink copy. Both models apply the same rules to every method. Neither
+represents measured link-layer traffic, retransmissions, latency, or energy.}
 
 \textbf{Alignment study.}
 \spacerev{A Fashion-MNIST MLP $2\times2$ study crosses IID or strong non-IID
@@ -687,12 +684,12 @@ $[-0.20,1.38]$ while using $35.1\%$ of the traffic, so we treat their accuracy
 as statistically comparable.} Figure~\ref{fig:communication-frontier} provides
 the broader comparison without duplicating those points in the table.}
 
-\actionrev{The Event-FedAvg-to-dense traffic ratios remain favorable under a
-logical-broadcast accounting model. \pNineteenRev{From Fashion-MNIST MLP through
-ResNet-14, they are $2.1\%$, $2.6\%$, $4.7\%$, and $3.8\%$, compared with
-$6.3\%$, $7.9\%$, $14.2\%$, and $11.5\%$ under conservative unicast.} This sensitivity
-uses the already recorded packet streams and requires no retraining. It does
-not establish the ranking under every network or multicast implementation.}
+\reviewrev{The Event-FedAvg-to-dense traffic ratios remain favorable when one
+shared downlink copy is charged in the logical-broadcast sensitivity. From
+Fashion-MNIST MLP through ResNet-14, they are $2.1\%$, $2.6\%$, $4.7\%$, and
+$3.8\%$, compared with $6.3\%$, $7.9\%$, $14.2\%$, and $11.5\%$ under
+conservative unicast. This calculation reuses the recorded packet streams and
+does not establish the ranking for arbitrary network or multicast costs.}
 
 \spacerev{On ResNet-14, Event-FedAvg reaches $75.14\pm0.90\%$ accuracy and
 $56.1\pm3.6\%$ worst-class accuracy at $38.66\pm0.36$ Gbit. Dense FedAvg
@@ -744,43 +741,32 @@ superiority of full reset. We retain full reset because it defines the tested
 operator and yields the bounded-state invariant and disjoint blocks used in
 the analysis.
 
-\spacerev{Table~\ref{tab:alignment-factorial} supports two main observations.
-First, aggregate events usually retain positive first-order alignment. Second,
-stronger heterogeneity and more local steps enlarge the gap between alignment
-and realized objective descent. The remaining columns diagnose why this gap
-appears. The table reports ten seeds and 31 audited
+\reviewrev{Table~\ref{tab:alignment-factorial} focuses on the quantities that
+map directly to the gradient-norm bound. It reports ten seeds and 31 audited
 checkpoints per seed at rounds $1,5,10,\ldots,150$. Each audit independently
-reruns training from the same initialization. Its
+reruns training from the same initialization. The displayed
 $\widehat\kappa_{\mathcal A}$ is the trajectory ratio in
 \eqref{eq:empirical-alignment-ratio}, not mean $A_r$ or theoretical $\kappa$.
-\actionrev{The diagnostic columns separate first-order alignment, realized
-descent, the sampled theorem terms, and the two signed decomposition
-components most directly affected by local depth and heterogeneity. Across the
-four cells, \reviewrev{the explicitly reported $A_r>0$ column shows that
-$96.1$--$99.0\%$ of audited aggregates have positive first-order alignment.}}}
+Across the four cells, $96.1$--$99.0\%$ of aggregates have positive
+first-order alignment. Under strong non-IID data, five local steps retain
+frequent positive alignment but reduce the frequency of objective decreases to
+$69.7\%$. Thus positive first-order alignment is not sufficient for realized
+descent.}
 
-\spacerev{$\overline B_{\mathcal A}$ exposes adverse heterogeneity, while
-$\overline L_{\mathcal A}$ shows that increasing local steps from one to five
-acts differently under IID and non-IID data. Under strong non-IID data, five
-steps retain frequent positive alignment but produce fewer objective decreases
-and a larger remainder. No pulse opposes its local-update proxy in the
-$1{,}240$ snapshots, so the recorded memory-opposition term is zero. This is a
-finite-trajectory observation, not a general encoder property or proof of
-Assumption~\eqref{eq:alignment-assumption-paper}.}
-
-\spacerev{For the fixed reference $\kappa_0=8$, most checkpoints have zero
-realized defect. Nonzero $\widehat{\mathcal D}_{\mathcal A}$ values show that a
-positive trajectory average does not exclude unfavorable rounds.
-$\widehat{\mathcal V}_{\mathcal A}$ increases with non-IID data and five local
-steps, matching the larger gap between first-order alignment and objective
-descent. These sampled diagnostics support the proposed finite-horizon
-mechanism but do not estimate the required conditional expectation or unknown
-global smoothness constant.}
+\reviewrev{For the fixed reference $\kappa_0=8$, most checkpoints have zero
+realized defect, while nonzero $\widehat{\mathcal D}_{\mathcal A}$ values show
+that a positive trajectory average does not exclude unfavorable rounds.
+$\widehat{\mathcal V}_{\mathcal A}$ rises with non-IID data and local depth,
+which is consistent with the larger observed gap between alignment and
+objective descent. The full artifact retains the signed decomposition terms,
+including the zero memory-opposition term in all $1{,}240$ snapshots. These are
+finite-trajectory diagnostics, not evidence that the conditional expectation
+in~\eqref{eq:alignment-assumption-paper} holds generally.}
 
 \section{Limitations}
 \label{sec:limitations}
 
-\spacerev{The evaluation covers synchronous full participation, ten clients,
+\reviewrev{The evaluation covers synchronous full participation, ten clients,
 two image datasets, and development-selected configurations. Ten paired seeds
 measure matched-run variation but do not provide simultaneous inference over
 all comparisons. Selection on one development partition does not quantify
@@ -788,27 +774,24 @@ hyperparameter-selection uncertainty across alternative development samples.
 The alignment study varies only partitioning and local steps
 around one Fashion-MNIST setting. The theorem assumes rather than proves
 aggregate alignment and makes no asymptotic claim. Broader data, participation,
-and hyperparameter regimes remain open. Finally, software bit counts do not
-measure latency, packet loss, asynchronous behavior, or hardware energy.}
+and hyperparameter regimes remain open. The reported bit savings depend on the
+stated unicast and logical-broadcast accounting models. They do not measure
+physical-network traffic, latency, packet loss, or hardware energy.}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-\spacerev{Event-FedAvg converts accumulated local-model changes into sparse
-signed events while preserving exact synchronization. We bound its state and
-event count and identify aggregate alignment as the condition connecting events
-to finite-horizon progress. Among the evaluated frozen configurations, it is
-nondominated in the observed mean communication--accuracy plane across four
-ten-client image-classification settings. \reviewrev{The controlled mechanism
-audit identifies persistent accumulation as influential at the selected
-compact-CNN operating point.} It does not show predictive
-superiority of full over subtractive reset. On CIFAR-10 ResNet-14, it improves mean accuracy over
-development-tuned dense FedAvg by $0.93$ points with $8.7\times$ less traffic.
-\reviewrev{The alignment study provides finite-trajectory evidence that
-positive first-order alignment need not coincide with an objective decrease
-under stronger heterogeneity and more local steps.} Future
-work should test partial participation, asynchronous operation, and measured
-system-level communication and energy.}
+\reviewrev{Event-FedAvg converts accumulated local-model changes into sparse
+signed events while preserving exact round-to-round synchronization. We bound
+its state and event count and give a conditional finite-horizon gradient-norm
+bound. Across four ten-client image-classification settings, it is nondominated
+among the evaluated mean communication--accuracy operating points. The
+mechanism audit supports cross-round persistence at one compact-CNN operating
+point but does not establish superiority of full reset. The alignment audit is
+consistent with a widening gap between first-order alignment and realized
+descent under stronger heterogeneity and more local steps. Future work should
+test partial participation, asynchronous operation, and measured system-level
+communication and energy.}
 
 \begin{samepage}
 \section*{Acknowledgment}
