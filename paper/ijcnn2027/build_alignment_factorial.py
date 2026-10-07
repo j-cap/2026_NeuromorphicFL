@@ -18,11 +18,13 @@ ROUNDS = ROOT / "combined_rounds.csv"
 AGGREGATES = ROOT / "aggregate_metrics.csv"
 PAIRED = ROOT / "paired_effects.csv"
 EVIDENCE = PAPER / "evidence" / "p11_alignment_factorial.csv"
+SENSITIVITY = PAPER / "evidence" / "p11_kappa_sensitivity.csv"
 TABLE = PAPER / "generated" / "p11_alignment_table.tex"
 REGIMES = ("iid", "strong")
 LOCAL_STEPS = (1, 5)
 SEEDS = tuple(range(2500, 3500, 100))
 KAPPA_AUDIT = 8.0
+KAPPA_REFERENCES = (4.0, 8.0, 12.0)
 CLIENT_COUNT = 10
 
 
@@ -118,7 +120,7 @@ def validate_design(
 
 
 def theorem_diagnostics(
-    rounds: list[dict[str, str]],
+    rounds: list[dict[str, str]], kappa_reference: float = KAPPA_AUDIT,
 ) -> dict[tuple[str, int, int], dict[str, float]]:
     grouped: dict[tuple[str, int, int], list[dict[str, str]]] = {}
     for row in rounds:
@@ -131,22 +133,56 @@ def theorem_diagnostics(
         events = [float(row["coordinate_events"]) for row in group]
         total_weight = sum(q)
         defects = [
-            max(KAPPA_AUDIT * squared_norm - aligned, 0.0)
+            max(kappa_reference * squared_norm - aligned, 0.0)
             for squared_norm, aligned in zip(gradient_sq, alignment)
         ]
         output[key] = {
             "kappa_condition_fraction": statistics.mean(
-                aligned >= KAPPA_AUDIT * squared_norm
+                aligned >= kappa_reference * squared_norm
                 for squared_norm, aligned in zip(gradient_sq, alignment)
             ),
             "sampled_defect_contribution": sum(
                 weight * defect for weight, defect in zip(q, defects)
             )
-            / (KAPPA_AUDIT * total_weight),
+            / (kappa_reference * total_weight),
             "sampled_event_curvature_factor": CLIENT_COUNT
             * sum(weight**2 * count for weight, count in zip(q, events))
             / total_weight,
         }
+    return output
+
+
+def build_kappa_sensitivity(
+    summaries: list[dict[str, str]], rounds: list[dict[str, str]]
+) -> list[dict[str, str]]:
+    grouped: dict[tuple[str, int], list[dict[str, str]]] = {
+        (regime, steps): [] for regime in REGIMES for steps in LOCAL_STEPS
+    }
+    for row in summaries:
+        grouped[cell_key(row)].append(row)
+    output: list[dict[str, str]] = []
+    for kappa_reference in KAPPA_REFERENCES:
+        diagnostics = theorem_diagnostics(rounds, kappa_reference)
+        for regime in REGIMES:
+            for steps in LOCAL_STEPS:
+                group = grouped[(regime, steps)]
+                row = {
+                    "kappa_reference": f"{kappa_reference:g}",
+                    "regime": regime,
+                    "local_steps": str(steps),
+                    "n_seeds": str(len(group)),
+                    "snapshots_per_seed": "31",
+                }
+                for metric in (
+                    "kappa_condition_fraction",
+                    "sampled_defect_contribution",
+                    "sampled_event_curvature_factor",
+                ):
+                    values = [diagnostics[run_key(item)][metric] for item in group]
+                    mean, std = mean_std(values)
+                    row[f"{metric}_mean"] = f"{mean:.17g}"
+                    row[f"{metric}_std"] = f"{std:.17g}"
+                output.append(row)
     return output
 
 
@@ -263,6 +299,16 @@ def evidence_csv(cells: list[dict[str, str]]) -> str:
     return stream.getvalue()
 
 
+def sensitivity_csv(rows: list[dict[str, str]]) -> str:
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(
+        stream, fieldnames=list(rows[0]), lineterminator="\n"
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+    return stream.getvalue()
+
+
 def pm(cell: dict[str, str], metric: str, scale: float, digits: int) -> str:
     mean = scale * float(cell[f"{metric}_mean"])
     std = scale * float(cell[f"{metric}_std"])
@@ -340,9 +386,11 @@ def main() -> None:
     rounds = read_rows(ROUNDS)
     validate_design(summaries, rounds)
     cells = build_cells(summaries, rounds)
+    sensitivity = build_kappa_sensitivity(summaries, rounds)
     validate_aggregates(cells)
     validate_paired_effects()
     check_or_write(EVIDENCE, evidence_csv(cells), args.check)
+    check_or_write(SENSITIVITY, sensitivity_csv(sensitivity), args.check)
     check_or_write(TABLE, table_tex(cells), args.check)
     print(
         f"validated P11: {len(REGIMES) * len(LOCAL_STEPS) * len(SEEDS)} runs, "

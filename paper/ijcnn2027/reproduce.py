@@ -102,14 +102,20 @@ def compile_manuscript() -> None:
         (int(line.split(":", 1)[1]) for line in info.splitlines() if line.startswith("Pages:")),
         None,
     )
-    if pages is None or pages > 6:
+    if pages is None or pages > 10:
         raise AssertionError(f"manuscript page limit failed: {pages}")
     log = (PAPER / "main.log").read_text(encoding="utf-8", errors="replace")
     forbidden = ("Overfull \\hbox", "Overfull \\vbox", "Citation `", "Reference `")
     warnings = [marker for marker in forbidden if marker in log]
     if warnings:
         raise AssertionError(f"manuscript log contains forbidden warnings: {warnings}")
-    run(sys.executable, str(PAPER / "check_submission_compliance.py"), cwd=PAPER)
+    run(
+        sys.executable,
+        str(PAPER / "check_submission_compliance.py"),
+        "--max-pages",
+        "10",
+        cwd=PAPER,
+    )
     print(f"compiled manuscript successfully: {pages} pages")
 
 
@@ -150,6 +156,7 @@ def main() -> None:
     run(sys.executable, str(PAPER / "check_manuscript_claims.py"))
     run(sys.executable, str(PAPER / "check_theory_contract.py"))
     run(sys.executable, str(REPO / ".github" / "scripts" / "check_actions_policy.py"))
+    run(sys.executable, str(PAPER / "build_anonymous_supplement.py"))
     if args.update_manifest:
         update_manifest()
     check_manifest()

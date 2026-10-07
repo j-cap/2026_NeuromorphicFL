@@ -45,3 +45,4 @@ paper/ijcnn2027/*.out
 paper/ijcnn2027/*.pdf
 paper/ijcnn2027/*.synctex.gz
 paper/ijcnn2027/tmp/
+paper/ijcnn2027/dist/*.zip

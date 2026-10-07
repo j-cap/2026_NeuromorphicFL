@@ -148,7 +148,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--tex", type=Path, default=Path("main.tex"))
     parser.add_argument("--pdf", type=Path, default=Path("main.pdf"))
-    parser.add_argument("--max-pages", type=int, default=6)
+    parser.add_argument("--max-pages", type=int, default=10)
     args = parser.parse_args()
 
     try:

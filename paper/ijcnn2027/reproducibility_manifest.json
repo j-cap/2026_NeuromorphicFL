@@ -180,12 +180,12 @@
     {
       "path": "paper/ijcnn2027/generated/main_results_table.tex",
       "role": "generated table",
-      "sha256": "bb6a802056c0f8cf5ac7565243d9a981362e3e4c6692190b4f5e13c9d7fcbbb9"
+      "sha256": "e7c35f26e9ae343dba85679b59e022d0de9585956b7f2d1a8e055410ac442281"
     },
     {
       "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
       "role": "generated table",
-      "sha256": "fcb9d88f9c91eeb385b8e7dc7f9046c7628207ed17e42563d76ebcc4abfd9489"
+      "sha256": "bd9837b21d757f7df9de29875718eec4dddc77ec4de96806c9d9357e902e4508"
     },
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
@@ -200,17 +200,17 @@
     {
       "path": "paper/ijcnn2027/figures/communication_frontier_fmnist_mlp.pdf",
       "role": "generated figure panel",
-      "sha256": "0e36d0fc3b207408c07a0451ecd6b3116c50a98861ab8385c34fb2f832da6f91"
+      "sha256": "b6230bdef7d461513f951d4f592e161e1c3494aba8c742eb9443d696d067b016"
     },
     {
       "path": "paper/ijcnn2027/figures/communication_frontier_fmnist_cnn.pdf",
       "role": "generated figure panel",
-      "sha256": "883703ae813938907e99aeb9773a3f266f65f4ff46fcb8e71a3903761266e85c"
+      "sha256": "3f7bdd154e4847b8e57316b934c6f9059abb86442c411d49b523d4eb526a81d9"
     },
     {
       "path": "paper/ijcnn2027/figures/communication_frontier_cifar_cnn.pdf",
       "role": "generated figure panel",
-      "sha256": "d8199f909b95f024f6a7aec4ca757d90d0727bfb432ecf0e509a292ee8200e39"
+      "sha256": "bf6153d75d61e919d18bbb795a4955e0a11197dbd5122136c69eadbf418a8521"
     },
     {
       "path": "paper/ijcnn2027/figures/communication_frontier_cifar_resnet14.pdf",
@@ -225,12 +225,12 @@
     {
       "path": "paper/ijcnn2027/figures/resnet14_communication_trajectory.pdf",
       "role": "generated trajectory figure",
-      "sha256": "00ed02737fb01d1891d850d448413f8f66b05da9025f86f57685590be6036501"
+      "sha256": "1ab9af3bed5350d40d0d37e5e680fbe79c3cac377b813fc65c396f8754d52609"
     },
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "0f754e5a03d113f7e45d14181edfd67576598195e9a5bd239b021a48bd334772"
+      "sha256": "4d737e3e1e80314ebf53979cac49a5126d5853c02df53cac6d25c93ee8c472b2"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -285,7 +285,7 @@
     {
       "path": "paper/ijcnn2027/check_submission_compliance.py",
       "role": "submission validation code",
-      "sha256": "90881602f9016ac68d7901b4ca1c0c5b27e34b395b6af23780721f4fbc1c64d7"
+      "sha256": "af188bb0d15b2d40832a4d228ec1090b159ecb6799bdb2dccfbc8c9887b78dfa"
     },
     {
       "path": "paper/ijcnn2027/requirements-compliance.txt",
@@ -305,17 +305,17 @@
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "771ac189c33f78363fc71620d34ae621b420cf87d34e471a6d0a82845c256e03"
+      "sha256": "4fc8e8fa0b7d867311c592a653afb27a868abe8a84a153a617a245ba2990c3eb"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
       "role": "reproduction code",
-      "sha256": "8e406ac27b66e772b817f263514748d7bd7c9a8344c29dd9663e11dbb1582820"
+      "sha256": "2157a5145fb7f73235c2da591e52f082125ebe4c07add87eb4520d006b29aeb0"
     },
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "b0e8d777107963b5c9a34fbbc2649a31b37a3dab75e08ed593643c8af0af301b"
+      "sha256": "a0ee8458d787f9875df0203d67f8d50e2fd8c152e13bceb75e267febf1c15296"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
@@ -325,7 +325,7 @@
     {
       "path": "paper/ijcnn2027/reproduce.py",
       "role": "reproduction code",
-      "sha256": "cab026b2efbc66c89749e2572f236ef772ed0c90b549af3b18711c9f7234f9a3"
+      "sha256": "9e49f8d869d53deef835a5c4b9684a740c138c5acd219b1ff75184e748f3d36a"
     },
     {
       "path": "paper/ijcnn2027/requirements-evidence.txt",
@@ -385,7 +385,7 @@
     {
       "path": "experiments/p15_operator_ablation.py",
       "role": "future experiment code",
-      "sha256": "7c55e2e3c0d1d4e0ccd2c347bf33838a601f9ec2634541abcb8ee51ad0a13df6"
+      "sha256": "f7d05261f0bf02b04ef95f2d78d903774a3f15d1d388a2364bfc7ea7a5bbd8eb"
     },
     {
       "path": ".github/workflows/p11_alignment_factorial.yml",
@@ -406,6 +406,41 @@
       "path": "src/neuromorphicfl/final_baseline_campaign.py",
       "role": "experiment code",
       "sha256": "18c2c450a0b2d151d1b30333763bf1c7385cfb4dbc07c93a62589889bc4067c2"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/p11_kappa_sensitivity.csv",
+      "role": "generated sensitivity evidence",
+      "sha256": "281b98729889698f3795738bb4342ff8318305733ffcbccffa5700dd481f0ae8"
+    },
+    {
+      "path": "paper/ijcnn2027/ANONYMOUS_SUPPLEMENT.md",
+      "role": "anonymous supplement guide",
+      "sha256": "0edfddbc271063cdffecf91db6b60ccaa39e02f16e64fa1691a3d6acb94c2c51"
+    },
+    {
+      "path": "paper/ijcnn2027/reproduce_anonymous.py",
+      "role": "anonymous supplement validator",
+      "sha256": "ec32f1562be7ddce30600921d2d1784480bb194c591699155b8442834f00a738"
+    },
+    {
+      "path": "paper/ijcnn2027/build_anonymous_supplement.py",
+      "role": "anonymous supplement builder",
+      "sha256": "3f7354f7c8504d4eb4855e41b8390a263663e468bbab3a22e2cb20e1006d9b05"
+    },
+    {
+      "path": "paper/ijcnn2027/dist/event-fedavg-anonymous-supplement.zip",
+      "role": "anonymous supplementary archive",
+      "sha256": "335de8171d3fa5da57e369c70bfbb3f13675201456a475288f44f361c4cdb68e"
+    },
+    {
+      "path": "paper/ijcnn2027/REPRODUCIBILITY.md",
+      "role": "reproducibility guide",
+      "sha256": "9ecda8e02746af9495904ad3d1b758cc12fb41bf741d1b939b00ec96af55b1ea"
+    },
+    {
+      "path": "paper/ijcnn2027/IEEEtran.bst",
+      "role": "IEEE bibliography style",
+      "sha256": "aa5c775bdeb820383cc7f3e558596838ad9a2600309a7353dc3444071f841460"
     }
   ]
 }

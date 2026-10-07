@@ -27,7 +27,7 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
 
-\title{Event-FedAvg: Stateful Event-Driven Communication for Federated Learning}
+\title{Event-FedAvg: Stateful Coordinate-Event Communication for Federated Learning}
 
 % Keep the initial submission anonymous if required by the final IJCNN 2027
 % author instructions. Author identities and affiliations are added only after
@@ -41,7 +41,7 @@
 \reviewrev{Federated learning exchanges high-dimensional model updates even
 when individual parameters change only slightly. Event-FedAvg instead
 accumulates weighted local-model changes in leaky client states and emits signed
-coordinate events at threshold crossings. The server sums coincident events,
+coordinate events at threshold crossings within synchronous FL rounds. The server sums coincident events,
 applies an independently scheduled model quantum, and returns either sparse
 replay or a smaller checkpoint so that all clients remain synchronized. We
 prove pathwise state and event-budget bounds and, conditional on expected
@@ -54,10 +54,8 @@ affects accuracy at the audited operating point, while full reset shows no
 clear advantage over subtractive reset. On ResNet-14, Event-FedAvg reaches
 $75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
 $74.21\pm0.74\%$ at $336.56$ Gbit for development-tuned dense FedAvg. These
-end-to-end results compare the complete communication and server-update
-protocols. They do not attribute the accuracy difference to sparsification
-alone or establish unconditional convergence or measured network and energy
-savings.}
+end-to-end comparisons neither isolate sparsification nor establish
+unconditional convergence or measured network and energy savings.}
 \end{abstract}
 
 \section{Introduction}
@@ -84,7 +82,8 @@ model and optimizer. Inspired by leaky integrate-and-fire neurons
 \cite{gerstner2014neuronal}, its client encoder retains part of a parameter-wise
 state, adds new local evidence, emits an index and sign at a threshold, and
 resets. An independent \emph{model quantum} determines how far each net event
-moves the server parameter.}
+moves the server parameter. Only coordinate-payload generation is event-driven.
+The FL protocol remains synchronous and no round is skipped.}
 
 \spacerev{After every round, the server synchronizes all clients by returning
 either the ordered sparse update sequence or, when cheaper, a complete model
@@ -98,10 +97,8 @@ finite-horizon gradient-norm bound under an explicit expected-alignment
 condition, and decompose the realized alignment into measurable mechanisms.
 Ten-seed comparisons against four referenced baselines use matched local
 training and total bidirectional traffic. A separate ten-seed audit isolates
-cross-round memory and reset semantics. Event-FedAvg is nondominated among the
-evaluated mean operating points in all four settings and uses $8.7\times$ less
-traffic than dense FedAvg on ResNet-14. These are end-to-end protocol
-comparisons rather than estimates of the isolated effect of sparsification.
+cross-round memory and reset semantics. Every method is evaluated as an
+end-to-end protocol, so differences are not attributed to sparsification alone.
 Figure~\ref{fig:event-fedavg-method} summarizes a complete round.}
 
 \section{\rev{Related Work}}
@@ -110,21 +107,32 @@ Figure~\ref{fig:event-fedavg-method} summarizes a complete round.}
 \spacerev{One-bit, sign, and sparse methods reduce message precision or density,
 while memory and error feedback preserve discarded residuals
 \cite{seide2014onebit,bernstein2018signsgd,stich2018memory,richtarik2021ef21}.}
-\reviewrev{Structurally, Strom is the closest coordinate-pulse predecessor. It
-retains nonleaky parameter residuals, subtracts a threshold-sized contribution
-after firing, and uses the signed pulses for uplink compression
-\cite{strom2015distributed}. LENA self-triggers gradient-vector uploads from
-error memory to a server with gradient history~\cite{ghadikolaei2021lena}.
-SPARQ-SGD triggers compressed model-vector exchange between decentralized
-neighbors~\cite{singh2023sparq}, while Sparse Ternary Compression sends
-residual-corrected sparse ternary updates in both FL directions
-\cite{sattler2020stc}. Other event-triggered methods likewise suppress vector
-exchange~\cite{he2023etfl,yoon2025etfl,zhai2026gossip}. Event-FedAvg instead
-combines leaky coordinate state, full reset, independent trigger and update
-scales, same-coordinate cancellation, and exact per-round synchronization. The
-contribution is this complete operator and protocol rather than any individual
-ingredient. EF-TopK and Sign-EF represent its retained-residual and sign
-comparators.}
+\reviewrev{Table~\ref{tab:structural-comparison} distinguishes the closest
+communication operators. Other event-triggered methods likewise suppress
+vector exchange~\cite{he2023etfl,yoon2025etfl,zhai2026gossip}. Event-FedAvg's
+novelty claim is the complete operator and synchronization protocol rather than
+any individual ingredient.}
+
+\refstepcounter{table}\label{tab:structural-comparison}
+\begin{center}
+{\scriptsize\textsc{Table~\thetable. Closest communication operators.}}\\[-2pt]
+{\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.92}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Method & Gran. & State/reset & Step & Sync. \\
+\midrule
+Strom~\cite{strom2015distributed} & Coord. & Residual/sub. & $\vartheta$ & Server \\
+LENA~\cite{ghadikolaei2021lena} & Vector & Error/retain & -- & Broadcast \\
+STC~\cite{sattler2020stc} & Vector & Residual/retain & -- & Bidirectional \\
+SPARQ~\cite{singh2023sparq} & Vector & Last model & -- & Neighbors \\
+Event-FedAvg & Coord. & Leaky/full & $q_r$ & Exact round \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\vspace{-2mm}
 \spacerev{Federated spiking-neural-network work trains models whose neurons exchange
 spikes and maintain LIF states
 \cite{venkatesha2021fedsnn,chaki2023tradeoffs,tao2026sfedhifi}. Here, the
@@ -238,13 +246,12 @@ when their signs agree and cancel otherwise.}
 \spacerev{A nonempty client packet has a 64-bit metadata header. Each event adds
 one sign bit and a $\lceil\log_2d\rceil$-bit address for one of $d$ parameters.}
 \reviewrev{The server returns either the ordered uplink stream or a dense model
-checkpoint, whichever is smaller. Ordered replay is conservative and
-compressor-agnostic because every client reconstructs the server aggregate from
-the same packet order. A sparse encoding of $\vect{C}^r$ could exploit
-reinforcement or cancellation, but it would require a second value code for
-nonunit entries and method-specific aggregation rules. Replay is therefore not
-claimed to be bit-optimal. Adding such a codec as a third option could only
-reduce the reported communication cost.}
+checkpoint, whichever is smaller. Replay is not required
+by~\eqref{eq:server-update}. We use it conservatively to preserve the original
+address--sign events and avoid defining a second codec. Encoding $\vect{C}^r$
+could exploit cancellation and may be smaller, but must represent nonunit
+integers. Replay is therefore not claimed to be bit-optimal. Adding this third
+option could only reduce the reported communication cost.}
 \spacerev{Our metric charges every upload, initial synchronization, per-round
 request, and separate response to each client. These accounting choices do not
 change~\eqref{eq:server-update}. Algorithm~\ref{alg:event-fedavg} gives the full
@@ -467,11 +474,11 @@ quantum-weighted event cost remains controlled. The theorem does not prove that
 Event-FedAvg always satisfies the alignment condition. It states the
 optimization consequence when that condition holds.}
 
-\rev{The three right-hand terms in~\eqref{eq:stationarity} are the initial gap
-divided by $\kappa Q_R$, the $q_r$-weighted alignment defect, and the curvature
-cost of discrete events. The last grows with $q_r^2\E N_r$. A small bound thus
-requires sufficient cumulative update mass, controlled defects, and a quantum
-schedule that keeps the event-curvature sum small relative to $Q_R$.}
+\rev{Operationally, the three right-hand terms identify what must be controlled:
+cumulative update mass, the $q_r$-weighted alignment defect, and discrete-event
+curvature. The last grows with $q_r^2\E N_r$. A small bound therefore requires
+sufficient mass, controlled defects, and a quantum schedule that keeps the
+event-curvature sum small relative to $Q_R$.}
 
 \rev{Taking expectations in~\eqref{eq:descent} and applying
 \eqref{eq:alignment-assumption-paper}, then dividing by $\kappa q_r$, yields}
@@ -598,8 +605,9 @@ $(\vartheta,q_0)$ pair by final development training loss and freeze all
 settings before the multi-seed evaluation. A separate three-seed compact-CNN
 audit at 120 rounds gave $48.25\pm1.07\%$ for $\rho=0.999$ and
 $48.32\pm1.05\%$ for $\rho=1$, at $200.2$ and $202.1$ Mbit. It therefore
-provides no evidence of an isolated leakage benefit. The artifact reports every
-method-specific candidate, development score, and frozen selection.}
+provides no evidence of an isolated leakage benefit. The anonymous supplementary
+artifact reports every method-specific candidate, development score, frozen
+selection, per-seed summary, and audit component.}
 
 \spacerev{Each comparison method has a development-selected quality setting and,
 when available, a nearest-traffic setting. EF-TopK retains fractions $0.05$
@@ -780,45 +788,39 @@ frequent positive alignment but reduce the frequency of objective decreases to
 $69.7\%$. Thus positive first-order alignment is not sufficient for realized
 descent.}
 
-\reviewrev{For the fixed reference $\kappa_0=8$, most checkpoints have zero
-realized defect, while nonzero $\widehat{\mathcal D}_{\mathcal A}$ values show
-that a positive trajectory average does not exclude unfavorable rounds.
-$\widehat{\mathcal V}_{\mathcal A}$ rises with non-IID data and local depth,
-which is consistent with the larger observed gap between alignment and
-objective descent. The full artifact retains the signed decomposition terms,
-including the zero memory-opposition term in all $1{,}240$ snapshots. These are
-finite-trajectory diagnostics, not evidence that the conditional expectation
-in~\eqref{eq:alignment-assumption-paper} holds generally.}
+\reviewrev{For $\kappa_0=8$, most checkpoints have zero realized defect, but
+nonzero $\widehat{\mathcal D}_{\mathcal A}$ excludes uniform alignment. A
+post-hoc check over $\kappa_0\in\{4,8,12\}$ gives $75.2$--$95.5\%$ zero-defect
+checkpoints and $\widehat{\mathcal D}_{\mathcal A}=0.020$--$0.073$, while the
+event-curvature ordering is unchanged. The artifact retains all decomposition
+terms, including zero memory opposition in all $1{,}240$ snapshots. These
+finite-trajectory diagnostics are not specific to $\kappa_0=8$, but they do not
+certify~\eqref{eq:alignment-assumption-paper}.}
 
 \section{Limitations}
 \label{sec:limitations}
 
 \reviewrev{The evaluation covers synchronous full participation, ten clients,
-two image datasets, and development-selected configurations. Ten paired seeds
-measure matched-run variation but do not provide simultaneous inference over
-all comparisons. Selection on one development partition does not quantify
-hyperparameter-selection uncertainty across alternative development samples.
-The alignment study varies only partitioning and local steps
-around one Fashion-MNIST setting. The theorem assumes rather than proves
-aggregate alignment and makes no asymptotic claim. Broader data, participation,
-and hyperparameter regimes remain open. The reported bit savings depend on the
-stated unicast and logical-broadcast accounting models. They do not measure
-physical-network traffic, latency, packet loss, or hardware energy.}
+two image datasets, and configurations selected on one development partition.
+Ten paired seeds measure matched-run variation but not simultaneous inference
+or hyperparameter-selection uncertainty. The alignment study varies only
+partitioning and local steps in one Fashion-MNIST setting, and the theorem
+assumes aggregate alignment without an asymptotic claim. Broader data,
+participation, and hyperparameter regimes remain open. The reported bit savings
+follow stated accounting models and do not measure physical-network traffic,
+latency, packet loss, or hardware energy.}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-\reviewrev{Event-FedAvg converts accumulated local-model changes into sparse
-signed events while preserving exact round-to-round synchronization. We bound
-its state and event count and give a conditional finite-horizon gradient-norm
-bound. Across four ten-client image-classification settings, it is nondominated
-among the evaluated mean communication--accuracy operating points. The
-mechanism audit supports cross-round persistence at one compact-CNN operating
-point but does not establish superiority of full reset. The alignment audit is
-consistent with a widening gap between first-order alignment and realized
-descent under stronger heterogeneity and more local steps. Future work should
-test partial participation, asynchronous operation, and measured system-level
-communication and energy.}
+\reviewrev{Event-FedAvg converts accumulated local changes into sparse signed
+events with exact round-to-round synchronization. We bound its state and event
+count and give a conditional finite-horizon gradient-norm result. It is
+nondominated among the evaluated mean operating points across four ten-client
+settings. The audits support cross-round persistence at one operating point and
+show a widening gap between alignment and descent under stronger heterogeneity
+and more local steps. Future work should test partial participation,
+asynchronous operation, and measured communication and energy.}
 
 \begin{samepage}
 \section*{Acknowledgment}

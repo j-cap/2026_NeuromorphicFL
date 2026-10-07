@@ -34,7 +34,8 @@ LaTeX distribution containing the standard IEEE dependencies, then run:
 python paper/ijcnn2027/reproduce.py --compile --strict-environment
 ```
 
-The compile step rejects a manuscript over six pages and fails on overfull
+The compile step rejects a manuscript over ten pages, the IJCNN maximum with
+paid extra pages, and fails on overfull
 boxes or unresolved citations/references. It then runs the P10 submission
 checker for anonymity, PDF structure, page size, font embedding, and the
 AI-use disclosure.

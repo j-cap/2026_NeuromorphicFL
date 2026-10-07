@@ -18,6 +18,7 @@ MANUSCRIPT = PAPER / "main.tex"
 P12 = PAPER / "evidence" / "p12_headline_ten_seed.csv"
 P12_PAIRED = PAPER / "evidence" / "p12_paired_differences.csv"
 P11 = PAPER / "evidence" / "p11_alignment_factorial.csv"
+P11_SENSITIVITY = PAPER / "evidence" / "p11_kappa_sensitivity.csv"
 P13 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P13_PAIRED = PAPER / "evidence" / "p13_resnet14_paired.csv"
 P14 = PAPER / "evidence" / "p14_figure2_ten_seed.csv"
@@ -170,6 +171,7 @@ def main() -> None:
     headline = rows(P12)
     differences = rows(P12_PAIRED)
     factorial = rows(P11)
+    kappa_sensitivity = rows(P11_SENSITIVITY)
     resnet = rows(P13)
     resnet_paired = rows(P13_PAIRED)
     figure2 = rows(P14)
@@ -180,6 +182,15 @@ def main() -> None:
     p8_summary = rows(P8_SUMMARY)
     p15_summary = rows(P15_SUMMARY)
     p15_paired = rows(P15_PAIRED)
+
+    sensitivity_zero = [
+        100 * number(row, "kappa_condition_fraction_mean")
+        for row in kappa_sensitivity
+    ]
+    sensitivity_defect = [
+        number(row, "sampled_defect_contribution_mean")
+        for row in kappa_sensitivity
+    ]
 
     mlp_event = point(headline, "fmnist_mlp_event")
     mlp_topk = point(headline, "fmnist_mlp_ef_quality")
@@ -260,6 +271,15 @@ def main() -> None:
 
     claims = [
         (
+            "kappa sensitivity zero-defect range",
+            f"${min(sensitivity_zero):.1f}$--${max(sensitivity_zero):.1f}\\%$ zero-defect",
+        ),
+        (
+            "kappa sensitivity defect range",
+            "$\\widehat{\\mathcal D}_{\\mathcal A}="
+            f"{min(sensitivity_defect):.3f}$--${max(sensitivity_defect):.3f}$",
+        ),
+        (
             "broadcast-accounting sensitivity",
             "they are "
             + ", ".join(f"${broadcast:.1f}\\%$" for broadcast, _ in accounting_ratios[:-1])
@@ -280,10 +300,6 @@ def main() -> None:
             "abstract ResNet dense point",
             f"${pm(resnet_dense, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ at "
             f"${number(resnet_dense, 'unicast_hybrid_total_bits_mean') / 1e9:.2f}$ Gbit",
-        ),
-        (
-            "introduction ResNet traffic fold",
-            f"${number(resnet_dense, 'unicast_hybrid_total_bits_mean') / number(resnet_event, 'unicast_hybrid_total_bits_mean'):.1f}\\times$ less traffic",
         ),
         (
             "MLP quality tradeoff",
