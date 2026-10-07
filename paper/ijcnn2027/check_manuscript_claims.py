@@ -28,6 +28,13 @@ P19 = P19_ROOT / "aggregate.csv"
 P19_PAIRED = P19_ROOT / "paired_differences.csv"
 P19_HISTORIES = P19_ROOT / "histories.csv"
 P13_ROOT = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
+P8_SUMMARY = (
+    REPO
+    / "experiments"
+    / "results"
+    / "p8_targeted_revision"
+    / "heldout_summary.csv"
+)
 P15_ROOT = REPO / "experiments" / "results" / "p15_operator_ablation"
 P15_SUMMARY = P15_ROOT / "summary.csv"
 P15_PAIRED = P15_ROOT / "paired.csv"
@@ -170,6 +177,7 @@ def main() -> None:
     p19 = rows(P19)
     p19_paired = rows(P19_PAIRED)
     p19_histories = rows(P19_HISTORIES)
+    p8_summary = rows(P8_SUMMARY)
     p15_summary = rows(P15_SUMMARY)
     p15_paired = rows(P15_PAIRED)
 
@@ -188,6 +196,12 @@ def main() -> None:
     resnet_dense = next(row for row in resnet if row["method"] == "dense")
     resnet_difference = next(
         row for row in resnet_paired if row["comparison"] == "event_minus_dense"
+    )
+    p8_frozen = next(
+        row for row in p8_summary if row["config_name"] == "event_frozen"
+    )
+    p8_no_leak = next(
+        row for row in p8_summary if row["config_name"] == "event_no_leak"
     )
 
     accounting_ratios = []
@@ -353,6 +367,15 @@ def main() -> None:
     claims.extend(
         [
             (
+                "P8 leakage-audit accuracy",
+                f"${pm(p8_frozen, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ for $\\rho=0.999$ and "
+                f"${pm(p8_no_leak, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$ for $\\rho=1$",
+            ),
+            (
+                "P8 leakage-audit traffic",
+                f"at ${traffic_mbit(p8_frozen):.1f}$ and ${traffic_mbit(p8_no_leak):.1f}$ Mbit",
+            ),
+            (
                 "ResNet Event accuracy",
                 f"${pm(resnet_event, 'final_test_accuracy_mean', 'final_test_accuracy_std', scale=100, digits=2)}\\%$",
             ),
@@ -469,6 +492,8 @@ def main() -> None:
         "P11 audited snapshot count",
         "broadcast-accounting sensitivity",
         "unicast-accounting sensitivity",
+        "P8 leakage-audit accuracy",
+        "P8 leakage-audit traffic",
         "P15 frozen accuracy",
         "P15 memoryless accuracy",
         "P15 subtractive accuracy",

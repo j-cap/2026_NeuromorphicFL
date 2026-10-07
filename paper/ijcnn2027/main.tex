@@ -54,9 +54,10 @@ affects accuracy at the audited operating point, while full reset shows no
 clear advantage over subtractive reset. On ResNet-14, Event-FedAvg reaches
 $75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
 $74.21\pm0.74\%$ at $336.56$ Gbit for development-tuned dense FedAvg. These
-results support a communication--performance operating point in the evaluated
-synchronous setting, not unconditional convergence or measured network and
-energy savings.}
+end-to-end results compare the complete communication and server-update
+protocols. They do not attribute the accuracy difference to sparsification
+alone or establish unconditional convergence or measured network and energy
+savings.}
 \end{abstract}
 
 \section{Introduction}
@@ -99,32 +100,32 @@ Ten-seed comparisons against four referenced baselines use matched local
 training and total bidirectional traffic. A separate ten-seed audit isolates
 cross-round memory and reset semantics. Event-FedAvg is nondominated among the
 evaluated mean operating points in all four settings and uses $8.7\times$ less
-traffic than dense FedAvg on ResNet-14. Figure~\ref{fig:event-fedavg-method}
-summarizes a complete round.}
+traffic than dense FedAvg on ResNet-14. These are end-to-end protocol
+comparisons rather than estimates of the isolated effect of sparsification.
+Figure~\ref{fig:event-fedavg-method} summarizes a complete round.}
 
 \section{\rev{Related Work}}
 \label{sec:related-work}
 
 \spacerev{One-bit, sign, and sparse methods reduce message precision or density,
 while memory and error feedback preserve discarded residuals
-\cite{seide2014onebit,bernstein2018signsgd,stich2018memory,richtarik2021ef21}.
-Sparse Ternary Compression applies residual-corrected sparsification in both FL
-directions~\cite{sattler2020stc}. Strom's parameter-wise residuals and signed
-threshold pulses are the closest predecessor~\cite{strom2015distributed}.
-\reviewrev{Unlike Strom, Event-FedAvg places coordinate pulses in synchronous
-FL with leaky cross-round states, separate trigger and update scales, aggregate
-cancellation, and exact replay-or-checkpoint synchronization.}
-
-\reviewrev{Event-triggered learning suppresses vector messages based on model
-or gradient deviations
-\cite{ghadikolaei2021lena,singh2023sparq,he2023etfl,yoon2025etfl,
-zhai2026gossip}. These methods exchange complete vectors or decentralized
-neighbor state rather than the synchronized coordinate-event operator above.
-We claim this complete combination, not accumulation, thresholding, sign
-transmission, leakage, or reset individually. EF-TopK and Sign-EF cover the
-retained-residual and sign mechanisms used by STC, although not its
-data-dependent ternary magnitude.}
-Federated spiking-neural-network work trains models whose neurons exchange
+\cite{seide2014onebit,bernstein2018signsgd,stich2018memory,richtarik2021ef21}.}
+\reviewrev{Structurally, Strom is the closest coordinate-pulse predecessor. It
+retains nonleaky parameter residuals, subtracts a threshold-sized contribution
+after firing, and uses the signed pulses for uplink compression
+\cite{strom2015distributed}. LENA self-triggers gradient-vector uploads from
+error memory to a server with gradient history~\cite{ghadikolaei2021lena}.
+SPARQ-SGD triggers compressed model-vector exchange between decentralized
+neighbors~\cite{singh2023sparq}, while Sparse Ternary Compression sends
+residual-corrected sparse ternary updates in both FL directions
+\cite{sattler2020stc}. Other event-triggered methods likewise suppress vector
+exchange~\cite{he2023etfl,yoon2025etfl,zhai2026gossip}. Event-FedAvg instead
+combines leaky coordinate state, full reset, independent trigger and update
+scales, same-coordinate cancellation, and exact per-round synchronization. The
+contribution is this complete operator and protocol rather than any individual
+ingredient. EF-TopK and Sign-EF represent its retained-residual and sign
+comparators.}
+\spacerev{Federated spiking-neural-network work trains models whose neurons exchange
 spikes and maintain LIF states
 \cite{venkatesha2021fedsnn,chaki2023tradeoffs,tao2026sfedhifi}. Here, the
 LIF-inspired state belongs only to the communication layer around a
@@ -235,9 +236,16 @@ floating-point magnitude. Pulses for the same parameter and round reinforce
 when their signs agree and cancel otherwise.}
 
 \spacerev{A nonempty client packet has a 64-bit metadata header. Each event adds
-one sign bit and a $\lceil\log_2d\rceil$-bit address for one of $d$ parameters.
-The server returns the ordered packet stream or a smaller dense checkpoint. Our
-conservative metric charges every upload, initial synchronization, per-round
+one sign bit and a $\lceil\log_2d\rceil$-bit address for one of $d$ parameters.}
+\reviewrev{The server returns either the ordered uplink stream or a dense model
+checkpoint, whichever is smaller. Ordered replay is conservative and
+compressor-agnostic because every client reconstructs the server aggregate from
+the same packet order. A sparse encoding of $\vect{C}^r$ could exploit
+reinforcement or cancellation, but it would require a second value code for
+nonunit entries and method-specific aggregation rules. Replay is therefore not
+claimed to be bit-optimal. Adding such a codec as a third option could only
+reduce the reported communication cost.}
+\spacerev{Our metric charges every upload, initial synchronization, per-round
 request, and separate response to each client. These accounting choices do not
 change~\eqref{eq:server-update}. Algorithm~\ref{alg:event-fedavg} gives the full
 ordering.}
@@ -447,23 +455,23 @@ $J_R$ with $\Pr(J_R=r)=q_r/Q_R$. Then}
 \end{align}
 \end{theorem}
 
-\reviewrev{The first two assumptions are standard finite-horizon smoothness,
-lower-boundedness, and scheduling conditions. Equation~\eqref{eq:alignment-assumption-paper}
-is an additional learning-side assumption. The encoder guarantees bounded
-state and an event budget, but does not establish this expected alignment. The
-theorem therefore derives the stationarity consequence of sufficient
-alignment. It is a conditional communication-to-optimization bridge, not an
-unconditional convergence theorem for Event-FedAvg.}
+\reviewrev{The encoder analysis alone bounds the client states and the number of
+transmitted events. To obtain an optimization result, we additionally assume
+that the aggregate event update is sufficiently aligned with the negative
+global gradient in expectation, as stated
+in~\eqref{eq:alignment-assumption-paper}. Under this condition,
+Theorem~\ref{thm:conditional-stationarity} bounds the $q_r$-weighted average
+squared gradient norm over the first $R$ rounds. The bound improves when the
+initial objective gap and alignment defects are small and when the
+quantum-weighted event cost remains controlled. The theorem does not prove that
+Event-FedAvg always satisfies the alignment condition. It states the
+optimization consequence when that condition holds.}
 
-\rev{The three terms on the right of~\eqref{eq:stationarity} have distinct
-roles. The first is the initial optimization gap divided by the cumulative
-effective update mass $\kappa Q_R$. The second is the accumulated alignment
-defect, averaged with the same $q_r$ weights used to select $J_R$. The third is
-the smoothness cost of discrete event updates. It grows with the expected event
-count $N_r$ and is weighted by $q_r^2$, so reducing the model quantum lowers
-this curvature penalty. Consequently, a small bound requires enough cumulative
-update mass, controlled alignment defects, and a quantum schedule for which the
-event-curvature sum remains small relative to $Q_R$.}
+\rev{The three right-hand terms in~\eqref{eq:stationarity} are the initial gap
+divided by $\kappa Q_R$, the $q_r$-weighted alignment defect, and the curvature
+cost of discrete events. The last grows with $q_r^2\E N_r$. A small bound thus
+requires sufficient cumulative update mass, controlled defects, and a quantum
+schedule that keeps the event-curvature sum small relative to $Q_R$.}
 
 \rev{Taking expectations in~\eqref{eq:descent} and applying
 \eqref{eq:alignment-assumption-paper}, then dividing by $\kappa q_r$, yields}
@@ -503,11 +511,10 @@ establish the conditional expectation for unseen rounds or training runs in
 the audit to interpret observed mechanisms rather than to claim that the
 assumption has been proved.}
 
-\newrev{We also assess the two empirical terms that correspond most directly to
-the theorem. We use the fixed reference $\kappa_0=8$, chosen before this
-assessment as a conservative value below the previously observed aggregate
-trajectory ratios. It is not fitted separately to the four audit cells. We
-define the realized defect
+\reviewrev{We also assess two empirical terms that map to the theorem. The
+reference $\kappa_0=8$ was selected from exploratory trajectories and then held
+fixed across all four audit cells. It is neither an estimate nor a lower
+confidence bound for theoretical $\kappa$. We define the realized defect
 $\widehat\beta_r=[\kappa_0\norm{\vect{g}^r}_2^2-A_r]_+$. Over the audited
 checkpoints $\mathcal A$, we report the zero-defect frequency and
 \begin{equation}
@@ -519,13 +526,13 @@ checkpoints $\mathcal A$, we report the zero-defect frequency and
  {\sum_{r\in\mathcal A}q_r}.
  \label{eq:empirical-theorem-diagnostics}
 \end{equation}
-Here $\widehat{\mathcal D}_{\mathcal A}$ is the sampled analogue of the
-alignment-defect term in~\eqref{eq:stationarity}. The observable
-$\widehat{\mathcal V}_{\mathcal A}$ becomes the theorem's curvature term after
-multiplication by $L/(2\kappa_0)$. We do not estimate a global smoothness
-constant or substitute sampled checkpoints for the complete round sequence.
-Thus these quantities diagnose the theorem's mechanism but are not presented
-as a numerical convergence certificate.}
+Here $\widehat{\mathcal D}_{\mathcal A}$ measures sampled violations of this
+reference, while $\widehat{\mathcal V}_{\mathcal A}$ becomes the curvature term
+after multiplication by $L/(2\kappa_0)$. Zero defect shows consistency at an
+audited checkpoint, not the required conditional expectation for other rounds,
+seeds, or tasks. Because we neither estimate global $L$ nor audit every round,
+these quantities diagnose the theorem's mechanism rather than certify its
+numerical bound.}
 
 \begin{figure*}[t]
  \centering
@@ -540,20 +547,21 @@ as a numerical convergence certificate.}
  \subfloat[\rev{CIFAR-10 ResNet-14}]{%
   \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_resnet14.pdf}}
  \par\vspace{0.5mm}
- \caption{\spacerev{Ten-seed held-out communication--accuracy comparison.
- Filled markers are quality-selected and hollow markers are nearest-traffic settings.
- Dotted lines connect points that are nondominated in the observed mean plane. Error bars show mean
- $\pm$ sample standard deviation over matched seeds.}}
+ \caption{\reviewrev{Ten-seed test-set communication--accuracy comparison.
+ Traffic axes are logarithmic and use panel-specific ranges. Filled markers are
+ quality-selected and hollow markers are nearest-traffic settings. Dotted lines
+ connect points that are nondominated in the observed mean plane. Error bars
+ show mean $\pm$ sample standard deviation over matched seeds.}}
  \label{fig:communication-frontier}
 \end{figure*}
 
 \begin{figure*}[t]
  \centering
  \includegraphics[width=0.94\textwidth]{figures/convergence_trajectories.pdf}
- \caption{\pNineteenRev{Held-out convergence behavior over ten matched seeds for all
- four dataset--model pairs. Lines and shaded bands show the mean and pointwise
- 95\% confidence interval. The shaded final 20\% of each fixed horizon supports
- a visual saturation check.}}
+ \caption{\reviewrev{Test-set convergence behavior over ten matched seeds for
+ all four dataset--model pairs. Color and line style identify methods. Lines
+ and colored bands show the mean and pointwise 95\% confidence interval. The
+ pale-gray span marks the final 20\% used for the visual saturation check.}}
  \label{fig:convergence-trajectories}
 \end{figure*}
 
@@ -572,23 +580,26 @@ ResNet-14 for 3,000 rounds.} Each client has 5,000 examples under the same class
 proportions. All runs use full participation, five local SGD steps, batch size
 32, and learning rate $0.1$ for Fashion-MNIST or $0.05$ for CIFAR-10. We set
 $r_0=100$. Within a benchmark, every method uses the same final-round horizon.
-The horizons differ across benchmarks because they were selected for the
-corresponding architecture and dataset. The frozen Event-FedAvg tuples
+The frozen Event-FedAvg tuples
 $(\rho,\vartheta,q_0,\alpha)$ are $(0.999,0.025,0.005,0.1)$,
 $(0.999,0.025,0.010,0.3)$, $(0.999,0.025,0.005,0.2)$, and
 $(0.999,0.0125,0.005,0.3)$ in the listed model order.}
 
 \textbf{Practical parameter selection.}
-\spacerev{For constant retention, $\rho$ gives an approximate memory horizon
-$1/(1-\rho)$. The threshold $\vartheta$ controls firing and traffic, $q_0$
-controls pulse displacement, and $\alpha$ controls its decay. We jointly select
-$(\vartheta,q_0)$ by final development loss and freeze all settings before
-evaluation. We use $\rho=0.999$ for long memory. An ablation finds no measurable
-difference from $\rho=1$ at the selected finite horizon. The complete candidate
-grids, development scores, and frozen selections are included in the
-reproducibility artifact. \reviewrev{Grid sizes are method-specific, but every
-candidate and development score is reported and held-out metrics are excluded
-from selection.}}
+\reviewrev{The retention $\rho$ controls how quickly unused evidence fades and
+gives the approximate memory horizon $1/(1-\rho)$ when constant. We fix
+$\rho=0.999$ across benchmarks to retain long but finite memory. The threshold
+$\vartheta$ is the evidence required to fire, so increasing it generally lowers
+event traffic. The initial quantum $q_0$ sets the server-model displacement of
+one net event, while $r_0$ and $\alpha$ set the time scale and decay rate of
+$q_r=q_0(1+r/r_0)^{-\alpha}$. We fix $r_0=100$ globally and fix $\alpha$ per
+benchmark before the final scale search. We then select the task-specific
+$(\vartheta,q_0)$ pair by final development training loss and freeze all
+settings before the multi-seed evaluation. A separate three-seed compact-CNN
+audit at 120 rounds gave $48.25\pm1.07\%$ for $\rho=0.999$ and
+$48.32\pm1.05\%$ for $\rho=1$, at $200.2$ and $202.1$ Mbit. It therefore
+provides no evidence of an isolated leakage benefit. The artifact reports every
+method-specific candidate, development score, and frozen selection.}
 
 \spacerev{Each comparison method has a development-selected quality setting and,
 when available, a nearest-traffic setting. EF-TopK retains fractions $0.05$
@@ -608,6 +619,19 @@ means identical client data, initialization, local steps, learning rate, and
 minibatch order for every method sharing a seed. Only communication and its
 server update differ.
 
+\reviewrev{We choose one common horizon per benchmark before its multi-seed
+campaign. The Fashion-MNIST and compact CIFAR-10 audits extend all frozen
+operating points on one strong-skew partition and training seed. The ResNet-14
+audit instead extends the selected dense development trajectory. The first two
+audits apply a fixed plateau rule to smoothed test cross-entropy over the final
+20\% of rounds. The ResNet-14 audit extends the dense trajectory to 3,600 rounds
+and identifies 3,000 rounds as the generalization plateau before later
+deterioration. The resulting horizon is fixed for every method and seed,
+without method-specific early stopping or checkpoint selection. The audit seed
+is included in the ten-seed Fashion-MNIST and compact-CIFAR aggregates, whereas
+the ResNet-14 audit seed is separate. We therefore describe the campaigns as
+fixed-horizon test-set evaluations, not completely untouched held-out tests.}
+
 \spacerev{Hyperparameters are selected on one development partition per
 benchmark by final training loss. For dense FedAvg, server gain $\gamma$ scales
 the aggregate as
@@ -617,8 +641,9 @@ $\{0.25,0.5,0.75,1,1.5,2,4\}$. The ResNet-14 choice $\gamma=1.5$ follows a
 separate 900-round development audit and is frozen for the 3,000-round evaluation. For Strom and
 EF-TopK, we also freeze the setting nearest Event-FedAvg in log traffic.
 Table~\ref{tab:main-results} reports Event-FedAvg, dense FedAvg, and the
-preselected quality-oriented sparse comparator for each benchmark. Held-out
-accuracy is never used to choose this table entry.
+preselected quality-oriented sparse comparator for each benchmark. Test
+accuracy is not used to select configurations or this table entry. Test
+cross-entropy enters only the shared horizon audits described above.
 Figure~\ref{fig:communication-frontier} contains all remaining frozen points,
 including nearest-traffic settings and secondary method families. Values
 are means and sample standard deviations over ten paired strong-skew partitions
@@ -648,13 +673,17 @@ decision, so diagnostics cannot alter later crossings.}
 \textbf{Mechanism audits.}
 \reviewrev{The selected Event-FedAvg operator uses persistent cross-round state
 and full reset. Baseline comparisons cannot isolate these internal choices, so
-we conduct a controlled 120-round compact CIFAR-10 CNN audit. For the
+we conduct a controlled compact CIFAR-10 CNN audit. Because it reuses the
+original frozen reference runs, it retains their 120-round endpoint rather than
+redesigning the control after the later 1,800-round extension. It is therefore
+an early operating-point mechanism test, not long-horizon evidence. For the
 memoryless and subtractive-reset families, one threshold is selected on the
 development partition by minimum log-distance to the frozen operator's total
-traffic. The selected thresholds are $0.010$ and $0.025$, respectively, and
-neither lies at a search-grid boundary. The settings are then frozen for the
-same ten paired held-out seeds. All other training, quantum, and communication
-settings remain unchanged.}
+traffic. The
+selected thresholds are $0.010$ and $0.025$, respectively, and neither lies at
+a search-grid boundary. The settings are then frozen for the same ten paired
+evaluation seeds. All other training, quantum, and communication settings
+remain unchanged.}
 
 \section{Results and Discussion}
 \label{sec:results}
@@ -697,22 +726,22 @@ reaches $74.21\pm0.74\%$ and $51.7\pm5.5\%$ at $336.56$ Gbit. The paired
 accuracy advantage is $0.93$ points with a 95\% interval of $[0.17,1.69]$ points
 and holds for seven of ten pairs. Thus Event-FedAvg uses $11.5\%$ of dense traffic.}
 
-\actionrev{This is an operating-point comparison, not evidence that sparsity
-alone causes the accuracy gain. Event-FedAvg changes both the transmitted
-representation and the induced server update, including a decaying quantum,
-whereas the dense reference uses the development-selected constant gain from
-the preceding audit.}
+\reviewrev{This is an end-to-end protocol operating-point comparison, not
+evidence that sparsity alone causes the accuracy gain. Event-FedAvg changes both
+the transmitted representation and the induced server update, including a
+decaying quantum, whereas the dense reference uses the development-selected
+constant gain from the preceding audit.}
 
-\pNineteenRev{Figure~\ref{fig:convergence-trajectories} shows held-out
+\pNineteenRev{Figure~\ref{fig:convergence-trajectories} shows test-set
 cross-entropy for all four final-horizon campaigns. The Fashion-MNIST curves have largely
 flattened by their endpoints. On the compact CIFAR-10 CNN, Event-FedAvg accuracy
 is already $57.17\%$ at round 1,200 and remains $57.15\%$ at round 1,800, while
-its held-out loss rises modestly after the accuracy plateau. Dense FedAvg and
+its test loss rises modestly after the accuracy plateau. Dense FedAvg and
 both Strom settings also deteriorate late, whereas EF-TopK and Sign-EF retain
 small improvements. Two nearest-traffic Strom runs collapse to chance-level
 accuracy, which explains its large $15.1$-point standard deviation in
 Figure~\ref{fig:communication-frontier}. On ResNet-14, Event-FedAvg reaches its
-minimum mean held-out loss near round 1,800 and then enters a generalization
+minimum mean test loss near round 1,800 and then enters a generalization
 plateau, while EF-TopK and Sign-EF continue improving at round 3,000.
 \reviewrev{We therefore describe the campaigns as practically saturated or
 past their best generalization region, not as fully converged.} Strom's
@@ -721,10 +750,8 @@ threshold and update magnitude in this synchronous adaptation. They do not
 imply general instability of the original asynchronous method.}
 
 \textbf{Mechanism audit.}
-\reviewrev{The controlled audit focuses on the two operator choices evaluated
-over the full ten-seed held-out set: cross-round state and reset semantics. Its
-120-round horizon is deliberately diagnostic and is not used as evidence of
-long-horizon convergence.}
+\reviewrev{The controlled audit isolates cross-round state and reset semantics
+over ten paired seeds at the original 120-round operating point.}
 
 \input{generated/p15_operator_ablation_table}
 

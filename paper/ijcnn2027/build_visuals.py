@@ -70,6 +70,16 @@ METHODS = {
     "dense": {"label": "Dense FedAvg", "marker": "o", "color": "#595959"},
 }
 
+# Redundant encoding keeps the convergence curves distinguishable in
+# grayscale and when several means overlap late in training.
+TRAJECTORY_LINESTYLES = {
+    "event": "-",
+    "strom": (0, (4.0, 1.6)),
+    "ef_topk": (0, (3.2, 1.3, 1.0, 1.3)),
+    "sign_ef": (0, (1.0, 1.3)),
+    "dense": (0, (6.0, 1.5, 1.5, 1.5)),
+}
+
 RESNET_CONFIGS = {
     "event": "event_t0125_q005",
     "dense": "dense_g15",
@@ -511,7 +521,7 @@ def frontier_legend() -> bytes:
 
 
 def convergence_trajectories() -> bytes:
-    """Render ten-seed held-out loss curves for all four benchmarks."""
+    """Render ten-seed test-loss curves for all four benchmarks."""
 
     fig, axes = plt.subplots(2, 2, figsize=(7.08, 4.55))
     p17_histories = read_csv(P17_HISTORIES)
@@ -550,9 +560,15 @@ def convergence_trajectories() -> bytes:
             ci = 1.96 * stack.std(axis=0, ddof=1) / np.sqrt(stack.shape[0])
             style = METHODS[method]
             ax.fill_between(reference, mean - ci, mean + ci,
-                            color=style["color"], alpha=0.10, linewidth=0)
-            ax.plot(reference, mean, color=style["color"], linewidth=1.25)
-        ax.axvspan(0.8 * horizon, horizon, color="#bdbdbd", alpha=0.12,
+                            color=style["color"], alpha=0.14, linewidth=0)
+            ax.plot(
+                reference,
+                mean,
+                color=style["color"],
+                linestyle=TRAJECTORY_LINESTYLES[method],
+                linewidth=1.45 if method == "event" else 1.30,
+            )
+        ax.axvspan(0.8 * horizon, horizon, color="#bdbdbd", alpha=0.17,
                    linewidth=0, zorder=0)
         ax.set_xlim(0, 1.025 * horizon)
         if horizon == 1500:
@@ -584,9 +600,15 @@ def convergence_trajectories() -> bytes:
         ci = 1.96 * stack.std(axis=0, ddof=1) / np.sqrt(stack.shape[0])
         style = METHODS[method]
         ax_resnet.fill_between(reference, mean - ci, mean + ci,
-                               color=style["color"], alpha=0.10, linewidth=0)
-        ax_resnet.plot(reference, mean, color=style["color"], linewidth=1.25)
-    ax_resnet.axvspan(2400, 3000, color="#bdbdbd", alpha=0.12,
+                               color=style["color"], alpha=0.14, linewidth=0)
+        ax_resnet.plot(
+            reference,
+            mean,
+            color=style["color"],
+            linestyle=TRAJECTORY_LINESTYLES[method],
+            linewidth=1.45 if method == "event" else 1.30,
+        )
+    ax_resnet.axvspan(2400, 3000, color="#bdbdbd", alpha=0.17,
                       linewidth=0, zorder=0)
     ax_resnet.set_xlim(0, 3075)
     ax_resnet.set_xticks((0, 1000, 2000, 3000))
@@ -595,9 +617,15 @@ def convergence_trajectories() -> bytes:
     ax_resnet.set_title("(d) CIFAR-10 ResNet-14", pad=3.0)
 
     handles = [
-        Line2D([0], [0], color=style["color"], linewidth=1.45,
-               label=style["label"])
-        for style in METHODS.values()
+        Line2D(
+            [0],
+            [0],
+            color=style["color"],
+            linestyle=TRAJECTORY_LINESTYLES[method],
+            linewidth=1.45,
+            label=style["label"],
+        )
+        for method, style in METHODS.items()
     ]
     fig.legend(handles=handles, loc="upper center", ncol=5, frameon=False,
                handlelength=1.5, columnspacing=1.15, bbox_to_anchor=(0.5, 0.995))
