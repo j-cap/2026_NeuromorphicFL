@@ -48,7 +48,13 @@ FRONTIER_PANEL_FILES = {
     "cifar_resnet14": FIGURES / "communication_frontier_cifar_resnet14.pdf",
 }
 FRONTIER_LEGEND = FIGURES / "communication_frontier_legend.pdf"
-CONVERGENCE_TRAJECTORIES = FIGURES / "convergence_trajectories.pdf"
+CONVERGENCE_PANEL_FILES = {
+    "fmnist_mlp": FIGURES / "convergence_fmnist_mlp.pdf",
+    "fmnist_cnn": FIGURES / "convergence_fmnist_cnn.pdf",
+    "cifar_cnn": FIGURES / "convergence_cifar_cnn.pdf",
+    "cifar_resnet14": FIGURES / "convergence_cifar_resnet14.pdf",
+}
+CONVERGENCE_LEGEND = FIGURES / "convergence_legend.pdf"
 MAIN_TABLE = PAPER / "generated" / "main_results_table.tex"
 MATCHED_ACCURACY_TABLE = PAPER / "generated" / "matched_accuracy_traffic_table.tex"
 MATCHED_ACCURACY_EVIDENCE = PAPER / "evidence" / "matched_accuracy_traffic.csv"
@@ -526,18 +532,26 @@ def frontier_legend() -> bytes:
     return save_pdf(fig)
 
 
-def convergence_trajectories() -> bytes:
-    """Render ten-seed test-loss curves for all four benchmarks."""
+def convergence_panel(benchmark: str) -> bytes:
+    """Render one title-free ten-seed test-loss panel for LaTeX assembly."""
 
-    fig, axes = plt.subplots(2, 2, figsize=(7.08, 4.55))
-    p17_histories = read_csv(P17_HISTORIES)
-    p19_histories = read_csv(P19_HISTORIES)
-    panels = (
-        ("fmnist_mlp", axes[0, 0], 1500, "(a) Fashion-MNIST MLP", p17_histories),
-        ("fmnist_cnn", axes[0, 1], 1800, "(b) Fashion-MNIST CNN", p17_histories),
-        ("cifar_cnn", axes[1, 0], 1800, "(c) CIFAR-10 CNN", p19_histories),
-    )
-    for benchmark, ax, horizon, title, source in panels:
+    fig, ax = plt.subplots(figsize=(3.42, 1.88))
+    if benchmark == "fmnist_mlp":
+        horizon = 1500
+        source = read_csv(P17_HISTORIES)
+    elif benchmark == "fmnist_cnn":
+        horizon = 1800
+        source = read_csv(P17_HISTORIES)
+    elif benchmark == "cifar_cnn":
+        horizon = 1800
+        source = read_csv(P19_HISTORIES)
+    elif benchmark == "cifar_resnet14":
+        horizon = 3000
+        source = None
+    else:
+        raise ValueError(f"unknown convergence benchmark: {benchmark}")
+
+    if source is not None:
         for method in METHODS:
             selected = [
                 row for row in source
@@ -581,46 +595,50 @@ def convergence_trajectories() -> bytes:
             ax.set_xticks((0, 500, 1000, 1500))
         else:
             ax.set_xticks((0, 600, 1200, 1800))
-        ax.set_xlabel("Communication round")
-        ax.set_ylabel("Test cross-entropy")
-        ax.set_title(title, pad=3.0)
+    else:
+        for method, config_name in RESNET_CONFIGS.items():
+            series = []
+            reference: np.ndarray | None = None
+            for seed in RESNET_SEEDS:
+                path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r3000_history.csv"
+                rows = read_csv(path)
+                rounds = np.array([int(row["round"]) for row in rows])
+                losses = np.array([float(row["test_ce"]) for row in rows])
+                if reference is None:
+                    reference = rounds
+                elif not np.array_equal(reference, rounds):
+                    raise ValueError("ResNet histories do not share evaluation rounds")
+                if rounds[-1] != horizon:
+                    raise ValueError(f"invalid ResNet trajectory {path.name}")
+                series.append(losses)
+            stack = np.stack(series)
+            mean = stack.mean(axis=0)
+            ci = 1.96 * stack.std(axis=0, ddof=1) / np.sqrt(stack.shape[0])
+            style = METHODS[method]
+            ax.fill_between(reference, mean - ci, mean + ci,
+                            color=style["color"], alpha=0.14, linewidth=0)
+            ax.plot(
+                reference,
+                mean,
+                color=style["color"],
+                linestyle=TRAJECTORY_LINESTYLES[method],
+                linewidth=1.45 if method == "event" else 1.30,
+            )
+        ax.axvspan(0.8 * horizon, horizon, color="#bdbdbd", alpha=0.17,
+                   linewidth=0, zorder=0)
+        ax.set_xlim(0, 1.025 * horizon)
+        ax.set_xticks((0, 1000, 2000, 3000))
 
-    ax_resnet = axes[1, 1]
-    for method, config_name in RESNET_CONFIGS.items():
-        series = []
-        reference: np.ndarray | None = None
-        for seed in RESNET_SEEDS:
-            path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r3000_history.csv"
-            rows = read_csv(path)
-            rounds = np.array([int(row["round"]) for row in rows])
-            losses = np.array([float(row["test_ce"]) for row in rows])
-            if reference is None:
-                reference = rounds
-            elif not np.array_equal(reference, rounds):
-                raise ValueError("ResNet histories do not share evaluation rounds")
-            if rounds[-1] != 3000:
-                raise ValueError(f"invalid ResNet trajectory {path.name}")
-            series.append(losses)
-        stack = np.stack(series)
-        mean = stack.mean(axis=0)
-        ci = 1.96 * stack.std(axis=0, ddof=1) / np.sqrt(stack.shape[0])
-        style = METHODS[method]
-        ax_resnet.fill_between(reference, mean - ci, mean + ci,
-                               color=style["color"], alpha=0.14, linewidth=0)
-        ax_resnet.plot(
-            reference,
-            mean,
-            color=style["color"],
-            linestyle=TRAJECTORY_LINESTYLES[method],
-            linewidth=1.45 if method == "event" else 1.30,
-        )
-    ax_resnet.axvspan(2400, 3000, color="#bdbdbd", alpha=0.17,
-                      linewidth=0, zorder=0)
-    ax_resnet.set_xlim(0, 3075)
-    ax_resnet.set_xticks((0, 1000, 2000, 3000))
-    ax_resnet.set_xlabel("Communication round")
-    ax_resnet.set_ylabel("Test cross-entropy")
-    ax_resnet.set_title("(d) CIFAR-10 ResNet-14", pad=3.0)
+    ax.set_xlabel("Communication round")
+    ax.set_ylabel("Test cross-entropy")
+    ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
+    ax.set_axisbelow(True)
+    fig.subplots_adjust(left=0.17, right=0.985, top=0.98, bottom=0.23)
+    return save_pdf(fig, tight=False)
+
+
+def convergence_legend() -> bytes:
+    """Render the method legend shared by the four convergence panels."""
 
     handles = [
         Line2D(
@@ -633,14 +651,10 @@ def convergence_trajectories() -> bytes:
         )
         for method, style in METHODS.items()
     ]
+    fig = plt.figure(figsize=(7.08, 0.24))
     fig.legend(handles=handles, loc="upper center", ncol=5, frameon=False,
-               handlelength=1.5, columnspacing=1.15, bbox_to_anchor=(0.5, 0.995))
-    for ax in axes.flat:
-        ax.grid(True, which="major", color="#d9d9d9", linewidth=0.45)
-        ax.set_axisbelow(True)
-    fig.subplots_adjust(left=0.075, right=0.99, top=0.91, bottom=0.10,
-                        wspace=0.27, hspace=0.42)
-    return save_pdf(fig, tight=False)
+               handlelength=1.7, columnspacing=1.2, bbox_to_anchor=(0.5, 0.92))
+    return save_pdf(fig)
 
 
 def selected_rows(
@@ -1070,7 +1084,13 @@ def products() -> dict[Path, bytes]:
         for key, _title, _architecture, ylim in PANELS
     }
     products[FRONTIER_LEGEND] = frontier_legend()
-    products[CONVERGENCE_TRAJECTORIES] = convergence_trajectories()
+    products.update(
+        {
+            CONVERGENCE_PANEL_FILES[key]: convergence_panel(key)
+            for key in CONVERGENCE_PANEL_FILES
+        }
+    )
+    products[CONVERGENCE_LEGEND] = convergence_legend()
     products[MAIN_TABLE] = main_table(frontier).encode("utf-8")
     products[MATCHED_ACCURACY_TABLE] = matched_accuracy_table(accuracy_rows).encode("utf-8")
     products[MATCHED_ACCURACY_EVIDENCE] = matched_accuracy_csv(accuracy_rows).encode("utf-8")

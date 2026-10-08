@@ -233,6 +233,31 @@
       "sha256": "22617674a5110e9c9f23059bc269dcf0574a4cc71c55e1ecb0ffdb728a75ea73"
     },
     {
+      "path": "paper/ijcnn2027/figures/convergence_fmnist_mlp.pdf",
+      "role": "generated convergence panel",
+      "sha256": "6f10865bda09cf5ca16be54cdb698f7f9d81c34f92c0e662454d9d58ca92303d"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_fmnist_cnn.pdf",
+      "role": "generated convergence panel",
+      "sha256": "5987db1e39a46024be5b252f820f2ec733ac798eefbadc9e9d32bf8322e7f741"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_cifar_cnn.pdf",
+      "role": "generated convergence panel",
+      "sha256": "86ddb324df2bfaab0ec7cc3c5c8d7925ae74901817a9dd029a6ad1fbdb32dcea"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_cifar_resnet14.pdf",
+      "role": "generated convergence panel",
+      "sha256": "f363feeb1264518eb318c82f98c150c81026120880005b4801ee4a1d5253ef0d"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_legend.pdf",
+      "role": "generated figure legend",
+      "sha256": "30ecfd36de6b1934a5843d176ae8db20e25d8405523a2945d22b98ce0530bb3b"
+    },
+    {
       "path": "paper/ijcnn2027/figures/resnet14_communication_trajectory.pdf",
       "role": "generated trajectory figure",
       "sha256": "1ab9af3bed5350d40d0d37e5e680fbe79c3cac377b813fc65c396f8754d52609"
@@ -240,7 +265,7 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "ba30bd1192f0e3d27c25e0ee0f2741f6d3d8451be083fe7754f02364d2e112ab"
+      "sha256": "f202cdc449fe0df9dbcc840566d8e8232f10a43a0cf7cf26f1b3d1136dcff802"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -315,7 +340,7 @@
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "6af4a30b01260a7603bbf33d18e9413286c833369f037f5e0bb1ed52d06ec762"
+      "sha256": "eb77485b9d4287ba8641a731a57af3866f042a71b87518df4aaedc93a794efc0"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
@@ -435,12 +460,12 @@
     {
       "path": "paper/ijcnn2027/build_anonymous_supplement.py",
       "role": "anonymous supplement builder",
-      "sha256": "3f7354f7c8504d4eb4855e41b8390a263663e468bbab3a22e2cb20e1006d9b05"
+      "sha256": "2c8be32416944ed4be39012b72cdfce9bde5c269d96606d0cd278d8177831a49"
     },
     {
       "path": "paper/ijcnn2027/dist/event-fedavg-anonymous-supplement.zip",
       "role": "anonymous supplementary archive",
-      "sha256": "946fe2207c0361d92f61685feb37a87baf407eb139b1758f9b6f6e8ff4982371"
+      "sha256": "1968b9c64ba5154040821f3db55581b11a63b6eb95854439554f8a5df2f612ca"
     },
     {
       "path": "paper/ijcnn2027/REPRODUCIBILITY.md",

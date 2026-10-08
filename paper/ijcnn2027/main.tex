@@ -573,7 +573,18 @@ numerical bound.}
 
 \begin{figure*}[t]
  \centering
- \includegraphics[width=0.94\textwidth]{figures/convergence_trajectories.pdf}
+ \includegraphics[width=0.74\textwidth]{figures/convergence_legend.pdf}
+ \par\vspace{0.5mm}
+ \subfloat[Fashion-MNIST MLP]{%
+  \includegraphics[width=0.49\textwidth]{figures/convergence_fmnist_mlp.pdf}}\hfill
+ \subfloat[Fashion-MNIST CNN]{%
+  \includegraphics[width=0.49\textwidth]{figures/convergence_fmnist_cnn.pdf}}
+ \par\vspace{0.5mm}
+ \subfloat[CIFAR-10 CNN]{%
+  \includegraphics[width=0.49\textwidth]{figures/convergence_cifar_cnn.pdf}}\hfill
+ \subfloat[CIFAR-10 ResNet-14]{%
+  \includegraphics[width=0.49\textwidth]{figures/convergence_cifar_resnet14.pdf}}
+ \par\vspace{0.5mm}
  \caption{\reviewrev{Test-set convergence behavior over ten matched seeds for
  all four dataset--model pairs. Color and line style identify methods. Lines
  and colored bands show the mean and pointwise 95\% confidence interval. The

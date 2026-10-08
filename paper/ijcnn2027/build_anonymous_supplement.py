@@ -56,7 +56,7 @@ def selected_files() -> set[Path]:
         "paper/ijcnn2027/evidence/*.csv",
         "paper/ijcnn2027/generated/*.tex",
         "paper/ijcnn2027/figures/communication_frontier_*.pdf",
-        "paper/ijcnn2027/figures/convergence_trajectories.pdf",
+        "paper/ijcnn2027/figures/convergence_*.pdf",
         "experiments/p*.py",
         "experiments/final_baseline_*.py",
         "experiments/results/p3_cifar10/*.csv",
