@@ -163,6 +163,11 @@
       "sha256": "db22e730a41e72a35fb48e8984a410d78df3185463de70969eb5df04ce3cb085"
     },
     {
+      "path": "paper/ijcnn2027/evidence/matched_accuracy_traffic.csv",
+      "role": "frozen analysis",
+      "sha256": "4e1e11c833d64b0c24d1a03cedd35fe55ebffadd412a30e237ad8a3ec5d80ee9"
+    },
+    {
       "path": "paper/ijcnn2027/generated/fmnist_quality_table.tex",
       "role": "generated table",
       "sha256": "bbc9dc3fcaef6d87fe3d68527605103016c878b039c86a26f545fc388a6695f6"
@@ -186,6 +191,11 @@
       "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
       "role": "generated table",
       "sha256": "bd9837b21d757f7df9de29875718eec4dddc77ec4de96806c9d9357e902e4508"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/matched_accuracy_traffic_table.tex",
+      "role": "generated table",
+      "sha256": "b5f03c00336e4279d94b6b67c4b903190cbc53b4fb8b41b0416b51d0a0b71676"
     },
     {
       "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
@@ -230,7 +240,7 @@
     {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "4d737e3e1e80314ebf53979cac49a5126d5853c02df53cac6d25c93ee8c472b2"
+      "sha256": "ba30bd1192f0e3d27c25e0ee0f2741f6d3d8451be083fe7754f02364d2e112ab"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -305,7 +315,7 @@
     {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
-      "sha256": "4fc8e8fa0b7d867311c592a653afb27a868abe8a84a153a617a245ba2990c3eb"
+      "sha256": "6af4a30b01260a7603bbf33d18e9413286c833369f037f5e0bb1ed52d06ec762"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
@@ -315,7 +325,7 @@
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "a0ee8458d787f9875df0203d67f8d50e2fd8c152e13bceb75e267febf1c15296"
+      "sha256": "7ef722d74a8ee3a0f52ebaba3815e5b5a80d1f7867874daf2203a24aeaaf1314"
     },
     {
       "path": "paper/ijcnn2027/check_theory_contract.py",
@@ -430,7 +440,7 @@
     {
       "path": "paper/ijcnn2027/dist/event-fedavg-anonymous-supplement.zip",
       "role": "anonymous supplementary archive",
-      "sha256": "335de8171d3fa5da57e369c70bfbb3f13675201456a475288f44f361c4cdb68e"
+      "sha256": "946fe2207c0361d92f61685feb37a87baf407eb139b1758f9b6f6e8ff4982371"
     },
     {
       "path": "paper/ijcnn2027/REPRODUCIBILITY.md",

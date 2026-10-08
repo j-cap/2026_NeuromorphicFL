@@ -40,6 +40,7 @@ P15_ROOT = REPO / "experiments" / "results" / "p15_operator_ablation"
 P15_SUMMARY = P15_ROOT / "summary.csv"
 P15_PAIRED = P15_ROOT / "paired.csv"
 P15_TABLE = PAPER / "generated" / "p15_operator_ablation_table.tex"
+MATCHED_ACCURACY = PAPER / "evidence" / "matched_accuracy_traffic.csv"
 
 
 def rows(path: Path) -> list[dict[str, str]]:
@@ -182,6 +183,7 @@ def main() -> None:
     p8_summary = rows(P8_SUMMARY)
     p15_summary = rows(P15_SUMMARY)
     p15_paired = rows(P15_PAIRED)
+    matched_accuracy = rows(MATCHED_ACCURACY)
 
     sensitivity_zero = [
         100 * number(row, "kappa_condition_fraction_mean")
@@ -268,8 +270,15 @@ def main() -> None:
     c_accuracy_1800 = 100 * history_mean(
         p19_histories, "cifar_event", 1800, "test_accuracy"
     )
+    matched_reductions = [
+        number(row, "event_reduction_percent") for row in matched_accuracy
+    ]
 
     claims = [
+        (
+            "matched-accuracy traffic-reduction range",
+            f"${min(matched_reductions):.1f}$--${max(matched_reductions):.1f}\\%$ less traffic",
+        ),
         (
             "kappa sensitivity zero-defect range",
             f"${min(sensitivity_zero):.1f}$--${max(sensitivity_zero):.1f}\\%$ zero-defect",
@@ -281,15 +290,15 @@ def main() -> None:
         ),
         (
             "broadcast-accounting sensitivity",
-            "they are "
+            "ratios are "
             + ", ".join(f"${broadcast:.1f}\\%$" for broadcast, _ in accounting_ratios[:-1])
             + f", and ${accounting_ratios[-1][0]:.1f}\\%$",
         ),
         (
             "unicast-accounting sensitivity",
-            "compared with "
+            "uses "
             + ", ".join(f"${unicast:.1f}\\%$" for _, unicast in accounting_ratios[:-1])
-            + f", and ${accounting_ratios[-1][1]:.1f}\\%$ under conservative unicast",
+            + f", and ${accounting_ratios[-1][1]:.1f}\\%$ of dense traffic",
         ),
         (
             "abstract ResNet Event point",
@@ -333,8 +342,8 @@ def main() -> None:
         ),
         (
             "compact-CNN paired dense comparison",
-            f"paired accuracy advantage is ${number(c_dense_difference, 'mean_difference_points'):.2f}$ points "
-            f"with a 95\\% interval of $[{number(c_dense_difference, 'ci95_low_points'):.2f},"
+            f"${number(c_dense_difference, 'mean_difference_points'):.2f}$-point advantage has a "
+            f"95\\% interval of $[{number(c_dense_difference, 'ci95_low_points'):.2f},"
             f"{number(c_dense_difference, 'ci95_high_points'):.2f}]$ points",
         ),
         (
@@ -401,7 +410,7 @@ def main() -> None:
             ),
             (
                 "ResNet paired accuracy difference",
-                f"${number(resnet_difference, 'mean_accuracy_difference_points'):.2f}$ points",
+                f"${number(resnet_difference, 'mean_accuracy_difference_points'):.2f}$-point advantage",
             ),
             (
                 "ResNet paired accuracy interval",
@@ -494,11 +503,7 @@ def main() -> None:
         "abstract ResNet Event point",
         "abstract ResNet dense point",
         "introduction ResNet traffic fold",
-        "compact-CNN Event endpoint",
-        "compact-CNN dense endpoint",
         "compact-CNN paired dense comparison",
-        "compact-CNN dense traffic fraction",
-        "compact-CNN EF-TopK comparison",
         "compact-CNN convergence plateau",
         "compact-CNN Strom variability",
         "ResNet Event accuracy",
@@ -517,6 +522,7 @@ def main() -> None:
         "P15 memoryless paired interval",
         "P15 subtractive paired difference",
         "P15 subtractive paired interval",
+        "matched-accuracy traffic-reduction range",
     }
     checked = [(label, fragment) for label, fragment in claims if label in direct_prose_labels]
     for label, fragment in checked:

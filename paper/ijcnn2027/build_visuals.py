@@ -33,9 +33,11 @@ RESNET14 = PAPER / "evidence" / "p13_resnet14_ten_seed.csv"
 P17_ROOT = REPO / "experiments" / "results" / "p17_fmnist_final_horizons"
 P17 = P17_ROOT / "aggregate.csv"
 P17_HISTORIES = P17_ROOT / "histories.csv"
+P17_RUNS = P17_ROOT / "runs.csv"
 P19_ROOT = REPO / "experiments" / "results" / "p19_cifar10_cnn_final_horizons"
 P19 = P19_ROOT / "aggregate.csv"
 P19_HISTORIES = P19_ROOT / "histories.csv"
+P19_RUNS = P19_ROOT / "runs.csv"
 
 FIGURES = PAPER / "figures"
 METHOD_FIGURE = FIGURES / "event_fedavg_method.pdf"
@@ -48,6 +50,8 @@ FRONTIER_PANEL_FILES = {
 FRONTIER_LEGEND = FIGURES / "communication_frontier_legend.pdf"
 CONVERGENCE_TRAJECTORIES = FIGURES / "convergence_trajectories.pdf"
 MAIN_TABLE = PAPER / "generated" / "main_results_table.tex"
+MATCHED_ACCURACY_TABLE = PAPER / "generated" / "matched_accuracy_traffic_table.tex"
+MATCHED_ACCURACY_EVIDENCE = PAPER / "evidence" / "matched_accuracy_traffic.csv"
 
 PDF_METADATA = {
     "Title": None,
@@ -89,6 +93,8 @@ RESNET_CONFIGS = {
 }
 RESNET_SEEDS = tuple(range(4200, 5200, 100))
 RESNET_RESULTS = REPO / "experiments" / "results" / "p13_cifar10_resnet14"
+N_CLIENTS = 10
+MATCHED_ACCURACY_MARGINS = (10.0, 5.0, 2.0)
 
 # Explicit log-axis limits and labelled ticks keep communication scale readable
 # in the narrow four-panel layout while retaining every observed point.
@@ -659,6 +665,290 @@ def pm(
     return rendered
 
 
+def reconstructed_unicast_bits(
+    *, method: str, dimension: int, round_number: int, uplink_bits: float
+) -> float:
+    """Reconstruct exact cumulative traffic for the two endpoint protocols.
+
+    In every frozen Event-FedAvg run, ordered replay is cheaper in every round.
+    In every dense run, a checkpoint is cheaper in every round.  The final-run
+    metadata below verifies these invariants before this formula is used.
+    """
+
+    checkpoint_packet = 32 * dimension + 64
+    initial_unicast = N_CLIENTS * checkpoint_packet
+    requests = N_CLIENTS * round_number * 32
+    if method == "event":
+        downlink = initial_unicast + requests + N_CLIENTS * uplink_bits
+    elif method == "dense":
+        downlink = (
+            initial_unicast
+            + requests
+            + N_CLIENTS * round_number * checkpoint_packet
+        )
+    else:
+        raise ValueError(f"unsupported matched-accuracy method: {method}")
+    return uplink_bits + downlink
+
+
+def compact_trajectory(
+    *,
+    benchmark: str,
+    method: str,
+    histories: list[dict[str, str]],
+    runs: list[dict[str, str]],
+) -> list[dict[str, float]]:
+    selected_runs = [
+        row for row in runs
+        if row["benchmark"] == benchmark
+        and row["method"] == method
+        and row["comparison"] == "quality-selected"
+    ]
+    selected_histories = [
+        row for row in histories
+        if row["benchmark"] == benchmark
+        and row["method"] == method
+        and row["comparison"] == "quality-selected"
+    ]
+    by_seed_run = {int(row["seed_index"]): row for row in selected_runs}
+    by_seed_history: dict[int, list[dict[str, str]]] = {}
+    for row in selected_histories:
+        by_seed_history.setdefault(int(row["seed_index"]), []).append(row)
+    if set(by_seed_run) != set(range(10)) or set(by_seed_history) != set(range(10)):
+        raise ValueError(f"{benchmark} {method} lacks ten matched trajectories")
+
+    dimension_values = {int(row["dimension"]) for row in selected_runs}
+    if len(dimension_values) != 1:
+        raise ValueError(f"{benchmark} {method} has inconsistent dimensions")
+    dimension = dimension_values.pop()
+    expected_rounds: list[int] | None = None
+    seed_series: list[list[tuple[int, float, float]]] = []
+    for seed_index in range(10):
+        run = by_seed_run[seed_index]
+        rounds = int(run["rounds"])
+        if method == "event":
+            if int(run["replay_rounds"]) != rounds or int(run["checkpoint_rounds"]) != 0:
+                raise ValueError(f"{benchmark} Event-FedAvg did not use replay in every round")
+        else:
+            if int(run["replay_rounds"]) != 0 or int(run["checkpoint_rounds"]) != rounds:
+                raise ValueError(f"{benchmark} dense did not use checkpoints in every round")
+
+        ordered = sorted(by_seed_history[seed_index], key=lambda row: int(row["round"]))
+        observed_rounds = [int(row["round"]) for row in ordered]
+        if expected_rounds is None:
+            expected_rounds = observed_rounds
+        elif observed_rounds != expected_rounds:
+            raise ValueError(f"{benchmark} {method} evaluation checkpoints do not align")
+        trajectory = []
+        for row in ordered:
+            round_number = int(row["round"])
+            uplink_bits = float(row["uplink_packetized_bits"])
+            total_bits = reconstructed_unicast_bits(
+                method=method,
+                dimension=dimension,
+                round_number=round_number,
+                uplink_bits=uplink_bits,
+            )
+            trajectory.append((round_number, float(row["test_accuracy"]), total_bits))
+        if abs(trajectory[-1][2] - float(run["unicast_hybrid_total_bits"])) > 0.5:
+            raise ValueError(f"{benchmark} {method} final traffic reconstruction failed")
+        seed_series.append(trajectory)
+
+    assert expected_rounds is not None
+    return [
+        {
+            "round": float(round_number),
+            "mean_accuracy": float(np.mean([series[index][1] for series in seed_series])),
+            "mean_traffic_bits": float(np.mean([series[index][2] for series in seed_series])),
+        }
+        for index, round_number in enumerate(expected_rounds)
+    ]
+
+
+def resnet_trajectory(method: str) -> list[dict[str, float]]:
+    config_name = RESNET_CONFIGS[method]
+    seed_series: list[list[tuple[int, float, float]]] = []
+    expected_rounds: list[int] | None = None
+    for seed in RESNET_SEEDS:
+        summary_path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r3000.csv"
+        history_path = RESNET_RESULTS / f"{config_name}_p{seed}_heldout-r3000_history.csv"
+        summary = read_csv(summary_path)
+        history = read_csv(history_path)
+        if len(summary) != 1:
+            raise ValueError(f"invalid ResNet result file: {summary_path.name}")
+        run = summary[0]
+        rounds = int(run["rounds"])
+        if method == "event":
+            if int(run["replay_rounds"]) != rounds or int(run["checkpoint_rounds"]) != 0:
+                raise ValueError("ResNet Event-FedAvg did not use replay in every round")
+        elif method == "dense":
+            if int(run["replay_rounds"]) != 0 or int(run["checkpoint_rounds"]) != rounds:
+                raise ValueError("ResNet dense did not use checkpoints in every round")
+        else:
+            raise ValueError(method)
+        observed_rounds = [int(row["round"]) for row in history]
+        if expected_rounds is None:
+            expected_rounds = observed_rounds
+        elif observed_rounds != expected_rounds:
+            raise ValueError("ResNet matched-accuracy checkpoints do not align")
+        trajectory = [
+            (
+                int(row["round"]),
+                float(row["test_accuracy"]),
+                float(row["uplink_packetized_bits"])
+                + float(row["unicast_hybrid_downlink_bits"]),
+            )
+            for row in history
+        ]
+        if abs(trajectory[-1][2] - float(run["unicast_hybrid_total_bits"])) > 0.5:
+            raise ValueError(f"ResNet {method} final traffic check failed")
+        seed_series.append(trajectory)
+    assert expected_rounds is not None
+    return [
+        {
+            "round": float(round_number),
+            "mean_accuracy": float(np.mean([series[index][1] for series in seed_series])),
+            "mean_traffic_bits": float(np.mean([series[index][2] for series in seed_series])),
+        }
+        for index, round_number in enumerate(expected_rounds)
+    ]
+
+
+def first_crossing(
+    trajectory: list[dict[str, float]], target_accuracy: float
+) -> dict[str, float]:
+    for row in trajectory:
+        if row["mean_accuracy"] >= target_accuracy:
+            return row
+    raise ValueError(f"trajectory never reaches {100 * target_accuracy:.2f}%")
+
+
+def matched_accuracy_rows() -> list[dict[str, float | str]]:
+    p17_histories = read_csv(P17_HISTORIES)
+    p17_runs = read_csv(P17_RUNS)
+    p19_histories = read_csv(P19_HISTORIES)
+    p19_runs = read_csv(P19_RUNS)
+    sources = {
+        "fmnist_mlp": (
+            compact_trajectory(
+                benchmark="fmnist_mlp", method="event",
+                histories=p17_histories, runs=p17_runs,
+            ),
+            compact_trajectory(
+                benchmark="fmnist_mlp", method="dense",
+                histories=p17_histories, runs=p17_runs,
+            ),
+        ),
+        "fmnist_cnn": (
+            compact_trajectory(
+                benchmark="fmnist_cnn", method="event",
+                histories=p17_histories, runs=p17_runs,
+            ),
+            compact_trajectory(
+                benchmark="fmnist_cnn", method="dense",
+                histories=p17_histories, runs=p17_runs,
+            ),
+        ),
+        "cifar_cnn": (
+            compact_trajectory(
+                benchmark="cifar_cnn", method="event",
+                histories=p19_histories, runs=p19_runs,
+            ),
+            compact_trajectory(
+                benchmark="cifar_cnn", method="dense",
+                histories=p19_histories, runs=p19_runs,
+            ),
+        ),
+        "cifar_resnet14": (resnet_trajectory("event"), resnet_trajectory("dense")),
+    }
+    rows: list[dict[str, float | str]] = []
+    for benchmark, (event, dense) in sources.items():
+        dense_final = dense[-1]["mean_accuracy"]
+        for margin_points in MATCHED_ACCURACY_MARGINS:
+            target = dense_final - margin_points / 100.0
+            event_crossing = first_crossing(event, target)
+            dense_crossing = first_crossing(dense, target)
+            event_bits = event_crossing["mean_traffic_bits"]
+            dense_bits = dense_crossing["mean_traffic_bits"]
+            rows.append(
+                {
+                    "benchmark": benchmark,
+                    "n_seeds": 10.0,
+                    "dense_final_accuracy": dense_final,
+                    "margin_points": margin_points,
+                    "target_accuracy": target,
+                    "event_first_round": event_crossing["round"],
+                    "dense_first_round": dense_crossing["round"],
+                    "event_traffic_bits_mean": event_bits,
+                    "dense_traffic_bits_mean": dense_bits,
+                    "event_reduction_percent": 100.0 * (1.0 - event_bits / dense_bits),
+                }
+            )
+    return rows
+
+
+def matched_accuracy_csv(rows: list[dict[str, float | str]]) -> str:
+    stream = io.StringIO(newline="")
+    fieldnames = list(rows[0])
+    writer = csv.DictWriter(stream, fieldnames=fieldnames, lineterminator="\n")
+    writer.writeheader()
+    for row in rows:
+        writer.writerow(
+            {
+                key: (f"{value:.17g}" if isinstance(value, float) else value)
+                for key, value in row.items()
+            }
+        )
+    return stream.getvalue()
+
+
+def matched_accuracy_table(rows: list[dict[str, float | str]]) -> str:
+    labels = {
+        "fmnist_mlp": "Fashion-MNIST MLP",
+        "fmnist_cnn": "Fashion-MNIST CNN",
+        "cifar_cnn": "CIFAR-10 CNN",
+        "cifar_resnet14": "CIFAR-10 ResNet-14",
+    }
+    indexed = {
+        (str(row["benchmark"]), float(row["margin_points"])): row for row in rows
+    }
+    lines = [
+        "% Generated by paper/ijcnn2027/build_visuals.py. Do not edit by hand.",
+        "\\begin{table*}[t]",
+        "\\centering",
+        "\\caption{Bidirectional traffic to matched mean-accuracy targets over ten seeds. "
+        "Targets are 10, 5, and 2 percentage points below dense FedAvg's final mean. "
+        "Cells show Event-FedAvg/dense FedAvg traffic in Gbit, followed by the "
+        "Event-FedAvg reduction in parentheses, at the first recorded checkpoint "
+        "that reaches the target.}",
+        "\\label{tab:matched-accuracy-traffic}",
+        "\\scriptsize",
+        "\\setlength{\\tabcolsep}{5pt}",
+        "\\begin{tabular*}{0.94\\textwidth}{@{\\extracolsep{\\fill}}lrrrr@{}}",
+        "\\toprule",
+        "Benchmark & Dense final [\\%] & \\multicolumn{3}{c}{Target relative to dense final} \\\\",
+        "\\cmidrule(lr){3-5}",
+        " & & $-10$ pp & $-5$ pp & $-2$ pp \\\\",
+        "\\midrule",
+    ]
+    for benchmark in labels:
+        benchmark_rows = [indexed[(benchmark, margin)] for margin in MATCHED_ACCURACY_MARGINS]
+        dense_final = 100.0 * float(benchmark_rows[0]["dense_final_accuracy"])
+        cells = []
+        for row in benchmark_rows:
+            event_gbit = float(row["event_traffic_bits_mean"]) / 1e9
+            dense_gbit = float(row["dense_traffic_bits_mean"]) / 1e9
+            reduction = float(row["event_reduction_percent"])
+            cells.append(f"{event_gbit:.2f}/{dense_gbit:.2f} ({reduction:.1f}\\%)")
+        lines.append(
+            f"{labels[benchmark]} & {dense_final:.2f} & "
+            + " & ".join(cells)
+            + " \\\\"
+        )
+    lines.extend(["\\bottomrule", "\\end{tabular*}", "\\end{table*}", ""])
+    return "\n".join(lines)
+
+
 def main_table(grouped: dict[str, list[dict[str, str]]]) -> str:
     dataset_labels = {
         "fmnist_mlp": "Fashion-MNIST MLP",
@@ -774,6 +1064,7 @@ def products() -> dict[Path, bytes]:
     configure_matplotlib()
     frontier = frontier_rows()
     validate_frontier_contract(frontier)
+    accuracy_rows = matched_accuracy_rows()
     products = {
         FRONTIER_PANEL_FILES[key]: frontier_panel(key, frontier[key], ylim)
         for key, _title, _architecture, ylim in PANELS
@@ -781,6 +1072,8 @@ def products() -> dict[Path, bytes]:
     products[FRONTIER_LEGEND] = frontier_legend()
     products[CONVERGENCE_TRAJECTORIES] = convergence_trajectories()
     products[MAIN_TABLE] = main_table(frontier).encode("utf-8")
+    products[MATCHED_ACCURACY_TABLE] = matched_accuracy_table(accuracy_rows).encode("utf-8")
+    products[MATCHED_ACCURACY_EVIDENCE] = matched_accuracy_csv(accuracy_rows).encode("utf-8")
     return products
 
 

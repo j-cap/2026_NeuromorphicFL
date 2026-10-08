@@ -27,6 +27,16 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
 
+% IEEEtran uses stretchable display skips to align the bottoms of adjacent
+% columns.  In equation-heavy columns, that stretch can become conspicuous.
+% Retain normal separation while limiting how much the page builder may add.
+\AtBeginDocument{%
+  \setlength{\abovedisplayskip}{6pt plus 1pt minus 2pt}%
+  \setlength{\belowdisplayskip}{6pt plus 1pt minus 2pt}%
+  \setlength{\abovedisplayshortskip}{3pt plus 1pt}%
+  \setlength{\belowdisplayshortskip}{4pt plus 1pt minus 1pt}%
+}
+
 \title{Event-FedAvg: Stateful Coordinate-Event Communication for Federated Learning}
 
 % Keep the initial submission anonymous if required by the final IJCNN 2027
@@ -113,10 +123,11 @@ vector exchange~\cite{he2023etfl,yoon2025etfl,zhai2026gossip}. Event-FedAvg's
 novelty claim is the complete operator and synchronization protocol rather than
 any individual ingredient.}
 
-\refstepcounter{table}\label{tab:structural-comparison}
-\begin{center}
-{\scriptsize\textsc{Table~\thetable. Closest communication operators.}}\\[-2pt]
-{\scriptsize
+\begin{table}[!h]
+\caption{Closest communication operators.}
+\label{tab:structural-comparison}
+\centering
+\scriptsize
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{0.92}
 \begin{tabular}{@{}lllll@{}}
@@ -130,9 +141,7 @@ SPARQ~\cite{singh2023sparq} & Vector & Last model & -- & Neighbors \\
 Event-FedAvg & Coord. & Leaky/full & $q_r$ & Exact round \\
 \bottomrule
 \end{tabular}
-}
-\end{center}
-\vspace{-2mm}
+\end{table}
 \spacerev{Federated spiking-neural-network work trains models whose neurons exchange
 spikes and maintain LIF states
 \cite{venkatesha2021fedsnn,chaki2023tradeoffs,tao2026sfedhifi}. Here, the
@@ -704,41 +713,28 @@ per benchmark, while the figure retains all evaluated operating points.}
 
 \input{generated/p11_alignment_table}
 
-\newrev{Table~\ref{tab:main-results} summarizes the ten-seed tradeoffs. At the
-audited final horizons, Event-FedAvg improves mean Fashion-MNIST accuracy over
-dense FedAvg by $0.23$ percentage points for the MLP and $0.20$ points for the
-CNN while using only $6.3\%$ and $7.9\%$ of dense traffic. The paired MLP
-difference is positive on nine of ten seeds. The smaller CNN difference is
-positive on eight seeds and is treated as accuracy preservation rather than a
-claim of statistical superiority. \pNineteenRev{On the compact CIFAR-10 CNN,
-Event-FedAvg reaches $57.15\pm0.71\%$ accuracy and $37.8\pm3.6\%$ worst-class
-accuracy at $3.36\pm0.06$ Gbit. Dense FedAvg reaches $54.62\pm0.75\%$ and
-$35.0\pm5.2\%$ at $23.71$ Gbit. The paired accuracy advantage is $2.54$ points
-with a 95\% interval of $[1.67,3.41]$ points and is positive on nine of ten
-pairs. Event-FedAvg therefore uses $14.2\%$ of dense traffic. Against the
-quality-selected EF-TopK point, its $0.59$-point advantage has interval
-$[-0.20,1.38]$ while using $35.1\%$ of the traffic, so we treat their accuracy
-as statistically comparable.} Figure~\ref{fig:communication-frontier} provides
-the broader comparison without duplicating those points in the table.}
+\newrev{At the audited final horizons, Event-FedAvg uses $6.3\%$, $7.9\%$,
+$14.2\%$, and $11.5\%$ of dense traffic in the model order of
+Table~\ref{tab:main-results}, while matching or exceeding dense mean accuracy.
+The paired Fashion-MNIST differences are positive on nine of ten MLP seeds and
+eight of ten CNN seeds. On compact CIFAR-10, the $2.54$-point advantage has a
+95\% interval of $[1.67,3.41]$ points. On ResNet-14, the $0.93$-point advantage
+has interval $[0.17,1.69]$ points and holds for seven pairs. These are
+end-to-end protocol comparisons. Event-FedAvg changes the representation and
+the induced server update, while dense FedAvg uses a development-selected
+constant gain.}
 
-\reviewrev{The Event-FedAvg-to-dense traffic ratios remain favorable when one
-shared downlink copy is charged in the logical-broadcast sensitivity. From
-Fashion-MNIST MLP through ResNet-14, they are $2.1\%$, $2.6\%$, $4.7\%$, and
-$3.8\%$, compared with $6.3\%$, $7.9\%$, $14.2\%$, and $11.5\%$ under
-conservative unicast. This calculation reuses the recorded packet streams and
-does not establish the ranking for arbitrary network or multicast costs.}
+\input{generated/matched_accuracy_traffic_table}
 
-\spacerev{On ResNet-14, Event-FedAvg reaches $75.14\pm0.90\%$ accuracy and
-$56.1\pm3.6\%$ worst-class accuracy at $38.66\pm0.36$ Gbit. Dense FedAvg
-reaches $74.21\pm0.74\%$ and $51.7\pm5.5\%$ at $336.56$ Gbit. The paired
-accuracy advantage is $0.93$ points with a 95\% interval of $[0.17,1.69]$ points
-and holds for seven of ten pairs. Thus Event-FedAvg uses $11.5\%$ of dense traffic.}
+\reviewrev{Table~\ref{tab:matched-accuracy-traffic} uses the first recorded
+checkpoint where the ten-seed mean reaches each uniform task-relative target.
+This post-hoc description of fixed trajectories is not target-based early
+stopping. Event-FedAvg uses $91.5$--$95.6\%$ less traffic across the twelve
+cells. Figure~\ref{fig:communication-frontier} retains all sparse baselines.}
 
-\reviewrev{This is an end-to-end protocol operating-point comparison, not
-evidence that sparsity alone causes the accuracy gain. Event-FedAvg changes both
-the transmitted representation and the induced server update, including a
-decaying quantum, whereas the dense reference uses the development-selected
-constant gain from the preceding audit.}
+\reviewrev{With one shared downlink copy, the corresponding Event-to-dense
+ratios are $2.1\%$, $2.6\%$, $4.7\%$, and $3.8\%$. This sensitivity reuses the
+recorded streams and does not establish rankings for arbitrary network costs.}
 
 \pNineteenRev{Figure~\ref{fig:convergence-trajectories} shows test-set
 cross-entropy for all four final-horizon campaigns. The Fashion-MNIST curves have largely
