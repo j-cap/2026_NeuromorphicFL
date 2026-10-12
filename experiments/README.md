@@ -194,6 +194,25 @@ These experiments are not part of the current frozen manuscript evidence. The
 paper therefore attributes results to the complete operator and explicitly
 does not claim an isolated gain from either reset or persistent accumulation.
 
+## P20 — Larger-client and partial-participation pilot
+
+**Question.** Does Event-FedAvg retain its communication advantage with fifty
+registered clients and uniform partial participation, once returning-client
+catch-up is charged explicitly?
+
+The one-seed pilot compares Event-FedAvg, quality-selected EF-TopK, and dense
+FedAvg on the compact CIFAR-10 CNN. It includes a 50-client full-participation
+control and a primary 10-of-50 partial-participation cell. The existing matched
+10-of-10 P19 seed-zero runs are reused. See
+[`P20_PARTIAL_PARTICIPATION_PROTOCOL.md`](P20_PARTIAL_PARTICIPATION_PROTOCOL.md).
+
+```bash
+python experiments/p20_cifar10_partial_participation.py smoke
+python experiments/p20_cifar10_partial_participation.py pilot --workers 4
+python experiments/p20_cifar10_partial_participation.py verify
+python experiments/p20_cifar10_partial_participation.py analyze
+```
+
 ## Conventions
 
 - Use fixed random seeds and Monte Carlo ensembles.

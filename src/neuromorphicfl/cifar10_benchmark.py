@@ -285,22 +285,46 @@ def load_cifar10(root: str | Path) -> tuple[np.ndarray, ...]:
     return train_X, train_y, test_X, test_y
 
 
-def class_count_matrix(regime: str = "strong") -> np.ndarray:
+def class_count_matrix(regime: str = "strong", n_clients: int = 10) -> np.ndarray:
+    """Return an exact balanced CIFAR-10 partition for ``n_clients``.
+
+    The original benchmark used ten clients.  The generalized construction
+    keeps all 50,000 training examples, equal client sizes, and equal global
+    class totals.  In the strong-skew regime, dominant classes are assigned
+    cyclically, so every class is dominant for the same number of clients.
+    The supported client counts must therefore be multiples of ten.
+    """
+    if n_clients <= 0 or n_clients % 10 != 0:
+        raise ValueError("n_clients must be a positive multiple of ten")
+    if 50_000 % n_clients != 0:
+        raise ValueError("n_clients must divide the 50,000 CIFAR-10 samples")
+
+    samples_per_client = 50_000 // n_clients
     if regime == "iid":
-        return np.full((10, 10), 500, dtype=int)
+        if samples_per_client % 10 != 0:
+            raise ValueError("IID client size must be divisible by ten")
+        return np.full(
+            (n_clients, 10), samples_per_client // 10, dtype=int
+        )
     if regime == "strong":
-        counts = np.full((10, 10), 250, dtype=int)
-        np.fill_diagonal(counts, 2750)
+        if samples_per_client % 20 != 0:
+            raise ValueError(
+                "strong-skew client size must be divisible by twenty"
+            )
+        minor = samples_per_client // 20
+        dominant = samples_per_client - 9 * minor
+        counts = np.full((n_clients, 10), minor, dtype=int)
+        counts[np.arange(n_clients), np.arange(n_clients) % 10] = dominant
         return counts
     raise ValueError(f"unknown CIFAR-10 regime {regime}")
 
 
 def make_cifar10_federation(
     *, root: str | Path, regime: str = "strong", seed: int = 3400,
-    train_eval_size: int = 5000,
+    train_eval_size: int = 5000, n_clients: int = 10,
 ) -> MulticlassFederation:
     train_X, train_y, test_X, test_y = load_cifar10(root)
-    counts = class_count_matrix(regime)
+    counts = class_count_matrix(regime, n_clients=n_clients)
     rng = np.random.default_rng(seed)
     per_class = []
     for cls in range(10):
@@ -311,7 +335,7 @@ def make_cifar10_federation(
         per_class.append(ids)
     offsets = np.zeros(10, dtype=int)
     client_X, client_y, global_ids = [], [], []
-    for client in range(10):
+    for client in range(n_clients):
         parts = []
         for cls in range(10):
             take = int(counts[client, cls])
@@ -332,7 +356,8 @@ def make_cifar10_federation(
         X_train_eval=train_X[eval_ids], y_train_eval=train_y[eval_ids],
         X_test=test_X[test_order], y_test=test_y[test_order],
         regime=regime, client_class_counts=counts,
-        periods=np.ones(10, dtype=int), weights=np.full(10, 0.1),
+        periods=np.ones(n_clients, dtype=int),
+        weights=np.full(n_clients, 1.0 / n_clients),
     )
 
 

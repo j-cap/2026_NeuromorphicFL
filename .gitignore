@@ -24,6 +24,9 @@ experiments/results/**
 !experiments/results/p17_fmnist_final_horizons/**/
 !experiments/results/p17_fmnist_final_horizons/**/*.csv
 !experiments/results/p17_fmnist_final_horizons/**/*.json
+!experiments/results/p20_cifar10_partial_participation/
+!experiments/results/p20_cifar10_partial_participation/*.csv
+!experiments/results/p20_cifar10_partial_participation/*.json
 
 # LaTeX build products
 report/*.aux
