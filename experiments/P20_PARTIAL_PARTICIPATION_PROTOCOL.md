@@ -174,6 +174,12 @@ The command generates `p20_participation_robustness.pdf` (vector),
 `p20_participation_robustness.png` (300 dpi), and
 `p20_participation_figure_audit.csv` in the P20 results directory.
 
+The figure is sized at 7.16 inches for an IEEE two-column placement; use
+\\includegraphics[width=\\textwidth]{...} inside a figure* environment.
+Typography is defined at final width, with one shared method legend.
+Regenerate the PDF and PNG after updating the plotting script; previously
+committed figure files are not automatically changed.
+
 Panel (a) shows final test accuracy, panel (b) exact total communication;
 both display sample standard deviation across ten seeds. Panel (c)
 decomposes Event-FedAvg total traffic into uplink, dense checkpoints,
