@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "purpose": "larger-client and partial-participation pilot",
+  "dataset": "CIFAR-10",
+  "architecture": "compact CNN",
+  "partition": {
+    "regime": "strong class skew",
+    "fifty_client_design": "1,000 examples per client; 550 dominant-class and 50 from each other class; five dominant clients per class"
+  },
+  "rounds": 1800,
+  "eval_stride": 60,
+  "partition_seed": 3500,
+  "train_seed": 83500,
+  "selection": "uniform without replacement each round; one schedule shared by methods",
+  "sampling_estimator": "p_i / pi_i before compression",
+  "state_aging": "lazy event-state decay rho ** participation_gap",
+  "synchronization": "selected clients catch up by ordered replay or the smaller dense checkpoint; selected clients receive the current round update; a terminal catch-up makes all registered clients exact",
+  "traffic": "initial model, selected-client requests, packet headers, addresses, signs or float values, catch-up, and terminal exact synchronization",
+  "scenarios": [
+    {
+      "scenario_id": "m10_k10",
+      "n_clients": 10,
+      "active_clients": 10,
+      "role": "matched reference"
+    },
+    {
+      "scenario_id": "m50_k50",
+      "n_clients": 50,
+      "active_clients": 50,
+      "role": "client-count scaling control"
+    },
+    {
+      "scenario_id": "m50_k10",
+      "n_clients": 50,
+      "active_clients": 10,
+      "role": "primary 20-percent participation"
+    },
+    {
+      "scenario_id": "m50_k05",
+      "n_clients": 50,
+      "active_clients": 5,
+      "role": "optional 10-percent stress test"
+    }
+  ],
+  "methods": [
+    {
+      "method": "event",
+      "configuration": "event_t025_q005"
+    },
+    {
+      "method": "ef_topk",
+      "configuration": "ef_k05"
+    },
+    {
+      "method": "dense",
+      "configuration": "dense_gain_2p0"
+    }
+  ],
+  "reference_reuse": "m10_k10 imports the frozen P19 seed-zero runs after seed and horizon checks",
+  "extension_rule": "consider ten matched seeds only after the m50_k10 pilot is stable, within one accuracy point of dense, uses less total traffic, and does not use checkpoints for at least 90 percent of nonempty syncs"
+}

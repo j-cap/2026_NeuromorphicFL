@@ -1,0 +1,10 @@
+scenario_id,scenario_role,method,n_clients,active_clients,final_test_accuracy,accuracy_minus_dense_points,final_worst_class_accuracy,total_traffic_gbit,traffic_fraction_of_dense,traffic_reduction_vs_dense,terminal_catchup_fraction,checkpoint_sync_fraction,events_per_active_client_round,return_burst_ratio
+m10_k10,matched reference,event,10,10,0.5722,2.51,0.385,3.359142576,0.1416994843,0.8583005157,0,0,1054.075611,
+m10_k10,matched reference,ef_topk,10,10,0.5694,2.23,0.356,9.58639904,0.4043852768,0.5956147232,0,0,0,
+m10_k10,matched reference,dense,10,10,0.5471,0,0.35,23.70610304,1,0,0,1,0,
+m50_k50,client-count scaling control,event,50,50,0.5772,2.5,0.379,18.06492026,0.1524073377,0.8475926623,0,0,241.4959111,0
+m50_k50,client-count scaling control,ef_topk,50,50,0.5691,1.69,0.38,63.6373552,0.5368858398,0.4631141602,0,1,0,
+m50_k50,client-count scaling control,dense,50,50,0.5522,0,0.3,118.5305152,1,0,0,1,0,
+m50_k10,primary 20-percent participation,event,50,10,0.5628,2.61,0.305,10.89228971,0.3281054119,0.6718945881,0.001935346246,0.2174933597,1146.604667,1.060255016
+m50_k10,primary 20-percent participation,ef_topk,50,10,0.5656,2.89,0.322,18.57281282,0.5594636721,0.4405363279,0.00133328776,0.3546852801,0,
+m50_k10,primary 20-percent participation,dense,50,10,0.5367,0,0.323,33.19753139,1,0,0.0007932348851,1,0,

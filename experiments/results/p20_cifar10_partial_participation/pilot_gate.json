@@ -1,0 +1,8 @@
+{
+  "scenario": "m50_k10",
+  "accuracy_within_one_point_of_dense": true,
+  "less_total_traffic_than_dense": true,
+  "checkpoint_sync_fraction_below_0p9": true,
+  "candidate_for_ten_seed_extension": true,
+  "note": "This is a prespecified pilot screen, not a statistical conclusion. Inspect learning curves and return-burst diagnostics before extension."
+}
