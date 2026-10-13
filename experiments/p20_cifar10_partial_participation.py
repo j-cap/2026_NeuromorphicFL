@@ -318,8 +318,8 @@ def run_point(
 ) -> str:
     point = POINT_BY_ID[point_id]
     scenario = SCENARIO_BY_ID[point.scenario_id]
-    if seed_index is not None and scenario.scenario_id != "m50_k10":
-        raise ValueError("the ten-seed extension is restricted to m50_k10")
+    if seed_index is not None and scenario.scenario_id not in ("m50_k10", "m50_k05"):
+        raise ValueError("the ten-seed extension is restricted to m50_k10 or m50_k05")
     if scenario.scenario_id == "m10_k10":
         import_p19_reference()
         return f"reuse frozen P19 reference {point_id}"
@@ -415,12 +415,13 @@ def campaign(scenario_ids: tuple[str, ...], workers: int, force: bool) -> None:
 
 
 def ten_seed_campaign(
-    workers: int, start_seed: int, end_seed: int, force: bool
+    workers: int, start_seed: int, end_seed: int, force: bool,
+    scenario_id: str = "m50_k10",
 ) -> None:
     if start_seed > end_seed:
         raise ValueError("start seed must not exceed end seed")
     prepare_data()
-    scenario = SCENARIO_BY_ID["m50_k10"]
+    scenario = SCENARIO_BY_ID[scenario_id]
     points = [point for point in POINTS if point.scenario_id == scenario.scenario_id]
     for seed_index in range(start_seed, end_seed + 1):
         write_schedule(scenario, seed_index=seed_index)
@@ -432,7 +433,7 @@ def ten_seed_campaign(
     ]
     total = len(points) * (end_seed - start_seed + 1)
     print(
-        f"P20 m50_k10 seeds {start_seed}-{end_seed}: "
+        f"P20 {scenario_id} seeds {start_seed}-{end_seed}: "
         f"{total - len(jobs)}/{total} complete, {len(jobs)} pending, "
         f"workers={workers}",
         flush=True,
@@ -629,8 +630,8 @@ def analyze(include_stress: bool = False) -> None:
     print(json.dumps(gate, indent=2), flush=True)
 
 
-def load_ten_seed() -> tuple[pd.DataFrame, pd.DataFrame]:
-    points = [point for point in POINTS if point.scenario_id == "m50_k10"]
+def load_ten_seed(scenario_id: str = "m50_k10") -> tuple[pd.DataFrame, pd.DataFrame]:
+    points = [point for point in POINTS if point.scenario_id == scenario_id]
     missing = [
         (point.point_id, seed_index)
         for point in points
@@ -639,7 +640,7 @@ def load_ten_seed() -> tuple[pd.DataFrame, pd.DataFrame]:
     ]
     if missing:
         raise RuntimeError(
-            f"P20 m50_k10 ten-seed extension is incomplete: "
+            f"P20 {scenario_id} ten-seed extension is incomplete: "
             f"{len(missing)} point/seed pairs missing"
         )
     summaries = []
@@ -657,7 +658,7 @@ def load_ten_seed() -> tuple[pd.DataFrame, pd.DataFrame]:
     runs = pd.concat(summaries, ignore_index=True, sort=False)
     history = pd.concat(histories, ignore_index=True, sort=False)
     if len(runs) != 30 or runs.duplicated(["point_id", "seed_index"]).any():
-        raise RuntimeError("invalid P20 m50_k10 ten-seed run grid")
+        raise RuntimeError(f"invalid P20 {scenario_id} ten-seed run grid")
     return runs, history
 
 
@@ -677,8 +678,9 @@ def paired_interval(values: np.ndarray) -> dict[str, float | int]:
     }
 
 
-def finalize_ten_seed() -> None:
-    runs, histories = load_ten_seed()
+def finalize_ten_seed(scenario_id: str = "m50_k10") -> None:
+    runs, histories = load_ten_seed(scenario_id)
+    prefix = "ten_seed" if scenario_id == "m50_k10" else "stress_ten_seed"
     metrics = (
         "final_train_objective",
         "final_test_ce",
@@ -724,14 +726,14 @@ def finalize_ten_seed() -> None:
                 }
             )
     atomic_csv(
-        runs.sort_values(["point_id", "seed_index"]), OUT / "ten_seed_runs.csv"
+        runs.sort_values(["point_id", "seed_index"]), OUT / f"{prefix}_runs.csv"
     )
     atomic_csv(
         histories.sort_values(["point_id", "seed_index", "round"]),
-        OUT / "ten_seed_histories.csv",
+        OUT / f"{prefix}_histories.csv",
     )
-    atomic_csv(aggregate, OUT / "ten_seed_aggregate.csv")
-    atomic_csv(pd.DataFrame(paired_rows), OUT / "ten_seed_paired_differences.csv")
+    atomic_csv(aggregate, OUT / f"{prefix}_aggregate.csv")
+    atomic_csv(pd.DataFrame(paired_rows), OUT / f"{prefix}_paired_differences.csv")
     print(
         aggregate[
             [
@@ -747,10 +749,10 @@ def finalize_ten_seed() -> None:
     )
 
 
-def verify_ten_seed() -> None:
-    runs, histories = load_ten_seed()
+def verify_ten_seed(scenario_id: str = "m50_k10") -> None:
+    runs, histories = load_ten_seed(scenario_id)
     problems: list[str] = []
-    points = [point for point in POINTS if point.scenario_id == "m50_k10"]
+    points = [point for point in POINTS if point.scenario_id == scenario_id]
     expected_pairs = {
         (point.point_id, seed_index)
         for point in points
@@ -767,7 +769,7 @@ def verify_ten_seed() -> None:
             problems.append(f"partition seed drift: {row.point_id}/s{seed_index}")
         if int(row.train_seed) != train_seed(seed_index):
             problems.append(f"training seed drift: {row.point_id}/s{seed_index}")
-        scenario = SCENARIO_BY_ID["m50_k10"]
+        scenario = SCENARIO_BY_ID[scenario_id]
         expected_selection = selection_seed(scenario, seed_index)
         if int(row.selection_seed) != expected_selection:
             problems.append(f"selection seed drift: {row.point_id}/s{seed_index}")
@@ -802,13 +804,13 @@ def verify_ten_seed() -> None:
     for seed_index in range(10):
         _, _, activity_path = output_paths(event, seed_index)
         activity = pd.read_csv(activity_path)
-        expected_rows = ROUNDS * SCENARIO_BY_ID["m50_k10"].active_clients
+        expected_rows = ROUNDS * SCENARIO_BY_ID[scenario_id].active_clients
         if len(activity) != expected_rows:
             problems.append(f"event activity rows mismatch: seed={seed_index}")
 
     if problems:
         raise RuntimeError("\n".join(problems))
-    print("P20 verification passed: 30 matched m50_k10 runs", flush=True)
+    print(f"P20 verification passed: 30 matched {scenario_id} runs", flush=True)
 
 
 def verify(include_stress: bool = False) -> None:
@@ -995,6 +997,13 @@ def parser() -> argparse.ArgumentParser:
     verify_parser.add_argument("--include-stress", action="store_true")
     sub.add_parser("finalize-ten-seed")
     sub.add_parser("verify-ten-seed")
+    stress_ten = sub.add_parser("stress-ten-seed")
+    stress_ten.add_argument("--workers", type=int, choices=range(1, 9), default=1)
+    stress_ten.add_argument("--start-seed", type=int, choices=range(10), default=0)
+    stress_ten.add_argument("--end-seed", type=int, choices=range(10), default=9)
+    stress_ten.add_argument("--force", action="store_true")
+    sub.add_parser("verify-stress-ten-seed")
+    sub.add_parser("finalize-stress-ten-seed")
     return root
 
 
@@ -1037,6 +1046,10 @@ def main() -> None:
             args.end_seed,
             args.force,
         )
+    elif args.command == "stress-ten-seed":
+        protocol(write=True)
+        ten_seed_campaign(args.workers, args.start_seed, args.end_seed, args.force,
+                          scenario_id="m50_k05")
     elif args.command == "analyze":
         analyze(args.include_stress)
     elif args.command == "verify":
@@ -1045,6 +1058,10 @@ def main() -> None:
         finalize_ten_seed()
     elif args.command == "verify-ten-seed":
         verify_ten_seed()
+    elif args.command == "verify-stress-ten-seed":
+        verify_ten_seed("m50_k05")
+    elif args.command == "finalize-stress-ten-seed":
+        finalize_ten_seed("m50_k05")
     else:
         raise RuntimeError(args.command)
 
