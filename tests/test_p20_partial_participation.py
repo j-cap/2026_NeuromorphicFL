@@ -52,10 +52,7 @@ class TenSeedExtensionTests(unittest.TestCase):
         self.assertEqual(first.shape, (p20.ROUNDS, 5))
         self.assertTrue(all(len(np.unique(row)) == 5 for row in first))
         self.assertFalse(np.array_equal(first, second))
-        self.assertEqual(
-            p20.selection_seed(scenario, 0),
-            p20.selection_seed(scenario, 0),
-        )
+        self.assertNotEqual(p20.selection_seed(scenario, 0), p20.selection_seed(scenario, 1))
 
     def test_stress_cli_commands_are_registered(self) -> None:
         for command in ("stress-ten-seed", "verify-stress-ten-seed",
