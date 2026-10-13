@@ -55,6 +55,8 @@ class FinalBaselineConfig:
     strom_threshold: float = 0.005
     init_scale: float = 0.5
     server_gain: float = 1.0
+    server_gain_exponent: float = 0.0
+    server_gain_scale: float = 100.0
     event_memory: Literal["persistent", "memoryless"] = "persistent"
     event_reset: Literal["full", "subtractive"] = "full"
 
@@ -154,6 +156,13 @@ def run_final_baseline(
             raise ValueError("alignment_client_reference_size must be positive")
     if not np.isfinite(config.server_gain) or config.server_gain <= 0.0:
         raise ValueError("server_gain must be finite and positive")
+    if (not np.isfinite(config.server_gain_exponent)
+            or config.server_gain_exponent < 0.0
+            or not np.isfinite(config.server_gain_scale)
+            or config.server_gain_scale <= 0.0):
+        raise ValueError("invalid dense server-gain schedule")
+    if method != "dense" and config.server_gain_exponent != 0.0:
+        raise ValueError("scheduled server gain is defined only for dense FedAvg")
     if config.event_memory not in ("persistent", "memoryless"):
         raise ValueError(f"unsupported event memory: {config.event_memory}")
     if config.event_reset not in ("full", "subtractive"):
@@ -383,7 +392,11 @@ def run_final_baseline(
         # communication payload.  The frozen campaigns use one.  P8 exposes
         # this standard degree of freedom for a development-only dense-FedAvg
         # fairness audit.
-        aggregate *= float(config.server_gain)
+        # Zero exponent exactly preserves all historical baseline trajectories.
+        gain = float(config.server_gain) * (
+            1.0 + rnd / float(config.server_gain_scale)
+        ) ** (-float(config.server_gain_exponent))
+        aggregate *= gain
         if audit_round:
             audit_w_before = w.copy()
         w += aggregate
@@ -698,6 +711,8 @@ def run_final_baseline(
         "strom_threshold": float(config.strom_threshold),
         "init_scale": float(config.init_scale),
         "server_gain": float(config.server_gain),
+        "server_gain_exponent": float(config.server_gain_exponent),
+        "server_gain_scale": float(config.server_gain_scale),
         "event_memory": config.event_memory,
         "event_reset": config.event_reset,
     }
