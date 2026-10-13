@@ -1,0 +1,27 @@
+ .../m10_k10_dense_p3500_r1800_history.csv          |    32 [32m+[m
+ .../m10_k10_dense_p3500_r1800_summary.csv          |     2 [32m+[m
+ .../m10_k10_ef_topk_p3500_r1800_history.csv        |    32 [32m+[m
+ .../m10_k10_ef_topk_p3500_r1800_summary.csv        |     2 [32m+[m
+ .../m10_k10_event_p3500_r1800_history.csv          |    32 [32m+[m
+ .../m10_k10_event_p3500_r1800_summary.csv          |     2 [32m+[m
+ .../m50_k10_dense_p3500_r1800_history.csv          |    32 [32m+[m
+ .../m50_k10_dense_p3500_r1800_summary.csv          |     2 [32m+[m
+ .../m50_k10_ef_topk_p3500_r1800_history.csv        |    32 [32m+[m
+ .../m50_k10_ef_topk_p3500_r1800_summary.csv        |     2 [32m+[m
+ .../m50_k10_event_p3500_r1800_activity.csv         | 18001 [32m++++[m
+ .../m50_k10_event_p3500_r1800_history.csv          |    32 [32m+[m
+ .../m50_k10_event_p3500_r1800_summary.csv          |     2 [32m+[m
+ .../m50_k50_dense_p3500_r1800_history.csv          |    32 [32m+[m
+ .../m50_k50_dense_p3500_r1800_summary.csv          |     2 [32m+[m
+ .../m50_k50_ef_topk_p3500_r1800_history.csv        |    32 [32m+[m
+ .../m50_k50_ef_topk_p3500_r1800_summary.csv        |     2 [32m+[m
+ .../m50_k50_event_p3500_r1800_activity.csv         | 90001 [32m+++++++++++++++++++[m
+ .../m50_k50_event_p3500_r1800_history.csv          |    32 [32m+[m
+ .../m50_k50_event_p3500_r1800_summary.csv          |     2 [32m+[m
+ .../pilot_comparison.csv                           |    10 [32m+[m
+ .../pilot_gate.json                                |     8 [32m+[m
+ .../protocol.json                                  |    61 [32m+[m
+ .../selection_schedule_m10_k10.csv                 |  1801 [32m+[m
+ .../selection_schedule_m50_k10.csv                 |  1801 [32m+[m
+ .../selection_schedule_m50_k50.csv                 |  1801 [32m+[m
+ 26 files changed, 113790 insertions(+)

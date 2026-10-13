@@ -1,0 +1,5 @@
+comparison,metric,n,mean_difference,std_difference,ci95_low,ci95_high,n_positive
+event_minus_ef_topk,final_test_accuracy,10,-0.00081,0.005089302506,-0.004450667432,0.002830667432,4
+event_minus_ef_topk,unicast_hybrid_total_bits,10,-7909541793,194895428.9,-8048961574,-7770122012,0
+event_minus_dense,final_test_accuracy,10,0.02467,0.006845931476,0.01977271599,0.02956728401,10
+event_minus_dense,unicast_hybrid_total_bits,10,-2.253155556e+10,194723918.9,-2.267085265e+10,-2.239225847e+10,0

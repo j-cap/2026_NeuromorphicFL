@@ -1,0 +1,10 @@
+{
+  "reference_history": "dense_g15_p4100_dense-horizon-r1800_history.csv",
+  "candidate_history": "dense_g15_p4100_dense-horizon-audit_history.csv",
+  "reference_available": true,
+  "overlap_target_round": 1800,
+  "accuracy_exact_match": true,
+  "max_abs_train_ce_difference": 0.0,
+  "max_abs_test_ce_difference": 0.0,
+  "numerically_reproduced": true
+}
