@@ -43,6 +43,25 @@ class TenSeedExtensionTests(unittest.TestCase):
         point = p20.POINT_BY_ID["m50_k10_event"]
         self.assertEqual(p20.output_paths(point), p20.output_paths(point, 0))
 
+    def test_stress_seed_zero_reuses_pilot_and_schedule_has_five(self) -> None:
+        point = p20.POINT_BY_ID["m50_k05_event"]
+        scenario = p20.SCENARIO_BY_ID["m50_k05"]
+        self.assertEqual(p20.output_paths(point), p20.output_paths(point, 0))
+        first = p20.schedule_for(scenario, seed_index=0)
+        second = p20.schedule_for(scenario, seed_index=1)
+        self.assertEqual(first.shape, (p20.ROUNDS, 5))
+        self.assertTrue(all(len(np.unique(row)) == 5 for row in first))
+        self.assertFalse(np.array_equal(first, second))
+        self.assertEqual(
+            p20.selection_seed(scenario, 0),
+            p20.selection_seed(scenario, 0),
+        )
+
+    def test_stress_cli_commands_are_registered(self) -> None:
+        for command in ("stress-ten-seed", "verify-stress-ten-seed",
+                        "finalize-stress-ten-seed"):
+            self.assertEqual(p20.parser().parse_args([command]).command, command)
+
     def test_seed_mapping_is_matched_and_distinct(self) -> None:
         scenario = p20.SCENARIO_BY_ID["m50_k10"]
         first = p20.schedule_for(scenario, seed_index=0)
