@@ -161,6 +161,27 @@ The 10% scenario is a stress test, not an independently tuned configuration.
 Do not claim equivalence of prediction accuracy based solely on a
 non-significant difference.
 
+## Publication-figure generation
+
+After both ten-seed campaigns are complete and verified, generate the
+three-panel visualization from the frozen per-seed CSVs (no GPU required):
+
+```bat
+python experiments\p20_plot_participation.py
+```
+
+The command generates `p20_participation_robustness.pdf` (vector),
+`p20_participation_robustness.png` (300 dpi), and
+`p20_participation_figure_audit.csv` in the P20 results directory.
+
+Panel (a) shows final test accuracy, panel (b) exact total communication;
+both display sample standard deviation across ten seeds. Panel (c)
+decomposes Event-FedAvg total traffic into uplink, dense checkpoints,
+terminal catch-up and remaining synchronization traffic. The residual
+component is defined arithmetically, not assumed to be all replay traffic.
+Figures show observed aggregates, not matched-accuracy comparisons.
+No experiment or model parameters are changed.
+
 ## Saved evidence
 
 The output directory is
