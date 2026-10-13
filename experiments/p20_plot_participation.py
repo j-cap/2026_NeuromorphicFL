@@ -1,7 +1,7 @@
 """Publication-oriented P20 participation robustness figure.
 
 Usage: python experiments/p20_plot_participation.py
-Produces PDF, PNG and a CSV audit next to the frozen P20 data.
+Produces three independent panel PDFs/PNGs, two legend PDFs/PNGs, and a CSV audit.
 """
 from __future__ import annotations
 
@@ -78,81 +78,89 @@ def summarize(runs: pd.DataFrame) -> pd.DataFrame:
 
 
 def draw(summary: pd.DataFrame, root: Path, dpi: int) -> None:
-    """Render at final IEEE two-column width; typography is not scaled down later."""
+    """Export independent vector panels and legends for LaTeX subfigures."""
     plt.rcParams.update({
         "font.family": "DejaVu Sans", "font.size": 8,
-        "axes.labelsize": 8, "axes.titlesize": 8.5,
+        "axes.labelsize": 8, "axes.titlesize": 8,
         "xtick.labelsize": 7.5, "ytick.labelsize": 7.5,
         "legend.fontsize": 7, "pdf.fonttype": 42, "ps.fonttype": 42,
         "axes.linewidth": 0.65, "savefig.facecolor": "white",
     })
-    fig, axes = plt.subplots(
-        1, 3, figsize=(7.16, 2.75),
-        gridspec_kw={"width_ratios": [1.04, 1.04, 1.1]},
-    )
-    # Reserve top margin for a common method legend, and bottom for traffic legend.
-    fig.subplots_adjust(left=0.072, right=0.99, top=0.77, bottom=0.34,
-                        wspace=0.43)
-    handles = []
-    for method in METHODS:
-        sub = summary[summary.method == method].sort_values("participation_pct")
-        x = sub.participation_pct.to_numpy()
-        style = dict(color=COLORS[method], marker=MARKERS[method],
-                     linewidth=1.25, markersize=4, capsize=2,
-                     elinewidth=0.9, markeredgecolor="white", markeredgewidth=0.4)
-        handle = axes[0].errorbar(
-            x, sub.accuracy_mean_pct, yerr=sub.accuracy_sd_pp,
-            label=LABELS[method], **style
-        )
-        axes[1].errorbar(x, sub.traffic_mean_gbit,
-                         yerr=sub.traffic_sd_gbit, **style)
-        handles.append(handle)
-    for ax in axes[:2]:
-        ax.set_xticks([10, 20], ["10", "20"])
+    stem = "p20_participation_"
+    def export(fig, name):
+        fig.savefig(root / f"{stem}{name}.pdf", bbox_inches="tight", pad_inches=0.035)
+        fig.savefig(root / f"{stem}{name}.png", dpi=dpi,
+                    bbox_inches="tight", pad_inches=0.035)
+        plt.close(fig)
+
+    method_handles = []
+    for metric, ylabel, filename in (
+        ("accuracy_mean_pct", "Test accuracy (%)", "accuracy"),
+        ("traffic_mean_gbit", "Exact traffic (Gbit)", "communication"),
+    ):
+        fig, ax = plt.subplots(figsize=(2.30, 1.85))
+        fig.subplots_adjust(left=0.24, right=0.97, bottom=0.25, top=0.97)
+        for method in METHODS:
+            sub = summary[summary.method == method].sort_values("participation_pct")
+            x = sub.participation_pct.to_numpy()
+            uncertainty = ("accuracy_sd_pp" if metric == "accuracy_mean_pct"
+                           else "traffic_sd_gbit")
+            handle = ax.errorbar(
+                x, sub[metric], yerr=sub[uncertainty],
+                color=COLORS[method], marker=MARKERS[method],
+                linewidth=1.25, markersize=4, capsize=2,
+                elinewidth=0.9, markeredgecolor="white",
+                markeredgewidth=0.4, label=LABELS[method])
+            if metric == "accuracy_mean_pct":
+                method_handles.append(handle)
+        ax.set_xticks([10, 20])
         ax.set_xlim(7.5, 22.5)
+        ax.set_xlabel("Participation (%)")
+        ax.set_ylabel(ylabel)
         ax.grid(axis="y", color="#dedede", linewidth=0.55)
         ax.set_axisbelow(True)
-    axes[0].set_ylabel("Test accuracy (%)")
-    axes[1].set_ylabel("Exact traffic (Gbit)")
+        ax.spines[["top", "right"]].set_visible(False)
+        export(fig, filename)
+
     event = summary[summary.method == "event"].sort_values("participation_pct")
+    fig, ax = plt.subplots(figsize=(2.48, 1.85))
+    fig.subplots_adjust(left=0.23, right=0.98, bottom=0.25, top=0.97)
     x = np.arange(2)
     bottom = np.zeros(2)
-    # The other-sync component is a residual: never label it as measured replay.
     components = [
         ("uplink_gbit", "Uplink", "#167f85"),
         ("checkpoint_downlink_gbit", "Checkpoints", "#da8c35"),
         ("other_gbit", "Other sync.", "#8c92a2"),
         ("terminal_gbit", "Final catch-up", "#b7c7d1"),
     ]
+    component_handles = []
     for col, name, color in components:
         values = event[col].to_numpy(dtype=float)
-        axes[2].bar(x, values, bottom=bottom, width=0.57, label=name,
-                    color=color, edgecolor="white", linewidth=0.35)
+        handle = ax.bar(x, values, bottom=bottom, width=0.57,
+                        color=color, edgecolor="white", linewidth=0.35, label=name)
+        component_handles.append(handle)
         bottom += values
-    # Assert plot decomposition is consistent with the audit total.
-    np.testing.assert_allclose(bottom, event.traffic_mean_gbit.to_numpy(),
-                               rtol=1e-10, atol=1e-7)
-    axes[2].set_xticks(x, ["10", "20"])
-    axes[2].set_ylabel("Event traffic (Gbit)")
-    axes[2].grid(axis="y", color="#dedede", linewidth=0.55)
-    axes[2].set_axisbelow(True)
-    for ax, heading in zip(axes, (
-        "(a) Test accuracy", "(b) Total communication",
-        "(c) Traffic composition",
-    )):
-        ax.set_title(heading, loc="left", fontweight="bold", pad=7)
-        ax.set_xlabel("Participation (%)")
-        ax.spines[["top", "right"]].set_visible(False)
-    fig.legend(handles, [LABELS[m] for m in METHODS], loc="upper center",
-               bbox_to_anchor=(0.5, 0.96), ncol=3, frameon=False,
-               columnspacing=2.5, handlelength=2)
-    axes[2].legend(loc="upper center", bbox_to_anchor=(0.5, -0.33),
-                   ncol=2, frameon=False, handlelength=1.3,
-                   columnspacing=0.65, labelspacing=0.5)
-    out = root / "p20_participation_robustness"
-    fig.savefig(out.with_suffix(".pdf"))
-    fig.savefig(out.with_suffix(".png"), dpi=dpi)
-    plt.close(fig)
+    np.testing.assert_allclose(
+        bottom, event.traffic_mean_gbit.to_numpy(), rtol=1e-10, atol=1e-7)
+    ax.set_xticks(x, ["10", "20"])
+    ax.set_xlabel("Participation (%)")
+    ax.set_ylabel("Event traffic (Gbit)")
+    ax.grid(axis="y", color="#dedede", linewidth=0.55)
+    ax.set_axisbelow(True)
+    ax.spines[["top", "right"]].set_visible(False)
+    export(fig, "composition")
+
+    # These independent legends are placed and scaled by LaTeX, as with
+    # the manuscript's communication-frontier and convergence figures.
+    def legend_pdf(handles, labels, name, width, ncol):
+        fig = plt.figure(figsize=(width, 0.28))
+        fig.legend(handles, labels, loc="center", ncol=ncol, frameon=False,
+                   fontsize=7, columnspacing=1.45, handlelength=1.7)
+        export(fig, name)
+    legend_pdf(method_handles, [LABELS[m] for m in METHODS],
+               "method_legend", 5.1, 3)
+    legend_pdf(component_handles, [entry[1] for entry in components],
+               "traffic_legend", 6.0, 4)
 
 
 def main() -> None:
@@ -168,7 +176,7 @@ def main() -> None:
     draw(summary, root, args.dpi)
     print(summary[["participation_pct", "method", "accuracy_mean_pct",
                    "accuracy_sd_pp", "traffic_mean_gbit"]].to_string(index=False))
-    print(f"Saved PDF, PNG and audit CSV in {root}")
+    print(f"Saved three panel PDFs/PNGs, two legends and audit CSV in {root}")
 
 
 if __name__ == "__main__":
