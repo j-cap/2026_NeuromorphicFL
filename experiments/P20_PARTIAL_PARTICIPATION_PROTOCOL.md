@@ -102,6 +102,24 @@ python experiments\p20_cifar10_partial_participation.py verify --include-stress
 python experiments\p20_cifar10_partial_participation.py analyze --include-stress
 ```
 
+## Matched ten-seed extension
+
+After the pilot gate passes, extend only the primary `m50_k10` scenario.  The
+campaign runs Event-FedAvg, quality-selected EF-TopK, and dense FedAvg with ten
+matched partition, training, and client-selection seeds.  Seed zero reuses the
+completed pilot, leaving 27 new runs.  The campaign is resumable.
+
+```bat
+python experiments\p20_cifar10_partial_participation.py ten-seed --workers 4
+python experiments\p20_cifar10_partial_participation.py status
+python experiments\p20_cifar10_partial_participation.py verify-ten-seed
+python experiments\p20_cifar10_partial_participation.py finalize-ten-seed
+```
+
+Use `--start-seed` and `--end-seed` to split the work into batches.  Complete
+point/seed pairs are skipped unless `--force` is supplied.  A single failed
+pair can be resumed explicitly with `point --point-id ... --seed-index ...`.
+
 ## Saved evidence
 
 The output directory is

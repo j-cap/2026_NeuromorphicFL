@@ -14,6 +14,7 @@ import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import asdict, dataclass, replace
 import json
+import math
 import os
 from pathlib import Path
 import sys
@@ -48,7 +49,8 @@ from p12_headline_ten_seed import CIFAR_BASE
 DATA = REPO / "data" / "cifar-10"
 OUT = REPO / "experiments" / "results" / "p20_cifar10_partial_participation"
 P19 = REPO / "experiments" / "results" / "p19_cifar10_cnn_final_horizons"
-PARTITION_SEED = 3500
+PARTITION_SEEDS = tuple(range(3500, 4500, 100))
+PARTITION_SEED = PARTITION_SEEDS[0]
 TRAIN_SEED = 80_000 + PARTITION_SEED
 ROUNDS = 1800
 EVAL_STRIDE = 60
@@ -102,8 +104,23 @@ P19_REFERENCE_IDS = {
 }
 
 
-def selection_seed(scenario: Scenario) -> int:
-    return 91_000 + PARTITION_SEED + 100 * scenario.n_clients + scenario.active_clients
+def partition_seed(seed_index: int) -> int:
+    if not 0 <= seed_index < len(PARTITION_SEEDS):
+        raise ValueError(f"seed index must be in [0, {len(PARTITION_SEEDS) - 1}]")
+    return PARTITION_SEEDS[seed_index]
+
+
+def train_seed(seed_index: int) -> int:
+    return 80_000 + partition_seed(seed_index)
+
+
+def selection_seed(scenario: Scenario, seed_index: int = 0) -> int:
+    return (
+        91_000
+        + partition_seed(seed_index)
+        + 100 * scenario.n_clients
+        + scenario.active_clients
+    )
 
 
 def config_for(point: Point, rounds: int = ROUNDS):
@@ -117,8 +134,16 @@ def config_for(point: Point, rounds: int = ROUNDS):
     raise ValueError(point.method)
 
 
-def output_paths(point: Point) -> tuple[Path, Path, Path]:
-    stem = f"{point.point_id}_p{PARTITION_SEED}_r{ROUNDS}"
+def output_paths(
+    point: Point, seed_index: int | None = None
+) -> tuple[Path, Path, Path]:
+    # The completed pilot is seed zero. Preserve its original filenames so the
+    # ten-seed extension reuses rather than duplicates those results.
+    if seed_index in (None, 0):
+        stem = f"{point.point_id}_p{PARTITION_SEED}_r{ROUNDS}"
+    else:
+        seed = partition_seed(seed_index)
+        stem = f"{point.point_id}_s{seed_index}_p{seed}_r{ROUNDS}"
     return (
         OUT / f"{stem}_summary.csv",
         OUT / f"{stem}_history.csv",
@@ -126,8 +151,8 @@ def output_paths(point: Point) -> tuple[Path, Path, Path]:
     )
 
 
-def complete(point: Point) -> bool:
-    summary, history, activity = output_paths(point)
+def complete(point: Point, seed_index: int | None = None) -> bool:
+    summary, history, activity = output_paths(point, seed_index)
     return summary.exists() and history.exists() and (
         point.method != "event"
         or point.scenario_id == "m10_k10"
@@ -149,30 +174,42 @@ def atomic_json(payload: dict[str, object], path: Path) -> None:
     os.replace(temporary, path)
 
 
-def schedule_for(scenario: Scenario, rounds: int = ROUNDS) -> np.ndarray:
+def schedule_for(
+    scenario: Scenario, rounds: int = ROUNDS, seed_index: int = 0
+) -> np.ndarray:
     return participation_schedule(
         n_rounds=rounds,
         n_clients=scenario.n_clients,
         active_clients=scenario.active_clients,
-        seed=selection_seed(scenario),
+        seed=selection_seed(scenario, seed_index),
     )
 
 
-def write_schedule(scenario: Scenario) -> Path:
-    schedule = schedule_for(scenario)
+def write_schedule(scenario: Scenario, seed_index: int | None = None) -> Path:
+    effective_seed_index = 0 if seed_index is None else seed_index
+    schedule = schedule_for(scenario, seed_index=effective_seed_index)
     frame = pd.DataFrame(
         schedule,
         columns=[f"slot_{slot}" for slot in range(scenario.active_clients)],
     )
     frame.insert(0, "round", np.arange(1, ROUNDS + 1))
-    path = OUT / f"selection_schedule_{scenario.scenario_id}.csv"
+    if seed_index in (None, 0):
+        path = OUT / f"selection_schedule_{scenario.scenario_id}.csv"
+    else:
+        seed = partition_seed(seed_index)
+        path = OUT / (
+            f"selection_schedule_{scenario.scenario_id}_s{seed_index}_p{seed}.csv"
+        )
     atomic_csv(frame, path)
     return path
 
 
-def metadata(point: Point, schedule: np.ndarray) -> dict[str, object]:
+def metadata(
+    point: Point, schedule: np.ndarray, seed_index: int | None = None
+) -> dict[str, object]:
     scenario = SCENARIO_BY_ID[point.scenario_id]
-    return {
+    effective_seed_index = 0 if seed_index is None else seed_index
+    payload: dict[str, object] = {
         "point_id": point.point_id,
         "scenario_id": scenario.scenario_id,
         "scenario_role": scenario.role,
@@ -181,12 +218,15 @@ def metadata(point: Point, schedule: np.ndarray) -> dict[str, object]:
         "n_clients": scenario.n_clients,
         "active_clients": scenario.active_clients,
         "participation_rate": scenario.active_clients / scenario.n_clients,
-        "partition_seed": PARTITION_SEED,
-        "train_seed": TRAIN_SEED,
-        "selection_seed": selection_seed(scenario),
+        "partition_seed": partition_seed(effective_seed_index),
+        "train_seed": train_seed(effective_seed_index),
+        "selection_seed": selection_seed(scenario, effective_seed_index),
         "selection_schedule_sha256": schedule_sha256(schedule),
         "rounds": ROUNDS,
     }
+    if seed_index is not None:
+        payload["seed_index"] = seed_index
+    return payload
 
 
 def prepare_data() -> None:
@@ -273,22 +313,28 @@ def import_p19_reference() -> None:
     print(f"P19 reference import complete: {imported} newly imported", flush=True)
 
 
-def run_point(point_id: str, force: bool = False) -> str:
+def run_point(
+    point_id: str, force: bool = False, seed_index: int | None = None
+) -> str:
     point = POINT_BY_ID[point_id]
     scenario = SCENARIO_BY_ID[point.scenario_id]
+    if seed_index is not None and scenario.scenario_id != "m50_k10":
+        raise ValueError("the ten-seed extension is restricted to m50_k10")
     if scenario.scenario_id == "m10_k10":
         import_p19_reference()
         return f"reuse frozen P19 reference {point_id}"
 
-    summary_path, history_path, activity_path = output_paths(point)
-    if complete(point) and not force:
-        return f"reuse {point_id}"
+    summary_path, history_path, activity_path = output_paths(point, seed_index)
+    if complete(point, seed_index) and not force:
+        suffix = "" if seed_index is None else f" seed={seed_index}"
+        return f"reuse {point_id}{suffix}"
 
-    schedule = schedule_for(scenario)
+    effective_seed_index = 0 if seed_index is None else seed_index
+    schedule = schedule_for(scenario, seed_index=effective_seed_index)
     federation = make_cifar10_federation(
         root=DATA,
         regime="strong",
-        seed=PARTITION_SEED,
+        seed=partition_seed(effective_seed_index),
         n_clients=scenario.n_clients,
     )
     result = run_partial_participation(
@@ -297,7 +343,7 @@ def run_point(point_id: str, force: bool = False) -> str:
         method=point.method,
         config=config_for(point),
         schedule=schedule,
-        seed=TRAIN_SEED,
+        seed=train_seed(effective_seed_index),
         record_history=True,
         record_activity=point.method == "event",
     )
@@ -305,8 +351,12 @@ def run_point(point_id: str, force: bool = False) -> str:
     if not isinstance(history, pd.DataFrame):
         raise TypeError("partial runner did not return a history DataFrame")
     activity = result.pop("activity", None)
-    info = metadata(point, schedule)
-    info["source_campaign"] = "p20_cifar10_partial_participation"
+    info = metadata(point, schedule, seed_index=seed_index)
+    info["source_campaign"] = (
+        "p20_cifar10_partial_participation"
+        if seed_index is None
+        else "p20_cifar10_partial_participation_ten_seed"
+    )
     result.update(info)
     atomic_csv(pd.DataFrame([result]), summary_path)
     atomic_csv(history.assign(**info), history_path)
@@ -314,8 +364,10 @@ def run_point(point_id: str, force: bool = False) -> str:
         if not isinstance(activity, pd.DataFrame):
             raise TypeError("event run did not return an activity DataFrame")
         atomic_csv(activity.assign(**info), activity_path)
+    suffix = "" if seed_index is None else f" seed={seed_index}"
     return (
-        f"done {point_id}: test_acc={100 * float(result['final_test_accuracy']):.2f}%, "
+        f"done {point_id}{suffix}: "
+        f"test_acc={100 * float(result['final_test_accuracy']):.2f}%, "
         f"traffic={float(result['unicast_hybrid_total_bits']) / 1e9:.3f} Gbit"
     )
 
@@ -358,6 +410,56 @@ def campaign(scenario_ids: tuple[str, ...], workers: int, force: bool) -> None:
                 for other in futures:
                     other.cancel()
                 raise RuntimeError(f"P20 point failed: {point_id}") from error
+    finally:
+        executor.shutdown(wait=True, cancel_futures=True)
+
+
+def ten_seed_campaign(
+    workers: int, start_seed: int, end_seed: int, force: bool
+) -> None:
+    if start_seed > end_seed:
+        raise ValueError("start seed must not exceed end seed")
+    prepare_data()
+    scenario = SCENARIO_BY_ID["m50_k10"]
+    points = [point for point in POINTS if point.scenario_id == scenario.scenario_id]
+    for seed_index in range(start_seed, end_seed + 1):
+        write_schedule(scenario, seed_index=seed_index)
+    jobs = [
+        (point.point_id, seed_index)
+        for seed_index in range(start_seed, end_seed + 1)
+        for point in points
+        if force or not complete(point, seed_index)
+    ]
+    total = len(points) * (end_seed - start_seed + 1)
+    print(
+        f"P20 m50_k10 seeds {start_seed}-{end_seed}: "
+        f"{total - len(jobs)}/{total} complete, {len(jobs)} pending, "
+        f"workers={workers}",
+        flush=True,
+    )
+    if workers == 1:
+        for point_id, seed_index in jobs:
+            print(run_point(point_id, force=force, seed_index=seed_index), flush=True)
+        return
+    executor = ProcessPoolExecutor(max_workers=workers)
+    futures = {
+        executor.submit(run_point, point_id, force, seed_index): (
+            point_id,
+            seed_index,
+        )
+        for point_id, seed_index in jobs
+    }
+    try:
+        for future in as_completed(futures):
+            point_id, seed_index = futures[future]
+            try:
+                print(future.result(), flush=True)
+            except BaseException as error:
+                for other in futures:
+                    other.cancel()
+                raise RuntimeError(
+                    f"P20 ten-seed run failed: {point_id} seed={seed_index}"
+                ) from error
     finally:
         executor.shutdown(wait=True, cancel_futures=True)
 
@@ -527,6 +629,188 @@ def analyze(include_stress: bool = False) -> None:
     print(json.dumps(gate, indent=2), flush=True)
 
 
+def load_ten_seed() -> tuple[pd.DataFrame, pd.DataFrame]:
+    points = [point for point in POINTS if point.scenario_id == "m50_k10"]
+    missing = [
+        (point.point_id, seed_index)
+        for point in points
+        for seed_index in range(10)
+        if not complete(point, seed_index)
+    ]
+    if missing:
+        raise RuntimeError(
+            f"P20 m50_k10 ten-seed extension is incomplete: "
+            f"{len(missing)} point/seed pairs missing"
+        )
+    summaries = []
+    histories = []
+    for point in points:
+        for seed_index in range(10):
+            summary_path, history_path, _ = output_paths(point, seed_index)
+            summary = pd.read_csv(summary_path)
+            history = pd.read_csv(history_path)
+            # Seed zero is the frozen pilot and predates the seed_index column.
+            summary["seed_index"] = seed_index
+            history["seed_index"] = seed_index
+            summaries.append(summary)
+            histories.append(history)
+    runs = pd.concat(summaries, ignore_index=True, sort=False)
+    history = pd.concat(histories, ignore_index=True, sort=False)
+    if len(runs) != 30 or runs.duplicated(["point_id", "seed_index"]).any():
+        raise RuntimeError("invalid P20 m50_k10 ten-seed run grid")
+    return runs, history
+
+
+def paired_interval(values: np.ndarray) -> dict[str, float | int]:
+    n = len(values)
+    mean = float(np.mean(values))
+    std = float(np.std(values, ddof=1))
+    critical = 2.262157  # two-sided 95% t critical value for nine degrees of freedom
+    half_width = critical * std / math.sqrt(n)
+    return {
+        "n": n,
+        "mean_difference": mean,
+        "std_difference": std,
+        "ci95_low": mean - half_width,
+        "ci95_high": mean + half_width,
+        "n_positive": int(np.sum(values > 0)),
+    }
+
+
+def finalize_ten_seed() -> None:
+    runs, histories = load_ten_seed()
+    metrics = (
+        "final_train_objective",
+        "final_test_ce",
+        "final_test_accuracy",
+        "final_worst_class_accuracy",
+        "uplink_packetized_bits",
+        "unicast_hybrid_total_bits",
+        "operational_total_bits",
+        "coordinate_events",
+        "events_per_active_client_round",
+        "return_burst_ratio",
+        "checkpoint_downlink_bits",
+        "terminal_catchup_downlink_bits",
+    )
+    aggregate = (
+        runs.groupby(["point_id", "method", "configuration"], as_index=False)
+        .agg(
+            n_seeds=("seed_index", "size"),
+            **{
+                f"{metric}_{stat}": (metric, stat)
+                for metric in metrics
+                for stat in ("mean", "std")
+            },
+        )
+        .sort_values("method")
+    )
+    indexed = runs.set_index(["method", "seed_index"])
+    paired_rows = []
+    for comparator in ("ef_topk", "dense"):
+        for metric in ("final_test_accuracy", "unicast_hybrid_total_bits"):
+            differences = np.array(
+                [
+                    float(indexed.loc[("event", seed_index), metric])
+                    - float(indexed.loc[(comparator, seed_index), metric])
+                    for seed_index in range(10)
+                ]
+            )
+            paired_rows.append(
+                {
+                    "comparison": f"event_minus_{comparator}",
+                    "metric": metric,
+                    **paired_interval(differences),
+                }
+            )
+    atomic_csv(
+        runs.sort_values(["point_id", "seed_index"]), OUT / "ten_seed_runs.csv"
+    )
+    atomic_csv(
+        histories.sort_values(["point_id", "seed_index", "round"]),
+        OUT / "ten_seed_histories.csv",
+    )
+    atomic_csv(aggregate, OUT / "ten_seed_aggregate.csv")
+    atomic_csv(pd.DataFrame(paired_rows), OUT / "ten_seed_paired_differences.csv")
+    print(
+        aggregate[
+            [
+                "point_id",
+                "n_seeds",
+                "final_test_accuracy_mean",
+                "final_test_accuracy_std",
+                "unicast_hybrid_total_bits_mean",
+                "return_burst_ratio_mean",
+            ]
+        ].to_string(index=False),
+        flush=True,
+    )
+
+
+def verify_ten_seed() -> None:
+    runs, histories = load_ten_seed()
+    problems: list[str] = []
+    points = [point for point in POINTS if point.scenario_id == "m50_k10"]
+    expected_pairs = {
+        (point.point_id, seed_index)
+        for point in points
+        for seed_index in range(10)
+    }
+    observed_pairs = set(zip(runs.point_id.astype(str), runs.seed_index.astype(int)))
+    if observed_pairs != expected_pairs:
+        problems.append("summary grid does not match the frozen 3 x 10 protocol")
+
+    for row in runs.itertuples(index=False):
+        seed_index = int(row.seed_index)
+        expected_partition = partition_seed(seed_index)
+        if int(row.partition_seed) != expected_partition:
+            problems.append(f"partition seed drift: {row.point_id}/s{seed_index}")
+        if int(row.train_seed) != train_seed(seed_index):
+            problems.append(f"training seed drift: {row.point_id}/s{seed_index}")
+        scenario = SCENARIO_BY_ID["m50_k10"]
+        expected_selection = selection_seed(scenario, seed_index)
+        if int(row.selection_seed) != expected_selection:
+            problems.append(f"selection seed drift: {row.point_id}/s{seed_index}")
+        schedule = schedule_for(scenario, seed_index=seed_index)
+        if str(row.selection_schedule_sha256) != schedule_sha256(schedule):
+            problems.append(f"selection schedule drift: {row.point_id}/s{seed_index}")
+        if int(row.rounds) != ROUNDS:
+            problems.append(f"horizon drift: {row.point_id}/s{seed_index}")
+
+    schedule_counts = runs.groupby("seed_index")["selection_schedule_sha256"].nunique()
+    if not (schedule_counts == 1).all():
+        problems.append("methods did not share one selection schedule within each seed")
+
+    maxima = histories.groupby(["point_id", "seed_index"])["round"].max()
+    if len(maxima) != 30 or set(maxima.astype(int)) != {ROUNDS}:
+        problems.append("one or more histories do not reach round 1800")
+
+    required = (
+        "final_test_ce",
+        "final_test_accuracy",
+        "final_worst_class_accuracy",
+        "uplink_packetized_bits",
+        "unicast_hybrid_total_bits",
+        "operational_total_bits",
+    )
+    for metric in required:
+        values = pd.to_numeric(runs[metric], errors="coerce")
+        if not np.isfinite(values).all():
+            problems.append(f"invalid metric: {metric}")
+
+    event = next(point for point in points if point.method == "event")
+    for seed_index in range(10):
+        _, _, activity_path = output_paths(event, seed_index)
+        activity = pd.read_csv(activity_path)
+        expected_rows = ROUNDS * SCENARIO_BY_ID["m50_k10"].active_clients
+        if len(activity) != expected_rows:
+            problems.append(f"event activity rows mismatch: seed={seed_index}")
+
+    if problems:
+        raise RuntimeError("\n".join(problems))
+    print("P20 verification passed: 30 matched m50_k10 runs", flush=True)
+
+
 def verify(include_stress: bool = False) -> None:
     scenario_ids = PILOT_SCENARIOS + (STRESS_SCENARIOS if include_stress else ())
     runs = load_summaries(scenario_ids)
@@ -651,6 +935,11 @@ def protocol(write: bool = False) -> dict[str, object]:
             "within one accuracy point of dense, uses less total traffic, and "
             "does not use checkpoints for at least 90 percent of nonempty syncs"
         ),
+        "ten_seed_extension": (
+            "after the pilot gate passes, run only m50_k10 for Event-FedAvg, "
+            "quality-selected EF-TopK, and dense FedAvg with matched partition, "
+            "training, and client-selection seeds"
+        ),
     }
     if write:
         atomic_json(payload, OUT / "protocol.json")
@@ -668,6 +957,12 @@ def status() -> None:
             f"  {scenario.scenario_id}: {len(finished)}/{len(points)} {finished}",
             flush=True,
         )
+    print("P20 m50_k10 ten-seed extension")
+    for point in POINTS:
+        if point.scenario_id != "m50_k10":
+            continue
+        seeds = [seed_index for seed_index in range(10) if complete(point, seed_index)]
+        print(f"  {point.method}: {len(seeds)}/10 {seeds}", flush=True)
 
 
 def parser() -> argparse.ArgumentParser:
@@ -687,11 +982,19 @@ def parser() -> argparse.ArgumentParser:
     stress.add_argument("--force", action="store_true")
     point = sub.add_parser("point")
     point.add_argument("--point-id", choices=sorted(POINT_BY_ID), required=True)
+    point.add_argument("--seed-index", type=int, choices=range(10))
     point.add_argument("--force", action="store_true")
+    ten_seed = sub.add_parser("ten-seed")
+    ten_seed.add_argument("--workers", type=int, choices=range(1, 9), default=1)
+    ten_seed.add_argument("--start-seed", type=int, choices=range(10), default=0)
+    ten_seed.add_argument("--end-seed", type=int, choices=range(10), default=9)
+    ten_seed.add_argument("--force", action="store_true")
     analyze_parser = sub.add_parser("analyze")
     analyze_parser.add_argument("--include-stress", action="store_true")
     verify_parser = sub.add_parser("verify")
     verify_parser.add_argument("--include-stress", action="store_true")
+    sub.add_parser("finalize-ten-seed")
+    sub.add_parser("verify-ten-seed")
     return root
 
 
@@ -718,11 +1021,30 @@ def main() -> None:
     elif args.command == "point":
         prepare_data()
         protocol(write=True)
-        print(run_point(args.point_id, args.force), flush=True)
+        print(
+            run_point(
+                args.point_id,
+                force=args.force,
+                seed_index=args.seed_index,
+            ),
+            flush=True,
+        )
+    elif args.command == "ten-seed":
+        protocol(write=True)
+        ten_seed_campaign(
+            args.workers,
+            args.start_seed,
+            args.end_seed,
+            args.force,
+        )
     elif args.command == "analyze":
         analyze(args.include_stress)
     elif args.command == "verify":
         verify(args.include_stress)
+    elif args.command == "finalize-ten-seed":
+        finalize_ten_seed()
+    elif args.command == "verify-ten-seed":
+        verify_ten_seed()
     else:
         raise RuntimeError(args.command)
 

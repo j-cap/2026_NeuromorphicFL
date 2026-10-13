@@ -15,6 +15,7 @@ from neuromorphicfl.partial_participation import (
     participation_schedule,
     run_partial_participation,
 )
+from experiments import p20_cifar10_partial_participation as p20
 
 
 class PartitionTests(unittest.TestCase):
@@ -35,6 +36,22 @@ class PartitionTests(unittest.TestCase):
         )
         np.testing.assert_array_equal(first, second)
         self.assertTrue(all(len(np.unique(row)) == 10 for row in first))
+
+
+class TenSeedExtensionTests(unittest.TestCase):
+    def test_seed_zero_reuses_pilot_paths(self) -> None:
+        point = p20.POINT_BY_ID["m50_k10_event"]
+        self.assertEqual(p20.output_paths(point), p20.output_paths(point, 0))
+
+    def test_seed_mapping_is_matched_and_distinct(self) -> None:
+        scenario = p20.SCENARIO_BY_ID["m50_k10"]
+        first = p20.schedule_for(scenario, seed_index=0)
+        second = p20.schedule_for(scenario, seed_index=1)
+        self.assertEqual(p20.partition_seed(0), 3500)
+        self.assertEqual(p20.partition_seed(9), 4400)
+        self.assertEqual(p20.train_seed(0), 83500)
+        self.assertEqual(p20.selection_seed(scenario, 0), 99510)
+        self.assertFalse(np.array_equal(first, second))
 
 
 class FullParticipationRegressionTests(unittest.TestCase):

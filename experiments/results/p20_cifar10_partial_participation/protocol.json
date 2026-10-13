@@ -57,5 +57,6 @@
     }
   ],
   "reference_reuse": "m10_k10 imports the frozen P19 seed-zero runs after seed and horizon checks",
-  "extension_rule": "consider ten matched seeds only after the m50_k10 pilot is stable, within one accuracy point of dense, uses less total traffic, and does not use checkpoints for at least 90 percent of nonempty syncs"
+  "extension_rule": "consider ten matched seeds only after the m50_k10 pilot is stable, within one accuracy point of dense, uses less total traffic, and does not use checkpoints for at least 90 percent of nonempty syncs",
+  "ten_seed_extension": "after the pilot gate passes, run only m50_k10 for Event-FedAvg, quality-selected EF-TopK, and dense FedAvg with matched partition, training, and client-selection seeds"
 }
