@@ -959,12 +959,13 @@ def status() -> None:
             f"  {scenario.scenario_id}: {len(finished)}/{len(points)} {finished}",
             flush=True,
         )
-    print("P20 m50_k10 ten-seed extension")
-    for point in POINTS:
-        if point.scenario_id != "m50_k10":
-            continue
-        seeds = [seed_index for seed_index in range(10) if complete(point, seed_index)]
-        print(f"  {point.method}: {len(seeds)}/10 {seeds}", flush=True)
+    for scenario_id in ("m50_k10", "m50_k05"):
+        print(f"P20 {scenario_id} ten-seed extension")
+        for point in POINTS:
+            if point.scenario_id != scenario_id:
+                continue
+            seeds = [seed_index for seed_index in range(10) if complete(point, seed_index)]
+            print(f"  {point.method}: {len(seeds)}/10 {seeds}", flush=True)
 
 
 def parser() -> argparse.ArgumentParser:
