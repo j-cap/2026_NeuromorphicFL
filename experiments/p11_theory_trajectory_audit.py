@@ -189,6 +189,23 @@ def make_figure(df: pd.DataFrame, agg: pd.DataFrame, destination: Path) -> None:
     plt.close(fig)
 
 
+def markdown_table(frame: pd.DataFrame) -> str:
+    """Produce a Markdown table without pandas' optional tabulate dependency."""
+    def cell(value: object) -> str:
+        if pd.isna(value):
+            return ""
+        if isinstance(value, (float, np.floating)):
+            return f"{value:.4g}"
+        return str(value).replace("|", r"\|")
+
+    columns = [str(c) for c in frame.columns]
+    lines = ["| " + " | ".join(columns) + " |",
+             "| " + " | ".join("---" for _ in columns) + " |"]
+    for values in frame.itertuples(index=False, name=None):
+        lines.append("| " + " | ".join(cell(v) for v in values) + " |")
+    return "\n".join(lines)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, default=ROOT / "combined_rounds.csv")
@@ -214,9 +231,9 @@ def main() -> None:
         "The normalized sums below are **sampled diagnostics**, not full-horizon theorem terms.",
         "No conditional expectation or global smoothness constant is certified.", "",
         "## Condition-level mean metrics", "",
-        agg.to_markdown(index=False, floatfmt=".4g"), "",
+        markdown_table(agg), "",
         "## Paired seed contrasts (95% Student-t intervals)", "",
-        contrasts.to_markdown(index=False, floatfmt=".4g"), "",
+        markdown_table(contrasts), "",
         "Interpretation: a positive-alignment round can increase the objective;",
         "the realized curvature remainder is an exact algebraic difference.",
         "Its relation to $M q_r^2 N_r$ is descriptive, not an identified",
