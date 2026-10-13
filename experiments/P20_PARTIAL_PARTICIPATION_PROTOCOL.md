@@ -120,6 +120,47 @@ Use `--start-seed` and `--end-seed` to split the work into batches.  Complete
 point/seed pairs are skipped unless `--force` is supplied.  A single failed
 pair can be resumed explicitly with `point --point-id ... --seed-index ...`.
 
+## Matched ten-seed 10% participation stress test
+
+Freeze the same 50-client class-skew partition and all three method
+hyperparameters. Select exactly 5 of 50 clients (10%) uniformly without
+replacement in each of 1,800 rounds. Seeds 0–9 match the existing 20%
+participation campaign for partition and training randomness; each method
+within a seed shares the exact 5-client schedule. The synchronization
+and traffic accounting remain unchanged, including the terminal exact
+catch-up of inactive clients.
+
+Run on the workstation:
+
+```bat
+git pull
+conda activate neuromorphicfl-resnet14
+python -m unittest tests.test_p20_partial_participation
+python experiments\p20_cifar10_partial_participation.py stress-ten-seed --workers 2
+python experiments\p20_cifar10_partial_participation.py status
+python experiments\p20_cifar10_partial_participation.py verify-stress-ten-seed
+python experiments\p20_cifar10_partial_participation.py finalize-stress-ten-seed
+```
+
+For limited RAM or long runs, run one worker or split the run into
+`--start-seed 0 --end-seed 4` and
+`--start-seed 5 --end-seed 9`. Completed point/seed pairs are skipped
+on restart; do not use `--force` unless deliberately rerunning results.
+There are 30 method/seed pairs; any completed seed-zero stress pilot is reused.
+
+The outputs are saved under
+`experiments/results/p20_cifar10_partial_participation/`:
+`stress_ten_seed_runs.csv`, `stress_ten_seed_histories.csv`,
+`stress_ten_seed_aggregate.csv`, and
+`stress_ten_seed_paired_differences.csv`, alongside individual
+histories, summaries, selection schedules, and event-activity diagnostics.
+
+When comparing 10% against 20%, evaluate seed-paired accuracy, exact
+total bits, return bursts, checkpoint usage, and matched-accuracy costs.
+The 10% scenario is a stress test, not an independently tuned configuration.
+Do not claim equivalence of prediction accuracy based solely on a
+non-significant difference.
+
 ## Saved evidence
 
 The output directory is
