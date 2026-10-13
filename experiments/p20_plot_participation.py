@@ -78,56 +78,80 @@ def summarize(runs: pd.DataFrame) -> pd.DataFrame:
 
 
 def draw(summary: pd.DataFrame, root: Path, dpi: int) -> None:
-    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9,
-                         "axes.labelsize": 9, "legend.fontsize": 8,
-                         "pdf.fonttype": 42, "ps.fonttype": 42})
-    fig, axes = plt.subplots(1, 3, figsize=(11.2, 3.15),
-                             gridspec_kw={"width_ratios": [1, 1, 1.15]},
-                             constrained_layout=True)
+    """Render at final IEEE two-column width; typography is not scaled down later."""
+    plt.rcParams.update({
+        "font.family": "DejaVu Sans", "font.size": 8,
+        "axes.labelsize": 8, "axes.titlesize": 8.5,
+        "xtick.labelsize": 7.5, "ytick.labelsize": 7.5,
+        "legend.fontsize": 7, "pdf.fonttype": 42, "ps.fonttype": 42,
+        "axes.linewidth": 0.65, "savefig.facecolor": "white",
+    })
+    fig, axes = plt.subplots(
+        1, 3, figsize=(7.16, 2.75),
+        gridspec_kw={"width_ratios": [1.04, 1.04, 1.1]},
+    )
+    # Reserve top margin for a common method legend, and bottom for traffic legend.
+    fig.subplots_adjust(left=0.072, right=0.99, top=0.77, bottom=0.34,
+                        wspace=0.43)
+    handles = []
     for method in METHODS:
         sub = summary[summary.method == method].sort_values("participation_pct")
         x = sub.participation_pct.to_numpy()
         style = dict(color=COLORS[method], marker=MARKERS[method],
-                     linewidth=1.6, markersize=5, capsize=3)
-        axes[0].errorbar(x, sub.accuracy_mean_pct, yerr=sub.accuracy_sd_pp,
-                         label=LABELS[method], **style)
-        axes[1].errorbar(x, sub.traffic_mean_gbit, yerr=sub.traffic_sd_gbit,
-                         label=LABELS[method], **style)
+                     linewidth=1.25, markersize=4, capsize=2,
+                     elinewidth=0.9, markeredgecolor="white", markeredgewidth=0.4)
+        handle = axes[0].errorbar(
+            x, sub.accuracy_mean_pct, yerr=sub.accuracy_sd_pp,
+            label=LABELS[method], **style
+        )
+        axes[1].errorbar(x, sub.traffic_mean_gbit,
+                         yerr=sub.traffic_sd_gbit, **style)
+        handles.append(handle)
     for ax in axes[:2]:
         ax.set_xticks([10, 20], ["10", "20"])
-        ax.set_xlabel("Active clients per round (%)")
-        ax.grid(axis="y", alpha=0.25)
-        ax.spines[["top", "right"]].set_visible(False)
-    axes[0].set_ylabel("Final test accuracy (%)")
-    axes[1].set_ylabel("Exact total traffic (Gbit)")
+        ax.set_xlim(7.5, 22.5)
+        ax.grid(axis="y", color="#dedede", linewidth=0.55)
+        ax.set_axisbelow(True)
+    axes[0].set_ylabel("Test accuracy (%)")
+    axes[1].set_ylabel("Exact traffic (Gbit)")
     event = summary[summary.method == "event"].sort_values("participation_pct")
     x = np.arange(2)
     bottom = np.zeros(2)
+    # The other-sync component is a residual: never label it as measured replay.
     components = [
         ("uplink_gbit", "Uplink", "#167f85"),
-        ("checkpoint_downlink_gbit", "Dense checkpoints", "#da8c35"),
-        ("other_gbit", "Other synchronization", "#8c92a2"),
-        ("terminal_gbit", "Terminal catch-up", "#b7c7d1"),
+        ("checkpoint_downlink_gbit", "Checkpoints", "#da8c35"),
+        ("other_gbit", "Other sync.", "#8c92a2"),
+        ("terminal_gbit", "Final catch-up", "#b7c7d1"),
     ]
     for col, name, color in components:
-        values = event[col].to_numpy()
-        axes[2].bar(x, values, bottom=bottom, width=0.55,
-                    label=name, color=color)
+        values = event[col].to_numpy(dtype=float)
+        axes[2].bar(x, values, bottom=bottom, width=0.57, label=name,
+                    color=color, edgecolor="white", linewidth=0.35)
         bottom += values
+    # Assert plot decomposition is consistent with the audit total.
+    np.testing.assert_allclose(bottom, event.traffic_mean_gbit.to_numpy(),
+                               rtol=1e-10, atol=1e-7)
     axes[2].set_xticks(x, ["10", "20"])
-    axes[2].set_xlabel("Active clients per round (%)")
-    axes[2].set_ylabel("Event-FedAvg traffic (Gbit)")
-    axes[2].spines[["top", "right"]].set_visible(False)
-    axes[2].grid(axis="y", alpha=0.25)
+    axes[2].set_ylabel("Event traffic (Gbit)")
+    axes[2].grid(axis="y", color="#dedede", linewidth=0.55)
     axes[2].set_axisbelow(True)
-    for ax, tag in zip(axes, ("(a)", "(b)", "(c)")):
-        ax.set_title(tag, loc="left", fontweight="bold")
-    axes[0].legend(loc="lower right", frameon=False)
-    axes[2].legend(loc="upper left", bbox_to_anchor=(0, 1.01),
-                   fontsize=7, frameon=False)
+    for ax, heading in zip(axes, (
+        "(a) Test accuracy", "(b) Total communication",
+        "(c) Traffic composition",
+    )):
+        ax.set_title(heading, loc="left", fontweight="bold", pad=7)
+        ax.set_xlabel("Participation (%)")
+        ax.spines[["top", "right"]].set_visible(False)
+    fig.legend(handles, [LABELS[m] for m in METHODS], loc="upper center",
+               bbox_to_anchor=(0.5, 0.96), ncol=3, frameon=False,
+               columnspacing=2.5, handlelength=2)
+    axes[2].legend(loc="upper center", bbox_to_anchor=(0.5, -0.33),
+                   ncol=2, frameon=False, handlelength=1.3,
+                   columnspacing=0.65, labelspacing=0.5)
     out = root / "p20_participation_robustness"
-    fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
-    fig.savefig(out.with_suffix(".png"), dpi=dpi, bbox_inches="tight")
+    fig.savefig(out.with_suffix(".pdf"))
+    fig.savefig(out.with_suffix(".png"), dpi=dpi)
     plt.close(fig)
 
 
