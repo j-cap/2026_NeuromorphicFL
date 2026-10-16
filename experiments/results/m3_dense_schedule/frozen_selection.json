@@ -1,0 +1,9 @@
+{
+  "point_id": "g4_a0p30",
+  "gain0": 4.0,
+  "gain_exponent": 0.3,
+  "gain_scale": 100.0,
+  "selection_metric": "final_train_objective",
+  "development_partition_seed": 4500,
+  "rounds": 1800
+}

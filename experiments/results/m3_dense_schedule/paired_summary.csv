@@ -1,0 +1,7 @@
+comparator,metric,n,mean_difference,ci95_low,ci95_high
+constant_dense,accuracy_diff,10,0.00206,-0.00404011137836,0.00816011137836
+constant_dense,traffic_diff,10,0,0,0
+ef_topk,accuracy_diff,10,-0.0174,-0.0256208311558,-0.0091791688442
+ef_topk,traffic_diff,10,14119704000,14119704000,14119704000
+event,accuracy_diff,10,-0.02331,-0.0287941385682,-0.0178258614318
+event,traffic_diff,10,20343138483.2,20301172083.5,20385104882.9
