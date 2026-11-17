@@ -1,0 +1,265 @@
+{
+  "data_sha256": {
+    "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+    "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+    "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+    "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+    "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154",
+    "test_batch": "f53d8d457504f7cff4ea9e021afcf0e0ad8e24a91f3fc42091b8adef61157831"
+  },
+  "protocol": {
+    "architecture": "cifar_cnn",
+    "base_config": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.005,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 1.0,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.01,
+      "threshold": 0.025,
+      "topk_fraction": 0.01
+    },
+    "budget_rule": "best training objective at or below event_reference unicast bits",
+    "campaign": "stc_cifar10_development_v1",
+    "checkpoint_stride": 60,
+    "evaluation_scope": "development_training_only",
+    "excluded_evaluation_partitions": [
+      3500,
+      3600,
+      3700,
+      3800,
+      3900,
+      4000,
+      4100,
+      4200,
+      4300,
+      4400
+    ],
+    "n_clients": 10,
+    "nearest_traffic_rule": "minimum absolute log traffic ratio; diagnostic only",
+    "partition_seed": 4500,
+    "points": [
+      {
+        "download_fraction": 0.01,
+        "method": "event",
+        "point_id": "event_reference",
+        "server_gain": 1.0,
+        "upload_fraction": 0.01
+      },
+      {
+        "download_fraction": 0.001,
+        "method": "stc",
+        "point_id": "stc_u0p001_d0p001_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.001
+      },
+      {
+        "download_fraction": 0.001,
+        "method": "stc",
+        "point_id": "stc_u0p001_d0p001_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.001
+      },
+      {
+        "download_fraction": 0.0025,
+        "method": "stc",
+        "point_id": "stc_u0p0025_d0p0025_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.0025
+      },
+      {
+        "download_fraction": 0.0025,
+        "method": "stc",
+        "point_id": "stc_u0p0025_d0p0025_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.0025
+      },
+      {
+        "download_fraction": 0.005,
+        "method": "stc",
+        "point_id": "stc_u0p005_d0p005_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.005
+      },
+      {
+        "download_fraction": 0.005,
+        "method": "stc",
+        "point_id": "stc_u0p005_d0p005_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.005
+      },
+      {
+        "download_fraction": 0.01,
+        "method": "stc",
+        "point_id": "stc_u0p01_d0p01_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.01
+      },
+      {
+        "download_fraction": 0.01,
+        "method": "stc",
+        "point_id": "stc_u0p01_d0p01_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.01
+      },
+      {
+        "download_fraction": 0.025,
+        "method": "stc",
+        "point_id": "stc_u0p025_d0p025_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.025
+      },
+      {
+        "download_fraction": 0.025,
+        "method": "stc",
+        "point_id": "stc_u0p025_d0p025_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.025
+      },
+      {
+        "download_fraction": 0.05,
+        "method": "stc",
+        "point_id": "stc_u0p05_d0p05_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.05
+      },
+      {
+        "download_fraction": 0.05,
+        "method": "stc",
+        "point_id": "stc_u0p05_d0p05_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.05
+      },
+      {
+        "download_fraction": 0.1,
+        "method": "stc",
+        "point_id": "stc_u0p1_d0p1_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.1
+      },
+      {
+        "download_fraction": 0.1,
+        "method": "stc",
+        "point_id": "stc_u0p1_d0p1_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.1
+      },
+      {
+        "download_fraction": 0.25,
+        "method": "stc",
+        "point_id": "stc_u0p25_d0p25_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.25
+      },
+      {
+        "download_fraction": 0.25,
+        "method": "stc",
+        "point_id": "stc_u0p25_d0p25_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.25
+      },
+      {
+        "download_fraction": 0.5,
+        "method": "stc",
+        "point_id": "stc_u0p5_d0p5_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.5
+      },
+      {
+        "download_fraction": 0.5,
+        "method": "stc",
+        "point_id": "stc_u0p5_d0p5_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.5
+      },
+      {
+        "download_fraction": 1.0,
+        "method": "stc",
+        "point_id": "stc_u1_d1_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 1.0
+      },
+      {
+        "download_fraction": 1.0,
+        "method": "stc",
+        "point_id": "stc_u1_d1_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 1.0
+      },
+      {
+        "download_fraction": 0.01,
+        "method": "stc",
+        "point_id": "stc_u0p0025_d0p01_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.0025
+      },
+      {
+        "download_fraction": 0.01,
+        "method": "stc",
+        "point_id": "stc_u0p0025_d0p01_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.0025
+      },
+      {
+        "download_fraction": 0.0025,
+        "method": "stc",
+        "point_id": "stc_u0p01_d0p0025_g1",
+        "server_gain": 1.0,
+        "upload_fraction": 0.01
+      },
+      {
+        "download_fraction": 0.0025,
+        "method": "stc",
+        "point_id": "stc_u0p01_d0p0025_g2",
+        "server_gain": 2.0,
+        "upload_fraction": 0.01
+      }
+    ],
+    "regime": "strong",
+    "rounds": 1800,
+    "selection_metric": "final_train_objective",
+    "selection_ties": [
+      "unicast_hybrid_total_bits",
+      "point_id"
+    ],
+    "stc_protocol": "stc_fedavg_tensor_rice_v1",
+    "train_eval_size": 5000,
+    "train_seed": 84500
+  },
+  "runtime": {
+    "byteorder": "little",
+    "machine": "AMD64",
+    "numpy": "1.26.4",
+    "numpy_build_sha256": "c09fc0cdcacc88059c442edaae7f6429761f93f54cf808da0a43062b9f6a785d",
+    "pandas": "2.2.3",
+    "python": "3.11.16",
+    "system": "Windows",
+    "thread_limits": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "source_hashes": {
+    "experiments/p12_headline_ten_seed.py": "b7f64ebe4b9e0e8923d69a577e22ff50dac2af8aba58c078f2d7d7cb54833235",
+    "experiments/stc_cifar10_development.py": "59eab8b9783c39cc002a29f6382a46b7beb6c147e69322e752a088d228a98c69",
+    "src/neuromorphicfl/baseline_checkpoint.py": "63835e71195dfbd1f50953392db348b8d9fbc760833da25adada579675eb2d75",
+    "src/neuromorphicfl/cifar10_benchmark.py": "448a96c1addabeb0b15977a9e7ab3dee41a7c87bf48d7ee971d3e6b1e69ea58a",
+    "src/neuromorphicfl/final_baseline_campaign.py": "e7dabedf0e2690e0823d9c46135e76b0c440588d7f8fcac99028055a9a557367",
+    "src/neuromorphicfl/stc.py": "e05c6cead5c1b75d4b6b46c0e32b073028b959b8ee5b812627cece002c6446e7"
+  }
+}

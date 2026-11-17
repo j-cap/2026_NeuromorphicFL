@@ -1,0 +1,70 @@
+{
+  "campaign_sha256": "08d7c016c542d2c7045cbe8ee3cfa1cec65da07a78eb9620121ebfea99eee4e0",
+  "choices": {
+    "event_reference_unicast_bits": 3426441456,
+    "nearest_traffic_diagnostic": {
+      "download_fraction": 1.0,
+      "final_train_objective": 0.9772041213989259,
+      "method": "stc",
+      "point_id": "stc_u1_d1_g2",
+      "relative_budget_gap": 0.5589059204985289,
+      "server_gain": 2.0,
+      "traffic_ratio_to_event": 0.441094079501471,
+      "unicast_bits": 1511383040,
+      "upload_fraction": 1.0,
+      "within_ten_percent": false
+    },
+    "quality": {
+      "download_fraction": 1.0,
+      "final_train_objective": 0.9772041213989259,
+      "method": "stc",
+      "point_id": "stc_u1_d1_g2",
+      "server_gain": 2.0,
+      "traffic_ratio_to_event": 0.441094079501471,
+      "unicast_bits": 1511383040,
+      "upload_fraction": 1.0
+    },
+    "within_event_budget": {
+      "download_fraction": 1.0,
+      "final_train_objective": 0.9772041213989259,
+      "method": "stc",
+      "point_id": "stc_u1_d1_g2",
+      "server_gain": 2.0,
+      "traffic_ratio_to_event": 0.441094079501471,
+      "unicast_bits": 1511383040,
+      "upload_fraction": 1.0
+    }
+  },
+  "numerical_failures": [],
+  "partition_seed": 4500,
+  "receipt_sha256": {
+    "event_reference": "728f0f2109bf6221cb4d63ba6dba20de6e4f85bf362a4f9279a34ed8138d60b1",
+    "stc_u0p001_d0p001_g1": "17df309224e98cbf66dd45553e6cb1cac9f6597f78c1df0965d5bca791738b42",
+    "stc_u0p001_d0p001_g2": "4193417727b4ca342ebc6d1375ebc22d02c101532f7b8b6ba0efd9cb952afb4f",
+    "stc_u0p0025_d0p0025_g1": "b792a840336afbd49b24ba0339e11b8f02e8cac5f39d63351581f6f7cbe11585",
+    "stc_u0p0025_d0p0025_g2": "37b501f52b320745239e81e35328263ee3a924b568039f72fd167f1cd375d929",
+    "stc_u0p0025_d0p01_g1": "8e495589197c80a0ed7242d7ed599d9f7913259c4f047250939be473fe56ba8f",
+    "stc_u0p0025_d0p01_g2": "ad934485f328da837687b550f06f7c5e6fbec1a3444f26d6e091550ad72b5056",
+    "stc_u0p005_d0p005_g1": "1724e261c4dcb72c532f5d3e082c012eea5742a45388f706f29cee3a3894acaf",
+    "stc_u0p005_d0p005_g2": "f2209356103e66e64c25f5b26829dccca4e9c64a91d4bd43397ea35e2f1dc614",
+    "stc_u0p01_d0p0025_g1": "c668b48660484f2c5e549e10acdd609c6170629140a2cc0f858d2726d33215e2",
+    "stc_u0p01_d0p0025_g2": "dfe14b3f049ae0aea3de16b628ce967317e22a2dbf22736b3ec2fdb7a5f3d003",
+    "stc_u0p01_d0p01_g1": "17e006f8b49db4b62baf35182e35de9a7e727ce5a90f427a8af996ae7765733f",
+    "stc_u0p01_d0p01_g2": "e0adde4d6e92102f3f8d99d9921bf7e99be80282bafdfef56d22e15f370da6a0",
+    "stc_u0p025_d0p025_g1": "c31ec94506c495a5eb4f4612ec9e8d3b9286baa9a7a4f4ba9403d27eef643221",
+    "stc_u0p025_d0p025_g2": "b2f955d97532219d000c9ea7d23cd7e4916889438ce13cc33e52550f0623387c",
+    "stc_u0p05_d0p05_g1": "1685cc5d71cadb74547a2b38da32d57656c02bd10a398eaca59f335ef44148a4",
+    "stc_u0p05_d0p05_g2": "5e55f44b7c5f3d6cf4ee0285d385c6f87f94e546f57a4035063ebe13b187f7bf",
+    "stc_u0p1_d0p1_g1": "1afcf59cd41498418adc27842758a042e903cc5c5b18a169d249bb9b99ac4c48",
+    "stc_u0p1_d0p1_g2": "35ef740a588eea96872cc2cbf0172cb781129a2613f73fa4e92f634db28ffdd7",
+    "stc_u0p25_d0p25_g1": "c77af29f4d149baa092f34625477acbadd6a08f69626b433300082a96346b682",
+    "stc_u0p25_d0p25_g2": "77bf6e4377f694ee173d33ed8afb01a1fdc1b05b73f7f9b1de30da3b3d808bbe",
+    "stc_u0p5_d0p5_g1": "2cc3bb618f56de48c09a210ded346b7cab18f637ff7e93c43be99fb62dfa22c4",
+    "stc_u0p5_d0p5_g2": "4d72f71b12d74568e47e78bde88793b3b17380fbc0a59d3cac557e67012a4570",
+    "stc_u1_d1_g1": "108b6b0e8c49fa830581ad3cf78a9f31c185a50baf42bc6ae630adc8e90e53f8",
+    "stc_u1_d1_g2": "a9f879ddb7029af775143d2015f1543cf80a5ee5364c12a600c31b74e5273d7e"
+  },
+  "rounds": 1800,
+  "selection_metric": "final_train_objective",
+  "train_seed": 84500
+}

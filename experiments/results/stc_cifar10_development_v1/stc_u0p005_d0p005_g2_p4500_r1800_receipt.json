@@ -1,0 +1,16 @@
+{
+  "history_sha256": "344f0bfd84e77cde36ca28a93c35b921d050ca37bf0143ff91d2b43fa60d59eb",
+  "identity": {
+    "campaign_sha256": "08d7c016c542d2c7045cbe8ee3cfa1cec65da07a78eb9620121ebfea99eee4e0",
+    "config_sha256": "261f7a6603ac26ff497a905ee789ddbf2ef8b5e475382b7290c47f0e2701f8c6",
+    "point": {
+      "download_fraction": 0.005,
+      "method": "stc",
+      "point_id": "stc_u0p005_d0p005_g2",
+      "server_gain": 2.0,
+      "upload_fraction": 0.005
+    }
+  },
+  "state": "complete",
+  "summary_sha256": "3dc112ad3641d075bd81a170f1f41c347863b419697ed3881bdb2c247d5cde28"
+}

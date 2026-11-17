@@ -1,0 +1,16 @@
+{
+  "history_sha256": "5089484fe6116efd6c3c317508d9935cc3c904b98520ede5e8769926e6f0d4bc",
+  "identity": {
+    "campaign_sha256": "08d7c016c542d2c7045cbe8ee3cfa1cec65da07a78eb9620121ebfea99eee4e0",
+    "config_sha256": "3dd7076a9bd6b19b2c8775cc8fee52120d0c1561ca5ec62c6a3a9035473ec8fd",
+    "point": {
+      "download_fraction": 0.01,
+      "method": "event",
+      "point_id": "event_reference",
+      "server_gain": 1.0,
+      "upload_fraction": 0.01
+    }
+  },
+  "state": "complete",
+  "summary_sha256": "e05f77419cf0c3a523cae73cc764b3ce3fbe55223471f8cf1735321d762998c6"
+}
