@@ -1,5 +1,11 @@
 # Experiments
 
+The short Event/STC message-coding audit is documented in
+[`EVENT_CODEC_PILOT.md`](EVENT_CODEC_PILOT.md). Run
+`python experiments/event_codec_pilot.py verify`, then `run --workers 2` and
+`analyze`. It uses 120 rounds on the fixed development seed and does not alter
+the frozen STC confirmation sources.
+
 All experiments should import reusable code from `src/neuromorphicfl` where appropriate and write generated artifacts to `experiments/results/<experiment-name>/`.
 
 ## 01 — stationary stochastic quadratic

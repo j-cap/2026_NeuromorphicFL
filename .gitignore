@@ -35,6 +35,9 @@ experiments/results/**
 !experiments/results/stc_cifar10_confirmation_v1/
 !experiments/results/stc_cifar10_confirmation_v1/*.csv
 !experiments/results/stc_cifar10_confirmation_v1/*.json
+!experiments/results/event_codec_pilot_v1/
+!experiments/results/event_codec_pilot_v1/*.csv
+!experiments/results/event_codec_pilot_v1/*.json
 
 # LaTeX build products
 report/*.aux
