@@ -66,4 +66,12 @@ The minimum clean-checkout commands and the explicit boundary between
 artifact reproduction and full training reruns are documented in
 [`paper/ijcnn2027/REPRODUCIBILITY.md`](paper/ijcnn2027/REPRODUCIBILITY.md).
 
+The STC comparator extension is tracked in
+[`experiments/STC_BASELINES_PLAN.md`](experiments/STC_BASELINES_PLAN.md).
+Its first stage implements per-tensor sparse ternary compression, a real
+Golomb/Rice wire codec, client/server residuals and native compressed downlink
+accounting in the NumPy FedAvg runner. Run the bounded implementation checks
+with `python experiments/stc_stage1.py verify`. The tuning campaign, PyTorch
+integration and replacement publication evidence are subsequent stages.
+
 The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.
