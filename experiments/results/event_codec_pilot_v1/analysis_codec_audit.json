@@ -1,0 +1,75 @@
+{
+  "aggregate_l1": 765416,
+  "aggregate_nonzeros": 644352,
+  "archived_1800_round_event_format_ceiling": {
+    "coordinate_events": 19355741,
+    "fixed_bits": 7159040,
+    "rounds": 1800,
+    "server_stream_upper_bits": 75980480,
+    "status": "calculated_format_ceiling_not_measured_reencoding",
+    "unicast_saving_lower_percent": 73.51596950792904,
+    "unicast_total_upper_bits": 907459800,
+    "uplink_upper_bits": 140495960
+  },
+  "archived_prefixes": [
+    {
+      "archived_point": "event_reference",
+      "matching_rounds": [
+        1,
+        60,
+        120
+      ],
+      "native_traffic_exact": true,
+      "original_receipt_and_file_hashes_verified": true,
+      "point": "event",
+      "training_diagnostics_exact": true
+    },
+    {
+      "archived_point": "stc_u1_d1_g2",
+      "matching_rounds": [
+        1,
+        60,
+        120
+      ],
+      "native_traffic_exact": true,
+      "original_receipt_and_file_hashes_verified": true,
+      "point": "stc_primary",
+      "training_diagnostics_exact": true
+    },
+    {
+      "archived_point": "stc_u0p25_d0p25_g2",
+      "matching_rounds": [
+        1,
+        60,
+        120
+      ],
+      "native_traffic_exact": true,
+      "original_receipt_and_file_hashes_verified": true,
+      "point": "stc_sparse",
+      "training_diagnostics_exact": true
+    }
+  ],
+  "bits_per_uplink_pulse": 7.091642245676641,
+  "coordinate_events": 1125398,
+  "event_upload_modes": {
+    "rice:fixed:3": 115,
+    "rice:fixed:4": 1055,
+    "rice:fixed:5": 27,
+    "rice:fixed:6": 2,
+    "rice:fixed:7": 1
+  },
+  "exact_aggregate_downlink_rounds": 120,
+  "exactness_extra_fraction_of_total_unicast": 0.015583663791081259,
+  "exactness_extra_server_bits": 78392,
+  "limits": [
+    "one development partition and first 120 rounds",
+    "no test-accuracy or convergence conclusion",
+    "packet decoding checked during recorded execution; full packet streams not saved",
+    "recorded raw-data hashes match archive; data not independently downloaded by this analysis"
+  ],
+  "matching_recorded_data_and_runtime": true,
+  "max_canonical_float32_error": 3.725290298461914e-09,
+  "pilot_source_and_receipt_verification": true,
+  "roundoff_corrected_coordinates": 1312,
+  "weighted_cancellation_fraction": 0.3198708368061788
+}

@@ -38,6 +38,8 @@ experiments/results/**
 !experiments/results/event_codec_pilot_v1/
 !experiments/results/event_codec_pilot_v1/*.csv
 !experiments/results/event_codec_pilot_v1/*.json
+!experiments/results/event_codec_pilot_v1/analysis_codec_traffic.png
+!experiments/results/event_codec_pilot_v1/analysis_codec_traffic.pdf
 
 # LaTeX build products
 report/*.aux

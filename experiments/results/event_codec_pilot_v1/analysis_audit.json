@@ -1,0 +1,33 @@
+{
+  "convergence_or_accuracy_ranking": false,
+  "points": [
+    {
+      "all_frames_verified_at_execution": true,
+      "codec_audit_seconds": 17.194991998374462,
+      "max_canonical_error": 3.725290298461914e-09,
+      "model_sha256": "239fb49473ee796b993bc7b13dab0b9b30727b83754576be9f12d1e361c73caa",
+      "point": "event",
+      "rounds": 120,
+      "total_roundoff_corrections": 1312
+    },
+    {
+      "all_frames_verified_at_execution": true,
+      "codec_audit_seconds": 178.3725502998568,
+      "max_canonical_error": 0.0,
+      "model_sha256": "b82794d1d349a76fc0632481850dca2fe8b002fa94e4e20568f6420c3976cd7a",
+      "point": "stc_primary",
+      "rounds": 120,
+      "total_roundoff_corrections": 0
+    },
+    {
+      "all_frames_verified_at_execution": true,
+      "codec_audit_seconds": 75.48747539892793,
+      "max_canonical_error": 0.0,
+      "model_sha256": "77cd71faa50ecb200bad3b67328f82e9186d276c686268cc29e4a2a9356afe10",
+      "point": "stc_sparse",
+      "rounds": 120,
+      "total_roundoff_corrections": 0
+    }
+  ],
+  "scope": "codec_correctness_and_early_traffic_not_convergence"
+}
