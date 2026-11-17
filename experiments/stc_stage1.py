@@ -24,11 +24,11 @@ from neuromorphicfl.fmnist_multiclass_benchmark import MulticlassFederation
 from neuromorphicfl.stc import STC_PROTOCOL
 
 
-def smoke() -> None:
+def smoke_federation() -> MulticlassFederation:
     rng = np.random.default_rng(12)
     images = tuple(rng.integers(0, 256, size=(3, 3, 32, 32), dtype=np.uint8) for _ in range(2))
     labels = tuple(rng.integers(0, 10, size=3, dtype=np.int64) for _ in range(2))
-    federation = MulticlassFederation(
+    return MulticlassFederation(
         client_X=images, client_y=labels,
         X_train_eval=np.concatenate(images), y_train_eval=np.concatenate(labels),
         X_test=rng.integers(0, 256, size=(10, 3, 32, 32), dtype=np.uint8),
@@ -36,6 +36,10 @@ def smoke() -> None:
         client_class_counts=np.ones((2, 10), dtype=int),
         periods=np.ones(2, dtype=int), weights=np.array([0.5, 0.5]),
     )
+
+
+def smoke() -> None:
+    federation = smoke_federation()
     config = FinalBaselineConfig(
         local_steps=1, local_lr=0.05, batch_size=2, rounds=2,
         eval_stride=1, init_scale=1.0,

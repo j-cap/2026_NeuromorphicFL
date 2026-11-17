@@ -71,7 +71,12 @@ The STC comparator extension is tracked in
 Its first stage implements per-tensor sparse ternary compression, a real
 Golomb/Rice wire codec, client/server residuals and native compressed downlink
 accounting in the NumPy FedAvg runner. Run the bounded implementation checks
-with `python experiments/stc_stage1.py verify`. The tuning campaign, PyTorch
-integration and replacement publication evidence are subsequent stages.
+with `python experiments/stc_stage1.py verify`. Stage 2 provides the resumable
+compact-CIFAR development campaign in
+[`experiments/stc_cifar10_development.py`](experiments/stc_cifar10_development.py),
+with its fixed grid and local commands documented in
+[`experiments/STC_CIFAR10_DEVELOPMENT.md`](experiments/STC_CIFAR10_DEVELOPMENT.md).
+PyTorch integration and replacement publication evidence follow the development
+results.
 
 The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.

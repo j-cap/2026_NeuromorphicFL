@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 import math
-from typing import Literal
+from typing import Callable, Literal
 
 import numpy as np
 import pandas as pd
 
 from .stc import STC_PROTOCOL, STCState
+from .baseline_checkpoint import BaselineCheckpoint
 
 from .fmnist_multiclass_benchmark import (
     MulticlassFederation,
@@ -125,6 +126,9 @@ def run_final_baseline(
     alignment_audit_rounds: tuple[int, ...] | None = None,
     record_history: bool = False,
     record_group_activity: bool = False,
+    checkpoint: BaselineCheckpoint | None = None,
+    checkpoint_stride: int = 60,
+    progress_callback: Callable[[dict[str, float | int]], None] | None = None,
 ) -> dict[str, float | int | str | pd.DataFrame]:
     """Run a FedAvg comparator with explicit bidirectional accounting.
 
@@ -138,6 +142,11 @@ def run_final_baseline(
     and server error feedback. Its native downlink is charged at actual encoded
     length, without replacing it by replay or checkpoint fallback. The existing
     unicast_hybrid_* result keys hold this native cost for schema compatibility.
+
+    Optional numeric checkpoints preserve the model, all compressor residuals,
+    RNG, history and traffic counters. The caller supplies a data/source/runtime
+    provenance record; incompatible checkpoints are rejected. Audited runs do
+    not support checkpointing. Progress callbacks run after checkpoint writes.
     """
     if alignment_audit_stride is not None and alignment_audit_rounds is not None:
         raise ValueError(
@@ -178,6 +187,10 @@ def run_final_baseline(
         raise ValueError(f"unsupported event reset: {config.event_reset}")
     if record_group_activity and method != "event":
         raise ValueError("group activity is defined only for method='event'")
+    if checkpoint_stride <= 0:
+        raise ValueError("checkpoint_stride must be positive")
+    if checkpoint is not None and (audit_enabled or record_group_activity):
+        raise ValueError("checkpointing does not support alignment/group audits")
 
     layout, initialize, loss_grad, metrics = _architecture_ops(architecture)
     rng = np.random.default_rng(seed)
@@ -229,7 +242,51 @@ def run_final_baseline(
         else len(federation.y_train_eval)
     )
 
-    for rnd in range(1, config.rounds + 1):
+    checkpoint_identity = {
+        "method": method, "architecture": architecture, "config": asdict(config),
+        "seed": seed, "n_clients": n_clients, "dimension": d,
+        "weights": weights.tolist(), "numpy_version": np.__version__,
+    }
+    checkpoint_arrays = {
+        "model": w, "event_state": event_state,
+        "strom_state": strom_state, "residual": residual,
+    }
+    if stc_state is not None:
+        checkpoint_arrays.update({
+            "stc_client_residuals": stc_state.client_residuals,
+            "stc_server_residual": stc_state.server_residual,
+        })
+    start_round = 0
+    saved = checkpoint.load(checkpoint_identity) if checkpoint is not None else None
+    if saved is not None:
+        if set(saved["arrays"]) != set(checkpoint_arrays):
+            raise ValueError("checkpoint state array names differ")
+        for name, target in checkpoint_arrays.items():
+            source = saved["arrays"][name]
+            if (source.shape != target.shape or source.dtype != target.dtype
+                    or not np.all(np.isfinite(source))):
+                raise ValueError(f"invalid checkpoint array: {name}")
+            target[:] = source
+        progress = saved["progress"]
+        start_round = int(progress["completed_round"])
+        if not 0 <= start_round <= config.rounds:
+            raise ValueError("checkpoint round is outside the configured horizon")
+        rng.bit_generator.state = progress["rng_state"]
+        uplink_payload = int(progress["uplink_payload"])
+        uplink_packetized = int(progress["uplink_packetized"])
+        messages = int(progress["messages"])
+        coordinate_events = int(progress["coordinate_events"])
+        delta_norms = progress["delta_norms"]
+        history_rows = progress["history_rows"]
+        round_replay_packetized = progress["round_replay_packetized"]
+        stc_downlink_packets = progress["stc_downlink_packets"]
+        stc_downlink_bits = int(progress["stc_downlink_bits"])
+        packet_history = stc_downlink_packets if method == "stc" else round_replay_packetized
+        if (len(delta_norms) != start_round * n_clients
+                or len(packet_history) != start_round):
+            raise ValueError("checkpoint counters do not match the saved round")
+
+    for rnd in range(start_round + 1, config.rounds + 1):
         audit_round = bool(
             (
                 alignment_audit_stride is not None
@@ -260,6 +317,8 @@ def run_final_baseline(
                 layout=layout,
                 loss_grad=loss_grad,
             )
+            if checkpoint is not None and not np.all(np.isfinite(delta)):
+                raise FloatingPointError(f"nonfinite local delta at round {rnd}")
             deltas.append(delta)
             delta_norms.append(float(np.linalg.norm(delta)))
 
@@ -693,6 +752,28 @@ def run_final_baseline(
                         )
                     ),
                 })
+
+        if checkpoint is not None and (
+            rnd % checkpoint_stride == 0 or rnd == config.rounds
+        ):
+            checkpoint.save(checkpoint_identity, checkpoint_arrays, {
+                "completed_round": rnd, "rng_state": rng.bit_generator.state,
+                "uplink_payload": uplink_payload,
+                "uplink_packetized": uplink_packetized,
+                "messages": messages, "coordinate_events": coordinate_events,
+                "delta_norms": delta_norms, "history_rows": history_rows,
+                "round_replay_packetized": round_replay_packetized,
+                "stc_downlink_packets": stc_downlink_packets,
+                "stc_downlink_bits": stc_downlink_bits,
+            })
+        if progress_callback is not None and (
+            rnd == 1 or rnd % config.eval_stride == 0 or rnd == config.rounds
+        ):
+            progress_callback({
+                "round": rnd, "rounds": config.rounds,
+                "train_objective": float(history_rows[-1]["train_objective"]),
+                "uplink_packetized_bits": uplink_packetized,
+            })
 
     history = pd.DataFrame(history_rows)
     train_obj, train_ce, _, _, _, _ = metrics(

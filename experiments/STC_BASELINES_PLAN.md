@@ -16,7 +16,10 @@ related-work entries unless a separate, explicitly scoped comparison is added.
 
 Stage 1 provides implementation verification only. No STC research result,
 configuration selection, or submission claim follows from its smoke output.
-Stage 2 must be prepared before running development or held-out campaigns.
+Stage 2 is implemented in `stc_cifar10_development.py`; its fixed development
+search, selection rules, checkpoint convention and local commands are documented
+in [STC_CIFAR10_DEVELOPMENT.md](STC_CIFAR10_DEVELOPMENT.md). Development results
+must be analysed and selected configurations frozen before held-out campaigns.
 
 ## Common experimental contract
 

@@ -27,6 +27,9 @@ experiments/results/**
 !experiments/results/p20_cifar10_partial_participation/
 !experiments/results/p20_cifar10_partial_participation/*.csv
 !experiments/results/p20_cifar10_partial_participation/*.json
+!experiments/results/stc_cifar10_development_v1/
+!experiments/results/stc_cifar10_development_v1/*.csv
+!experiments/results/stc_cifar10_development_v1/*.json
 
 # LaTeX build products
 report/*.aux
