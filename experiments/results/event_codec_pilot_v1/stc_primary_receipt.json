@@ -1,0 +1,10 @@
+{
+  "contract_sha256": "4ce96064d4608ee2ce39b70eaa309deed4e4b7131bead1bcc43a3819171171aa",
+  "point": "stc_primary",
+  "sha256": {
+    "history": "e8bf2ea45756be4a66b46beb2eb7fae27ed6565a05ce6fe015521422ad801291",
+    "rounds": "5de12eed01b90b831946b118eb0d50b947d2b11d7a5097ad587927717e1d03a8",
+    "summary": "49292aff1322e6ef78792600a5c54f89c4acec7a8211b97615bbb3930a2ac059"
+  },
+  "state": "complete"
+}
