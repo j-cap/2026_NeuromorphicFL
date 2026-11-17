@@ -140,3 +140,12 @@ levels. The numerical setup must identify the dense-ternary or sparse operating
 point, common FedAvg host and gain extension, and retain the explicit Ström-style
 adaptation label. New manuscript edits remain red when the evidence
 is integrated. This analysis does not change the manuscript or its frozen data.
+
+## Follow-up decision before confirmation
+
+The subsequent discussion predeclares p=0.25, gain 2 as a secondary operating
+point, alongside the unchanged p=1, gain 2 primary. This strengthens the assessment
+of the tradeoff before inspecting new STC test results and requires 20 new runs.
+The protocol and runnable code are in
+[STC_CIFAR10_CONFIRMATION.md](STC_CIFAR10_CONFIRMATION.md). The original
+`frozen_selection.json` remains the authority for the primary.

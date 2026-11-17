@@ -76,7 +76,11 @@ compact-CIFAR development campaign in
 [`experiments/stc_cifar10_development.py`](experiments/stc_cifar10_development.py),
 with its fixed grid and local commands documented in
 [`experiments/STC_CIFAR10_DEVELOPMENT.md`](experiments/STC_CIFAR10_DEVELOPMENT.md).
-PyTorch integration and replacement publication evidence follow the development
-results.
+The next experiment is the fixed 20-run compact-CIFAR confirmation in
+[`experiments/stc_cifar10_confirmation.py`](experiments/stc_cifar10_confirmation.py).
+Its primary/secondary roles, paired analysis and local commands are declared in
+[`experiments/STC_CIFAR10_CONFIRMATION.md`](experiments/STC_CIFAR10_CONFIRMATION.md).
+The result determines the scope of later benchmarks, PyTorch integration and
+replacement publication evidence.
 
 The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.

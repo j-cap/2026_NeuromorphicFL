@@ -11,7 +11,7 @@ related-work entries unless a separate, explicitly scoped comparison is added.
 |---|---|---|
 | 1 | STC compressor, wire codec, two residual levels, NumPy integration | Hand-reference, conservation, wire-length and model-reconstruction checks; bounded CNN smoke; existing-method regression |
 | 2 | Compact-CIFAR development campaign | Declared search and selection rules, separate development data, frozen configurations, resumable local commands |
-| 3 | PyTorch ResNet integration and main benchmark extension | Same compressor conventions and traffic accounting, checkpointed residuals, ten paired evaluation seeds |
+| 3 | Compact-CIFAR confirmation, then other benchmarks if justified | Two predeclared STC points on ten paired seeds; fixed training, test accuracy and complete traffic accounting |
 | 4 | Publication evidence | All five methods represented consistently; conclusions follow observed results; manuscript changes in red |
 
 Stage 1 provides implementation verification only. No STC research result,
@@ -25,6 +25,13 @@ are in [STC_CIFAR10_DEVELOPMENT_RESULTS.md](STC_CIFAR10_DEVELOPMENT_RESULTS.md).
 Use `python experiments/stc_cifar10_development_audit.py` for verification after
 Git has normalized Windows text line endings; it preserves the frozen source
 and original receipt hashes.
+
+The follow-up decision adds the sparse 25% point as an explicitly predeclared
+secondary analysis before any new STC test results are inspected. The original
+100% point remains the frozen primary. This makes 20 new STC runs, specified in
+[STC_CIFAR10_CONFIRMATION.md](STC_CIFAR10_CONFIRMATION.md), rather than the earlier
+ten-run primary-only recommendation. The original development selection is
+preserved.
 
 ## Common experimental contract
 
