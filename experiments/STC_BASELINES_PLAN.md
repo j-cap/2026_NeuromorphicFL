@@ -20,6 +20,11 @@ Stage 2 is implemented in `stc_cifar10_development.py`; its fixed development
 search, selection rules, checkpoint convention and local commands are documented
 in [STC_CIFAR10_DEVELOPMENT.md](STC_CIFAR10_DEVELOPMENT.md). Development results
 must be analysed and selected configurations frozen before held-out campaigns.
+The completed development analysis and the recommended ten-seed confirmation
+are in [STC_CIFAR10_DEVELOPMENT_RESULTS.md](STC_CIFAR10_DEVELOPMENT_RESULTS.md).
+Use `python experiments/stc_cifar10_development_audit.py` for verification after
+Git has normalized Windows text line endings; it preserves the frozen source
+and original receipt hashes.
 
 ## Common experimental contract
 

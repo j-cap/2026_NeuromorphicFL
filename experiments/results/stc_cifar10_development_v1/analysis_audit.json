@@ -1,0 +1,92 @@
+{
+  "aggregate_tables_reproduced": true,
+  "campaign_sha256": "08d7c016c542d2c7045cbe8ee3cfa1cec65da07a78eb9620121ebfea99eee4e0",
+  "complete": 25,
+  "development_runs": 25,
+  "file_hash_matches": {
+    "CRLF": 75,
+    "LF": 0,
+    "raw": 0
+  },
+  "frozen_choices": {
+    "event_reference_unicast_bits": 3426441456,
+    "nearest_traffic_diagnostic": {
+      "download_fraction": 1.0,
+      "final_train_objective": 0.9772041213989259,
+      "method": "stc",
+      "point_id": "stc_u1_d1_g2",
+      "relative_budget_gap": 0.5589059204985289,
+      "server_gain": 2.0,
+      "traffic_ratio_to_event": 0.441094079501471,
+      "unicast_bits": 1511383040,
+      "upload_fraction": 1.0,
+      "within_ten_percent": false
+    },
+    "quality": {
+      "download_fraction": 1.0,
+      "final_train_objective": 0.9772041213989259,
+      "method": "stc",
+      "point_id": "stc_u1_d1_g2",
+      "server_gain": 2.0,
+      "traffic_ratio_to_event": 0.441094079501471,
+      "unicast_bits": 1511383040,
+      "upload_fraction": 1.0
+    },
+    "within_event_budget": {
+      "download_fraction": 1.0,
+      "final_train_objective": 0.9772041213989259,
+      "method": "stc",
+      "point_id": "stc_u1_d1_g2",
+      "server_gain": 2.0,
+      "traffic_ratio_to_event": 0.441094079501471,
+      "unicast_bits": 1511383040,
+      "upload_fraction": 1.0
+    }
+  },
+  "numerical_failures": 0,
+  "runtime": {
+    "byteorder": "little",
+    "machine": "AMD64",
+    "numpy": "1.26.4",
+    "numpy_build_sha256": "c09fc0cdcacc88059c442edaae7f6429761f93f54cf808da0a43062b9f6a785d",
+    "pandas": "2.2.3",
+    "python": "3.11.16",
+    "system": "Windows",
+    "thread_limits": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "selected_cross_entropy_reduction_percent": 2.716681046424344,
+  "selected_objective_gap_regularization_fraction": 0.9396676114183866,
+  "selection_reproduced": true,
+  "source_hashes_match": true,
+  "stc_points_with_lower_cross_entropy_and_unicast_traffic": [
+    "stc_u0p25_d0p25_g2",
+    "stc_u0p5_d0p5_g2",
+    "stc_u1_d1_g2"
+  ],
+  "stc_points_with_lower_objective_and_unicast_traffic": [
+    "stc_u0p005_d0p005_g1",
+    "stc_u0p005_d0p005_g2",
+    "stc_u0p01_d0p01_g1",
+    "stc_u0p01_d0p01_g2",
+    "stc_u0p025_d0p025_g1",
+    "stc_u0p025_d0p025_g2",
+    "stc_u0p05_d0p05_g1",
+    "stc_u0p05_d0p05_g2",
+    "stc_u0p1_d0p1_g1",
+    "stc_u0p1_d0p1_g2",
+    "stc_u0p25_d0p25_g1",
+    "stc_u0p25_d0p25_g2",
+    "stc_u0p5_d0p5_g1",
+    "stc_u0p5_d0p5_g2",
+    "stc_u1_d1_g1",
+    "stc_u1_d1_g2",
+    "stc_u0p0025_d0p01_g1",
+    "stc_u0p01_d0p0025_g1",
+    "stc_u0p01_d0p0025_g2"
+  ]
+}

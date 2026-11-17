@@ -30,6 +30,8 @@ experiments/results/**
 !experiments/results/stc_cifar10_development_v1/
 !experiments/results/stc_cifar10_development_v1/*.csv
 !experiments/results/stc_cifar10_development_v1/*.json
+!experiments/results/stc_cifar10_development_v1/analysis_frontier.png
+!experiments/results/stc_cifar10_development_v1/analysis_frontier.pdf
 
 # LaTeX build products
 report/*.aux
