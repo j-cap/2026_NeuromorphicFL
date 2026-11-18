@@ -1,5 +1,12 @@
 # Experiments
 
+The single-seed 1800-round codec follow-up with held-out predictive metrics is
+documented in [`EVENT_CODEC_FULL_HORIZON.md`](EVENT_CODEC_FULL_HORIZON.md).
+Run `python experiments/event_codec_full_horizon.py verify`, `preflight`,
+`run --workers 2`, then `analyze`. Afterwards use
+`git add experiments/results/event_codec_full_horizon_v1`,
+`git commit -m "Add full-horizon single-seed codec results"`, and `git push origin main`.
+
 The short Event/STC message-coding audit is documented in
 [`EVENT_CODEC_PILOT.md`](EVENT_CODEC_PILOT.md). Run
 `python experiments/event_codec_pilot.py verify`, then `run --workers 2` and
