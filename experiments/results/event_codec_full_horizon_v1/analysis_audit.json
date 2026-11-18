@@ -1,0 +1,65 @@
+{
+  "confidence_intervals": false,
+  "endpoint": "final_round_1800",
+  "model_reconstruction": "bitwise_each_round",
+  "regression_references": [
+    {
+      "max_absolute_metric_differences": {
+        "macro_accuracy": 2.220446049250313e-16,
+        "test_accuracy": 0.0,
+        "test_ce": 4.746094628416131e-10,
+        "train_ce": 4.804687758763748e-10,
+        "train_objective": 4.951172805078841e-10,
+        "worst_class_accuracy": 0.0
+      },
+      "metric_tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-08
+      },
+      "native_traffic_exact": true,
+      "point": "event",
+      "reference": "archived_event_seed_3500",
+      "status": "matched"
+    },
+    {
+      "max_absolute_metric_differences": {
+        "macro_accuracy": 0.0,
+        "test_accuracy": 0.0,
+        "test_ce": 0.0,
+        "train_ce": 0.0,
+        "train_objective": 0.0,
+        "worst_class_accuracy": 0.0
+      },
+      "metric_tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-08
+      },
+      "native_traffic_exact": true,
+      "point": "stc_primary",
+      "reference": "matching_native_stc_confirmation_seed_3500",
+      "status": "matched"
+    },
+    {
+      "max_absolute_metric_differences": {
+        "macro_accuracy": 0.0,
+        "test_accuracy": 0.0,
+        "test_ce": 0.0,
+        "train_ce": 0.0,
+        "train_objective": 0.0,
+        "worst_class_accuracy": 0.0
+      },
+      "metric_tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-08
+      },
+      "native_traffic_exact": true,
+      "point": "stc_sparse",
+      "reference": "matching_native_stc_confirmation_seed_3500",
+      "status": "matched"
+    }
+  ],
+  "seed_pairs": 1,
+  "source_and_receipts_verified": true,
+  "target_rule": "first_saved_sample_no_interpolation_unreached_censored",
+  "test_driven_configuration_selection": false
+}

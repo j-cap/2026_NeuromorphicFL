@@ -1,0 +1,11 @@
+{
+  "contract_sha256": "3374e4a7e27f58af9707d075abf12b3b520598351d0e098604f590f1b08fbe8f",
+  "point": "event",
+  "sha256": {
+    "evaluation": "1fe8c5614bab83ef78ca4659b2dc1c11405bcb56bc75837d170c055670f57f73",
+    "history": "e3982d391b7789761f8521e5734d009ba1736b44fae49081a849ffc3047b5dda",
+    "rounds": "9fe7655500f86ad451ecc29d05e546d9957c97b420622a61df437df7e2afb1e0",
+    "summary": "e2b627d875ef792cf5336c96c8ace8d86bfefa16b2b2d825ed779dbd251c2bcb"
+  },
+  "state": "complete"
+}
