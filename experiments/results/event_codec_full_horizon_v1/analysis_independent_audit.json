@@ -1,0 +1,124 @@
+{
+  "all_saved_derived_tables_reproduced": true,
+  "all_three_receipts_and_source_hashes_verified": true,
+  "endpoint_event_vs_references": [
+    {
+      "event_accuracy_difference_pp": 0.12000000000000899,
+      "event_broadcast_reduction_percent": 53.52193392470208,
+      "event_downlink_increase_percent": 63.5964543225638,
+      "event_test_ce_difference": 0.015435726928710869,
+      "event_unicast_reduction_percent": 0.3098723952439819,
+      "event_uplink_reduction_percent": 65.45213662017999,
+      "reference": "stc_primary"
+    },
+    {
+      "event_accuracy_difference_pp": 1.0700000000000043,
+      "event_broadcast_reduction_percent": 56.56063642695401,
+      "event_downlink_increase_percent": 53.23563052825051,
+      "event_test_ce_difference": -0.02450433349609371,
+      "event_unicast_reduction_percent": 6.7344519207230835,
+      "event_uplink_reduction_percent": 67.71772386815229,
+      "reference": "stc_sparse"
+    }
+  ],
+  "event_aggregate_exact_frames_selected": 1800,
+  "event_aggregate_l1": 13992347,
+  "event_coordinate_events": 18973361,
+  "event_corrected_coordinate_rounds": 18953,
+  "independently_available_regression_references": [
+    {
+      "max_absolute_metric_differences": {
+        "macro_accuracy": 2.220446049250313e-16,
+        "test_accuracy": 0.0,
+        "test_ce": 4.746094628416131e-10,
+        "train_ce": 4.804687758763748e-10,
+        "train_objective": 4.951172805078841e-10,
+        "worst_class_accuracy": 0.0
+      },
+      "metric_tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-08
+      },
+      "native_traffic_exact": true,
+      "point": "event",
+      "reference": "archived_event_seed_3500",
+      "status": "matched"
+    },
+    {
+      "point": "stc_primary",
+      "status": "matching_confirmation_receipt_not_available"
+    },
+    {
+      "point": "stc_sparse",
+      "status": "matching_confirmation_receipt_not_available"
+    }
+  ],
+  "limitations": [
+    "one partition/training seed; no confidence intervals",
+    "first saved crossing at 60-round intervals",
+    "full packet streams and per-example predictions are not committed",
+    "recorded dataset fingerprints checked; raw images not redownloaded",
+    "matching native STC confirmation data may exist locally but is not yet committed"
+  ],
+  "maximum_count_times_jump_error": 3.725290298461914e-09,
+  "recorded_data_and_runtime_match_pilot": true,
+  "roundoff_correction_fraction_of_final_unicast": 0.015846326793785975,
+  "scope": "one_fixed_seed_final_round_and_prespecified_targets",
+  "user_local_recorded_regression_references": [
+    {
+      "max_absolute_metric_differences": {
+        "macro_accuracy": 2.220446049250313e-16,
+        "test_accuracy": 0.0,
+        "test_ce": 4.746094628416131e-10,
+        "train_ce": 4.804687758763748e-10,
+        "train_objective": 4.951172805078841e-10,
+        "worst_class_accuracy": 0.0
+      },
+      "metric_tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-08
+      },
+      "native_traffic_exact": true,
+      "point": "event",
+      "reference": "archived_event_seed_3500",
+      "status": "matched"
+    },
+    {
+      "max_absolute_metric_differences": {
+        "macro_accuracy": 0.0,
+        "test_accuracy": 0.0,
+        "test_ce": 0.0,
+        "train_ce": 0.0,
+        "train_objective": 0.0,
+        "worst_class_accuracy": 0.0
+      },
+      "metric_tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-08
+      },
+      "native_traffic_exact": true,
+      "point": "stc_primary",
+      "reference": "matching_native_stc_confirmation_seed_3500",
+      "status": "matched"
+    },
+    {
+      "max_absolute_metric_differences": {
+        "macro_accuracy": 0.0,
+        "test_accuracy": 0.0,
+        "test_ce": 0.0,
+        "train_ce": 0.0,
+        "train_objective": 0.0,
+        "worst_class_accuracy": 0.0
+      },
+      "metric_tolerance": {
+        "atol": 1e-09,
+        "rtol": 1e-08
+      },
+      "native_traffic_exact": true,
+      "point": "stc_sparse",
+      "reference": "matching_native_stc_confirmation_seed_3500",
+      "status": "matched"
+    }
+  ],
+  "weighted_cancellation_fraction": 0.262526707840535
+}
