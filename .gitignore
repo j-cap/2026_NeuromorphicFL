@@ -47,6 +47,11 @@ experiments/results/**
 !experiments/results/event_codec_full_horizon_v1/accuracy_traffic.pdf
 !experiments/results/event_codec_full_horizon_v1/analysis_endpoint_targets.png
 !experiments/results/event_codec_full_horizon_v1/analysis_endpoint_targets.pdf
+!experiments/results/event_codec_ten_seed_v1/
+!experiments/results/event_codec_ten_seed_v1/*.csv
+!experiments/results/event_codec_ten_seed_v1/*.json
+!experiments/results/event_codec_ten_seed_v1/confirmation.png
+!experiments/results/event_codec_ten_seed_v1/confirmation.pdf
 
 # LaTeX build products
 report/*.aux

@@ -1,5 +1,14 @@
 # Experiments
 
+The ten-seed confirmation of the frozen 1800-round codec comparison is documented
+in [`EVENT_CODEC_TEN_SEED.md`](EVENT_CODEC_TEN_SEED.md). It reuses the three
+completed seed-3500 trajectories and trains 27 remaining point/seed pairs.
+Run `python experiments/event_codec_ten_seed.py verify`, `preflight`,
+`run --workers 2`, then `analyze`. Afterwards use
+`git add experiments/results/event_codec_ten_seed_v1`,
+`git commit -m "Add ten-seed Event and STC codec confirmation results"`, and
+`git push origin main`.
+
 The single-seed 1800-round codec follow-up with held-out predictive metrics is
 documented in [`EVENT_CODEC_FULL_HORIZON.md`](EVENT_CODEC_FULL_HORIZON.md).
 Run `python experiments/event_codec_full_horizon.py verify`, `preflight`,
