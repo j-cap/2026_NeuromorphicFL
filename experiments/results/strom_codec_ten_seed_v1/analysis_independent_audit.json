@@ -1,0 +1,35 @@
+{
+  "audit_source_sha256": "eba263db1cb6c54bd86709409fea957c43ac62247681fd928ec7fa63145c4332",
+  "contract_sha256": "acdbd88dd0e99eefc97ec1fb5860b439bb778dc466bf1828c57af5a8b0509c25",
+  "development_checkpoint_reused": false,
+  "equivalence_or_noninferiority_claim": false,
+  "frozen_development_selection_sha256": "21c25ee3aade9921b206bbbb8d999eaec76151b2a54825a568aa723c6fda97e2",
+  "independent_paired_intervals_and_coverage": true,
+  "independent_prefix_and_endpoint_accounting": true,
+  "limits": [
+    "fixed compact CNN and full-participation strong-skew regime",
+    "uncertainty across partition/SGD seeds on a fixed previously inspected test set",
+    "secondary intervals are descriptive, unadjusted for multiple comparisons",
+    "raw images, packet bytes, model weights and residual arrays are not reloaded",
+    "first saved crossings are retrospective and can later fall below target",
+    "no causal leak/reset/quantum attribution from these algorithm comparisons"
+  ],
+  "new_Strom_receipts_verified": 10,
+  "original_analysis_preserved": true,
+  "original_analysis_sha256": {
+    "comparison.csv": "414fda6f907d480c4b3355c4938153c937672b13aa40610588a1f600500225ac",
+    "comparison_history.csv": "4fdb513148d506208acf9339663a6ae54813dee0bb6bcd2d5e3398cee58e167d",
+    "endpoint_summary.csv": "c41463aa84a566c4fcfdf82f867c2c1069205bf79288920b03876c91a728cc44",
+    "main_runs.csv": "0c06f91167cdbb6a2c8fba3d818d01f5d627f17c5d6c1741c6d33268a478b4f5",
+    "paired_per_seed.csv": "3042845de56c141de4fcc30ff85f359ee59643562524cb7208897a2574966416",
+    "paired_summary.csv": "98652861b0ad946f4bc4a3387834526d6390a90803fdff68df7f51a13ab7eff0",
+    "paired_target_summary.csv": "e6e229f1d75449a9b9336669cbb096553f780dd6cde4563e94c9d9be1368fc70",
+    "traffic_to_target.csv": "ebc69442730d3a911227ff521f6408e86a92cbd6823e200aaaada67a435d0080"
+  },
+  "reproduced_original_analysis_csvs": 8,
+  "results_commit": "b3b2d302fa9311fdefd4c77634ad6d9e4d3217dc",
+  "reused_Event_STC_receipts_verified": 30,
+  "test_tuning_or_early_stopping": false,
+  "verified_evaluated_model_fingerprints": 1240,
+  "verified_round_records": 72000
+}

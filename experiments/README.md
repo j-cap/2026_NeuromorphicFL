@@ -1,5 +1,17 @@
 # Experiments
 
+The completed calibrated Ström comparison is interpreted in
+[`STROM_CODEC_TEN_SEED_RESULTS.md`](STROM_CODEC_TEN_SEED_RESULTS.md). The ten-seed
+study finds lower final traffic for Ström in every seed, lower mean test CE,
+and no established final-accuracy difference from Event. Event reaches 50%
+accuracy in fewer sampled rounds on every seed, but this does not establish
+lower traffic to that target. Run `python experiments/strom_codec_ten_seed_audit.py`
+to reproduce the saved-evidence audit and export paired cost/codec diagnostics
+without changing the original analysis. Afterwards use
+`git add experiments/results/strom_codec_ten_seed_v1`,
+`git commit -m "Refresh calibrated Strom ten-seed evidence audit"`, and
+`git push origin main`.
+
 The calibrated Ström confirmation is documented in
 [`STROM_CODEC_TEN_SEED.md`](STROM_CODEC_TEN_SEED.md). It freezes threshold 0.05
 and native gain 0.10, runs ten new 1800-round Ström trajectories on the full
