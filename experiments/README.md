@@ -1,5 +1,15 @@
 # Experiments
 
+The bounded validation-only Ström calibration is documented in
+[`STROM_CODEC_DEVELOPMENT.md`](STROM_CODEC_DEVELOPMENT.md). It holds out 5000
+training images, screens 15 settings plus fixed Event, permits one boundary
+extension of at most six settings, and continues at most two Ström finalists
+and Event to 1800 rounds. Run `python experiments/strom_codec_development.py verify`,
+`preflight`, `run --workers 2`, then `analyze`. Afterwards use
+`git add experiments/results/strom_codec_development_v1`,
+`git commit -m "Add validation-only Strom development results"`, and
+`git push origin main`.
+
 The comparable Ström-style pulse baseline is documented in
 [`STROM_CODEC_PILOT.md`](STROM_CODEC_PILOT.md). It uses the same lossless position
 and aggregate-downlink codecs as Event, preserves the native residual rule, and
