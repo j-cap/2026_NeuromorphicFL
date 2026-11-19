@@ -1,0 +1,11 @@
+{
+  "boundary_passes": 1,
+  "confirmation_included": false,
+  "full_horizon_selection_available": true,
+  "official_test_evaluations": 0,
+  "promoted_strom_points": 1,
+  "screened_strom_points": 15,
+  "selection_metric": "final_validation_ce",
+  "split_disjointness_verified": true,
+  "validation_only": true
+}

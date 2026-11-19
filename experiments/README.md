@@ -1,5 +1,17 @@
 # Experiments
 
+The completed Ström development study is interpreted in
+[`STROM_CODEC_DEVELOPMENT_RESULTS.md`](STROM_CODEC_DEVELOPMENT_RESULTS.md).
+It freezes threshold 0.05 and native gain 0.10 for confirmation. The selected
+Ström run uses 31.85% less final unicast traffic than Event and has better
+round-1800 validation CE on the single development seed. This is development
+evidence, not a multi-seed test conclusion. Run
+`python experiments/strom_codec_development_audit.py` to verify saved evidence
+and regenerate endpoint, target-cost, codec and trajectory diagnostics without
+training. Afterwards use `git add experiments/results/strom_codec_development_v1`,
+`git commit -m "Refresh validation-only Strom development analysis"`, and
+`git push origin main`.
+
 The bounded validation-only Ström calibration is documented in
 [`STROM_CODEC_DEVELOPMENT.md`](STROM_CODEC_DEVELOPMENT.md). It holds out 5000
 training images, screens 15 settings plus fixed Event, permits one boundary

@@ -62,6 +62,8 @@ experiments/results/**
 !experiments/results/strom_codec_development_v1/*.json
 !experiments/results/strom_codec_development_v1/development_frontier.png
 !experiments/results/strom_codec_development_v1/development_frontier.pdf
+!experiments/results/strom_codec_development_v1/analysis_trajectories.png
+!experiments/results/strom_codec_development_v1/analysis_trajectories.pdf
 
 # LaTeX build products
 report/*.aux

@@ -1,0 +1,54 @@
+{
+  "archived_model_evaluations": 238,
+  "archived_round_records": 13200,
+  "audit_source_sha256": "85fecf3fe60760632eb0931474d03ad34c4b0f5e8aaa88b2a79cacfdfe03d686",
+  "completion_receipts_verified": 18,
+  "confirmation_included": false,
+  "contract_sha256": "15316b56f3b67c763d9b26ccaaa9e94d3012b8caf60c79b77b6effd366af2bf7",
+  "derived_csv_sha256": {
+    "analysis_codec_diagnostics.csv": "53d8d4603432000dee193a485ce0792505d8e3296f593445587f747f1f86c122",
+    "analysis_endpoint_comparison.csv": "0358cf2083201ad858a9da4a7f6e0c8d65437a9e47eef68fb128d486a20c4a9d",
+    "analysis_endpoint_contrasts.csv": "c4b1cddcb6410b3edd935a1b8200dc7822758f4a208c45ebc292acfe1011ea7a",
+    "analysis_finalist_curves.csv": "b12fb9e8e63135ce04a1bb0f70aecdc5feeaec6766082f6e0c09f066c92d77e6",
+    "analysis_target_comparison.csv": "fd0a66257d5a78765cd3540679d5b93e0d8d1475aa2202653332f62fae3f5abc",
+    "analysis_traffic_to_targets.csv": "ee2c600f0736e10909dbc6c3f9f866f2cc177f7a0e752766826f712161fa631f"
+  },
+  "independent_fixed_horizon_selection": true,
+  "independent_traffic_reconstruction": true,
+  "limits": [
+    "one development partition/SGD seed; no confidence intervals or significance claim",
+    "validation used for configuration selection; no independent predictive confirmation",
+    "only the promoted candidate is evaluated to 1800; no full-grid optimum claim",
+    "first saved target crossings are retrospective validation diagnostics, without interpolation",
+    "raw images, packets, residual arrays and model checkpoints are not reloaded",
+    "old STC test results use a different training split and are not combined with these scores"
+  ],
+  "official_test_evaluations": 0,
+  "results_commit": "67eeec9a90f7689f9adcba0c50da16df541193d4",
+  "selection": {
+    "event_unicast_budget_bits": 760066088,
+    "nearest_traffic_diagnostic": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 518019672,
+      "validation_ce": 1.2680138122558593
+    },
+    "quality": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 518019672,
+      "validation_ce": 1.2680138122558593
+    },
+    "within_event_budget": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 518019672,
+      "validation_ce": 1.2680138122558593
+    }
+  },
+  "split_disjointness_verified": true,
+  "verified_finalist_screening_prefixes": 2
+}
