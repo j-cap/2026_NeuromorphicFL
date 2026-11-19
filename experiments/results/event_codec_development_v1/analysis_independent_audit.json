@@ -1,0 +1,40 @@
+{
+  "archived_evaluated_model_fingerprints": 269,
+  "archived_round_records": 15000,
+  "audit_source_sha256": "3cc8374f906a815dc366dd18f53e67c0eb17538a69670a6dd66064893960f81b",
+  "confirmation_included": false,
+  "contract_sha256": "8560b0f8a2b99a5d9f9b13167cd4708a54fdc3e8816c63ac4d5051fc2234bd52",
+  "exact_600_round_prefixes": [
+    "strom_reference",
+    "event_t0p025_q0p005",
+    "event_t0p05_q0p01"
+  ],
+  "frozen_validation_selection_verified": true,
+  "independent_counter_helper_sha256": "85fecf3fe60760632eb0931474d03ad34c4b0f5e8aaa88b2a79cacfdfe03d686",
+  "independent_prefix_and_endpoint_traffic_reconstruction": true,
+  "limits": [
+    "one development partition/SGD seed with validation-based selection; no confidence intervals",
+    "only screen-promoted Event candidates evaluated to 1800; no full-grid optimum claim",
+    "accuracy and CE can favour different algorithms; report both",
+    "first saved accuracy crossings are retrospective diagnostics, without interpolation",
+    "raw images, packet bytes, NPZ model weights and Event/residual arrays are not reloaded",
+    "additional development after inspected test confirmation; fresh paired confirmation required"
+  ],
+  "new_completion_receipts_verified": 15,
+  "official_test_evaluations": 0,
+  "original_analysis_preserved": true,
+  "original_analysis_raw_byte_sha256": {
+    "analysis_audit.json": "894b322d4993af90d5a316ea15d1dade6786a8c26df6f6722573b3c7f3cbf83c",
+    "controls.csv": "f2fa563f0bba35340c2ef23290ad0c63e8e1f0d65e07cd8db3573b4f968bc211",
+    "development_frontier.pdf": "bdba8ce745b9392ede2aa2b33dc37b6d8ad1a3f11fbe584803125d54dd740fb7",
+    "development_frontier.png": "af8bc054483398f48b308af6b8346e7207db89948089d01b27174ffbf4ddf080",
+    "finalists.csv": "7b0f87ebf1b306c89ef9450c3660e8e5714643b71950c6788c6b5c015b40c8ca",
+    "screening.csv": "469382557bd1a2383a78d2a9175423ba8407024d866aaa1533f0b60c8f3f9876"
+  },
+  "reproduced_original_ledger_csvs": 3,
+  "results_commit": "7d018daa29750da12f5c74b2e4f4a6e0e6fe922d",
+  "reused_reference_stages_verified": 4,
+  "unique_evaluated_models": 236,
+  "unique_trajectory_rounds": 13200,
+  "winner_initial_quantum_on_upper_grid_boundary": true
+}

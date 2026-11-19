@@ -1,5 +1,17 @@
 # Experiments
 
+The completed Event threshold/quantum search is interpreted in
+[`EVENT_CODEC_DEVELOPMENT_RESULTS.md`](EVENT_CODEC_DEVELOPMENT_RESULTS.md).
+It selects threshold 0.05 / quantum 0.01, improving validation accuracy and
+traffic over current Event. Relative to calibrated Ström, it has lower traffic
+and higher accuracy but worse final validation CE on the single development
+seed. Run `python experiments/event_codec_development_audit.py` to verify saved
+evidence and regenerate endpoint, target and codec diagnostics without changing
+the original analysis. Afterwards use
+`git add experiments/results/event_codec_development_v1`,
+`git commit -m "Refresh Event threshold quantum development analysis"`, and
+`git push origin main`. Fresh paired confirmation remains the next experiment.
+
 The bounded Event threshold/quantum study is documented in
 [`EVENT_CODEC_DEVELOPMENT.md`](EVENT_CODEC_DEVELOPMENT.md). It screens fifteen
 settings on the existing 45000/5000 training/validation split: fourteen new runs
