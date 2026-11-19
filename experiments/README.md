@@ -1,5 +1,17 @@
 # Experiments
 
+The calibrated Ström confirmation is documented in
+[`STROM_CODEC_TEN_SEED.md`](STROM_CODEC_TEN_SEED.md). It freezes threshold 0.05
+and native gain 0.10, runs ten new 1800-round Ström trajectories on the full
+training set, and reuses all thirty completed Event/STC controls. The validation
+checkpoint cannot be reused, including for seed 3500. Run
+`python experiments/strom_codec_ten_seed.py verify`, `preflight`,
+`run --workers 2`, then `analyze`. Afterwards use
+`git add experiments/results/strom_codec_ten_seed_v1`,
+`git commit -m "Add calibrated Strom ten-seed confirmation results"`, and
+`git push origin main`. Runs resume from local checkpoints; all expected seeds
+must be present before the paired analysis is accepted.
+
 The completed Ström development study is interpreted in
 [`STROM_CODEC_DEVELOPMENT_RESULTS.md`](STROM_CODEC_DEVELOPMENT_RESULTS.md).
 It freezes threshold 0.05 and native gain 0.10 for confirmation. The selected
