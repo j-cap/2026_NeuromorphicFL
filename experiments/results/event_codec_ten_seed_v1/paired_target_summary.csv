@@ -1,0 +1,13 @@
+scope,reference,target_accuracy,n_total,n_event_reached,n_reference_reached,n_common_hits,n,estimate,ci95_low,ci95_high,direction,estimand
+all_10,stc_primary,0.45000000000000001,10,10,10,10,10,0.84142903127266566,0.77542639101567346,0.91304967547093185,Event_over_reference,conditional_on_both_reaching_target
+all_10,stc_primary,0.5,10,10,10,10,10,0.70668234619044057,0.65428724572104913,0.76327322851428692,Event_over_reference,conditional_on_both_reaching_target
+all_10,stc_primary,0.55000000000000004,10,10,10,10,10,0.78959487283543628,0.64391147782669056,0.96823877920656309,Event_over_reference,conditional_on_both_reaching_target
+all_10,stc_sparse,0.45000000000000001,10,10,10,10,10,0.82175976213685475,0.81339820403176255,0.83020727525586047,Event_over_reference,conditional_on_both_reaching_target
+all_10,stc_sparse,0.5,10,10,10,10,10,0.68111281833453186,0.62281683632417095,0.74486533478704031,Event_over_reference,conditional_on_both_reaching_target
+all_10,stc_sparse,0.55000000000000004,10,10,10,10,10,0.70975760128398524,0.60944060934785138,0.82658727504137663,Event_over_reference,conditional_on_both_reaching_target
+additional_9,stc_primary,0.45000000000000001,9,9,9,9,9,0.87213319128347899,0.86227042463305481,0.88210876960321472,Event_over_reference,conditional_on_both_reaching_target
+additional_9,stc_primary,0.5,9,9,9,9,9,0.71076670957460752,0.65184950427191324,0.7750091273042975,Event_over_reference,conditional_on_both_reaching_target
+additional_9,stc_primary,0.55000000000000004,9,9,9,9,9,0.78567491661683397,0.62293664095071488,0.99092754225980262,Event_over_reference,conditional_on_both_reaching_target
+additional_9,stc_sparse,0.45000000000000001,9,9,9,9,9,0.82108636278409175,0.81172808761279114,0.83055252791943102,Event_over_reference,conditional_on_both_reaching_target
+additional_9,stc_sparse,0.5,9,9,9,9,9,0.68708262551147092,0.62203219095969964,0.75893585756612647,Event_over_reference,conditional_on_both_reaching_target
+additional_9,stc_sparse,0.55000000000000004,9,9,9,9,9,0.71022926893735217,0.59700518798005453,0.8449266850795577,Event_over_reference,conditional_on_both_reaching_target

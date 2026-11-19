@@ -1,0 +1,185 @@
+{
+  "expected": 30,
+  "results": [
+    {
+      "error": "",
+      "partition_seed": 3500,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 3500,
+      "point": "stc_primary",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 3500,
+      "point": "stc_sparse",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 3600,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3600,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3600,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3700,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3700,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3700,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3800,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3800,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3800,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3900,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3900,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 3900,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4000,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4000,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4000,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4100,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4100,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4100,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4200,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4200,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4200,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4300,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4300,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4300,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4400,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4400,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 4400,
+      "point": "stc_sparse",
+      "state": "complete"
+    }
+  ]
+}

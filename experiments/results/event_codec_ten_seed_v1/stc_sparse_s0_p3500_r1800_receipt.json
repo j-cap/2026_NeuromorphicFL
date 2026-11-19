@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "config_sha256": "38419e376d7840641acbe1d5e222f828e0badea1ce75914c7b1b077fe11b0ce6",
+    "contract_sha256": "81f8efd113145fedb45a26d4e83b44c1501b4b554968639a691ef46294e90708",
+    "evaluation_scope": "ten_seed_fixed_codec_confirmation",
+    "evidence_origin": "reused_full_horizon",
+    "partition_seed": 3500,
+    "point": "stc_sparse",
+    "seed_index": 0,
+    "source_contract_sha256": "3374e4a7e27f58af9707d075abf12b3b520598351d0e098604f590f1b08fbe8f",
+    "train_seed": 83500
+  },
+  "source": {
+    "files": {
+      "evaluation": {
+        "path": "experiments/results/event_codec_full_horizon_v1/stc_sparse_evaluation.csv",
+        "sha256": "f3e68737ce8621c29ca981cde6f6d5bc523ebaa27aa0dee56a97c22611f4b6d3"
+      },
+      "history": {
+        "path": "experiments/results/event_codec_full_horizon_v1/stc_sparse_history.csv",
+        "sha256": "990ca46d4c047c4ab0e9748ef9069fdcf7d79945b6224e8f917a17c1f90c567c"
+      },
+      "receipt": {
+        "path": "experiments/results/event_codec_full_horizon_v1/stc_sparse_receipt.json",
+        "sha256": "341c6691abde0b5e1b801cf8835bf1e549ca27fed31523b770e01ef3ca2f4b22"
+      },
+      "rounds": {
+        "path": "experiments/results/event_codec_full_horizon_v1/stc_sparse_rounds.csv",
+        "sha256": "e9d0e46a8f60befeff6992703c4211f452229c1c429d977697509fd55bc58c80"
+      },
+      "summary": {
+        "path": "experiments/results/event_codec_full_horizon_v1/stc_sparse_summary.csv",
+        "sha256": "9ca1c9960727ffc29cf57ab607547d386610df02baf96b2e82f835b1a038a6aa"
+      }
+    },
+    "source_contract_sha256": "3374e4a7e27f58af9707d075abf12b3b520598351d0e098604f590f1b08fbe8f"
+  },
+  "state": "reused"
+}
