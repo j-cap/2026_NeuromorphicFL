@@ -1,5 +1,18 @@
 # Experiments
 
+The bounded Event threshold/quantum study is documented in
+[`EVENT_CODEC_DEVELOPMENT.md`](EVENT_CODEC_DEVELOPMENT.md). It screens fifteen
+settings on the existing 45000/5000 training/validation split: fourteen new runs
+plus reused current Event. Calibrated Ström supplies the fixed communication
+budget. At most two promoted settings continue exactly from 600 to 1800 rounds;
+only threshold and initial quantum change. Run
+`python experiments/event_codec_development.py verify`, `preflight`,
+`run --workers 2`, then `analyze`. Afterwards use
+`git add experiments/results/event_codec_development_v1`,
+`git commit -m "Add validation-only Event threshold quantum development results"`,
+and `git push origin main`. The study loads no official test curves and ends
+with frozen development choices, without launching confirmation runs.
+
 The completed calibrated Ström comparison is interpreted in
 [`STROM_CODEC_TEN_SEED_RESULTS.md`](STROM_CODEC_TEN_SEED_RESULTS.md). The ten-seed
 study finds lower final traffic for Ström in every seed, lower mean test CE,
