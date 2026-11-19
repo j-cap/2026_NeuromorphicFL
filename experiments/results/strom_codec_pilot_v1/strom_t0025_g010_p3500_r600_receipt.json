@@ -1,0 +1,18 @@
+{
+  "identity": {
+    "config_sha256": "3b2da495abc6f2c8aa01b474e18cb5da67e6fcf523565b3e52c20b2b66b84ec2",
+    "contract_sha256": "d1ebc2866ba6298d3bb749b095a9516a8bdadf900fabc0e4e71da0c408c132f4",
+    "evaluation_scope": "single_seed_600_round_codec_scaling_pilot",
+    "evidence_origin": "new_strom_codec_run",
+    "partition_seed": 3500,
+    "point": "strom_t0025_g010",
+    "train_seed": 83500
+  },
+  "sha256": {
+    "evaluation": "e32cda8ec0a25232b41c2517e53b936f4ad26172900c2fb784cba6ac5404d049",
+    "history": "f254df26e16bfb63e7e139626b0538f7cf66f0e7386bdc1a325d0d2255b4c549",
+    "rounds": "eacc0dd9fe88f9548a8d44b5aa05f7b7b370e8c7fb2785e208e915f214947a9c",
+    "summary": "fcda2f1bcf1d16518901617f31bc8d9a520103cdb88d4d528bb8498b2f23ff91"
+  },
+  "state": "complete"
+}
