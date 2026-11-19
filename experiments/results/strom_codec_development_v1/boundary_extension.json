@@ -1,0 +1,48 @@
+{
+  "additional_points": [],
+  "contract_sha256": "15316b56f3b67c763d9b26ccaaa9e94d3012b8caf60c79b77b6effd366af2bf7",
+  "extension_passes": 1,
+  "initial_receipts": {
+    "event_reference": "2b27e3f42fad29f7f801d897ff780426f3c9cb5c14b44277554857d094549522",
+    "strom_t0p0025_g1": "6b5c44825f2729ffe07e344bddf992a5c32890c3d2a02d232bd3f5262ec6a162",
+    "strom_t0p0025_g2": "9eabecde24f40f80ce609e789aa680a6419eb9d460c7dba510c93a7c26d21054",
+    "strom_t0p0025_g4": "9b44c97d5be08f8863072b9bb29c6bd9b26424408bad1a1ddcb793fad3a536b8",
+    "strom_t0p01_g1": "c1a6a9e110a80aec230a9956fb44aad7ab68d9355013fd3a6862f05237e59e8a",
+    "strom_t0p01_g2": "906cf99102c79fc45e22452b988da4a045acb918cba4e7dd0fee6ec44afab5d5",
+    "strom_t0p01_g4": "45ce09d944d979280a7af356bfeffbfd83d366773026637fa5cc13fa6e0af2f0",
+    "strom_t0p025_g1": "a35c378a116eadc87bc2c25afee015ed7699d18d148c0d14ff5b2609295af7f6",
+    "strom_t0p025_g2": "73c17a8a47315f7e53b01de322e2ed49fc7bc65fd74c62cbe65696d212d94402",
+    "strom_t0p025_g4": "1ae56330432e2f511add9134d5796310410f0de233dba3824f3f027e9cea87ba",
+    "strom_t0p05_g1": "2bd4e3fb198bb2b47aa055eb0e55262e26f27d3069cd5cf956956880a2baf8b8",
+    "strom_t0p05_g2": "d69deec61024ba1a643f0162637a667452c443de710ba028f74c897017efb2ce",
+    "strom_t0p05_g4": "bd29281d8490afff9df9a39bb6a1e9507bd077f728765d82d759c26806a7d6ff",
+    "strom_t0p1_g1": "06f86b8449a21d4a3638ae33ee451647199e96136e6d9b2454166f790f35b1f1",
+    "strom_t0p1_g2": "e70e2b4831a56f514397ab02ca4761fd6e8c5055cd1f6a220ba131264165f37c",
+    "strom_t0p1_g4": "fcdd231e223e827ccc515e32b6930b482a716ba37851eaee6028ab0cc79c76cd"
+  },
+  "initial_selection": {
+    "event_unicast_budget_bits": 234420328,
+    "nearest_traffic_diagnostic": {
+      "equivalent_gain": 4.0,
+      "point_id": "strom_t0p025_g4",
+      "threshold": 0.025,
+      "unicast_bits": 235450480,
+      "validation_ce": 1.2838466430664062
+    },
+    "quality": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 158684888,
+      "validation_ce": 1.259027587890625
+    },
+    "within_event_budget": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 158684888,
+      "validation_ce": 1.259027587890625
+    }
+  },
+  "split_sha256": "5ccbf3123678b7525df7ab6e5d05864a0707eeb1bf60eb3c79327b90d799ff72"
+}

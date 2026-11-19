@@ -1,0 +1,87 @@
+{
+  "confirmation_included": false,
+  "contract_sha256": "15316b56f3b67c763d9b26ccaaa9e94d3012b8caf60c79b77b6effd366af2bf7",
+  "final_horizon": 1800,
+  "final_receipts": {
+    "event_reference": "fb4b4b349e903ea2a6703926b76155cac13a013aa427920cad50558f7327ebc5",
+    "strom_t0p05_g2": "9a7515ef5142e5bf8734e960a1a06a66b510cbab44dff9a4500a0a79c9d6ebf1"
+  },
+  "official_test_evaluations": 0,
+  "scope": "two_stage_development_selection_among_promoted_finalists",
+  "screen_horizon": 600,
+  "screening_selection_sha256": "8e918623d595eff48c41cdb052eba18f76388b65ade6cbcf335a41be3a9f1c61",
+  "selected_configs": {
+    "quality": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.005,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 0.1,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.05,
+      "threshold": 0.025,
+      "topk_fraction": 0.01
+    },
+    "within_event_budget": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.005,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 0.1,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.05,
+      "threshold": 0.025,
+      "topk_fraction": 0.01
+    }
+  },
+  "selection": {
+    "event_unicast_budget_bits": 760066088,
+    "nearest_traffic_diagnostic": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 518019672,
+      "validation_ce": 1.2680138122558593
+    },
+    "quality": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 518019672,
+      "validation_ce": 1.2680138122558593
+    },
+    "within_event_budget": {
+      "equivalent_gain": 2.0,
+      "point_id": "strom_t0p05_g2",
+      "threshold": 0.05,
+      "unicast_bits": 518019672,
+      "validation_ce": 1.2680138122558593
+    }
+  },
+  "selection_metric": "final_validation_ce",
+  "split_sha256": "5ccbf3123678b7525df7ab6e5d05864a0707eeb1bf60eb3c79327b90d799ff72"
+}

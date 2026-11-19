@@ -1,0 +1,19 @@
+{
+  "identity": {
+    "config_sha256": "a73db7803e49260b614cc61f1abfbefd16e49c0edd5f261513a4dca430d7a229",
+    "contract_sha256": "15316b56f3b67c763d9b26ccaaa9e94d3012b8caf60c79b77b6effd366af2bf7",
+    "evaluation_scope": "training_holdout_validation_only",
+    "method": "strom",
+    "point_id": "strom_t0p1_g4",
+    "split_sha256": "5ccbf3123678b7525df7ab6e5d05864a0707eeb1bf60eb3c79327b90d799ff72",
+    "stage_horizon": 600,
+    "training_seed": 84500
+  },
+  "sha256": {
+    "evaluation": "80b68b35af81a1f0365b61b0dfcb0a367304653a39f205a550b83d51ec007245",
+    "history": "24db9d67fc8e346d71a27d48b5cdb3e6d76903745aab5ad9cf1ba2d910c4b671",
+    "rounds": "46dec1a0c1e3daf8d4843f7133eeea4f91a80ed72b225eacba462e53c815551a",
+    "summary": "d458d5e66ea04a70261162486f45cd18ea9318a82504f08d20214932a1aa5531"
+  },
+  "state": "complete"
+}
