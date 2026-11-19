@@ -1,0 +1,40 @@
+{
+  "identity": {
+    "config_sha256": "b868e4e319cbed388bf158ebd76c04fc30f0ff0bef411d36282f4e95a59b4365",
+    "contract_sha256": "acdbd88dd0e99eefc97ec1fb5860b439bb778dc466bf1828c57af5a8b0509c25",
+    "evaluation_scope": "calibrated_Strom_full_training_ten_seed_confirmation",
+    "evidence_origin": "reused_Event_STC_codec_run",
+    "partition_seed": 3500,
+    "point": "stc_primary",
+    "seed_index": 0,
+    "source_contract_sha256": "81f8efd113145fedb45a26d4e83b44c1501b4b554968639a691ef46294e90708",
+    "train_seed": 83500
+  },
+  "source": {
+    "evaluation": {
+      "path": "experiments/results/event_codec_full_horizon_v1/stc_primary_evaluation.csv",
+      "sha256": "6966b20ebb94cfb3881f64b41329b078ae03108affe11e3c850cc3be9fd88443"
+    },
+    "history": {
+      "path": "experiments/results/event_codec_full_horizon_v1/stc_primary_history.csv",
+      "sha256": "f08c1e9b51bc921274f644120114436fe1cf407f800667c608139ce4ebff1a46"
+    },
+    "receipt": {
+      "path": "experiments/results/event_codec_full_horizon_v1/stc_primary_receipt.json",
+      "sha256": "458ead95f5842bdb3716b7038011401d5122ebd127a68fb603ba9af468649ce4"
+    },
+    "reference_receipt": {
+      "path": "experiments/results/event_codec_ten_seed_v1/stc_primary_s0_p3500_r1800_receipt.json",
+      "sha256": "97cf0f131c8a97b816a573db3c309b054a9a50c5352008ddc55c3333121dbf14"
+    },
+    "rounds": {
+      "path": "experiments/results/event_codec_full_horizon_v1/stc_primary_rounds.csv",
+      "sha256": "8908e5654c42bccc072aa2ec5231964142796897ae3776b834a5292a0c31fd86"
+    },
+    "summary": {
+      "path": "experiments/results/event_codec_full_horizon_v1/stc_primary_summary.csv",
+      "sha256": "d47d16c85c70c48b7d874b9b32c6b2b55d227034c70842683b1658d6272e16eb"
+    }
+  },
+  "state": "reused"
+}

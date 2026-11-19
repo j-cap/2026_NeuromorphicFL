@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "config_sha256": "3dd7076a9bd6b19b2c8775cc8fee52120d0c1561ca5ec62c6a3a9035473ec8fd",
+    "contract_sha256": "acdbd88dd0e99eefc97ec1fb5860b439bb778dc466bf1828c57af5a8b0509c25",
+    "evaluation_scope": "calibrated_Strom_full_training_ten_seed_confirmation",
+    "evidence_origin": "reused_Event_STC_codec_run",
+    "partition_seed": 3900,
+    "point": "event",
+    "seed_index": 4,
+    "source_contract_sha256": "81f8efd113145fedb45a26d4e83b44c1501b4b554968639a691ef46294e90708",
+    "train_seed": 83900
+  },
+  "source": {
+    "evaluation": {
+      "path": "experiments/results/event_codec_ten_seed_v1/event_s4_p3900_r1800_evaluation.csv",
+      "sha256": "6449c84133f242d6f43e1b622c29812d50c403cd6d84baeb962767ef84b553f0"
+    },
+    "history": {
+      "path": "experiments/results/event_codec_ten_seed_v1/event_s4_p3900_r1800_history.csv",
+      "sha256": "1fbad75a0d8acd43a940a9501f40f5cb9c58d765e356ef634f4a00f346425b38"
+    },
+    "receipt": {
+      "path": "experiments/results/event_codec_ten_seed_v1/event_s4_p3900_r1800_receipt.json",
+      "sha256": "793d6f2170e234fdb1745bc5639766e8175ea3fc1289364c6653485c3fe20d64"
+    },
+    "rounds": {
+      "path": "experiments/results/event_codec_ten_seed_v1/event_s4_p3900_r1800_rounds.csv",
+      "sha256": "59af01eff6e2faf9f90fd15ad9682c45674181a7b139b47cd499c1ae37263e2c"
+    },
+    "summary": {
+      "path": "experiments/results/event_codec_ten_seed_v1/event_s4_p3900_r1800_summary.csv",
+      "sha256": "d691c55e143e9eb8f4d3731f61621acfe235bc54548e613fe82fa854f9076ee2"
+    }
+  },
+  "state": "reused"
+}

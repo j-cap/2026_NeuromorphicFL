@@ -1,0 +1,17 @@
+{
+  "development_checkpoint_reused": false,
+  "equivalence_or_noninferiority_claim": false,
+  "frozen_development_selection_sha256": "21c25ee3aade9921b206bbbb8d999eaec76151b2a54825a568aa723c6fda97e2",
+  "intervals": "descriptive_unadjusted_paired_95pct_Student_t_ratios_on_log_scale",
+  "new_Strom_training_runs": 10,
+  "primary_endpoint": "Event minus calibrated Strom round-1800 test accuracy in percentage points",
+  "reused_Event_STC_results": 30,
+  "scopes": {
+    "additional_9": "exclude the previously inspected pilot 3500",
+    "all_10": "ten matched seeds including previously inspected pilot 3500"
+  },
+  "seed_pairs": 10,
+  "source_receipts_model_fingerprints_and_prefix_costs_verified": true,
+  "target_coverage_required_for_interpretation": true,
+  "test_tuning_or_early_stopping": false
+}
