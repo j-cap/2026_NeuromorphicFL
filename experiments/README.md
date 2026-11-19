@@ -10,6 +10,11 @@ then `analyze`. Afterwards use `git add experiments/results/strom_codec_pilot_v1
 `git commit -m "Add comparable Strom-style codec pilot results"`, and
 `git push origin main`.
 
+The completed pilot and its scaling/backlog qualifications are documented in
+[`STROM_CODEC_PILOT_RESULTS.md`](STROM_CODEC_PILOT_RESULTS.md).
+`python experiments/strom_codec_pilot_audit.py` verifies the saved evidence and
+exports endpoint, target-cost and residual/codec diagnostics without training.
+
 The ten-seed confirmation of the frozen 1800-round codec comparison is documented
 in [`EVENT_CODEC_TEN_SEED.md`](EVENT_CODEC_TEN_SEED.md). It reuses the three
 completed seed-3500 trajectories and trains 27 remaining point/seed pairs.

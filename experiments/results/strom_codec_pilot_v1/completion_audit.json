@@ -1,0 +1,29 @@
+{
+  "expected": 6,
+  "results": [
+    {
+      "point": "strom_t0025_g005",
+      "state": "complete"
+    },
+    {
+      "point": "strom_t0025_g010",
+      "state": "complete"
+    },
+    {
+      "point": "strom_t0025_g100",
+      "state": "complete"
+    },
+    {
+      "point": "strom_t0100_g005",
+      "state": "complete"
+    },
+    {
+      "point": "strom_t0100_g010",
+      "state": "complete"
+    },
+    {
+      "point": "strom_t0100_g100",
+      "state": "complete"
+    }
+  ]
+}

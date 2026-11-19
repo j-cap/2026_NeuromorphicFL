@@ -1,0 +1,51 @@
+{
+  "future_tuning_requires_separate_development_validation": true,
+  "intervals": false,
+  "legacy_curve_checks": [
+    {
+      "point": "strom_t0025_g005",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "point": "strom_t0025_g010",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "maximum_absolute_metric_differences": {
+        "macro_accuracy": 1.1102230246251565e-16,
+        "test_accuracy": 0.0,
+        "test_ce": 4.863280889111365e-10,
+        "train_ce": 4.628906147274847e-10,
+        "train_objective": 4.1015635332541933e-10,
+        "worst_class_accuracy": 0.0
+      },
+      "point": "strom_t0025_g100",
+      "status": "matched"
+    },
+    {
+      "point": "strom_t0100_g005",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "point": "strom_t0100_g010",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "maximum_absolute_metric_differences": {
+        "macro_accuracy": 1.1102230246251565e-16,
+        "test_accuracy": 0.0,
+        "test_ce": 3.8183611827946606e-10,
+        "train_ce": 4.1796877070510163e-10,
+        "train_objective": 2.773438367853487e-09,
+        "worst_class_accuracy": 0.0
+      },
+      "point": "strom_t0100_g100",
+      "status": "matched"
+    }
+  ],
+  "new_trajectories": 6,
+  "reused_prefixes": 3,
+  "roundtrip_and_client_model_checks_at_execution": true,
+  "scope": "single_seed_scaling_and_codec_pilot_not_confirmation",
+  "test_based_selection": false
+}

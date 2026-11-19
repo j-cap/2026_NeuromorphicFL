@@ -1,0 +1,64 @@
+{
+  "audit_source_sha256": "ab61a27275f7ecf2837e1790ed1072cd45880bc515435d72042c0beeec83d5ac",
+  "configuration_frozen_for_confirmation": false,
+  "contract_sha256": "d1ebc2866ba6298d3bb749b095a9516a8bdadf900fabc0e4e71da0c408c132f4",
+  "legacy_regressions": [
+    {
+      "point": "strom_t0025_g005",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "point": "strom_t0025_g010",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "maximum_absolute_metric_differences": {
+        "macro_accuracy": 1.1102230246251565e-16,
+        "test_accuracy": 0.0,
+        "test_ce": 4.863280889111365e-10,
+        "train_ce": 4.628906147274847e-10,
+        "train_objective": 4.1015635332541933e-10,
+        "worst_class_accuracy": 0.0
+      },
+      "point": "strom_t0025_g100",
+      "status": "matched"
+    },
+    {
+      "point": "strom_t0100_g005",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "point": "strom_t0100_g010",
+      "status": "normalized_gain_no_archived_curve_native_equivalence_checked_synthetically"
+    },
+    {
+      "maximum_absolute_metric_differences": {
+        "macro_accuracy": 1.1102230246251565e-16,
+        "test_accuracy": 0.0,
+        "test_ce": 3.8183611827946606e-10,
+        "train_ce": 4.1796877070510163e-10,
+        "train_objective": 2.773438367853487e-09,
+        "worst_class_accuracy": 0.0
+      },
+      "point": "strom_t0100_g100",
+      "status": "matched"
+    }
+  ],
+  "limits": [
+    "one previously inspected seed and a 600-round horizon; no confidence intervals",
+    "highest observed endpoint accuracy does not select a final baseline",
+    "four normalized-gain trajectories lack independent archived real-data curves",
+    "raw images, full packets, final residual arrays and model checkpoints not reloaded",
+    "broader threshold/gain development tuning required before final comparative claims"
+  ],
+  "new_model_evaluations": 66,
+  "new_round_records": 3600,
+  "recorded_data_and_runtime_match_references": true,
+  "reproduced_analysis_csv_tables": 5,
+  "residual_backlog_interpretation": "configuration-range_and_one-pulse-cap_concern_not_causal_proof",
+  "results_commit": "a6a3aaac549521e607c1c15a9d6975ee1be8090f",
+  "scope": "single_seed_scaling_and_codec_pilot_not_confirmation",
+  "test_based_selection": false,
+  "verified_new_receipts": 6,
+  "verified_reused_full_horizon_prefixes": 3
+}
