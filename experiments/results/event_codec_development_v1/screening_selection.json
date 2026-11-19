@@ -1,0 +1,45 @@
+{
+  "all_screen_receipts": {
+    "event_t0p0125_q0p0025": "bac64e16a7a1e22c33edea84a80705a1c65aa919a1033b31bc9860bba0502a89",
+    "event_t0p0125_q0p005": "dc8735a95b4b25e727a04e306ed8d535f3f66bad92f938c41777945ec4065b1c",
+    "event_t0p0125_q0p01": "a585826790848ea9a88b2cda358c9bcbc78bbfe0e7f1b4766a7cf5267620c5aa",
+    "event_t0p025_q0p0025": "8e8104a8c06cd849be964645540ff504780e1629cf7187e6c9cd71bd6fe62099",
+    "event_t0p025_q0p005": "334fae19fba7a93f1eb777daafc94670263b2158f428fdb5d558977ddf0baa9b",
+    "event_t0p025_q0p01": "846f32a487cc51f14451c0229b35589452ace67a0ab89f8e5f5f730a4690ca0a",
+    "event_t0p05_q0p0025": "a54ca7fdb49db302ddfc663bfc34537d043205028a8897c8bc38141940609670",
+    "event_t0p05_q0p005": "d5ac324c486cc651c0fda962ebe1065c93d4abc4625cd240dba7bde4f6f7d9a1",
+    "event_t0p05_q0p01": "abdc6b85cc21114c2d18093f15aa2de30ec6020615481f91daa67c69e74a766e",
+    "event_t0p1_q0p0025": "cbc61abab3307227ba1896774d28498c0873fc8d59be21f6bd73216e434379f2",
+    "event_t0p1_q0p005": "7d1268ae18212fe58c7804c7f26addd4e7a473986fa9653a73c3305fcf1b7e68",
+    "event_t0p1_q0p01": "2a43276e7990ed75bd134c1346f692457cfcb9167fc0939905959af8383af5b5",
+    "event_t0p2_q0p0025": "650bb16849e8aa272a648e3a86bf683bf184d33a2008c205f0fda448f2c6a541",
+    "event_t0p2_q0p005": "11c4517800b5c9e70827075461dfb31a014656237c47fca976c74aa627a599bc",
+    "event_t0p2_q0p01": "9fcc3d9a1693c595fa6664afe4fac2ecb5793f1986f7aa67fec5d1caa814e51f",
+    "strom_reference": "99b8fd4bb6f784f61f34912cd7efd5f660f163c813135b826b5bc0e18d222414"
+  },
+  "automatic_extension": false,
+  "contract_sha256": "8560b0f8a2b99a5d9f9b13167cd4708a54fdc3e8816c63ac4d5051fc2234bd52",
+  "horizon": 600,
+  "promoted_Event_ids": [
+    "event_t0p025_q0p005",
+    "event_t0p05_q0p01"
+  ],
+  "selection": {
+    "quality": {
+      "jump0": 0.005,
+      "point_id": "event_t0p025_q0p005",
+      "threshold": 0.025,
+      "unicast_bits": 234420328,
+      "validation_ce": 1.2490932434082032
+    },
+    "strom_unicast_budget_bits": 158684888,
+    "within_strom_budget": {
+      "jump0": 0.01,
+      "point_id": "event_t0p05_q0p01",
+      "threshold": 0.05,
+      "unicast_bits": 151489488,
+      "validation_ce": 1.2568142211914062
+    }
+  },
+  "split_sha256": "5ccbf3123678b7525df7ab6e5d05864a0707eeb1bf60eb3c79327b90d799ff72"
+}

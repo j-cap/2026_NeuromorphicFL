@@ -1,0 +1,33 @@
+{
+  "contract_sha256": "8560b0f8a2b99a5d9f9b13167cd4708a54fdc3e8816c63ac4d5051fc2234bd52",
+  "split": {
+    "index_csv_sha256": "9e4941babb3e43d65794b141a005237b36e2a52bd580442c7ff818233882db96",
+    "ordered_client_indices_sha256": [
+      "f958fdabf1a055e60255bdf9c627aa6a627e40d40361456d720785b5467e27cb",
+      "3751e3f7e4d4c7fc159a5749e7fefe421a9d38ea1785d2831cc3efc134a6a80f",
+      "9946b9508b0130545fd3e9b7e83c0035a72601056ea3893430efe3c48999ed58",
+      "cffdc0ce52cff82c18187944ac854d5c59812106be7d28aa396297abaaf740e9",
+      "4d096910f518737288f832fadb81629f5f082e094f2f2b3ee77c15aef7fcccd1",
+      "16ef8198cb965f9bdbad1a1705bd5bfd3eed10411e0394d931e49ffbb8a0bd7b",
+      "432f4b95ffc45a5c096c96857809b85f32425df04c4a4f6e0dc4ca15e8ec66b2",
+      "303298c08928f535c1286473fd8d15df731a77c91336a5134a9e8b7ec061d466",
+      "852ec3fd4835c6f559cd6495a72e095eb160a26ce4c7fdfa358530b819364bb6",
+      "af6ee549c316eecec41cdcf1d6b696e271a2ff719535c03ce9cd6f0443093bc5"
+    ],
+    "ordered_training_diagnostic_indices_sha256": "dee814483684bd79a60f5acf850b7b471b1a920331225f354df90baf341d04d2",
+    "ordered_validation_indices_sha256": "55ceb44689439067694a6118c42cf1de15ebe6db15b112f2a26b14e1a2584808",
+    "specification": {
+      "clients": 10,
+      "dominant_class_fraction": 0.55,
+      "examples_per_client": 4500,
+      "official_test_batch": "never_parsed_or_evaluated",
+      "official_test_slot": "empty",
+      "partition_seed": 4500,
+      "split_seed": 64500,
+      "training_diagnostic_examples": 5000,
+      "training_examples": 45000,
+      "validation_examples": 5000,
+      "validation_per_class": 500
+    }
+  }
+}

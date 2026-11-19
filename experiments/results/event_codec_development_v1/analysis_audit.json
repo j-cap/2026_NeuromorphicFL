@@ -1,0 +1,13 @@
+{
+  "confirmation_included": false,
+  "final_selection_available": true,
+  "new_screen_training_runs": 14,
+  "official_test_evaluations": 0,
+  "promoted_Event_points": 2,
+  "reused_reference_stages": 4,
+  "screen_Event_points": 15,
+  "selection_metric": "final_validation_ce",
+  "split_disjointness_verified": true,
+  "test_curves_used_for_selection": false,
+  "validation_only": true
+}

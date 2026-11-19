@@ -1,0 +1,20 @@
+{
+  "identity": {
+    "config_sha256": "459c10168c3df90c2c109a34f9be04e9dc5239d7863b128772cd53650d3ff497",
+    "contract_sha256": "8560b0f8a2b99a5d9f9b13167cd4708a54fdc3e8816c63ac4d5051fc2234bd52",
+    "evaluation_scope": "training_holdout_validation_only",
+    "evidence_origin": "new_Event_validation_run",
+    "method": "event",
+    "point_id": "event_t0p05_q0p01",
+    "split_sha256": "5ccbf3123678b7525df7ab6e5d05864a0707eeb1bf60eb3c79327b90d799ff72",
+    "stage_horizon": 600,
+    "training_seed": 84500
+  },
+  "sha256": {
+    "evaluation": "436c7ab7537ce93c47695a28ee891e8f6dc4a423a0d189f16d60fb0c2ccec469",
+    "history": "f4ea58930520b9de545185a12f7ce8bea6ed27b54411f56e5b9210f15020fd83",
+    "rounds": "5d3d757f0881e75ddda0caaf76e89c0606d60975e8c16902fba3266cf5712b89",
+    "summary": "d4e14441ed4f77bacd92af7ec57e9aaa0d8ce40f3084aceec9f8ce4b8e8e178d"
+  },
+  "state": "complete"
+}
