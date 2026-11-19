@@ -1,5 +1,15 @@
 # Experiments
 
+The comparable Ström-style pulse baseline is documented in
+[`STROM_CODEC_PILOT.md`](STROM_CODEC_PILOT.md). It uses the same lossless position
+and aggregate-downlink codecs as Event, preserves the native residual rule, and
+tests six fixed threshold/gain combinations for 600 rounds on seed 3500.
+Event and both STC prefixes are reused. Run
+`python experiments/strom_codec_pilot.py verify`, `preflight`, `run --workers 2`,
+then `analyze`. Afterwards use `git add experiments/results/strom_codec_pilot_v1`,
+`git commit -m "Add comparable Strom-style codec pilot results"`, and
+`git push origin main`.
+
 The ten-seed confirmation of the frozen 1800-round codec comparison is documented
 in [`EVENT_CODEC_TEN_SEED.md`](EVENT_CODEC_TEN_SEED.md). It reuses the three
 completed seed-3500 trajectories and trains 27 remaining point/seed pairs.
