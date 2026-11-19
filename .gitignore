@@ -76,6 +76,11 @@ experiments/results/**
 !experiments/results/event_codec_development_v1/development_frontier.pdf
 !experiments/results/event_codec_development_v1/analysis_trajectories.png
 !experiments/results/event_codec_development_v1/analysis_trajectories.pdf
+!experiments/results/event_strom_fresh_confirmation_v1/
+!experiments/results/event_strom_fresh_confirmation_v1/*.csv
+!experiments/results/event_strom_fresh_confirmation_v1/*.json
+!experiments/results/event_strom_fresh_confirmation_v1/confirmation.png
+!experiments/results/event_strom_fresh_confirmation_v1/confirmation.pdf
 
 # LaTeX build products
 report/*.aux

@@ -1,5 +1,18 @@
 # Experiments
 
+The fresh confirmation of tuned Event against calibrated Ström is documented
+in [`EVENT_STROM_FRESH_CONFIRMATION.md`](EVENT_STROM_FRESH_CONFIRMATION.md).
+It freezes Event threshold 0.05 / quantum 0.01 and Ström threshold 0.05 /
+native gain 0.10, then trains both methods on ten fresh matched partitions
+(6000–6900): twenty new full-training runs of 1800 rounds, with no reused
+trajectory or validation checkpoint. Run
+`python experiments/event_strom_fresh_confirmation.py verify`, `preflight`,
+`run --workers 2`, then `analyze`. Afterwards use
+`git add experiments/results/event_strom_fresh_confirmation_v1`,
+`git commit -m "Add fresh tuned Event and Strom confirmation results"`, and
+`git push origin main`. All ten pairs enter the accuracy/CE and unicast-traffic
+analysis; failed or missing runs block the final summary.
+
 The completed Event threshold/quantum search is interpreted in
 [`EVENT_CODEC_DEVELOPMENT_RESULTS.md`](EVENT_CODEC_DEVELOPMENT_RESULTS.md).
 It selects threshold 0.05 / quantum 0.01, improving validation accuracy and
@@ -10,7 +23,8 @@ evidence and regenerate endpoint, target and codec diagnostics without changing
 the original analysis. Afterwards use
 `git add experiments/results/event_codec_development_v1`,
 `git commit -m "Refresh Event threshold quantum development analysis"`, and
-`git push origin main`. Fresh paired confirmation remains the next experiment.
+`git push origin main`. The fresh paired confirmation above implements the
+next experiment.
 
 The bounded Event threshold/quantum study is documented in
 [`EVENT_CODEC_DEVELOPMENT.md`](EVENT_CODEC_DEVELOPMENT.md). It screens fifteen
