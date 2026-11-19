@@ -9,6 +9,12 @@ Run `python experiments/event_codec_ten_seed.py verify`, `preflight`,
 `git commit -m "Add ten-seed Event and STC codec confirmation results"`, and
 `git push origin main`.
 
+The completed confirmation is interpreted in
+[`EVENT_CODEC_TEN_SEED_RESULTS.md`](EVENT_CODEC_TEN_SEED_RESULTS.md).
+`python experiments/event_codec_ten_seed_audit.py` verifies the committed
+evidence and adds direction/target/codec summaries without overwriting the
+original local analysis.
+
 The single-seed 1800-round codec follow-up with held-out predictive metrics is
 documented in [`EVENT_CODEC_FULL_HORIZON.md`](EVENT_CODEC_FULL_HORIZON.md).
 Run `python experiments/event_codec_full_horizon.py verify`, `preflight`,

@@ -1,5 +1,10 @@
 # Full-horizon codec diagnostic: results and decision
 
+The ten-seed follow-up is now complete. See
+[`EVENT_CODEC_TEN_SEED_RESULTS.md`](EVENT_CODEC_TEN_SEED_RESULTS.md) for the
+confirmation and current decision. The single-seed findings below record the
+earlier diagnostic.
+
 Evidence: `experiments/results/event_codec_full_horizon_v1/`, results commit
 `9b3cc73`. One fixed evaluation partition (3500), SGD seed 83500, compact CIFAR
 CNN, ten fully participating clients, 1800 rounds. Settings are frozen and final

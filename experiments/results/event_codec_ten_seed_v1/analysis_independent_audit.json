@@ -1,0 +1,523 @@
+{
+  "all_eight_saved_csv_tables_reproduced": true,
+  "all_methods_reach_all_prespecified_targets": true,
+  "audit_source_sha256": "469b937dc9f02b58f1101f6db6750a14b752c61f0bc717e45e7be6d1352ea2cb",
+  "completion": [
+    {
+      "partition_seed": 3500,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "partition_seed": 3500,
+      "point": "stc_primary",
+      "state": "reused"
+    },
+    {
+      "partition_seed": 3500,
+      "point": "stc_sparse",
+      "state": "reused"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "stc_sparse",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "stc_primary",
+      "state": "complete"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "stc_sparse",
+      "state": "complete"
+    }
+  ],
+  "contract_sha256": "81f8efd113145fedb45a26d4e83b44c1501b4b554968639a691ef46294e90708",
+  "endpoint_accuracy_win_counts": {
+    "stc_primary": 6,
+    "stc_sparse": 8
+  },
+  "evaluated_models": 930,
+  "event_counts_patch_rounds": 18000,
+  "independently_available_regression_references": [
+    {
+      "partition_seed": 3500,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3500,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3500,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "stc_primary",
+      "status": "native_confirmation_not_available"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "stc_sparse",
+      "status": "native_confirmation_not_available"
+    }
+  ],
+  "limitations": [
+    "compact CNN and one CIFAR-10 federation regime; ten partition/SGD seeds on a fixed dataset",
+    "secondary intervals descriptive and unadjusted; no equivalence/noninferiority claim",
+    "first sampled crossings; no interpolation, deployment early stopping or checkpoint selection",
+    "raw images, full packet streams, NPZ models and per-example predictions not reloaded",
+    "20 native STC regression references reported locally but not committed; new STC receipts verify"
+  ],
+  "maximum_canonical_error": 3.725290298461914e-09,
+  "recorded_data_and_runtime_match_pilot": true,
+  "required_results": 30,
+  "results_commit": "9da398d59d52689e3423200913b2cccc18e0dbe7",
+  "round_records": 54000,
+  "statistics_comparison_tolerance": 1e-10,
+  "user_local_recorded_regression_references": [
+    {
+      "partition_seed": 3500,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3500,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3500,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3600,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3700,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3800,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 3900,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4000,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4100,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4200,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4300,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "event",
+      "reference": "archived_event",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "stc_primary",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    },
+    {
+      "partition_seed": 4400,
+      "point": "stc_sparse",
+      "reference": "native_STC_confirmation",
+      "status": "matched"
+    }
+  ],
+  "verified_new_results": 27,
+  "verified_reused_results": 3
+}
