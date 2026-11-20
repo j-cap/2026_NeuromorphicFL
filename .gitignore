@@ -86,6 +86,12 @@ experiments/results/**
 !experiments/results/core_fresh_comparison_v1/*.json
 !experiments/results/core_fresh_comparison_v1/comparison.png
 !experiments/results/core_fresh_comparison_v1/comparison.pdf
+!experiments/results/resnet14_transfer_v1/
+!experiments/results/resnet14_transfer_v1/*.csv
+!experiments/results/resnet14_transfer_v1/*.json
+!experiments/results/resnet14_transfer_v1/confirmation.png
+!experiments/results/resnet14_transfer_v1/confirmation.pdf
+resnet14_transfer_weekend.log
 
 # LaTeX build products
 report/*.aux

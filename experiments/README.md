@@ -1,5 +1,19 @@
 # Experiments
 
+The automatic weekend ResNet-14 study is documented in
+[`RESNET14_TRANSFER.md`](RESNET14_TRANSFER.md). It screens fifteen settings each
+for Event and Ström on a training-only holdout, continues at most two finalists
+per method exactly to 1800 rounds, freezes one choice each, and automatically
+trains six fresh full-training confirmation runs on seeds 7100/7200/7300.
+The normal maximum budget is 33600 rounds. Run
+`python experiments/resnet14_transfer.py verify --device cuda`,
+`preflight --device cuda`, `benchmark --device cuda`, then `run --device cuda`.
+Analysis is automatic when all six confirmation runs complete. Afterwards use
+`git add experiments/results/resnet14_transfer_v1`,
+`git commit -m "Add bounded ResNet14 pulse transfer results"`, and
+`git push origin main`. Repeating the run command resumes the complete pipeline;
+official test images are parsed only after selection is frozen.
+
 The completed five-method core is interpreted in
 [`CORE_FRESH_COMPARISON_RESULTS.md`](CORE_FRESH_COMPARISON_RESULTS.md). Event has
 the lowest final unicast cost among the tested settings and uses fewer bits
