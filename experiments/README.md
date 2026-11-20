@@ -1,5 +1,18 @@
 # Experiments
 
+The common-seed five-method core is documented in
+[`CORE_FRESH_COMPARISON.md`](CORE_FRESH_COMPARISON.md). It adds thirty new
+1800-round trajectories for the frozen scheduled Dense, STC p=1/gain 2 and
+EF-TopK 5% baselines on seeds 6000–6900, and verifies/reuses all twenty completed
+Event/Ström controls. EF-TopK receives a lossless float32 support codec and
+exact aggregate/replay downlink without changing its native update/residual
+rule. Run `python experiments/core_fresh_comparison.py verify`, `preflight`,
+`run --workers 2`, then `analyze`. Afterwards use
+`git add experiments/results/core_fresh_comparison_v1`,
+`git commit -m "Add common-seed five-method core comparison results"`, and
+`git push origin main`. All fifty expected outcomes are required for the final
+paired accuracy/CE and conservative-unicast analysis.
+
 The completed fresh Event/Ström confirmation is interpreted in
 [`EVENT_STROM_FRESH_CONFIRMATION_RESULTS.md`](EVENT_STROM_FRESH_CONFIRMATION_RESULTS.md).
 Tuned Event uses 3.91% fewer final unicast bits and 29.23% fewer bits to reach

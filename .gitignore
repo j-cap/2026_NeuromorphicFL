@@ -81,6 +81,11 @@ experiments/results/**
 !experiments/results/event_strom_fresh_confirmation_v1/*.json
 !experiments/results/event_strom_fresh_confirmation_v1/confirmation.png
 !experiments/results/event_strom_fresh_confirmation_v1/confirmation.pdf
+!experiments/results/core_fresh_comparison_v1/
+!experiments/results/core_fresh_comparison_v1/*.csv
+!experiments/results/core_fresh_comparison_v1/*.json
+!experiments/results/core_fresh_comparison_v1/comparison.png
+!experiments/results/core_fresh_comparison_v1/comparison.pdf
 
 # LaTeX build products
 report/*.aux
