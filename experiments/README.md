@@ -1,5 +1,19 @@
 # Experiments
 
+The completed five-method core is interpreted in
+[`CORE_FRESH_COMPARISON_RESULTS.md`](CORE_FRESH_COMPARISON_RESULTS.md). Event has
+the lowest final unicast cost among the tested settings and uses fewer bits
+to reach 50% accuracy in every paired seed against all four comparators.
+The closest Ström contrast retains the 3.91% final and 29.23% target-50%
+traffic savings, with unresolved final accuracy/CE differences. Run
+`python experiments/core_fresh_comparison_audit.py` to verify all fifty
+outcomes, 90000 rounds, 1550 sampled model fingerprints, independent traffic
+and statistical reconstruction, and target censoring without training or
+overwriting original analysis. Afterwards use
+`git add experiments/results/core_fresh_comparison_v1`,
+`git commit -m "Refresh common-seed core comparison evidence audit"`, and
+`git push origin main`.
+
 The common-seed five-method core is documented in
 [`CORE_FRESH_COMPARISON.md`](CORE_FRESH_COMPARISON.md). It adds thirty new
 1800-round trajectories for the frozen scheduled Dense, STC p=1/gain 2 and

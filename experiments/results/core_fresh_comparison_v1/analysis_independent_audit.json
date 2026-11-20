@@ -1,0 +1,45 @@
+{
+  "all_ten_pairs_retained": true,
+  "audit_source_sha256": "fb1d72aa1c233efc5067a05b450e8f89a52606bd1679b3e1e796d83d5671c770",
+  "contract_sha256": "b0cd01100b4c47d631935a735d6d2bf1d3a43f8c66c286fd4b1676d68709b01a",
+  "equal_tuning_budget_claim": false,
+  "equivalence_or_noninferiority_claim": false,
+  "first_crossings_checked_against_raw_evaluations": true,
+  "hash_format": "sha256_UTF8_LF_for_text_raw_bytes_for_PNG_PDF",
+  "helper_source_sha256": {
+    "experiments/event_strom_fresh_confirmation_audit.py": "774902529ef16f79bc4ceebd5beb473997f55a1056d74d24f92bada8537cd43f",
+    "experiments/strom_codec_ten_seed_audit.py": "eba263db1cb6c54bd86709409fea957c43ac62247681fd928ec7fa63145c4332"
+  },
+  "independent_paired_intervals_and_coverage": true,
+  "independent_prefix_and_endpoint_accounting": true,
+  "limits": [
+    "compact CNN/full participation/strong-skew regime and fixed previously inspected test set",
+    "descriptive unadjusted intervals; historical baseline selection criteria differ",
+    "raw images, packets and NPZ model weights are not reloaded",
+    "target ratios condition on common hits; one Dense 55pct target is censored",
+    "no causal mechanism, wall-clock or field-wide SOTA claim"
+  ],
+  "new_complete_receipts_verified": 30,
+  "original_analysis_preserved": true,
+  "original_analysis_sha256": {
+    "analysis_audit.json": "c826dddde1e674cf38dab2778d10c5a21ebe8e652e87bbfdd31f559294d4ea35",
+    "comparison.csv": "ffca758743396fd5f2e4d2fc11738255846e4668a3c81b240c9c08765c02011d",
+    "comparison.pdf": "c262121f87a15357b3f4f6ddc163bc93099bda8fa1e730f862c765cdb7b35f07",
+    "comparison.png": "a7c2e599fa45135c40e2012835c33c714e0ec9bea7c034160b1e39905f9c8423",
+    "comparison_history.csv": "29305392c176f132e83aa5ca7d25389e1d2cdd2495012367a5434b65eb3317de",
+    "completion_audit.json": "d32dbe3d89d2a0dfc520f1c53304846b9f20525b97d0c23a9672357ff4cdc7a0",
+    "endpoint_summary.csv": "5ebf8d445c58e68a9e52907c21b6427fd0c88dfe3f536a0386f3598b847e1630",
+    "main_runs.csv": "c97add130292beaf9f27223760957d2f9fdc317544b61eb177088e3088cae98e",
+    "paired_per_seed.csv": "e141566357dc6d31409e9fb548eb96e932a2e32060a103101e99390545d3c534",
+    "paired_summary.csv": "fd45c356c08b55fd9e18f26f0520a9201c1f6a87f8d347e9c5eb04b637c66d1b",
+    "paired_target_summary.csv": "979d96d855f12a4ddbcc52798c4559b86f30348787f9623c6124240c28694b6a",
+    "traffic_to_target.csv": "53af6ac2f905ece9ea1687b83defe6af09f5a5e7069fe4f30c102027b219ecab"
+  },
+  "previous_Event_Strom_contrast_reproduced": true,
+  "reproduced_original_analysis_csvs": 8,
+  "results_commit": "04243a1f04ced7891533d43f13345fb941f93ae7",
+  "test_tuning_or_early_stopping": false,
+  "verified_evaluated_model_fingerprints": 1550,
+  "verified_reuse_receipts": 20,
+  "verified_round_records": 90000
+}
