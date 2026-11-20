@@ -1,0 +1,125 @@
+{
+  "expected": 20,
+  "results": [
+    {
+      "error": "",
+      "partition_seed": 6000,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6000,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6100,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6100,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6200,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6200,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6300,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6300,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6400,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6400,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6500,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6500,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6600,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6600,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6700,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6700,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6800,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6800,
+      "point": "strom",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6900,
+      "point": "event",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6900,
+      "point": "strom",
+      "state": "complete"
+    }
+  ]
+}

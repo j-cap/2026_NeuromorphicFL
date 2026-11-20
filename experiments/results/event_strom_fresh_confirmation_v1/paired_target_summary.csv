@@ -1,0 +1,4 @@
+target_accuracy,n_total,n_event_reached,n_strom_reached,n_common_hits,n,estimate,ci95_low,ci95_high,direction,estimand,event_fewer_rounds,same_sampled_round,event_fewer_bits
+0.45000000000000001,10,10,10,10,10,0.87474903363883993,0.78581278251173459,0.97375085883215162,Event_over_Strom,unicast_ratio_conditional_on_both_reaching_target,2,8,10
+0.5,10,10,10,10,10,0.7077407679634008,0.63415737668089822,0.78986228506724565,Event_over_Strom,unicast_ratio_conditional_on_both_reaching_target,9,1,10
+0.55000000000000004,10,10,10,10,10,0.81211103593750134,0.72239780732703485,0.91296558212407475,Event_over_Strom,unicast_ratio_conditional_on_both_reaching_target,7,1,8

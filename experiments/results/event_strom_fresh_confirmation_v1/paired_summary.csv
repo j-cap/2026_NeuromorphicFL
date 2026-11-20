@@ -1,0 +1,9 @@
+candidate,reference,metric,n,estimate,ci95_low,ci95_high,direction,primary_predictive_endpoint
+event,strom,test_accuracy_difference_pp,10,0.26699999999999946,-0.43456906091116443,0.96856906091116335,Event_minus_Strom,True
+event,strom,test_ce_difference,10,0.0017028768920898996,-0.015933583990052798,0.0193393377742326,Event_minus_Strom,False
+event,strom,train_objective_difference,10,0.033366796569824199,0.010934673482074102,0.055798919657574296,Event_minus_Strom,False
+event,strom,train_l2_penalty_difference,10,0.067011579895019519,0.051135863341336657,0.08288729644870238,Event_minus_Strom,False
+event,strom,unicast_traffic_ratio,10,0.96094383490785351,0.95207529139854619,0.96989498854756451,Event_over_Strom,False
+event,strom,broadcast_traffic_ratio,10,0.95206099174581116,0.94289693434417987,0.96131411503046904,Event_over_Strom,False
+event,strom,upload_traffic_ratio,10,0.94549689297741757,0.93605993434464652,0.95502899101843497,Event_over_Strom,False
+event,strom,downlink_traffic_ratio,10,0.96365828349908611,0.95485829267181843,0.97253937519666533,Event_over_Strom,False

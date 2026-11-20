@@ -1,0 +1,19 @@
+{
+  "identity": {
+    "config_sha256": "dae0be5e1a505243517b07db145f6c5c1f013ae9c12d98deeb7da15848196463",
+    "contract_sha256": "db9da52496b879b46581b570360711674ff9c17283c40528ed13aec237242f72",
+    "evaluation_scope": "fresh_frozen_Event_Strom_full_training_confirmation",
+    "evidence_origin": "new_fresh_full_training_run",
+    "partition_seed": 6800,
+    "point": "strom",
+    "seed_index": 8,
+    "train_seed": 86800
+  },
+  "sha256": {
+    "evaluation": "172d82836fba8164da7869a1cae552e074fdc8b67ae8ed02ede8db83e18fceca",
+    "history": "8d8a82d6bc8da59a5bfcae07a4f9e2ae85af1df374e741c5f1e7340a019d195f",
+    "rounds": "06bd17e27e853c54d445f8fabc3707c252e080c69a75847c75bbc8a6cbb3b543",
+    "summary": "ae3c3a4563e4d378d555b05b1e2537f477869fcba8a587ba8bce8e6e6090078d"
+  },
+  "state": "complete"
+}
