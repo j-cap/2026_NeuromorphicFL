@@ -1,5 +1,17 @@
 # Experiments
 
+The completed fresh Event/Ström confirmation is interpreted in
+[`EVENT_STROM_FRESH_CONFIRMATION_RESULTS.md`](EVENT_STROM_FRESH_CONFIRMATION_RESULTS.md).
+Tuned Event uses 3.91% fewer final unicast bits and 29.23% fewer bits to reach
+50% test accuracy across ten new matched pairs; final accuracy and CE
+differences remain unresolved. All twenty runs are complete. Run
+`python experiments/event_strom_fresh_confirmation_audit.py` to verify receipts,
+model fingerprints, independent traffic/statistical reconstruction and saved
+analysis without training or overwriting the original outputs. Afterwards use
+`git add experiments/results/event_strom_fresh_confirmation_v1`,
+`git commit -m "Refresh fresh Event and Strom confirmation evidence audit"`,
+and `git push origin main`.
+
 The fresh confirmation of tuned Event against calibrated Ström is documented
 in [`EVENT_STROM_FRESH_CONFIRMATION.md`](EVENT_STROM_FRESH_CONFIRMATION.md).
 It freezes Event threshold 0.05 / quantum 0.01 and Ström threshold 0.05 /

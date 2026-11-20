@@ -1,0 +1,39 @@
+{
+  "all_ten_fresh_pairs_retained": true,
+  "audit_source_sha256": "774902529ef16f79bc4ceebd5beb473997f55a1056d74d24f92bada8537cd43f",
+  "contract_sha256": "db9da52496b879b46581b570360711674ff9c17283c40528ed13aec237242f72",
+  "development_checkpoint_reused": false,
+  "equivalence_or_noninferiority_claim": false,
+  "fresh_complete_receipts_verified": 20,
+  "independent_paired_intervals_and_coverage": true,
+  "independent_prefix_and_endpoint_accounting": true,
+  "independent_statistics_helper_sha256": "eba263db1cb6c54bd86709409fea957c43ac62247681fd928ec7fa63145c4332",
+  "limits": [
+    "partition/SGD variation on one fixed previously inspected test set",
+    "compact CNN, full participation and strong-skew regime only",
+    "secondary intervals are descriptive and unadjusted",
+    "raw images, packets and NPZ weights are not reloaded",
+    "no causal leak/reset/quantum attribution or physical-network timing claim"
+  ],
+  "original_analysis_preserved": true,
+  "original_analysis_sha256": {
+    "analysis_audit.json": "ac6b1f8476898633085bc782cfefed5ddf9d8d937f4c3e475d212145850224c4",
+    "comparison.csv": "8ec146261ecd0a9fbf899a4bce52f7ed813d2b9e881f10869de2d025669d3eb8",
+    "comparison_history.csv": "94e42f129cf0be4f1982a3910bf343cda91aaafef35cd23f3b0dfbdd31acc73f",
+    "completion_audit.json": "f9d29365a81f80a846848b55dc848ed62ada047678716ddfae126350504a1a1b",
+    "confirmation.pdf": "d4c7d5ac16d5cab1e7e9d3f2caf5c4eea0c592b6cdf04e849aa9963021d5eaff",
+    "confirmation.png": "fc0107f519df945bdc45bea636c398045f086e3626d2c878ea48dd1fd84ccbc9",
+    "endpoint_summary.csv": "4407e00442759611ca349508eb288dcf039fe4e226a080deec63999efa877070",
+    "main_runs.csv": "d2465dc22e052857242d1cb553afe90f9ba2ea57d645f648039f39e43d30a543",
+    "paired_per_seed.csv": "ceca4759ad67320e2ddf4f3aaaef2475c1c1274b43935974a7e222f27228743d",
+    "paired_summary.csv": "f4ff51376b34d7ffbef9b2b2a34f13b831dff723e4a5dd2effb8bfe2b1f5d738",
+    "paired_target_summary.csv": "a19328c607ddc13eedc65b4cce42fa43b54bc39a21b16bd9af4e3769c3633c11",
+    "traffic_to_target.csv": "e8ed5508da598940dbf550638ef5ecfa4baa66c8c5ac0e84bd9e8c6cb0679b7a"
+  },
+  "original_hash_format": "sha256_UTF8_LF_for_text_raw_bytes_for_PNG_PDF",
+  "reproduced_original_analysis_csvs": 8,
+  "results_commit": "220f0842abf1268c0ba6c20bfa4e506b6e0ab500",
+  "test_tuning_or_early_stopping": false,
+  "verified_evaluated_model_fingerprints": 620,
+  "verified_round_records": 36000
+}
