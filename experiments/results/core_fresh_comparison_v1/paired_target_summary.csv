@@ -1,0 +1,13 @@
+candidate,reference,target_accuracy,n_total,n_candidate_reached,n_reference_reached,n_common_hits,n,estimate,ci95_low,ci95_high,direction,estimand,candidate_fewer_rounds,same_sampled_round,candidate_fewer_bits
+event,strom,0.45000000000000001,10,10,10,10,10,0.87474903363883993,0.78581278251173459,0.97375085883215162,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,2,8,10
+event,strom,0.5,10,10,10,10,10,0.7077407679634008,0.63415737668089822,0.78986228506724565,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,9,1,10
+event,strom,0.55000000000000004,10,10,10,10,10,0.81211103593750134,0.72239780732703485,0.91296558212407475,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,7,1,8
+event,dense,0.45000000000000001,10,10,10,10,10,0.0099123558641022267,0.0091024587530608454,0.010794314090526594,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,10,0,10
+event,dense,0.5,10,10,10,10,10,0.0090114547252967553,0.0082564569298953106,0.0098354920222545033,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,10,0,10
+event,dense,0.55000000000000004,10,10,9,9,9,0.01035690932415227,0.0080390479768743892,0.01334306886303936,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,9,0,9
+event,stc,0.45000000000000001,10,10,10,10,10,0.56644620411852209,0.51847667289384514,0.6188538827974942,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,1,9,10
+event,stc,0.5,10,10,10,10,10,0.4224551904150608,0.3769093665372717,0.47350478325397877,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,9,1,10
+event,stc,0.55000000000000004,10,10,10,10,10,0.46921929633799803,0.38908964739400509,0.56585095370830529,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,7,2,10
+event,ef_topk,0.45000000000000001,10,10,10,10,10,0.063457654868348673,0.059328596720496181,0.067874080696051525,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,10,0,10
+event,ef_topk,0.5,10,10,10,10,10,0.042313036614118907,0.039302488873887848,0.045554190556549835,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,10,0,10
+event,ef_topk,0.55000000000000004,10,10,10,10,10,0.03982473643353391,0.033001488298282172,0.048058730493163837,candidate_over_reference,unicast_ratio_conditional_on_both_reaching_target,10,0,10

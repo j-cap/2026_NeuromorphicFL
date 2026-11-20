@@ -1,0 +1,305 @@
+{
+  "expected": 50,
+  "results": [
+    {
+      "error": "",
+      "partition_seed": 6000,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6000,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6000,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6000,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6000,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6100,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6100,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6100,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6100,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6100,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6200,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6200,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6200,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6200,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6200,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6300,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6300,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6300,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6300,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6300,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6400,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6400,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6400,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6400,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6400,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6500,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6500,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6500,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6500,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6500,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6600,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6600,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6600,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6600,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6600,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6700,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6700,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6700,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6700,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6700,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6800,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6800,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6800,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6800,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6800,
+      "point": "ef_topk",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6900,
+      "point": "event",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6900,
+      "point": "strom",
+      "state": "reused"
+    },
+    {
+      "error": "",
+      "partition_seed": 6900,
+      "point": "dense",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6900,
+      "point": "stc",
+      "state": "complete"
+    },
+    {
+      "error": "",
+      "partition_seed": 6900,
+      "point": "ef_topk",
+      "state": "complete"
+    }
+  ]
+}

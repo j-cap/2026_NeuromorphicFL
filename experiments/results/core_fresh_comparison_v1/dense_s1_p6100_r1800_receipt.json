@@ -1,0 +1,19 @@
+{
+  "identity": {
+    "config_sha256": "0f5e5ce36089598315d33d574dccbe902780e9d556fd7676436643cd44c66d20",
+    "contract_sha256": "b0cd01100b4c47d631935a735d6d2bf1d3a43f8c66c286fd4b1676d68709b01a",
+    "evaluation_scope": "common_seed_five_method_core",
+    "evidence_origin": "new_run",
+    "partition_seed": 6100,
+    "point": "dense",
+    "seed_index": 1,
+    "train_seed": 86100
+  },
+  "sha256": {
+    "evaluation": "58be631850f432a4372eb7ae6386bba665b60f3b85b57f21e5f4000f5064b984",
+    "history": "3481dcd29829e7aaf194f1cc57c1dbd7034e5cce2023b7c8185508ced926d7a4",
+    "rounds": "d48d2de2c382c5a8526fd9d0a3b64e2eb1755d4a275cb8199ae0e408611b9398",
+    "summary": "2d99a9499b8339e945b9e3d67a5d338713ec851726ad9c9333c306b40fad0d06"
+  },
+  "state": "complete"
+}

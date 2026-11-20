@@ -1,0 +1,911 @@
+{
+  "data_sha256": {
+    "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+    "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+    "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+    "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+    "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154",
+    "test_batch": "f53d8d457504f7cff4ea9e021afcf0e0ad8e24a91f3fc42091b8adef61157831"
+  },
+  "partition_seed_provenance": {
+    "audited_evidence_commit": "838167711b474764b5056c7a7270bbe486b06904",
+    "freshness_means": "new_partition_and_SGD_seeds_not_a_new_test_dataset",
+    "overlap": [],
+    "recorded_prior_partition_seeds": [
+      2500,
+      2600,
+      2700,
+      2800,
+      2900,
+      3000,
+      3100,
+      3200,
+      3300,
+      3400,
+      3500,
+      3600,
+      3700,
+      3800,
+      3900,
+      4000,
+      4100,
+      4200,
+      4300,
+      4400,
+      4500,
+      4600,
+      4700,
+      4800,
+      4900,
+      5000,
+      5100
+    ],
+    "scope": "recorded_JSON_partition_seed_and_partition_seeds_metadata_under_experiments_results",
+    "selected_partition_seeds": [
+      6000,
+      6100,
+      6200,
+      6300,
+      6400,
+      6500,
+      6600,
+      6700,
+      6800,
+      6900
+    ]
+  },
+  "protocol": {
+    "EF_TopK_scope": "native_global_topk_weighted_client_delta_error_feedback_float32_values_lossless_wire_extension",
+    "STC_scope": "primary_p1_dense_ternary_both_residuals_not_p0p25_secondary",
+    "accuracy_targets": [
+      0.45,
+      0.5,
+      0.55
+    ],
+    "architecture": "cifar_cnn",
+    "campaign": "core_fresh_comparison_v1",
+    "checkpoint_stride": 60,
+    "comparisons": [
+      [
+        "event",
+        "strom"
+      ],
+      [
+        "event",
+        "dense"
+      ],
+      [
+        "event",
+        "stc"
+      ],
+      [
+        "event",
+        "ef_topk"
+      ]
+    ],
+    "dense_scope": "scheduled_server_gain_native_dense_float32_updates",
+    "development_checkpoint_reuse": false,
+    "dimension": 20570,
+    "dominant_class_fraction": 0.55,
+    "endpoint": "round_1800_not_best_test_checkpoint",
+    "equal_tuning_budget_claim": false,
+    "equivalence_or_noninferiority_claim": false,
+    "evaluation_rounds": [
+      1,
+      60,
+      120,
+      180,
+      240,
+      300,
+      360,
+      420,
+      480,
+      540,
+      600,
+      660,
+      720,
+      780,
+      840,
+      900,
+      960,
+      1020,
+      1080,
+      1140,
+      1200,
+      1260,
+      1320,
+      1380,
+      1440,
+      1500,
+      1560,
+      1620,
+      1680,
+      1740,
+      1800
+    ],
+    "hash_format": "sha256_utf8_lf_v1",
+    "initialization_seed": 7777,
+    "intervals": "descriptive_unadjusted_paired_95pct_Student_t_ratios_on_log_scale",
+    "main_variants": {
+      "dense": "dense_float32",
+      "ef_topk": "lossless_ef_topk",
+      "event": "both_codecs",
+      "stc": "lossless_stc",
+      "strom": "both_codecs"
+    },
+    "n_clients": 10,
+    "new_methods": [
+      "dense",
+      "stc",
+      "ef_topk"
+    ],
+    "new_training_runs": 30,
+    "partition_seeds": [
+      6000,
+      6100,
+      6200,
+      6300,
+      6400,
+      6500,
+      6600,
+      6700,
+      6800,
+      6900
+    ],
+    "points": {
+      "dense": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.005,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 4.0,
+        "server_gain_exponent": 0.3,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "threshold": 0.025,
+        "topk_fraction": 0.01
+      },
+      "ef_topk": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.005,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 1.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "threshold": 0.025,
+        "topk_fraction": 0.05
+      },
+      "event": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 1.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "threshold": 0.05,
+        "topk_fraction": 0.01
+      },
+      "stc": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.005,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 2.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 1.0,
+        "stc_upload_fraction": 1.0,
+        "strom_threshold": 0.01,
+        "threshold": 0.025,
+        "topk_fraction": 0.01
+      },
+      "strom": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.005,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 0.1,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.05,
+        "threshold": 0.025,
+        "topk_fraction": 0.01
+      }
+    },
+    "previously_inspected_seed_exclusion": "all_seeds_fresh_no_pilot_excluded_from_summary",
+    "primary_communication_accounting": "actual_lossless_frames_conservative_unicast",
+    "primary_predictive_endpoint": "Event_minus_each_reference_round_1800_test_accuracy_pp_descriptive",
+    "regime": "strong",
+    "reused_control_source": "event_strom_fresh_confirmation_v1",
+    "reused_methods": [
+      "event",
+      "strom"
+    ],
+    "reused_training_results": 20,
+    "rounds": 1800,
+    "secondary_endpoints": [
+      "test_CE",
+      "upload",
+      "download",
+      "final_unicast_ratio",
+      "broadcast_supplementary",
+      "regularized_training_diagnostics",
+      "accuracy_target_traffic_rounds_and_hit_coverage"
+    ],
+    "selection_policies": {
+      "dense": "frozen_M3_training_objective_schedule_g4_alpha0p3_scale100",
+      "ef_topk": "archived_P3_training_CE_quality_choice_global_fraction0p05_gain1",
+      "event_strom": "completed_frozen_validation_CE_selections",
+      "stc": "original_training_objective_primary_p1_gain2"
+    },
+    "target_rule": "first_saved_crossing_no_interpolation",
+    "test_examples": 10000,
+    "training_diagnostic_examples": 5000,
+    "training_examples": 50000,
+    "training_seeds": [
+      86000,
+      86100,
+      86200,
+      86300,
+      86400,
+      86500,
+      86600,
+      86700,
+      86800,
+      86900
+    ],
+    "tuning_or_early_stopping": false,
+    "uncertainty_scope": "fresh_partition_SGD_variation_on_fixed_previously_inspected_official_test_set",
+    "unreached_targets": "censored_no_cost_ratio_unless_both_reach_report_full_coverage"
+  },
+  "reference_contract_sha256": "db9da52496b879b46581b570360711674ff9c17283c40528ed13aec237242f72",
+  "references": {
+    "event_s0": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s0_p6000_r1800_evaluation.csv",
+        "sha256": "209a9aa5ebaefbb6a348eeed86b4c3554545e34e822e55f7537823f195eaed4e"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s0_p6000_r1800_history.csv",
+        "sha256": "2fc14f2e75487f284758b79cc43738dfee2d8829a20920fd952ea5ef67f81bbd"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s0_p6000_r1800_receipt.json",
+        "sha256": "2866df42fddd89509a6a742d1f0f4477ea2a7b97a9b845062fdf64a7d8bedc6c"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s0_p6000_r1800_rounds.csv",
+        "sha256": "42517e68b4733671367c5f3aa026860972da75db1fd658dee0ebd0c5d2df20b0"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s0_p6000_r1800_summary.csv",
+        "sha256": "faa39b659e5dc5cecf523417c376660cb6ea2b23c6f31679c2fbfd82d67fd200"
+      }
+    },
+    "event_s1": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s1_p6100_r1800_evaluation.csv",
+        "sha256": "f67482166270cd087b40bbd1417f3d11ed054e98e46253c8fa853f830897dd5f"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s1_p6100_r1800_history.csv",
+        "sha256": "9000033b0ae9f77a3bd3138a4e0cfa4a8735ddb51504b63d4e6f328abe76c4ab"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s1_p6100_r1800_receipt.json",
+        "sha256": "861dd62920e913f3b31f0f6c44fd650237f1a759550648ff8e1b28c5df0f6a61"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s1_p6100_r1800_rounds.csv",
+        "sha256": "23d5b40f59308d49a6148171b1fff02caf3e6a667c60a06f8fb8bf67101f784a"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s1_p6100_r1800_summary.csv",
+        "sha256": "9cac73a588e4bbeeaab390ccbc67ebdad71e9f17b64cf653fd20d91b5286f892"
+      }
+    },
+    "event_s2": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s2_p6200_r1800_evaluation.csv",
+        "sha256": "f97a32e0c9da7306dcc6d7547623d1d924e0578bb34b4bf37bc08a1e1139aa2a"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s2_p6200_r1800_history.csv",
+        "sha256": "ed0295d98010a7214d98be4c18419e99199c91de964a2f2f34286177687d16e2"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s2_p6200_r1800_receipt.json",
+        "sha256": "f2a0c71bd07e08be46f0eb3ae503fe282ffc408c660242a818dd9bf2e4d9c13a"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s2_p6200_r1800_rounds.csv",
+        "sha256": "1f347acca923eee08329e397ac692d5e9d423279fc5cbab151bdafaaa52fe105"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s2_p6200_r1800_summary.csv",
+        "sha256": "cb0ff9fbcd16578354dd1165957c63c11ab6dc06a281a53a345f1f018c98d9d4"
+      }
+    },
+    "event_s3": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s3_p6300_r1800_evaluation.csv",
+        "sha256": "408b8cc5f7b79c633a220b608f1b71b3431586284a273ccef5f28ed2ba31d747"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s3_p6300_r1800_history.csv",
+        "sha256": "73d5427651b5862d1bfd25bd270ef5929a5260916deed1ea85e18041966adc31"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s3_p6300_r1800_receipt.json",
+        "sha256": "9d400bd7f2053cbdbefcd86023c948cbace638716800fe1e8c3cb0eb357ed7b9"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s3_p6300_r1800_rounds.csv",
+        "sha256": "94fd1e2d4bf41836f9c8794c181ce31b93a6ce5e79ba0392095af81edeb66c18"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s3_p6300_r1800_summary.csv",
+        "sha256": "892dea72665351176b64dd2309349b01b2f2e2f4a4cc1eb5f4a690910757b33c"
+      }
+    },
+    "event_s4": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s4_p6400_r1800_evaluation.csv",
+        "sha256": "cfb4e290e5f74232a16ed01855f0115675d9c0d7358669f4e17e8c86e116f882"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s4_p6400_r1800_history.csv",
+        "sha256": "62425657a52ab2d26bc6c7dcecfa4709ecf7cbfefa4c5e27a211061df2cafa61"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s4_p6400_r1800_receipt.json",
+        "sha256": "72e1c685eb09863b9803446018d9afb7d093f6f5d93db86ca32e07be613ead8e"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s4_p6400_r1800_rounds.csv",
+        "sha256": "de86139e1323550b3206bddf8a25cba7364f53957ac70f83e242342d4690b8c2"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s4_p6400_r1800_summary.csv",
+        "sha256": "8349ef4327ee65402216ad46c935de038f34ad8783a72fe27964f24ba261fc19"
+      }
+    },
+    "event_s5": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s5_p6500_r1800_evaluation.csv",
+        "sha256": "939858d8ffc8a2d9581e431c5866705bbbac3d087fa885027e1522e32b62014a"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s5_p6500_r1800_history.csv",
+        "sha256": "3745441815f09cceaa598090c83b557b799ac517063a4dd1aae871467bdb7e13"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s5_p6500_r1800_receipt.json",
+        "sha256": "1ac04b64730b3dff58957f94eff21fedda40b4a9528c0aef05d2c17d721b2830"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s5_p6500_r1800_rounds.csv",
+        "sha256": "b7e138ab3c5a3c39bafbe241ff513f6b8fcee9d90bc9b9bbcc0845fdc5b01c79"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s5_p6500_r1800_summary.csv",
+        "sha256": "2729cbc4aef9c969f5bdc4abd52db012058db8818a34cbc0fa42714e36522893"
+      }
+    },
+    "event_s6": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s6_p6600_r1800_evaluation.csv",
+        "sha256": "69bdb4d90da3b5769f1ed83632f56cdbc77b09d768265edb57a932a123aefca4"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s6_p6600_r1800_history.csv",
+        "sha256": "778c3c5f585d55430d15a11644c2aca6ffef23e5c3258b4d450970ddfb2907de"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s6_p6600_r1800_receipt.json",
+        "sha256": "64cf789adbce4c73b8be2bdb70ec9ad01e2e9de98849d657270c30047642f876"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s6_p6600_r1800_rounds.csv",
+        "sha256": "9022befdf3031053cccebe102fa8b9faab6f41237a1283acca4618d0642c2339"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s6_p6600_r1800_summary.csv",
+        "sha256": "410499b5c83ddc9b0b295eaccf27e04c75e9430c1b9f709d7a9fcfc39956f921"
+      }
+    },
+    "event_s7": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s7_p6700_r1800_evaluation.csv",
+        "sha256": "5476375d60d2ae923c0f25f1002fb8c201a1d4a5ae6a1258b0f782cd4de41d3e"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s7_p6700_r1800_history.csv",
+        "sha256": "007ea5b6652dc9ebedaaead2c33cf1a4a5859c0151a4a769a459b6c8a2273872"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s7_p6700_r1800_receipt.json",
+        "sha256": "64de8185f916ab29764900971c2522c9ba1b2e0dadafe3d9adb2ea4488097f18"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s7_p6700_r1800_rounds.csv",
+        "sha256": "f30926047a51368407a160445d51241ef4075011e9bc5474600414290167662f"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s7_p6700_r1800_summary.csv",
+        "sha256": "fe8b48240167c90b3c880c1a7d4321d2e934570bed5b4fe3bd39a3c79397df23"
+      }
+    },
+    "event_s8": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s8_p6800_r1800_evaluation.csv",
+        "sha256": "805d192c267703ca40e82f659ce05b8691995a4c8b00e615147bdc6bbdc159f9"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s8_p6800_r1800_history.csv",
+        "sha256": "a5dfdec40e16bf32e3232c8f23b8f9b45ca762027c64d18c1baaa84ff3cffb81"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s8_p6800_r1800_receipt.json",
+        "sha256": "4d71c6d38e6451b77294f3f72dbfc43e487e8a2ab0e9a56a69db7f1afceeca29"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s8_p6800_r1800_rounds.csv",
+        "sha256": "fb0f3bcfe2e28e596df0cdfe32ccd36aa5e37a52a0ac14c4ca2429f75d347d19"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s8_p6800_r1800_summary.csv",
+        "sha256": "3c19903cb306b5b61ae843e61cc06c399c472205c99e3d07e626e678d742ed2d"
+      }
+    },
+    "event_s9": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s9_p6900_r1800_evaluation.csv",
+        "sha256": "53832d59ee6d28b63e53cee90932afdbb130cca9cd8f3da216840b310fd5cf66"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s9_p6900_r1800_history.csv",
+        "sha256": "511f60681bcf73815d8bbe31cdfbe43c624734ee84afaeeeaaa77fc3692fcfa4"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s9_p6900_r1800_receipt.json",
+        "sha256": "98a6897cbf9f1eafd2d86f76092c47bea5baf810ade68dbc55ada25b9a1119fd"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s9_p6900_r1800_rounds.csv",
+        "sha256": "8d38bf9165183540c367e0613a8fd3194a4f0f03f1c2776098894cb45b56a669"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/event_s9_p6900_r1800_summary.csv",
+        "sha256": "7f9497193077fcdacef17b13170f3cb96d2c6effb1dff5ae7da65964216f9edb"
+      }
+    },
+    "strom_s0": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s0_p6000_r1800_evaluation.csv",
+        "sha256": "46cb927c675b371bd0306e337b0fa15e9d664260f7d8dab22c934fc774b58ba4"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s0_p6000_r1800_history.csv",
+        "sha256": "b286749b961a4b991352ba18bd2194f7c824daba6cf3d542345f15ca671e9629"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s0_p6000_r1800_receipt.json",
+        "sha256": "7c079ea2440d3d1ca82a80fb1565ffce69f2453d5f0a9de1bf1a2ed190d14ea6"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s0_p6000_r1800_rounds.csv",
+        "sha256": "c2568db8950c8a1ea1dcdefda51d1244155e77277441afc67df8b6ddc4dc0cf5"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s0_p6000_r1800_summary.csv",
+        "sha256": "a61c13ab58eb9b0b358f38edfd5c1b2d830b0f49c61d3608b603ee2ee970e3de"
+      }
+    },
+    "strom_s1": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s1_p6100_r1800_evaluation.csv",
+        "sha256": "9903f768c69d2d8f0915efa588d187094bd48ab6f8fe7f87f42e4a8cd0e2a25a"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s1_p6100_r1800_history.csv",
+        "sha256": "2025ee39186a7ca3e03475db7f86424087ad38094c32cc756841579c95dad71a"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s1_p6100_r1800_receipt.json",
+        "sha256": "d81fe7e665c066b89d5b3101f4b6abcad9372bd3d5c1ae160280eb33f8d449fd"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s1_p6100_r1800_rounds.csv",
+        "sha256": "58352481744978eff53b7f2c00b2eace642f7e6e0078b394be0aa1fb38e10dfb"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s1_p6100_r1800_summary.csv",
+        "sha256": "a63f8732865c01f7b268a5f961b46351a6c934914b7af9332eddad937d66cd9b"
+      }
+    },
+    "strom_s2": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s2_p6200_r1800_evaluation.csv",
+        "sha256": "379b33709e7bd650592151134be32e8de982b03b66302555961f88028699554d"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s2_p6200_r1800_history.csv",
+        "sha256": "f4512ec03061481d0f088e223067cc03ff676fa98effcff1abd27ba39b1c7f00"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s2_p6200_r1800_receipt.json",
+        "sha256": "5dcb4d862b19e852bfac7a503f6483f1c173e357cccc2a58519393832429d88e"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s2_p6200_r1800_rounds.csv",
+        "sha256": "af02f272078998ec6e1441ccf37fa7f38ed15643782cc0653d1522c93dbfa64c"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s2_p6200_r1800_summary.csv",
+        "sha256": "f1b28d2255390f5c9d7ecadba1b0b52703c297c6b1c3d32ae9d150b09869f239"
+      }
+    },
+    "strom_s3": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s3_p6300_r1800_evaluation.csv",
+        "sha256": "84218e28c238dff3432c5ab4f0d8426cdc3206dae5d6206485e0a1b925b1a744"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s3_p6300_r1800_history.csv",
+        "sha256": "8ba86801b519e44b32919139ce735b8868bb678e655ec78b026206e53ebc11b6"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s3_p6300_r1800_receipt.json",
+        "sha256": "c8071a8c809602f5a758b76e3c1798f4f980ee98da0a4f4c4b8e5d9f1b1b3968"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s3_p6300_r1800_rounds.csv",
+        "sha256": "53b7251ec903035728c0aec280003e37f97a8ea6c8485013d2e9a3123f93a519"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s3_p6300_r1800_summary.csv",
+        "sha256": "df717d5d1c376259de0b088c6f40d55f37fde6c844022dd183ffabfe51ff7e9a"
+      }
+    },
+    "strom_s4": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s4_p6400_r1800_evaluation.csv",
+        "sha256": "e91ea34f62dc9c38f43a22c451725719cffbc349976d6a13c1355200d6685f04"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s4_p6400_r1800_history.csv",
+        "sha256": "d46964f02ff0d3de0937a45c948ddb1569a7b87a50a08c8b266517c35f526f70"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s4_p6400_r1800_receipt.json",
+        "sha256": "105e07f56788378754e538a7e223808d31854153e65f0bd87129b622a43f003d"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s4_p6400_r1800_rounds.csv",
+        "sha256": "65c6d18b1b59384bd5bd9954e14f63bb75acc37a4e5d48c7a77fc4cb4d05a44f"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s4_p6400_r1800_summary.csv",
+        "sha256": "483d9c0be676722b6dc2e0fc99d06dc04e652708207a8c157796991357456350"
+      }
+    },
+    "strom_s5": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s5_p6500_r1800_evaluation.csv",
+        "sha256": "ec78608864544a2d536cf092bdbd579f5a9e5ab2997793271c3405040d0c5987"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s5_p6500_r1800_history.csv",
+        "sha256": "a8d6ab38b987ed7ecffc89eb0b1450834d70aef2ead6059553e4b30cfbeaf829"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s5_p6500_r1800_receipt.json",
+        "sha256": "c1c3002bc5402ce4fae9d1e0f41bf261052f2333f525fd35888746c9ef78cf66"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s5_p6500_r1800_rounds.csv",
+        "sha256": "b99b1082796de1a6814482727099551ff24e15a0edf6fb2af1ad45396eb3d0b5"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s5_p6500_r1800_summary.csv",
+        "sha256": "b8018187caf9e7daffe6ad58515d926a4c8eb2b8bd0bb3edee4c50299626670f"
+      }
+    },
+    "strom_s6": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s6_p6600_r1800_evaluation.csv",
+        "sha256": "d8fa5c19ae5d2c2128d54644e21871a917d55afe16643fa6c50156c0458e64e9"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s6_p6600_r1800_history.csv",
+        "sha256": "0d46de76e8890c6da7aab37ed876090c3e13bbf2468bbe8172ce4973a0cb094a"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s6_p6600_r1800_receipt.json",
+        "sha256": "35e72dd9e6ef4a94d19253208c3f9016ff4c8743fccac667c46bc78321c4a306"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s6_p6600_r1800_rounds.csv",
+        "sha256": "5a648ca7a10c8fd1e9b551659b26fb44680cd798134f315f24c9d78babf978c6"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s6_p6600_r1800_summary.csv",
+        "sha256": "97e8d9fb3768bd793e5cdce14a89132813ffdb6cd54235ef0b6733a4cb0fa582"
+      }
+    },
+    "strom_s7": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s7_p6700_r1800_evaluation.csv",
+        "sha256": "651ffd6e1f44208f070a8cfdcf594ae1525e6f35f2cf3230db248d3c152a5a13"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s7_p6700_r1800_history.csv",
+        "sha256": "4c7bfd71944b5e0e42a5735be3f26adc6c69f59fee79e6825d17ef46a7003f6f"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s7_p6700_r1800_receipt.json",
+        "sha256": "e37746fb37371b2345e3a1a7543e571dcafd91f6344a5c28c49f2b5e7a429aa3"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s7_p6700_r1800_rounds.csv",
+        "sha256": "c338ebb49bcea4bc9cc343b3c80d008d9dbb084986f1a2e88db2f1e67b1582fe"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s7_p6700_r1800_summary.csv",
+        "sha256": "0ab183f19a43c153bc238c7f6f18f2e5f9ad9a5f5cba5229eadbd0562e24c61f"
+      }
+    },
+    "strom_s8": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_evaluation.csv",
+        "sha256": "172d82836fba8164da7869a1cae552e074fdc8b67ae8ed02ede8db83e18fceca"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_history.csv",
+        "sha256": "8d8a82d6bc8da59a5bfcae07a4f9e2ae85af1df374e741c5f1e7340a019d195f"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_receipt.json",
+        "sha256": "fcaa870f42bf0fb916a9008a018e18ffae4e2181986ca5672b58dbca4b35f469"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_rounds.csv",
+        "sha256": "06bd17e27e853c54d445f8fabc3707c252e080c69a75847c75bbc8a6cbb3b543"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_summary.csv",
+        "sha256": "ae3c3a4563e4d378d555b05b1e2537f477869fcba8a587ba8bce8e6e6090078d"
+      }
+    },
+    "strom_s9": {
+      "evaluation": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s9_p6900_r1800_evaluation.csv",
+        "sha256": "6cbcada3bc27261f5e7f99d698f5f1c187d1782e2f52c0c9136adf43783c00ea"
+      },
+      "history": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s9_p6900_r1800_history.csv",
+        "sha256": "1f72761a20c5cdc49c3cdecf1055b869c8e5081c34f5fcd3dbc38eeb4c28ad16"
+      },
+      "receipt": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s9_p6900_r1800_receipt.json",
+        "sha256": "5226e5685ce49af0071e045cdec82e6a6f1e7b12fa802978edd57578f99a9111"
+      },
+      "rounds": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s9_p6900_r1800_rounds.csv",
+        "sha256": "727c94df0b8a8c7ba95a367fa59650fad604bf697d70882bde2f31d09f2d392c"
+      },
+      "summary": {
+        "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s9_p6900_r1800_summary.csv",
+        "sha256": "8e780cf587dfb0e66f96a0ee779e357550250677db95715e18502fd29dfcec82"
+      }
+    }
+  },
+  "runtime": {
+    "byteorder": "little",
+    "machine": "AMD64",
+    "numpy": "1.26.4",
+    "numpy_build_sha256": "c09fc0cdcacc88059c442edaae7f6429761f93f54cf808da0a43062b9f6a785d",
+    "pandas": "2.2.3",
+    "python": "3.11.16",
+    "system": "Windows",
+    "thread_limits": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "selection_provenance": {
+    "STC_development_campaign_sha256": "08d7c016c542d2c7045cbe8ee3cfa1cec65da07a78eb9620121ebfea99eee4e0",
+    "STC_development_selection_sha256": "8f14777f47cc2c7b1bd1aa1b14f3beaf63df073b02db81e02031346565f236b5",
+    "archived_EF_selection_sha256": "96590a206d76814dac4a0e9c0d38360cf48edbbfb501985c3de78bbd9a89fe50",
+    "configs": {
+      "dense": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.005,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 4.0,
+        "server_gain_exponent": 0.3,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "threshold": 0.025,
+        "topk_fraction": 0.01
+      },
+      "ef_topk": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.005,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 1.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.01,
+        "threshold": 0.025,
+        "topk_fraction": 0.05
+      },
+      "stc": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.005,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 2.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 1.0,
+        "stc_upload_fraction": 1.0,
+        "strom_threshold": 0.01,
+        "threshold": 0.025,
+        "topk_fraction": 0.01
+      }
+    },
+    "frozen_dense_selection_sha256": "b426ec77d86acc3459de1a736b25ea52a30ac132d4a9a63abdf5b01b59aaac43"
+  },
+  "source_hashes": {
+    "experiments/core_float_host.py": "9eeb8a0231574fb2545012b00284e45c374faa4ace2af28080c357224ee0977a",
+    "experiments/core_fresh_comparison.py": "0c67564bf629fe3cdbb452f4bb47717470418896dc69f9f81a168c3696f83034",
+    "experiments/event_codec_development.py": "043aa0a6ec9205eb7c9b161052c87d1872820ba33fae4d2e070583fa2cc3a8fc",
+    "experiments/event_codec_development_audit.py": "3cc8374f906a815dc366dd18f53e67c0eb17538a69670a6dd66064893960f81b",
+    "experiments/event_codec_full_horizon.py": "3783288c77ef7b912e809ed831c9f24d93cb2fd38dff8e320b73208b706e9de3",
+    "experiments/event_codec_pilot.py": "9baf3fef2b45a6c7fb3329a3b551d9f3d102910d100b570367503cb02e901c08",
+    "experiments/event_strom_fresh_confirmation.py": "0b3ef439c9652bd112e9d6a4358ff0d83eaffa9e7082c6f3e6e18deff736bac5",
+    "experiments/m3_dense_schedule.py": "2ec24f8e953a90915fcd9bfc17ae19e9bd0965665123bf4dc840b3f4c0c5f1bd",
+    "experiments/p12_headline_ten_seed.py": "b7f64ebe4b9e0e8923d69a577e22ff50dac2af8aba58c078f2d7d7cb54833235",
+    "experiments/p19_cifar10_cnn_final_horizons.py": "dc11a729f7f9f3172528c486689e72d9ed3f00c2581cec940708881d8c532f55",
+    "experiments/stc_cifar10_confirmation.py": "927f0e70178a8ba64dc523578cb688506aa2098aa5457cc170866302a9c21f15",
+    "experiments/stc_cifar10_development.py": "59eab8b9783c39cc002a29f6382a46b7beb6c147e69322e752a088d228a98c69",
+    "experiments/stc_cifar10_development_audit.py": "97649fd48723fda225b709e8aec609e12603d4c7d5035f4ea7879cc726d616dc",
+    "experiments/strom_codec_development.py": "2ea4357aa6d9ef393c2c340e6b820943b41e24620686721e9f96cdd1fa49d834",
+    "experiments/strom_codec_development_audit.py": "85fecf3fe60760632eb0931474d03ad34c4b0f5e8aaa88b2a79cacfdfe03d686",
+    "experiments/strom_codec_host.py": "e815c2457d6118888bb45a0e16db48cbb565e12a67b47b7545dc2fdc11d527dd",
+    "experiments/strom_development_data.py": "fdb7f69c8673a363e824b0e111623b36ce0b1a1e0a46b1c20fc78e5f9cb55b95",
+    "src/neuromorphicfl/__init__.py": "872c4c69253ed71f0bbabef64004cba29beb305e2aa71a194b7701571677de18",
+    "src/neuromorphicfl/async_simulation.py": "8c9c5a390cb1f7e4b4794fa765c25944463d609d493439d2a60681930b4219b9",
+    "src/neuromorphicfl/baseline_checkpoint.py": "63835e71195dfbd1f50953392db348b8d9fbc760833da25adada579675eb2d75",
+    "src/neuromorphicfl/bidirectional_protocol.py": "cd1c99779a5533aa862e3274bbd84a5bbb6c0aad1cd27e5c2e5dec8a94f78d7d",
+    "src/neuromorphicfl/calibrated_certificate.py": "af9018b142b1eae8cfbaeb305f48afda9979f1e5043cd65fd79044f493442a79",
+    "src/neuromorphicfl/cifar10_benchmark.py": "448a96c1addabeb0b15977a9e7ab3dee41a7c87bf48d7ee971d3e6b1e69ea58a",
+    "src/neuromorphicfl/cifar10_resnet.py": "1bd498545749c4337729dd5353bf6871b0106b7298bf04e1cf0a07e92db0bb0d",
+    "src/neuromorphicfl/cifar10_resnet_torch.py": "9cf19236c39e23aa2cd891547b7fba9128db1cbfbf8caee487ae213a7274ca2d",
+    "src/neuromorphicfl/competitive_vector.py": "e219b01f4c4c23f761986904a3118b236f8d5c6332c95122273bed4347c790f1",
+    "src/neuromorphicfl/confirmation_metrics.py": "e20c1e293fc5519609c5a69a62e27dcee9fb1d47dec7b352b22d69e970572074",
+    "src/neuromorphicfl/delayed_async.py": "e524ff711b30c583cff4297289554f825e7c43fa32da8969834bcf6f11174aed",
+    "src/neuromorphicfl/descent_aware.py": "32f97ab211abb318d4ba0f39fe3230cec894f0dce6d25bf1c7e758dff1ce6cab",
+    "src/neuromorphicfl/event_codec.py": "7faacce3a8eb605b27ae8a70318d759f0dcc22cc0f1ce44684b66555921b5b9b",
+    "src/neuromorphicfl/event_codec_pilot.py": "c37f6f417d317d60a3b92d0990e110f43c62d0a4a5cffd711e732e3538004114",
+    "src/neuromorphicfl/fedavg_cnn_compatibility.py": "ae2816edad2dc6ffc6204c15a296c984eb3e1fb5067757c47ac52d8c3c39afcc",
+    "src/neuromorphicfl/fedavg_event_compatibility.py": "7ba5b6b79a2dd9f2c53432abb3a6d38effc9df01cbd76b2e291df5ed8bf04105",
+    "src/neuromorphicfl/final_baseline_campaign.py": "e7dabedf0e2690e0823d9c46135e76b0c440588d7f8fcac99028055a9a557367",
+    "src/neuromorphicfl/fmnist_cnn_benchmark.py": "138842397dd6126c475c9af9a7083c396a80f5d2c4ce68fa0fa69dfee12a2b10",
+    "src/neuromorphicfl/fmnist_event_benchmark.py": "ce7ac49888d150de5b1bd5b6f23ad5ab76c9786ea92f8e1839a3fde9e1ddf433",
+    "src/neuromorphicfl/fmnist_multiclass_benchmark.py": "826bf6a9ff9e2a6ccad05c912d72365c1f84786e8fc91f138f51a93773a90666",
+    "src/neuromorphicfl/homeostatic.py": "3e741940d6df8e7bcaac0a1bffdf60737e674670595e90023b9eb4cdb5e00c02",
+    "src/neuromorphicfl/logistic_certificate.py": "7f133dd03f1fa39b2d31f31de5bb5c97c00d42fe3c233a9940e57ba79cabb31b",
+    "src/neuromorphicfl/mechanism_audit.py": "0a1dbaef5da929bef9a5533d9c374b049eab34ba6cd0d300c3456127beb94e06",
+    "src/neuromorphicfl/metrics.py": "5faba3bf4c7324be84d8f952a97be920272a474c4024a1e8dbd14b8adb3a8e2d",
+    "src/neuromorphicfl/mlp_depth_scaling.py": "ceb4b19175471512c4f4957157054932109c76a429994860d13d1614f599237d",
+    "src/neuromorphicfl/mlp_event_gate.py": "72d65e661e2f53ac6543dd9861e6bbaadc11453d0cf6fc6a30f65dff703367b8",
+    "src/neuromorphicfl/objectives.py": "cd0e87bddd7a29e31a2e4151302cbbfc3446b410ae0a7d3c575e68f7fe077a27",
+    "src/neuromorphicfl/optimizers.py": "65d7ed19d7454b3d4d4f814e5f5d6a61d2cf7d6bf5bc485e178139cc3a54f193",
+    "src/neuromorphicfl/partial_participation.py": "c61970428cf3c086ef31728e23b3d12c73c560f745a8136b8ef9092d46ba858a",
+    "src/neuromorphicfl/q1_nearest_neighbor.py": "f45d918a285b140612bbe9db7571553e7a59c09fe86bc036eec80914f9cd44d5",
+    "src/neuromorphicfl/rotated_geometry.py": "59b78150c6ef7657cbf92d72502bfb8556e847cb37bfe57120c6d62701a77359",
+    "src/neuromorphicfl/selective_block_certificate.py": "d12df818bde4f3042082f76ae1a78a3cacd434965c69b6581ee3bdc9522bcfbb",
+    "src/neuromorphicfl/selective_calibration.py": "547b5c52084ff73952addaee7fea0233ecf09bb8a119cfa5fb609ed39a3f5258",
+    "src/neuromorphicfl/simulation.py": "3196fd68eb2a469cc1776c3e5ed1c238c97bdcd4cfb44ca3eeddad7933f186ff",
+    "src/neuromorphicfl/sparse_interval_certificate.py": "93830632316fcf5dd9552d8369c1e7857a4ff35a0882ab24f2a6af2a0130518b",
+    "src/neuromorphicfl/stc.py": "e05c6cead5c1b75d4b6b46c0e32b073028b959b8ee5b812627cece002c6446e7",
+    "src/neuromorphicfl/timing_aware.py": "d22c03fac2f124eafbfa5e70ec67b04476d716f0fcf5ece3ce2f8cc3a889889f",
+    "src/neuromorphicfl/vector_quadratic.py": "ffa04b2acd6aca775e1a020a8bf9d12512f459499a0845fac0f8ffa0793cd6aa",
+    "src/neuromorphicfl/vector_timing.py": "704e125fd7e8b01192ca12f4b43b7b8113265e4b8a9a76a5051396bc1903bd4a"
+  }
+}

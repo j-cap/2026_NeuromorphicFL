@@ -1,0 +1,13 @@
+{
+  "all_expected_results_retained": true,
+  "equivalence_or_noninferiority_claim": false,
+  "intervals": "descriptive_unadjusted_paired_95pct_Student_t_ratios_on_log_scale",
+  "new_training_results": 30,
+  "original_pulse_results_modified": false,
+  "seed_pairs": 10,
+  "source_and_config_sha256": "b0cd01100b4c47d631935a735d6d2bf1d3a43f8c66c286fd4b1676d68709b01a",
+  "test_tuning_or_early_stopping": false,
+  "verified_evaluated_model_fingerprints": 1550,
+  "verified_reused_controls": 20,
+  "verified_round_records": 90000
+}

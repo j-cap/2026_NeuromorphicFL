@@ -1,0 +1,35 @@
+{
+  "identity": {
+    "config_sha256": "dae0be5e1a505243517b07db145f6c5c1f013ae9c12d98deeb7da15848196463",
+    "contract_sha256": "b0cd01100b4c47d631935a735d6d2bf1d3a43f8c66c286fd4b1676d68709b01a",
+    "evaluation_scope": "common_seed_five_method_core",
+    "evidence_origin": "verified_reuse",
+    "partition_seed": 6800,
+    "point": "strom",
+    "seed_index": 8,
+    "train_seed": 86800
+  },
+  "references": {
+    "evaluation": {
+      "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_evaluation.csv",
+      "sha256": "172d82836fba8164da7869a1cae552e074fdc8b67ae8ed02ede8db83e18fceca"
+    },
+    "history": {
+      "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_history.csv",
+      "sha256": "8d8a82d6bc8da59a5bfcae07a4f9e2ae85af1df374e741c5f1e7340a019d195f"
+    },
+    "receipt": {
+      "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_receipt.json",
+      "sha256": "fcaa870f42bf0fb916a9008a018e18ffae4e2181986ca5672b58dbca4b35f469"
+    },
+    "rounds": {
+      "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_rounds.csv",
+      "sha256": "06bd17e27e853c54d445f8fabc3707c252e080c69a75847c75bbc8a6cbb3b543"
+    },
+    "summary": {
+      "path": "experiments/results/event_strom_fresh_confirmation_v1/strom_s8_p6800_r1800_summary.csv",
+      "sha256": "ae3c3a4563e4d378d555b05b1e2537f477869fcba8a587ba8bce8e6e6090078d"
+    }
+  },
+  "state": "reused"
+}
