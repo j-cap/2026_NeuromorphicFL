@@ -1,0 +1,22 @@
+{
+  "contract_sha256": "687d5b2f94de9bfa32e4e40d84821e4ff65f16c915c405ea572501b6072b3827",
+  "horizon": 600,
+  "official_test_evaluations": 0,
+  "receipt_sha256": {
+    "event_t0p005_q0p00125": "070616605c250af2d3d1feedf509fa96693709e60b2ad0b50765b5349f497276",
+    "event_t0p0125_q0p00125": "a9e02c014fb5b80395556881b7a7ad9ff8813e7ab1b43c573a8f22d913c6072d",
+    "event_t0p01_q0p00125": "721e16ef37149764ada0b9cda89bd3e13f4721d4ad5bfba02f99aacc2f079770",
+    "strom_t0p0025_g1": "1b13972c51ca71737f923d802d5fa2c7b23aa4e5cfddeea12f6c525d98bd9aaa",
+    "strom_t0p0025_g2": "cfd5f2d20f8393031ad7267acb4939110dfffbc7dcb915a038ee563ffcd491e6",
+    "strom_t0p005_g1": "3038077268685644cfff9b6d1c3d16f27447f035063381a0d82e9144ad7ba06a"
+  },
+  "selected": {
+    "event": [
+      "event_t0p005_q0p00125"
+    ],
+    "strom": [
+      "strom_t0p0025_g2"
+    ]
+  },
+  "selection_metric": "final_validation_ce"
+}

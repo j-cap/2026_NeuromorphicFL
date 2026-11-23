@@ -1,0 +1,80 @@
+{
+  "automatic_further_boundary_extension": false,
+  "changed": {
+    "event": false,
+    "strom": false
+  },
+  "configs": {
+    "event": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.0025,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 1.0,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.005,
+      "threshold": 0.01,
+      "topk_fraction": 0.025
+    },
+    "strom": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.01,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 0.1,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.005,
+      "threshold": 0.05,
+      "topk_fraction": 0.025
+    }
+  },
+  "confirmation_launched": false,
+  "contract_sha256": "687d5b2f94de9bfa32e4e40d84821e4ff65f16c915c405ea572501b6072b3827",
+  "fresh_matched_confirmation_required": false,
+  "horizon": 1800,
+  "official_test_evaluations": 0,
+  "parent_selected": {
+    "event": "event_t0p01_q0p0025",
+    "strom": "strom_t0p005_g2"
+  },
+  "promotion_sha256": "374b684e47d2ac964690031fcb33f11dfde6b3a24a70b3ed9c557961b0301a08",
+  "receipt_sha256": {
+    "event_t0p005_q0p00125": "95adcf8c80839afdc4ee9501db62035e44e34fd562e8ae827df765f0f7c51730",
+    "event_t0p01_q0p0025": "74f47e643e932ef3d83a208758e295be42a1a4a68db9ec89efe52e98ecb98001",
+    "strom_t0p0025_g2": "3ae3af614394ec70663d585280a42aebdfba213931498642d88a5ad7df02aa37",
+    "strom_t0p005_g2": "0bc1e0dd7cf25672e41a7b71979969d670194d8e23f475b69134ed402a7e8112"
+  },
+  "selected": {
+    "event": [
+      "event_t0p01_q0p0025"
+    ],
+    "strom": [
+      "strom_t0p005_g2"
+    ]
+  },
+  "selection_metric": "final_validation_ce"
+}

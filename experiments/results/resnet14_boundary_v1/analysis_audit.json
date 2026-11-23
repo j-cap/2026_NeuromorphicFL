@@ -1,0 +1,17 @@
+{
+  "all_new_candidate_outcomes_retained": true,
+  "automatic_confirmation": false,
+  "complete_new_stage_receipts": 8,
+  "failed_new_stage_receipts": 0,
+  "fresh_matched_confirmation_required": false,
+  "max_unique_additional_training_rounds": 6000,
+  "max_unique_new_evaluation_points": 106,
+  "official_test_images_or_metrics_read": false,
+  "parent_sources_and_development_evidence_verified": true,
+  "reused_parent_incumbents": 2,
+  "scope": "single_split_validation_boundary_check_not_predictive_confirmation",
+  "selection_sha256": "955375029f94b36268a416abb27ae175c04e7bc5d953e5a8fd97b84154a628d8",
+  "verified_exact_screen_prefixes": 2,
+  "verified_new_archived_evaluated_models": 128,
+  "verified_new_archived_round_rows": 7200
+}
