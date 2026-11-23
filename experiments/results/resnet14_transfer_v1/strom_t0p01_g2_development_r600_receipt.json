@@ -1,0 +1,162 @@
+{
+  "data_manifest": {
+    "class_counts": [
+      [
+        2475,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225
+      ],
+      [
+        225,
+        2475,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225
+      ],
+      [
+        225,
+        225,
+        2475,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225
+      ],
+      [
+        225,
+        225,
+        225,
+        2475,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225
+      ],
+      [
+        225,
+        225,
+        225,
+        225,
+        2475,
+        225,
+        225,
+        225,
+        225,
+        225
+      ],
+      [
+        225,
+        225,
+        225,
+        225,
+        225,
+        2475,
+        225,
+        225,
+        225,
+        225
+      ],
+      [
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        2475,
+        225,
+        225,
+        225
+      ],
+      [
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        2475,
+        225,
+        225
+      ],
+      [
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        2475,
+        225
+      ],
+      [
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        225,
+        2475
+      ]
+    ],
+    "client_indices_sha256": [
+      "ab748ad662893095d661ede476ab16e556aa9ce33ca6cf5da0315b2389f1b06f",
+      "0eba94d03cb75703dc0d98888cb75e776e5d024b2be5bbe71321d3d8d49e867c",
+      "f6c7630d5a44a736a32d315eae396f44c943ff96143e5f6d605ba9643910c598",
+      "5116efc3d9cef4ba8ea289a8f998004cec2d32138c60b2c0be106057d8cce7bb",
+      "5b2d0b5c17710bc0f07dc7a01c4d9cdafdeb169771abbfac69cfd4856f6ceb9d",
+      "e63a37d90aa625639c0a6a28e249b39c853786a550ceaf374f4ec460589ae7cc",
+      "5f3667e2ae200a114278e41c2da652c202ed4685af921bbff76e7e737c3b47bf",
+      "8cf9c55fb004d30191667f12e0c5e017e3c45877413326fa4d01e11d36cd9587",
+      "c74ecac65481a642051ece3d4e56f562796409ecd1c3c09a770f5d0779e7f9c0",
+      "f7645b78237ef808570c742b6c5ec248f4570c3f4b3a9a6ad7fc5e0ce02ca088"
+    ],
+    "diagnostic_indices_sha256": "e94b29d61071bd2116e233b101af5bc4582ad083523f60a11df20c22c4cfcc48",
+    "holdout_indices_sha256": "b940d03d15e0c39c058bba75e695ead12f96cab49df2d1d8f2aefeefeb65e485",
+    "index_csv_sha256": "e4651f1aef2fdf2c0f72c19bfaca82e7fdf9a608515a88e0bc0ac850d1afc48e",
+    "partition_seed": 7000,
+    "split_seed": 17000,
+    "training_examples": 45000,
+    "validation_examples": 5000
+  },
+  "identity": {
+    "config_sha256": "cdfddb82265d868b0ff0cf8bf96a0c0bde10f627b18aa019ffe97ad2d419e4d2",
+    "contract_sha256": "927ea000064e61a74e1ff8673cbbe40737cda110735a0d78e0af39a2b6af541b",
+    "method": "strom",
+    "partition_seed": 7000,
+    "phase": "development",
+    "point_id": "strom_t0p01_g2",
+    "stage_horizon": 600,
+    "train_seed": 97000
+  },
+  "sha256": {
+    "evaluation": "82727974dce7bd21bc019854eb73c49b86c31e9b44f0304493dd75998228c9ca",
+    "history": "6ea6f6b65bcde03e012f48baf871cca18bc5164e95fd21f10b26afe0337be78e",
+    "rounds": "614c82ace04c71e5e5df80130353d8363bc62971fca38b4ef46ce35966c7f299",
+    "summary": "afc286fe3bcecec01f27873276ebf7e5071221d6e6f9db965f5e9128185b5373"
+  },
+  "state": "complete"
+}

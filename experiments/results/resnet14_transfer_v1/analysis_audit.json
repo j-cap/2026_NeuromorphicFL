@@ -1,0 +1,10 @@
+{
+  "all_pairs_retained": true,
+  "frozen_selection_sha256": "654a9d67a4a71a5724eee5cb6eba52ce5158c2d959e3a184636b4b3ae9b7647c",
+  "new_confirmation_runs": 6,
+  "rounds_verified": 10800,
+  "sampled_model_fingerprints": 186,
+  "scope": "three_pair_initial_architecture_transfer_not_ten_seed_confirmation",
+  "seed_pairs": 3,
+  "test_based_selection_or_stopping": false
+}

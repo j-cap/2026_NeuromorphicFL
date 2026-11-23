@@ -1,0 +1,35 @@
+{
+  "expected": 6,
+  "results": [
+    {
+      "method": "event",
+      "partition_seed": 7100,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 7100,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 7200,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 7200,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 7300,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 7300,
+      "state": "complete"
+    }
+  ]
+}

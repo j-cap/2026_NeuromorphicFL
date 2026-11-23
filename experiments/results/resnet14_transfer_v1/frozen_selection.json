@@ -1,0 +1,70 @@
+{
+  "configs": {
+    "event": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.0025,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 1.0,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.005,
+      "threshold": 0.01,
+      "topk_fraction": 0.025
+    },
+    "strom": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.01,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 0.1,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.005,
+      "threshold": 0.05,
+      "topk_fraction": 0.025
+    }
+  },
+  "confirmation_checkpoint_reuse": false,
+  "contract_sha256": "927ea000064e61a74e1ff8673cbbe40737cda110735a0d78e0af39a2b6af541b",
+  "horizon": 1800,
+  "official_test_evaluations": 0,
+  "promotion_sha256": "cfc71a0d11342bfd5a32c4232ef32d9f9c0ffff20697d5fbcd440060d5499323",
+  "receipt_sha256": {
+    "event_t0p0125_q0p0025": "7b85e05d2c1227a0e50754bd93cbf3bea01243c908926cba8b07f40bd5b94562",
+    "event_t0p01_q0p0025": "74f47e643e932ef3d83a208758e295be42a1a4a68db9ec89efe52e98ecb98001",
+    "strom_t0p005_g2": "0bc1e0dd7cf25672e41a7b71979969d670194d8e23f475b69134ed402a7e8112",
+    "strom_t0p01_g2": "c90d86a5289f14238cd76acbb78bc4bc6add32e87fdc18d74fcf3a182a3e335b"
+  },
+  "selected": {
+    "event": [
+      "event_t0p01_q0p0025"
+    ],
+    "strom": [
+      "strom_t0p005_g2"
+    ]
+  },
+  "selection_metric": "final_validation_ce"
+}
