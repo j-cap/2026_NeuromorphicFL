@@ -1,5 +1,20 @@
 # Experiments
 
+The completed ResNet-14 transfer is interpreted in
+[`RESNET14_TRANSFER_RESULTS.md`](RESNET14_TRANSFER_RESULTS.md). All thirty
+screening runs, four finalists and six fresh confirmation runs are complete.
+Across three matched pairs, selected Event reaches 75.797% mean test accuracy
+versus 72.257% for selected Ström, with 31.04% less final unicast traffic and
+53.24% less traffic to the declared 50% accuracy target. Both selections touch
+lower search boundaries; these are bounded-calibration results, not optimal
+tuning claims. Run `python experiments/resnet14_transfer_audit.py` to verify
+all forty receipts, four exact continuations, independent traffic/statistical
+reconstruction and the eight original analysis CSVs without training or
+overwriting original analysis. Afterwards use
+`git add experiments/results/resnet14_transfer_v1`,
+`git commit -m "Refresh ResNet14 transfer evidence audit"`, and
+`git push origin main`.
+
 The automatic weekend ResNet-14 study is documented in
 [`RESNET14_TRANSFER.md`](RESNET14_TRANSFER.md). It screens fifteen settings each
 for Event and Ström on a training-only holdout, continues at most two finalists

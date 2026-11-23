@@ -1,0 +1,74 @@
+{
+  "all_three_confirmation_pairs_retained": true,
+  "archived_evaluated_model_fingerprints": 640,
+  "archived_round_records_verified": 36000,
+  "audit_source_sha256": "fcae74b6a999ecb3957b24ea41e72570ddbf13c8bb61355e35764cd510ae4b6b",
+  "boundary_diagnostics": {
+    "automatic_extension_performed": false,
+    "claim": "best_promoted_finalists_in_declared_bounded_grid_not_global_optima",
+    "event_quantum_on_lower_grid_boundary": true,
+    "strom_gain_on_lower_grid_boundary": true,
+    "strom_threshold_on_lower_grid_boundary": true
+  },
+  "complete_receipts_verified": 40,
+  "confirmation_receipts": 6,
+  "contract_sha256": "927ea000064e61a74e1ff8673cbbe40737cda110735a0d78e0af39a2b6af541b",
+  "development_receipts": 34,
+  "distinct_confirmation_final_models": 6,
+  "exact_600_to_1800_prefixes_verified": 4,
+  "first_crossings_rebuilt_from_raw_evaluations": true,
+  "helper_sha256": {
+    "experiments/event_strom_fresh_confirmation_audit.py": "774902529ef16f79bc4ceebd5beb473997f55a1056d74d24f92bada8537cd43f",
+    "experiments/strom_codec_ten_seed_audit.py": "eba263db1cb6c54bd86709409fea957c43ac62247681fd928ec7fa63145c4332"
+  },
+  "independent_paired_intervals": true,
+  "independent_prefix_and_endpoint_accounting": true,
+  "limits": [
+    "three pairs on one fixed previously inspected CIFAR10 test set",
+    "selected configurations touch search boundaries; no optimal-tuning claim",
+    "Torch backend and architecture change together relative to compact CNN",
+    "no raw images, packet bytes, NPZ model/state arrays or runtime replay loaded",
+    "secondary intervals are descriptive and unadjusted; no field-wide SOTA or causal mechanism claim"
+  ],
+  "official_test_used_for_selection": false,
+  "original_analysis_csvs_reproduced": 8,
+  "original_analysis_preserved": true,
+  "original_analysis_sha256": {
+    "analysis_audit.json": "3df0ff33cb08bf9591aab75a3e46bdf065c6617b0999e1be5a7ce526dbf89fce",
+    "confirmation.pdf": "246451fdfc000ba48bab2e0cded373e9272f411ef814bc98a1799af908368b95",
+    "confirmation.png": "0f3fb08ab92821225093204416db5f8dc3fb8c6b8625187605c596c0dc7a0e83",
+    "confirmation_completion.json": "9e571ed29ad1524f2a8674e44f33b981d023407a94f8898a8bebe28077f94cc5",
+    "confirmation_history.csv": "72b1f4878a49d12d2a06e850829edeae973f2896e0ef3c423527c5958df311de",
+    "confirmation_runs.csv": "dbb5dc81daef02419b517c6fde2ccd96b66cb92913fd331dea38fa8fd57cb74a",
+    "finalists.csv": "c45a3ac1696c5cf1cd3ea0fdef003c825182d363f757c9322787007c9e81b015",
+    "frozen_selection.json": "0a9f189cf0499975ae4bfa6df14c8ed3e95d8ff556738f91fe53af928c20c7cc",
+    "paired_per_seed.csv": "c065d6f8e39695cd1b50980aa2e1af17d34b0c638dd8b7ef7c2817f2f567e612",
+    "paired_summary.csv": "ddbc0ab76168c80f07a3aac29a2b69689e723c7bb5f1c5266914934cd723310a",
+    "paired_target_summary.csv": "af44f838eafddadf373a2e8fe94263bca8490f19376bbd691b65739190370d9d",
+    "promotion.json": "cfc71a0d11342bfd5a32c4232ef32d9f9c0ffff20697d5fbcd440060d5499323",
+    "screening.csv": "76c79c52454b8c4ec43709dd4edb08793a13d333e1fb0345a97c2ce5aacb1fc1",
+    "traffic_to_target.csv": "7e03ee87642fabf903821066b485d5eec657ccf5017a2f5ed09df650e46df10a"
+  },
+  "results_commit": "f8e740b1a888eee83200d82f9a92333543b16bba",
+  "runtime": {
+    "eval_batch_size": 256,
+    "runtime": {
+      "cuda_runtime": "12.1",
+      "cudnn": 90100,
+      "deterministic": true,
+      "device": "cuda:0",
+      "gpu": "NVIDIA GeForce RTX 4090",
+      "mixed_precision": false,
+      "numpy": "1.26.4",
+      "pandas": "2.2.3",
+      "platform": "Windows",
+      "python": "3.11.16",
+      "tf32": false,
+      "threads": 4,
+      "torch": "2.5.1",
+      "torchvision": "0.20.1"
+    }
+  },
+  "unique_scheduled_evaluations": 596,
+  "unique_scheduled_training_rounds": 33600
+}
