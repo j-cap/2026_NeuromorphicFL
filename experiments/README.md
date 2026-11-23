@@ -1,5 +1,20 @@
 # Experiments
 
+The completed ResNet boundary check is interpreted in
+[`RESNET14_BOUNDARY_RESULTS.md`](RESNET14_BOUNDARY_RESULTS.md). Both frozen
+choices survive: each promoted extension has worse validation CE/accuracy
+and higher final unicast cost (+48.14% for Event, +32.25% for Ström).
+Stop this bounded tuning study; the next confirmation can retain the existing
+three ResNet pairs and add seven fresh pairs. The boundary check contributes
+no new test-seed pairs. Run `python experiments/resnet14_boundary_audit.py`
+to verify all eight new stages, two reused incumbents, exact continuations,
+independent traffic and rankings, and the four original analysis CSVs.
+The reader handles Windows/Linux dependency-key spelling without modifying
+the frozen contract or original outputs. Afterwards use
+`git add experiments/results/resnet14_boundary_v1`,
+`git commit -m "Refresh ResNet14 boundary evidence audit"`, and
+`git push origin main`.
+
 The bounded follow-up to the ResNet calibration boundaries is documented in
 [`RESNET14_BOUNDARY.md`](RESNET14_BOUNDARY.md). It adds three validation-only
 600-round candidates per method, continues one new finalist each exactly to

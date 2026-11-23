@@ -1,0 +1,94 @@
+{
+  "audit_source_sha256": "729032c94c4137e439e921b91b09a9f8544d73bff5bc4ff08609dffab7e14746",
+  "changed": {
+    "event": false,
+    "strom": false
+  },
+  "contract_sha256": "687d5b2f94de9bfa32e4e40d84821e4ff65f16c915c405ea572501b6072b3827",
+  "distinct_full_horizon_development_models": 4,
+  "exact_600_to_1800_prefixes_verified": 2,
+  "helper_sha256": {
+    "experiments/resnet14_transfer_audit.py": "fcae74b6a999ecb3957b24ea41e72570ddbf13c8bb61355e35764cd510ae4b6b"
+  },
+  "independent_traffic_prefix_and_endpoint_checks": true,
+  "independent_validation_rankings_verified": true,
+  "limitations": [
+    "one development split and initialization",
+    "one new finalist per family after 600-round screening",
+    "bounded local sensitivity, no global optimum or new predictive confirmation",
+    "saved evidence and hashes only; no packet/model arrays or training replay"
+  ],
+  "new_archived_round_rows_verified": 7200,
+  "new_complete_stage_receipts_verified": 8,
+  "new_confirmation_pairs": 0,
+  "new_sampled_model_fingerprints_verified": 128,
+  "official_test_images_or_metrics_read": false,
+  "original_analysis_csvs_reproduced": 4,
+  "original_analysis_sha256": {
+    "analysis_audit.json": "afd738083f222464266af77b4d061c89bd16452b60a403b7040730a64d2cb7dc",
+    "boundary_summary.csv": "8b2bf5a1ef6f8f5c25b044d14e526cd723fa70cfd3366089819430bab75d9e6e",
+    "comparison.csv": "0566b5b7bab5bc1d4ddbbbf7d5aaf2ecb8a11e4961fb257cc572c79a81b770d2",
+    "finalists.csv": "7b17322c2e6fa4818cc269173cd825accc4de7886c6c2beeb3b814474b763978",
+    "frozen_selection.json": "ead10713fa42e500d6aedb3d15296999c41437ae7899ba19f982e2b862f66d01",
+    "promotion.json": "374b684e47d2ac964690031fcb33f11dfde6b3a24a70b3ed9c557961b0301a08",
+    "protocol.json": "1eab132e52b3dc0b59e1da6ed620b67250c9504e38ef30b4f787da83fff7c3d4",
+    "screening.csv": "8b4d2c30b59f3eaf9559c3079b303a2c0ffddc5eaa550b6ba427100b8d397f76"
+  },
+  "original_evidence_preserved": true,
+  "original_stage_evidence_sha256": {
+    "event_t0p005_q0p00125_development_r1800_evaluation.csv": "c9cf0497e608856dbef56dab99b23e293c3243e9a85eca81e661d15e53253773",
+    "event_t0p005_q0p00125_development_r1800_history.csv": "69a7d731854ea5b56b278d9d049044c0a908d3ad453746e4003092aea17c43c6",
+    "event_t0p005_q0p00125_development_r1800_receipt.json": "95adcf8c80839afdc4ee9501db62035e44e34fd562e8ae827df765f0f7c51730",
+    "event_t0p005_q0p00125_development_r1800_rounds.csv": "026a6d2f110960b7c58142d154a272f0da0b327f8db201ceb203f34a53559d85",
+    "event_t0p005_q0p00125_development_r1800_summary.csv": "ecad49044f6ed732ea659f7e41c638400e70243f7338abb4b650c9e6fc914f91",
+    "event_t0p005_q0p00125_development_r600_evaluation.csv": "660f0962604f563daeb300ce30ac747b9bc2171b95ad59d2bb8bf068e9eb11d1",
+    "event_t0p005_q0p00125_development_r600_history.csv": "12a236487aa8a89b657c63c8993ad933987722b097cc6a76d275126c480d8d26",
+    "event_t0p005_q0p00125_development_r600_receipt.json": "070616605c250af2d3d1feedf509fa96693709e60b2ad0b50765b5349f497276",
+    "event_t0p005_q0p00125_development_r600_rounds.csv": "7d749f25a63807ba0a4f8e2736dc80bc17273e1c02849a29c3853333b0f6a846",
+    "event_t0p005_q0p00125_development_r600_summary.csv": "c64123c4786009ccc21e1bdb039ee96faf3b78633493b3b6dbf03de0bc9890ef",
+    "event_t0p0125_q0p00125_development_r600_evaluation.csv": "02f6c771aaf9b0a206a53856e28aa1b174a89f8a1fbf0f32766f8c0ac4ec35ed",
+    "event_t0p0125_q0p00125_development_r600_history.csv": "4cb5ed4b2003b4293517a1a8e38ccca40106cba868cb61fbefd612f63c7c2a87",
+    "event_t0p0125_q0p00125_development_r600_receipt.json": "a9e02c014fb5b80395556881b7a7ad9ff8813e7ab1b43c573a8f22d913c6072d",
+    "event_t0p0125_q0p00125_development_r600_rounds.csv": "c50f2fa0dc0f6729f6bd76607c802c952e537ee0859df24e7bbf2efac047a4e7",
+    "event_t0p0125_q0p00125_development_r600_summary.csv": "8f2d2cb035c02efeb29d2b87f2cc0e5e097be9e9206ba37bc2a92193aa53e43a",
+    "event_t0p01_q0p00125_development_r600_evaluation.csv": "53e5a6f6fe5d5788a0d1bacfe28a62d2025f2d8e52adbbfd2b097fb1ba529893",
+    "event_t0p01_q0p00125_development_r600_history.csv": "a94d6e6af92d955c0f1c82804e850df467cd37f8bee4c6839d8b46b5ca11c7fb",
+    "event_t0p01_q0p00125_development_r600_receipt.json": "721e16ef37149764ada0b9cda89bd3e13f4721d4ad5bfba02f99aacc2f079770",
+    "event_t0p01_q0p00125_development_r600_rounds.csv": "790be3d5fc73ffba1174c2e4a8ecdfef0dea92422d46f3200dc85c2c2c5bbf13",
+    "event_t0p01_q0p00125_development_r600_summary.csv": "263f28754fc28288618a2c1033f47aae09c89ea47231b9f4e37e0ff97fb11be3",
+    "strom_t0p0025_g1_development_r600_evaluation.csv": "53266627b103cdef2b83abc6d1428600885f937d1cd028a99776945067541f8a",
+    "strom_t0p0025_g1_development_r600_history.csv": "a05500dcf2d120e7de7a93b119517937b5f7f3f13ce414fa2a70fec5f6a9dcdc",
+    "strom_t0p0025_g1_development_r600_receipt.json": "1b13972c51ca71737f923d802d5fa2c7b23aa4e5cfddeea12f6c525d98bd9aaa",
+    "strom_t0p0025_g1_development_r600_rounds.csv": "993b7ed07ac7ea10aac7b9cda2e86e294c0207a2d256fca549e9ad6fac90a4c2",
+    "strom_t0p0025_g1_development_r600_summary.csv": "9e2dbe9220cd3d3a455179dbd8812ed999dd879027e0fcf2b438170d165959ae",
+    "strom_t0p0025_g2_development_r1800_evaluation.csv": "c0220d850a696017d312bd418bfc3ff575fe7614843c5bbd1296b9b483d357d0",
+    "strom_t0p0025_g2_development_r1800_history.csv": "a45d798da6e82740f851beb07786b498f2c59f5d1c06596b914daca6ad40d6d7",
+    "strom_t0p0025_g2_development_r1800_receipt.json": "3ae3af614394ec70663d585280a42aebdfba213931498642d88a5ad7df02aa37",
+    "strom_t0p0025_g2_development_r1800_rounds.csv": "d442323b550e7d1c2b2819ca9a5e711ddca8e6775dd91aced89fa9986fe7a7e1",
+    "strom_t0p0025_g2_development_r1800_summary.csv": "131d9fab961b6b8bbab747f3141239aa658d295b071f4b3ae40f56104a71659d",
+    "strom_t0p0025_g2_development_r600_evaluation.csv": "15e2d7676c5ece6ce90a16ffb44619d1b0e665fc9f09a78f6088e57a7aa6345a",
+    "strom_t0p0025_g2_development_r600_history.csv": "2925cf16334779bc30a7dab6ad5fbfa457697b2a6a239111c66c0d04a767a94c",
+    "strom_t0p0025_g2_development_r600_receipt.json": "cfd5f2d20f8393031ad7267acb4939110dfffbc7dcb915a038ee563ffcd491e6",
+    "strom_t0p0025_g2_development_r600_rounds.csv": "193328a909fb37ca704eb5e7d612ac06bfe4a0b1c10a17de83d110e5a6facbd3",
+    "strom_t0p0025_g2_development_r600_summary.csv": "e3af3e3129fdcb7558d441b979f24b2fcc25fa8b2ec2eefbab3a8d0a449218bb",
+    "strom_t0p005_g1_development_r600_evaluation.csv": "82b03ad01045ee15142bf6472e2e840ae0ad300e5bb409da8529373b6c6e5bc1",
+    "strom_t0p005_g1_development_r600_history.csv": "9eab19eab32f8b35b39cf26d04023d81b9bcd15b74a12396b2a23784a6f60332",
+    "strom_t0p005_g1_development_r600_receipt.json": "3038077268685644cfff9b6d1c3d16f27447f035063381a0d82e9144ad7ba06a",
+    "strom_t0p005_g1_development_r600_rounds.csv": "a2f03bd1d7d234b0207688e63c911a1caa46f9a57d8371a9dca20b987314cc11",
+    "strom_t0p005_g1_development_r600_summary.csv": "6735d3b2460627a79e418decf2e6dd1c4ab169dcd7c0aaf0c20fcca716258934"
+  },
+  "recorded_contract_and_receipt_identities_preserved": true,
+  "results_commit": "dbb354b8541a57ad810116d0597b4972a268214b",
+  "reused_parent_incumbents_verified": 2,
+  "selected": {
+    "event": [
+      "event_t0p01_q0p0025"
+    ],
+    "strom": [
+      "strom_t0p005_g2"
+    ]
+  },
+  "unique_additional_training_rounds": 6000,
+  "unique_new_evaluation_points": 106,
+  "windows_posix_dependency_key_separators_normalized_for_comparison_only": true
+}
