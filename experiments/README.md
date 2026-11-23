@@ -1,5 +1,18 @@
 # Experiments
 
+The ten-pair ResNet confirmation is documented in
+[`RESNET14_TEN_SEED.md`](RESNET14_TEN_SEED.md). It freezes the unchanged Event
+and Ström choices, verifies/reuses the three completed pilot pairs, and adds
+seven fresh matched pairs on seeds 7400–8000: fourteen new 1800-round runs,
+25200 additional rounds, one GPU worker. Run
+`python experiments/resnet14_ten_seed.py verify --device cuda`,
+`preflight --device cuda`, then `run --device cuda`. Checkpoints support
+interruption recovery; final analysis requires all twenty outcomes and reports
+both all-ten and prospective-seven summaries, including target censoring.
+Afterwards use `git add experiments/results/resnet14_ten_seed_v1`,
+`git commit -m "Add ResNet14 ten-seed Event Strom confirmation"`, and
+`git push origin main`. Repeating `run` skips completed work.
+
 The completed ResNet boundary check is interpreted in
 [`RESNET14_BOUNDARY_RESULTS.md`](RESNET14_BOUNDARY_RESULTS.md). Both frozen
 choices survive: each promoted extension has worse validation CE/accuracy
