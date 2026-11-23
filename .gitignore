@@ -92,6 +92,10 @@ experiments/results/**
 !experiments/results/resnet14_transfer_v1/confirmation.png
 !experiments/results/resnet14_transfer_v1/confirmation.pdf
 resnet14_transfer_weekend.log
+!experiments/results/resnet14_boundary_v1/
+!experiments/results/resnet14_boundary_v1/*.csv
+!experiments/results/resnet14_boundary_v1/*.json
+resnet14_boundary.log
 
 # LaTeX build products
 report/*.aux

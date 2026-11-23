@@ -1,5 +1,18 @@
 # Experiments
 
+The bounded follow-up to the ResNet calibration boundaries is documented in
+[`RESNET14_BOUNDARY.md`](RESNET14_BOUNDARY.md). It adds three validation-only
+600-round candidates per method, continues one new finalist each exactly to
+1800 rounds, and compares them with the verified frozen incumbents. Maximum
+additional work is 6000 rounds, equally divided between Event and Ström.
+Run `python experiments/resnet14_boundary.py verify --device cuda`,
+`preflight --device cuda`, then `run --device cuda`. Selection uses validation
+CE and the original holdout; the new study reads no official-test images or
+metrics and launches no confirmation or further extension. Afterwards use
+`git add experiments/results/resnet14_boundary_v1`,
+`git commit -m "Add bounded ResNet14 validation boundary check"`, and
+`git push origin main`. Repeating `run` resumes the pipeline.
+
 The completed ResNet-14 transfer is interpreted in
 [`RESNET14_TRANSFER_RESULTS.md`](RESNET14_TRANSFER_RESULTS.md). All thirty
 screening runs, four finalists and six fresh confirmation runs are complete.
