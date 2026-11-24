@@ -1,0 +1,162 @@
+{
+  "data_manifest": {
+    "class_counts": [
+      [
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750
+      ]
+    ],
+    "client_indices_sha256": [
+      "c59679e1e2ccdb07fdddf90aab6679d8e0bb0621ed56250ccbdc10a32292ab71",
+      "becb38fc57fe64bd8ef2978bdf8ffa71ad7917115ab87a3dcce2e48674689ce1",
+      "8aa86f42daf9897b9ae958e72e19abf3efdcdf247b0ed466a6663fd02d7b9e17",
+      "20a27644022d405bdd4b2516e41e704bd6c15e447f4a82823e49fdc6bc0b2bc9",
+      "c6332dcd1b3476115e48d2aca4bfa267e45d076fd62476da4741f64efeee34d6",
+      "4c6047eb7bab9a1ce67bd9a643cc66b95b33415f604a51368a4a236b2c86efb3",
+      "98f1372bdf0412a1f9dcae5fdc0643f848b723d8fa7d6c8e640533297854ca06",
+      "a0ee044ab9e342e0b384b52dc34d42b053330a71a8951ac2e49d84f19c16e966",
+      "860c93d21f3214c8e70668143f9c434c7119f00095f934a0d9244ca4902f5cf2",
+      "1607df9c92953e248355a73231fe1e7c501c8f6e1741873f1fcf6c51f03ed40c"
+    ],
+    "diagnostic_indices_sha256": "f49ca1f8a4cb13dd05bd44cd7d41ed518bda2c104d6e44b0196aef77703acaaf",
+    "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "index_csv_sha256": "3503a18aa26fe00c4f7e33a6bea95a6e8db06785f24d643ac2a7a3802232de4d",
+    "partition_seed": 7400,
+    "split_seed": null,
+    "training_examples": 50000,
+    "validation_examples": 0
+  },
+  "identity": {
+    "config_sha256": "9f2127de33160001a615a6217f3b62eec22391e38abd1fcfc0749dcd9a82670e",
+    "contract_sha256": "832d7234b042ba8c80ade3276e48f462f0e1325bf0e163d76f9a2e9d03fdadcb",
+    "method": "event",
+    "partition_seed": 7400,
+    "phase": "confirmation",
+    "point_id": "event_t0p01_q0p0025",
+    "stage_horizon": 1800,
+    "train_seed": 97400
+  },
+  "sha256": {
+    "evaluation": "b7c1c74c20848e3659a142231d738d376c823337009d65a37f05eb6c542dfdda",
+    "history": "684d9297fa7fe75b18deb21b92502e8c31e51a84303ea87b56335b8d4ae89fda",
+    "rounds": "c64ed62337c9760f87884d731f8175356f289a07c0b8d004e199d9ac6dedf06e",
+    "summary": "297d33800596cbb69d666b6c8ac33e4748b43a7656cc2283d0290adebc6c942a"
+  },
+  "state": "complete"
+}

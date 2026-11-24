@@ -1,0 +1,17 @@
+{
+  "additional_pairs": 7,
+  "all_pairs_retained": true,
+  "new_runs": 14,
+  "reused_runs": 6,
+  "rounds_verified": 36000,
+  "sampled_model_fingerprints": 620,
+  "scope": "fixed_configurations_ten_matched_ResNet_pairs_including_three_inspected_pilot_pairs",
+  "scopes": [
+    "all_10",
+    "additional_7"
+  ],
+  "seed_pairs": 10,
+  "selection_sha256": "7bcd9e60ff4ffa159e31574a5f9dc92905457342f567acd1b681b2b755d651f9",
+  "test_based_selection_or_stopping": false,
+  "unreached_targets_censored": true
+}

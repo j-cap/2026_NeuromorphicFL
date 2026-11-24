@@ -1,0 +1,127 @@
+{
+  "expected": 20,
+  "expected_new": 14,
+  "expected_reused": 6,
+  "results": [
+    {
+      "method": "event",
+      "origin": "reused_pilot",
+      "partition_seed": 7100,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "reused_pilot",
+      "partition_seed": 7100,
+      "state": "reused"
+    },
+    {
+      "method": "event",
+      "origin": "reused_pilot",
+      "partition_seed": 7200,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "reused_pilot",
+      "partition_seed": 7200,
+      "state": "reused"
+    },
+    {
+      "method": "event",
+      "origin": "reused_pilot",
+      "partition_seed": 7300,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "reused_pilot",
+      "partition_seed": 7300,
+      "state": "reused"
+    },
+    {
+      "method": "event",
+      "origin": "new_additional",
+      "partition_seed": 7400,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "origin": "new_additional",
+      "partition_seed": 7400,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "new_additional",
+      "partition_seed": 7500,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "origin": "new_additional",
+      "partition_seed": 7500,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "new_additional",
+      "partition_seed": 7600,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "origin": "new_additional",
+      "partition_seed": 7600,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "new_additional",
+      "partition_seed": 7700,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "origin": "new_additional",
+      "partition_seed": 7700,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "new_additional",
+      "partition_seed": 7800,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "origin": "new_additional",
+      "partition_seed": 7800,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "new_additional",
+      "partition_seed": 7900,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "origin": "new_additional",
+      "partition_seed": 7900,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "new_additional",
+      "partition_seed": 8000,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "origin": "new_additional",
+      "partition_seed": 8000,
+      "state": "complete"
+    }
+  ]
+}
