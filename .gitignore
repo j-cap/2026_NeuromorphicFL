@@ -102,6 +102,10 @@ resnet14_boundary.log
 !experiments/results/resnet14_ten_seed_v1/confirmation.png
 !experiments/results/resnet14_ten_seed_v1/confirmation.pdf
 resnet14_ten_seed.log
+!experiments/results/resnet14_baseline_development_v1/
+!experiments/results/resnet14_baseline_development_v1/*.csv
+!experiments/results/resnet14_baseline_development_v1/*.json
+resnet14_baseline_development.log
 
 # LaTeX build products
 report/*.aux

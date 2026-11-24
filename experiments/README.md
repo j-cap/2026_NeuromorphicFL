@@ -1,5 +1,20 @@
 # Experiments
 
+The validation-only calibration of the remaining ResNet baselines is documented
+in [`RESNET14_BASELINE_DEVELOPMENT.md`](RESNET14_BASELINE_DEVELOPMENT.md).
+Dense varies server gain/schedule, STC varies retained fractions and gain, and
+EF-TopK varies global fraction and gain. Each gets eighteen 600-round screens
+and three exact continuations to 1800, matching the total ResNet calibration
+work per pulse family. Maximum new work is 43200 rounds. Run
+`python experiments/resnet14_baseline_development.py verify --device cuda`,
+`preflight --device cuda`, then `run --device cuda`. It stops with three frozen
+validation choices and reads no official-test images or metrics; thirty
+baseline confirmation runs follow only after analyzing this stage. Afterwards
+use `git add experiments/results/resnet14_baseline_development_v1`,
+`git commit -m "Add ResNet14 baseline validation calibration"`, and
+`git push origin main`. The experiment-local host preserves native baseline
+rules with actual lossless wire frames and exact model/state/RNG checkpointing.
+
 The completed ten-pair ResNet confirmation is interpreted in
 [`RESNET14_TEN_SEED_RESULTS.md`](RESNET14_TEN_SEED_RESULTS.md). Event has higher
 final accuracy and lower CE and unicast traffic in all ten pairs. Paired final
