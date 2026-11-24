@@ -1,5 +1,19 @@
 # Experiments
 
+The completed ten-pair ResNet confirmation is interpreted in
+[`RESNET14_TEN_SEED_RESULTS.md`](RESNET14_TEN_SEED_RESULTS.md). Event has higher
+final accuracy and lower CE and unicast traffic in all ten pairs. Paired final
+accuracy gain is 3.308 pp, final unicast saving is 30.74%, and saving to 50%
+accuracy is 51.44%. The seven new pairs independently retain the same directions
+and similar effects. All fourteen new and six reused outcomes are complete.
+Run `python experiments/resnet14_ten_seed_audit.py` to verify the twenty outcomes,
+36000 rounds, exact pilot reuse, independent traffic/statistics and all six
+original analysis CSVs without training or overwriting original results.
+Afterwards use `git add experiments/results/resnet14_ten_seed_v1`,
+`git commit -m "Refresh ResNet14 ten-seed evidence audit"`, and
+`git push origin main`. Freeze this pulse comparison; the remaining ResNet
+comparator gap is Dense, STC and EF-TopK under matching calibration/evaluation.
+
 The ten-pair ResNet confirmation is documented in
 [`RESNET14_TEN_SEED.md`](RESNET14_TEN_SEED.md). It freezes the unchanged Event
 and Ström choices, verifies/reuses the three completed pilot pairs, and adds
