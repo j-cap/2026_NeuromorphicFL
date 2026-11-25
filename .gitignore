@@ -105,6 +105,8 @@ resnet14_ten_seed.log
 !experiments/results/resnet14_baseline_development_v1/
 !experiments/results/resnet14_baseline_development_v1/*.csv
 !experiments/results/resnet14_baseline_development_v1/*.json
+!experiments/results/resnet14_baseline_development_v1/validation_tradeoff.png
+!experiments/results/resnet14_baseline_development_v1/validation_tradeoff.pdf
 resnet14_baseline_development.log
 
 # LaTeX build products

@@ -83,4 +83,12 @@ Its primary/secondary roles, paired analysis and local commands are declared in
 The result determines the scope of later benchmarks, PyTorch integration and
 replacement publication evidence.
 
+The completed ResNet baseline validation calibration is analyzed in
+[`experiments/RESNET14_BASELINE_DEVELOPMENT_RESULTS.md`](experiments/RESNET14_BASELINE_DEVELOPMENT_RESULTS.md).
+All 54 screens and nine continuations completed. The report preserves the
+CE-selected primary settings and includes both sparse STC finalists, whose
+communication/accuracy tradeoff challenges an overall Event advantage.
+These validation results are separate from the completed ten-pair Event/Ström
+test confirmation; matching STC/EF/Dense test confirmation is the next step.
+
 The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.

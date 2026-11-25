@@ -1,0 +1,12 @@
+point_id,method,role,coordinate_events,late_120_nonzero_client_fraction,unicast_downlink_percent_of_total,uplink_modes,downlink_modes,gain_at_grid_upper_boundary,lossless_roundtrips_recorded
+event_t0p01_q0p0025,event,frozen_primary,134448856,0.047982246174211735,83.570542130846107,"{""rice:fixed:2"": 21, ""rice:fixed:3"": 1959, ""rice:fixed:4"": 13886, ""rice:fixed:5"": 2068, ""rice:fixed:6"": 64, ""rice:fixed:7"": 2}","{""counts_patch"": 1800}",False,True
+strom_t0p005_g2,strom,frozen_primary,310232640,0.10640620780030964,78.070774903945434,"{""rice:fixed:1"": 15, ""rice:fixed:2"": 4941, ""rice:fixed:3"": 12745, ""rice:fixed:4"": 299}","{""counts_patch"": 1797, ""ordered"": 3}",False,True
+dense_g1p5_a0,dense,frozen_primary,3154624231,0.99999640529961542,50.014027597527452,"{""dense_float32"": 18000}","{""dense_float32"": 1800}",False,True
+dense_g2_a0p2,dense,secondary_finalist,3154623416,0.99999596309440941,50.014027597527452,"{""dense_float32"": 18000}","{""dense_float32"": 1800}",False,True
+dense_g2_a0p3,dense,secondary_finalist,3154622518,0.99999605819230308,50.014027597527452,"{""dense_float32"": 18000}","{""dense_float32"": 1800}",False,True
+stc_u0p05_d0p05_g4,stc,secondary_finalist,157518000,0.049932100103846903,51.017009506567121,"{""lossless_stc"": 18000}","{""lossless_stc"": 1800}",True,True
+stc_u1_d1_g4,stc,frozen_primary,3154643890,0.99999993818636901,50.384562099984599,"{""lossless_stc"": 18000}","{""lossless_stc"": 1800}",True,True
+stc_u0p01_d0p01_g4,stc,secondary_finalist,31824000,0.010087984571317715,53.934209743315513,"{""lossless_stc"": 18000}","{""lossless_stc"": 1800}",True,True
+ef_topk_p0p05_g4,ef_topk,secondary_finalist,157734000,0.050000570587362632,86.986743602281834,"{""support_rice:fixed:4"": 18000}","{""aggregate_support_rice:fixed:0"": 233, ""aggregate_support_rice:fixed:1"": 1566, ""aggregate_support_rice:fixed:2"": 1}",True,True
+ef_topk_p0p025_g4,ef_topk,secondary_finalist,78858000,0.02499743235686816,88.5232261142949,"{""support_rice:fixed:5"": 18000}","{""aggregate_support_rice:fixed:1"": 1221, ""aggregate_support_rice:fixed:2"": 578, ""aggregate_support_rice:fixed:3"": 1}",True,True
+ef_topk_p0p01_g4,ef_topk,frozen_primary,31554000,0.010002396466923051,89.473489180553599,"{""support_rice:fixed:6"": 18000}","{""aggregate_support_rice:fixed:3"": 1798, ""aggregate_support_rice:fixed:4"": 2}",True,True
