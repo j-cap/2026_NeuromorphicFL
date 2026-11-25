@@ -1,0 +1,13 @@
+{
+  "final_complete": 9,
+  "final_failed": 0,
+  "max_unique_training_rounds": 43200,
+  "new_confirmation_runs": 0,
+  "official_test_images_or_metrics_read": false,
+  "promoted": 9,
+  "scope": "single_split_validation_only_baseline_calibration_not_predictive_confirmation",
+  "screen_candidates": 54,
+  "screen_complete": 54,
+  "screen_failed": 0,
+  "selection_sha256": "12ad5251afa13b294972398c143c7a34678d9fe5f8fd7b3b0fff814d4ddfe052"
+}

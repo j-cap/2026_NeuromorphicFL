@@ -1,0 +1,103 @@
+{
+  "automatic_boundary_extension": false,
+  "configs": {
+    "dense": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.01,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 1.5,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 1.0,
+      "stc_upload_fraction": 1.0,
+      "strom_threshold": 0.005,
+      "threshold": 0.05,
+      "topk_fraction": 1.0
+    },
+    "ef_topk": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.01,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 4.0,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 0.01,
+      "stc_upload_fraction": 0.01,
+      "strom_threshold": 0.005,
+      "threshold": 0.05,
+      "topk_fraction": 0.01
+    },
+    "stc": {
+      "batch_size": 32,
+      "eval_stride": 60,
+      "event_memory": "persistent",
+      "event_reset": "full",
+      "init_scale": 1.0,
+      "jump0": 0.01,
+      "jump_exponent": 0.2,
+      "jump_scale": 100.0,
+      "local_lr": 0.05,
+      "local_steps": 5,
+      "regularization": 0.0005,
+      "rho": 0.999,
+      "rounds": 1800,
+      "server_gain": 4.0,
+      "server_gain_exponent": 0.0,
+      "server_gain_scale": 100.0,
+      "stc_download_fraction": 1.0,
+      "stc_upload_fraction": 1.0,
+      "strom_threshold": 0.005,
+      "threshold": 0.05,
+      "topk_fraction": 1.0
+    }
+  },
+  "confirmation_launched": false,
+  "contract_sha256": "504744f153517886437dc7fee89d8dc4fdffb996857f6dc426ece71daa8d9915",
+  "development_checkpoint_reuse_for_confirmation": false,
+  "horizon": 1800,
+  "official_test_evaluations": 0,
+  "promotion_sha256": "06860e6e3c260a186c8d03fcfd8c1584ddd1f647283a208214b964df9cc30736",
+  "receipt_sha256": {
+    "dense_g1p5_a0": "e8d23d08cde53f20fcd45419ee89c45a28c90dfb5cd43d87480c5ee6f6c36c51",
+    "dense_g2_a0p2": "546823bd56f3e511a84eda8c8dba3088ecf1865d3dc744d78f0d73d73645528a",
+    "dense_g2_a0p3": "1b4b8eb4e26037c473c40da751615d88aef30d5b93de6fb74b5f859969a24ab2",
+    "ef_topk_p0p01_g4": "5d794a274b64a9fb4c5dd4659d8506bc457b2c8d777bdb1f26dd9a86a7eeed51",
+    "ef_topk_p0p025_g4": "6dfc4d0bf5004a386437c83e0138d349696728e25261fcb62d675376793892d1",
+    "ef_topk_p0p05_g4": "bd5ad4a3d7a43a3ea36dd8735e98562845cc4e288584438a4cf8a50ee1463200",
+    "stc_u0p01_d0p01_g4": "f5171efc619ab69b363a3af8c7ba6bd8824fa8e4c745477c95b7195715980f61",
+    "stc_u0p05_d0p05_g4": "c36cf4b1232eb010cb21ce815f28a7a7f40a76384906ecba0469722aa27e8ce2",
+    "stc_u1_d1_g4": "1c177659297b9fbbf12ffbe8995e99ba06b8162372986281c91a3a871415d334"
+  },
+  "selected": {
+    "dense": [
+      "dense_g1p5_a0"
+    ],
+    "ef_topk": [
+      "ef_topk_p0p01_g4"
+    ],
+    "stc": [
+      "stc_u1_d1_g4"
+    ]
+  },
+  "selection_metric": "final_validation_ce"
+}
