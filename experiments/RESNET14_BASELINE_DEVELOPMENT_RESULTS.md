@@ -190,27 +190,32 @@ quantization to Event would preserve its current dynamics or improve quality.
 Any such variant requires a separate protocol and validation study after
 the present comparison is frozen.
 
-## Recommended next experiment
+## Chosen next experiment
+
+**Subsequent scope decision:** proceed with the original three CE-selected
+baselines only (Dense, EF-TopK and STC p=1/gain 4), giving thirty new fits and
+twenty verified pulse reuses. The optional twenty sparse-STC runs are deferred.
+The executable, narrower protocol is
+[`RESNET14_CORE_CONFIRMATION.md`](RESNET14_CORE_CONFIRMATION.md); this does not
+change the recorded development results or the frozen selections.
 
 1. **Keep the primary five-method comparison:** run the three CE-selected
    baselines on the same ten partition seeds 7100--8000 / SGD seeds
    97100--98000; reuse the twenty completed Event/Ström outcomes unchanged.
    This requires **30 new full-training runs / 54000 rounds**.
-2. **Declare both sparse STC points as secondary before confirmation:** p=0.05
-   and p=0.01, both gain 4 and symmetric upload/download fractions. Run each
-   on the same ten seeds. This adds **20 runs / 36000 rounds**, not a new
-   search. Their roles remain explicitly exploratory choices from development
-   evidence; they do not replace the frozen p=1 primary winner.
+2. **Keep the scope at those selected configurations.** Do not add sparse-STC
+   confirmation, new tuning or extra seeds. Preserve the sparse development
+   results as evidence limiting a broader frontier claim; they do not replace
+   the frozen p=1 primary winner or become confirmed test comparisons.
 3. Refit each new run from initialization on all 50000 training images; do
    not reuse development checkpoints. Evaluate the same official test set at
    round 1/every 60 and the fixed round-1800 endpoint. Report accuracy, CE,
    complete upload/download/unicast cost, target coverage and paired effects.
    Keep all outcomes and avoid test-driven retuning or early stopping.
 
-The recommended expanded confirmation therefore requires **50 new runs /
-90000 rounds** and yields 70 outcomes including twenty existing pulse runs.
-It preserves the frozen primary panel while answering the sparse-STC challenge
-to the paper's communication-efficiency claim. The test dataset has already
+The chosen confirmation requires **30 new runs / 54000 rounds** and yields
+50 outcomes including twenty existing pulse runs. It completes the selected
+primary panel; it does not resolve the sparse-STC frontier challenge. The test dataset has already
 been inspected for Event/Ström; common-seed comparison reduces nuisance
 variation but does not create a new blind external benchmark.
 

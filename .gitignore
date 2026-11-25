@@ -108,6 +108,12 @@ resnet14_ten_seed.log
 !experiments/results/resnet14_baseline_development_v1/validation_tradeoff.png
 !experiments/results/resnet14_baseline_development_v1/validation_tradeoff.pdf
 resnet14_baseline_development.log
+!experiments/results/resnet14_core_confirmation_v1/
+!experiments/results/resnet14_core_confirmation_v1/*.csv
+!experiments/results/resnet14_core_confirmation_v1/*.json
+!experiments/results/resnet14_core_confirmation_v1/confirmation.png
+!experiments/results/resnet14_core_confirmation_v1/confirmation.pdf
+resnet14_core_confirmation.log
 
 # LaTeX build products
 report/*.aux

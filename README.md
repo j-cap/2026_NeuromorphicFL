@@ -89,6 +89,9 @@ All 54 screens and nine continuations completed. The report preserves the
 CE-selected primary settings and includes both sparse STC finalists, whose
 communication/accuracy tradeoff challenges an overall Event advantage.
 These validation results are separate from the completed ten-pair Event/Ström
-test confirmation; matching STC/EF/Dense test confirmation is the next step.
+test confirmation. The selected common-seed confirmation is prepared in
+[`experiments/RESNET14_CORE_CONFIRMATION.md`](experiments/RESNET14_CORE_CONFIRMATION.md):
+thirty new Dense, EF-TopK and STC p=1/gain-4 fits reuse the twenty completed
+pulse outcomes. This campaign includes no additional sparse-STC points or tuning.
 
 The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.
