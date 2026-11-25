@@ -21,12 +21,13 @@ import tempfile
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "experiments"))
 import resnet14_baseline_development as development
+import resnet14_baseline_fast_host as host
 from resnet14_baseline_development_audit import independent_traffic as baseline_traffic
 from resnet14_transfer_audit import independent_traffic as pulse_traffic
 import numpy as np
 import pandas as pd
 
-parent, pulse, host = development.parent, development.pulse, development.host
+parent, pulse = development.parent, development.pulse
 OUT = REPO / "experiments/results/resnet14_core_confirmation_v1"
 SEEDS, ROUNDS = pulse.SEEDS, 1800
 REUSED, NEW = ("event", "strom"), ("dense", "ef_topk", "stc")
@@ -79,7 +80,9 @@ def protocol_spec():
         "unreached_targets": "censored_at1800_ratio_on_common_hits_full_coverage_reported",
         "intervals": "descriptive_unadjusted_paired_95pct_Student_t_ratios_on_log_scale",
         "baseline_arithmetic": "frozen_native_NumPy_float32_compressors_and_server_Torch_local_SGD_and_model_application",
-        "codec": host.WIRE_PROTOCOL, "execution": "sequential_single_device_same_recorded_runtime_as_completed_ResNet_pulses",
+        "codec": host.WIRE_PROTOCOL, "codec_backend": host.IMPLEMENTATION,
+        "codec_backend_scope": "byte_equivalent_bound1_CPU_acceleration_no_optimizer_or_wire_change",
+        "execution": "sequential_single_device_same_recorded_runtime_as_completed_ResNet_pulses",
         "reuse_policy": "all_twenty_completed_Event_Strom_outcomes_read_only_source_receipts_and_hashes_verified",
         "numerical_failure": "terminal_receipt_retained_continue_other_runs_final_analysis_requires_all_fifty_outcomes",
         "uncertainty_scope": "partition_SGD_variation_fixed_initialization_and_previously_inspected_CIFAR10_test_set",
@@ -157,7 +160,8 @@ def science_spec():
             raise RuntimeError("Conflicting baseline/pulse dependency identity")
         sources[name] = sha
     for name in ("experiments/resnet14_core_confirmation.py", "experiments/resnet14_baseline_development_audit.py",
-                 "experiments/resnet14_transfer_audit.py"):
+                 "experiments/resnet14_transfer_audit.py", "experiments/resnet14_baseline_fast_host.py",
+                 "experiments/fast_pulse_codec.py"):
         sources[name] = parent.text_hash(REPO / name)
     return {"protocol": protocol_spec(), "selection": selection, "source_hashes": sources,
             "execution": prior["execution"], "data_sha256": prior["data_sha256"],
@@ -460,6 +464,7 @@ def preflight(device_name="auto", threads=4, eval_batch_size=256):
     pulse.check_runtime(science, device, eval_batch_size)
     print(json.dumps(science["execution"], indent=2))
     print("Verified selections and twenty completed pulse outcomes; 30 new fits / 54000 rounds / 930 new evaluations.")
+    print("Byte-equivalent CPU codec backend:", host.IMPLEMENTATION)
     print("All ten partition seeds:", SEEDS)
     for method in NEW:
         print(method, POINT_IDS[method], "fresh full-training fit from initialization on every seed")
@@ -488,28 +493,32 @@ def smoke(device_name="auto", threads=4, eval_batch_size=256):
     for method in NEW:
         cfg = replace(config_for(method), rounds=3, eval_stride=1, local_steps=1, batch_size=2)
         with tempfile.TemporaryDirectory() as folder:
-            full, resumed, native = (Path(folder) / (n + ".npz") for n in ("full", "resumed", "native"))
+            full, resumed, native, original = (Path(folder) / (n + ".npz") for n in ("full", "resumed", "native", "original"))
             kwargs = dict(federation=fed, method=point_for(method).method, config=cfg, seed=parent.train_seed(SEEDS[0]), device=device, eval_batch_size=eval_batch_size)
             checkpoint = lambda p: parent.BaselineCheckpoint(p, {"synthetic_core_confirmation": method})
             a = host.run(**kwargs, checkpoint=checkpoint(full))
             reference = host.run(**kwargs, checkpoint=checkpoint(native), native_reference=True)
+            old = development.host.run(**kwargs, checkpoint=checkpoint(original))
             host.run(**kwargs, checkpoint=checkpoint(resumed), stop_after=2)
             b = host.run(**kwargs, checkpoint=checkpoint(resumed))
-            with np.load(full, allow_pickle=False) as x, np.load(resumed, allow_pickle=False) as y, np.load(native, allow_pickle=False) as z:
-                if set(x.files) != set(y.files) or set(x.files) != set(z.files):
+            with np.load(full, allow_pickle=False) as x, np.load(resumed, allow_pickle=False) as y, np.load(native, allow_pickle=False) as z, np.load(original, allow_pickle=False) as previous:
+                if set(x.files) != set(y.files) or set(x.files) != set(z.files) or set(x.files) != set(previous.files):
                     raise AssertionError("ResNet smoke checkpoint arrays differ")
                 for name in x.files:
                     if name != "metadata":
                         np.testing.assert_array_equal(x[name].view(np.uint8), y[name].view(np.uint8))
                         np.testing.assert_array_equal(x[name].view(np.uint8), z[name].view(np.uint8))
+                        np.testing.assert_array_equal(x[name].view(np.uint8), previous[name].view(np.uint8))
                 rng = lambda archive: json.loads(str(archive["metadata"].item()))["progress"]["numpy_rng"]
-                if rng(x) != rng(y) or rng(x) != rng(z):
+                if rng(x) != rng(y) or rng(x) != rng(z) or rng(x) != rng(previous):
                     raise AssertionError("ResNet smoke NumPy RNG differs")
             fields = [k for k in a["rounds"] if k not in ("training_seconds", "codec_seconds")]
             pd.testing.assert_frame_equal(a["rounds"][fields], b["rounds"][fields], check_exact=True)
+            pd.testing.assert_frame_equal(a["rounds"][fields], old["rounds"][fields], check_exact=True)
             pd.testing.assert_frame_equal(a["evaluation"], b["evaluation"], check_exact=True)
             pd.testing.assert_frame_equal(a["evaluation"], reference["evaluation"], check_exact=True)
-        print(method, "synthetic ResNet: exact native/encoded models, feedback, RNG and predictions; exact resumed traffic", flush=True)
+            pd.testing.assert_frame_equal(a["evaluation"], old["evaluation"], check_exact=True)
+        print(method, "synthetic ResNet: exact original/fast/native models, feedback, RNG and predictions; exact original/resumed traffic", flush=True)
 
 
 def main():
@@ -524,7 +533,7 @@ def main():
     if args.command == "verify":
         env = os.environ.copy()
         env["PYTHONPATH"] = os.pathsep.join([str(REPO / "src"), str(REPO), env.get("PYTHONPATH", "")])
-        for pattern in ("test_resnet14_core_confirmation.py", "test_resnet14_baseline.py"):
+        for pattern in ("test_fast_pulse_codec.py", "test_resnet14_core_confirmation.py", "test_resnet14_baseline.py"):
             subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", pattern, "-v"], cwd=REPO, env=env, check=True)
         smoke(args.device, args.threads, args.eval_batch_size)
     elif args.command == "smoke":

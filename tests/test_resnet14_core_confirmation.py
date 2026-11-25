@@ -131,6 +131,8 @@ class ProtocolTests(unittest.TestCase):
         self.assertFalse(p["development_checkpoint_reuse"])
         self.assertFalse(p["new_tuning"])
         self.assertFalse(p["automatic_extra_methods_or_seed_replacement"])
+        self.assertEqual(p["codec_backend"], study.host.IMPLEMENTATION)
+        self.assertEqual(study.host.WIRE_PROTOCOL, study.development.host.WIRE_PROTOCOL)
 
     def test_real_choices_twenty_reuses_and_full_training_manifests_without_images(self):
         with patch.object(parent.data_tools, "load_arrays", side_effect=AssertionError("scientific pinning must not parse images")):
@@ -140,6 +142,8 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(science["selection"]["selected"], {m: [k] for m, k in study.POINT_IDS.items()})
         self.assertTrue(all(m["training_examples"] == 50000 and m["validation_examples"] == 0 for m in science["partition_manifests"].values()))
         self.assertTrue(all("\\" not in p for p in science["source_hashes"]))
+        for name in ("experiments/fast_pulse_codec.py", "experiments/resnet14_baseline_fast_host.py"):
+            self.assertIn(name, science["source_hashes"])
         self.assertTrue(all("\\" not in entry["path"] for ref in science["references"].values() for entry in ref.values()))
         self.assertTrue(all("development" not in entry["path"] for ref in science["references"].values() for entry in ref.values()))
 

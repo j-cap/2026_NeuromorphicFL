@@ -93,5 +93,8 @@ test confirmation. The selected common-seed confirmation is prepared in
 [`experiments/RESNET14_CORE_CONFIRMATION.md`](experiments/RESNET14_CORE_CONFIRMATION.md):
 thirty new Dense, EF-TopK and STC p=1/gain-4 fits reuse the twenty completed
 pulse outcomes. This campaign includes no additional sparse-STC points or tuning.
+Its [CPU codec acceleration](experiments/RESNET14_CODEC_SPEED.md) preserves exact
+message bytes, native updates, predictions and communication accounting while
+reducing the dominant STC serialization cost. Run commands stay the same.
 
 The report in `report/main.tex` is intentionally more detailed than a paper draft. It is the project knowledge base from which the manuscript is distilled, and it records both successful mechanisms and falsified hypotheses.

@@ -1,0 +1,131 @@
+{
+  "clients": 10,
+  "dense_uses_the_identical_original_code_path": true,
+  "dimension": 175258,
+  "implementation": "EVS1_bound1_packbits_regex_v1",
+  "numpy": "2.3.5",
+  "platform": "Linux",
+  "python": "3.12.14",
+  "repeats": 3,
+  "rows": [
+    {
+      "codec_speedup": 0.981819887467986,
+      "fast_median_seconds": 0.0034859519992096466,
+      "models_residuals_and_counters_identical": true,
+      "original_median_seconds": 0.003422576999582816,
+      "point_id": "dense_g1p5_a0",
+      "samples_seconds": {
+        "fast": [
+          0.0033530830005474854,
+          0.0034859519992096466,
+          0.004087427000740718
+        ],
+        "original": [
+          0.020154567999270512,
+          0.003357990000040445,
+          0.003422576999582816
+        ]
+      }
+    },
+    {
+      "codec_speedup": 3.8173361004188227,
+      "fast_median_seconds": 0.04399307699986821,
+      "models_residuals_and_counters_identical": true,
+      "original_median_seconds": 0.1679363610001019,
+      "point_id": "ef_topk_p0p01_g4",
+      "samples_seconds": {
+        "fast": [
+          0.046069248000094376,
+          0.04399307699986821,
+          0.04321279299983871
+        ],
+        "original": [
+          0.17615334899983282,
+          0.1679363610001019,
+          0.16768487300032575
+        ]
+      }
+    },
+    {
+      "codec_speedup": 12.465912907388006,
+      "fast_median_seconds": 0.45131172299988975,
+      "models_residuals_and_counters_identical": true,
+      "original_median_seconds": 5.626012632999846,
+      "point_id": "stc_u1_d1_g4",
+      "samples_seconds": {
+        "fast": [
+          0.4348019210001439,
+          0.46249459399950865,
+          0.45131172299988975
+        ],
+        "original": [
+          6.050150377999671,
+          5.556458253000528,
+          5.626012632999846
+        ]
+      }
+    }
+  ],
+  "scope": "synthetic_CPU_codec_only_not_training_or_paper_evidence",
+  "seed": 20261125,
+  "source_sha256": {
+    "experiments/core_float_host.py": "9eeb8a0231574fb2545012b00284e45c374faa4ace2af28080c357224ee0977a",
+    "experiments/fast_pulse_codec.py": "4f49570dcc9ffb7ea8ad8b8998fafa04a37b9e74f6bef1971a757aba978055b3",
+    "experiments/resnet14_baseline_fast_host.py": "169a2c56693e6071f6ccaeaea7cb71262ed058421c3d720ecc2427822d9bbe5a",
+    "experiments/resnet14_baseline_host.py": "3f78af0d01f98c8a154605243112d966296b4ad61b9f6f0d2da8bb0598f27c59",
+    "experiments/resnet14_codec_benchmark.py": "8291ac15f72431cce7ecdb664bf479a61058a032170832c718f87b0673ede8c6",
+    "src/neuromorphicfl/event_codec.py": "7faacce3a8eb605b27ae8a70318d759f0dcc22cc0f1ce44684b66555921b5b9b",
+    "src/neuromorphicfl/stc.py": "e05c6cead5c1b75d4b6b46c0e32b073028b959b8ee5b812627cece002c6446e7"
+  },
+  "tensor_sizes": [
+    432,
+    16,
+    16,
+    2304,
+    16,
+    16,
+    2304,
+    16,
+    16,
+    2304,
+    16,
+    16,
+    2304,
+    16,
+    16,
+    4608,
+    32,
+    32,
+    9216,
+    32,
+    32,
+    512,
+    32,
+    32,
+    9216,
+    32,
+    32,
+    9216,
+    32,
+    32,
+    18432,
+    64,
+    64,
+    36864,
+    64,
+    64,
+    2048,
+    64,
+    64,
+    36864,
+    64,
+    64,
+    36864,
+    64,
+    64,
+    640,
+    10
+  ],
+  "torch": "2.5.1+cpu",
+  "warmup_steps_per_backend": 1
+}

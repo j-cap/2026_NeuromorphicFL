@@ -35,6 +35,11 @@ same Torch local SGD and model application as the pulse experiment. Lossless
 representations preserve each method's native update; they do not add a new
 lossy server operator to EF or Dense.
 
+The runner uses the [faster CPU codec](RESNET14_CODEC_SPEED.md), preserving the
+exact original message bytes and modes. The acceleration sources/backend are
+pinned in the confirmation contract. The frozen optimizer, package files,
+calibration drivers and original baseline host remain unchanged.
+
 ## Same network, learning problem and ten seed pairs
 
 All methods use **CIFAR-10 Torch ResNet-14 with GroupNorm, 175258 parameters**,
@@ -154,7 +159,10 @@ git push origin main
 
 `verify` uses unit tests, saved evidence and small synthetic real-ResNet
 trajectories; it performs no research training or CIFAR download. `preflight`
-checks scientific provenance and the recorded execution environment. `run`
+checks scientific provenance, prints the faster codec identity and checks the
+recorded execution environment. Synthetic ResNet verification compares against
+both the original encoded runner and the native update, as well as exact
+checkpoint resume. `run`
 performs only the thirty new baseline fits and automatically analyzes the
 fifty-outcome panel when complete.
 

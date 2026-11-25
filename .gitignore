@@ -114,6 +114,8 @@ resnet14_baseline_development.log
 !experiments/results/resnet14_core_confirmation_v1/confirmation.png
 !experiments/results/resnet14_core_confirmation_v1/confirmation.pdf
 resnet14_core_confirmation.log
+!experiments/results/resnet14_codec_speed_v1/
+!experiments/results/resnet14_codec_speed_v1/*.json
 
 # LaTeX build products
 report/*.aux
