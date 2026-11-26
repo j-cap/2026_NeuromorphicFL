@@ -1,0 +1,2427 @@
+{
+  "data_sha256": {
+    "data_batch_1": "54636561a3ce25bd3e19253c6b0d8538147b0ae398331ac4a2d86c6d987368cd",
+    "data_batch_2": "766b2cef9fbc745cf056b3152224f7cf77163b330ea9a15f9392beb8b89bc5a8",
+    "data_batch_3": "0f00d98ebfb30b3ec0ad19f9756dc2630b89003e10525f5e148445e82aa6a1f9",
+    "data_batch_4": "3f7bb240661948b8f4d53e36ec720d8306f5668bd0071dcb4e6c947f78e9682b",
+    "data_batch_5": "d91802434d8376bbaeeadf58a737e3a1b12ac839077e931237e0dcd43adcb154",
+    "test_batch": "f53d8d457504f7cff4ea9e021afcf0e0ad8e24a91f3fc42091b8adef61157831"
+  },
+  "execution": {
+    "eval_batch_size": 256,
+    "runtime": {
+      "cuda_runtime": "12.1",
+      "cudnn": 90100,
+      "deterministic": true,
+      "device": "cuda:0",
+      "gpu": "NVIDIA GeForce RTX 4090",
+      "mixed_precision": false,
+      "numpy": "1.26.4",
+      "pandas": "2.2.3",
+      "platform": "Windows",
+      "python": "3.11.16",
+      "tf32": false,
+      "threads": 4,
+      "torch": "2.5.1",
+      "torchvision": "0.20.1"
+    }
+  },
+  "partition_manifests": {
+    "7100": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "a058e4932a32218c188cc9ef4f3babc2219ec5ec547f0e0b26905eab45ac4640",
+        "6058ee00fa902642067b049ca0be4ce0cd6914b0556f734436a924c35c0d54c7",
+        "00610264375a467bc426454a91dae35a76f2b4569a4eca09f059668047571c61",
+        "c63ab9522a4e09ee0b33835f85a91f9d850e1df40ac238283ff696c7d099f431",
+        "dfe0438b581f9fac14c7821368688f7ee75133330374c23c248168c85d1dfb89",
+        "71ed3ad1dcaf084c59bd01f4f9ef8112b749143cf5def9c510980c62759ac406",
+        "dd5ee955564667e80cace520c22957ea5d0247acc90ccfb1411159ee7f31d3e2",
+        "38df5e4b01836f8a86b1b623f87f91e3911a9f10fcf28b854c3e07b003978735",
+        "ba0aeef5ff06a53d1b92a64c1f69843d754333171fd63bd766d9d6c54e6d44c5",
+        "9b8f38d19858df096a6d82fcff37f0cdc97892cb91a17ad1223e31749faeebcc"
+      ],
+      "diagnostic_indices_sha256": "4fac5fcfe9cb58b0e084dd5b309c2ad381e3e5bfa21455cdf175c4d7e485ff48",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "5eb69d02631e59d3cd02b9a4c16bf2d56d6dbbb2c97d14ded6a45212d3e878b4",
+      "partition_seed": 7100,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7200": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "caebcda6008f8c773ead46ca9adaaefd0e33fdf2915485083d69c2a1101722c6",
+        "b39e64e5f990900fbd6795b658bb4f566699f4f82862b9f52b6030423e86de5c",
+        "afd59b83ea772ba50b9e631e5ca6dbeb6ce99bbb3a10631d284f19bcb85f5af8",
+        "466df6f82617f709690371e4b99f9c2b922bfb76ebb6a0fcc79eb2880dc6a6da",
+        "2342e0156d73f08fb6a6cc3bc43c7b38a70d76efab9ab633ea0d6945c4e8b770",
+        "3b43e1570dbef7319cb2c4388db7f2a012563c0860e5ff21a3d790aac270c3a9",
+        "0f06daeca110ad74debdabc4a8769d3900b854e70172168cea3378b5bbde58a2",
+        "3598470d9d69ce1ffff3d98d8ae4b8594bffc6823251694d976741138898c949",
+        "2b3508095b7bbec9fbf6888985f968e4c485c6677e7ce24fe62fa2e83aad43d7",
+        "81e6876a232a486ad95a8279398ce508963966738fe57809c2fdafa7e0156c6a"
+      ],
+      "diagnostic_indices_sha256": "31b5c728be58a115190e3742e9f10dccff03584f81484c04fcc23320317d0fcb",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "8ef6dac67b1bfdc668819fd743124e5f67e10eefe1a646eccf204d7954e660eb",
+      "partition_seed": 7200,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7300": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "9178949d8f16b1d4a8d8c6e35a35822b45436fa7b64afc36fe8650de13cb26d1",
+        "36d097b75294125b0578ed59c0578bdedf533a97f71e071f9ce3787c47cd0d81",
+        "53ccda93050b36475dc23355d4322b81a92371f642afd59cc4ea2148fb5c895d",
+        "61bfbd454f3c89e0cff89992c5e0d96532d2de180bd0d14765c2cc5ad79a85c9",
+        "2a240292fc3e16d0c364128c874f14363beb6a5947f9a47b74e06569b983f56c",
+        "2b95ac398a2279a7190d1e0b67d00fadfd329b443c95e4cd9925c8c6881b2d85",
+        "a25395b4ae8e15f2819ea2a2f18047c9073601e8a402d5bc20f7c92808a30e60",
+        "0cac3e9a934bad0e2dcf26f363d43cf062eefc0abe8827c658224193567727c9",
+        "98546cf74f0859e5ea87cb53cf8a72d2919320eb8cbe0b48449b07e32cd92ee2",
+        "033e46b68a5ec85c534a160b1cffa3321b26b2af341ef58462d5eb403eef5ccd"
+      ],
+      "diagnostic_indices_sha256": "aa76c782b25393421928909ee2bbb7b70274a3c2cd9c68446f4b754d75e9ba2d",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "90f7ea6cb08fec9c3c3b7c5b1c34fe1e371aa29b9b9a6e8aabb5b9398a0a97e9",
+      "partition_seed": 7300,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7400": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "c59679e1e2ccdb07fdddf90aab6679d8e0bb0621ed56250ccbdc10a32292ab71",
+        "becb38fc57fe64bd8ef2978bdf8ffa71ad7917115ab87a3dcce2e48674689ce1",
+        "8aa86f42daf9897b9ae958e72e19abf3efdcdf247b0ed466a6663fd02d7b9e17",
+        "20a27644022d405bdd4b2516e41e704bd6c15e447f4a82823e49fdc6bc0b2bc9",
+        "c6332dcd1b3476115e48d2aca4bfa267e45d076fd62476da4741f64efeee34d6",
+        "4c6047eb7bab9a1ce67bd9a643cc66b95b33415f604a51368a4a236b2c86efb3",
+        "98f1372bdf0412a1f9dcae5fdc0643f848b723d8fa7d6c8e640533297854ca06",
+        "a0ee044ab9e342e0b384b52dc34d42b053330a71a8951ac2e49d84f19c16e966",
+        "860c93d21f3214c8e70668143f9c434c7119f00095f934a0d9244ca4902f5cf2",
+        "1607df9c92953e248355a73231fe1e7c501c8f6e1741873f1fcf6c51f03ed40c"
+      ],
+      "diagnostic_indices_sha256": "f49ca1f8a4cb13dd05bd44cd7d41ed518bda2c104d6e44b0196aef77703acaaf",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "3503a18aa26fe00c4f7e33a6bea95a6e8db06785f24d643ac2a7a3802232de4d",
+      "partition_seed": 7400,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7500": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "3af1f701f8d7b78ead9fc1f938abca3ec27f44af4b8d4636952c2522e45c9f4d",
+        "d5983685cb5b79054569aaa98d53c11095ff8f5d0e96d978a359db71473c798a",
+        "1b7f16f682a4a0d0032db3333ac7403500c7437474adcdcc3625089abe1be1cd",
+        "d365e3d93a5c8bb4d396750ac7ae6539fe7a972d9bf85524f6e1d79cebdc1a52",
+        "82edc4c1f9062ea426e34846470eb32291f2c1ae180ea8f40565b49d5c0b3436",
+        "605daff8821bf16e31480383b4495e9d858c4688f33fd37f27ed77efe4bc71c4",
+        "93c6717c14182dd7e662218a8ae641b4c037afeb01bb10a9833d31695e6a0775",
+        "503f5cbc7ac0df2134e5776d87be69c08f1388c3b6a52f5aae87502d00775ffc",
+        "175c4c4e4c3712fc9174ba5143c7aa05aa2c09351ca63b0c6e7b52d2b7d64c26",
+        "e445fe56d42d3c614fa0b4ff8c17fa11bc7c6286687cebe46886d0c57931913a"
+      ],
+      "diagnostic_indices_sha256": "359880feeda81d6b4598284fcdc7a1dda330d37ff99be5fd459e1e0a3726cedb",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "97bcf63635f6d43c55e4e27176d5d509070c63fa84cae39a8f914af78e864157",
+      "partition_seed": 7500,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7600": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "04f0c38134259d99d6044b186877e43de05717ad493cc8b5bfd0d713a9a1fc75",
+        "b715a2548fa68d4d5e267f1f6c3d2b2f740c63deb9b23b3a4ca8400d9c020949",
+        "bc437009ef60c06e7f06a7370c0c6f6a3783dbe4d16ea9827c8df50d19f94d3b",
+        "b478b11177dce42451339adff1500d1651c84fa115e25d186cdc856e272aa013",
+        "0e7be2a84dfb2d7a35234ef03bf7eb59259e96b25ac61866803fae40173ead36",
+        "05c7155f7511b75cf047949bca46d5f77d26a2b5126b862f70e3c967c19a4421",
+        "769f952f268291e90b73bba05a0b74b82c8a48cf319e043fd9cfb9f640ad07e0",
+        "2749bd7dcc37c9f9982c1519c71cf11556caee6286b976e799f031f13d72adc3",
+        "1e0f219ce48e7076d286de06d22bc618447a85975de13252775395e03de4f5cc",
+        "9033e616d864727b009f1b56ef5f2a588ff498f17c3a7ac242f53275f21bc2ca"
+      ],
+      "diagnostic_indices_sha256": "cc58c1b6caaf235565882bdd1f6eef7cff3c24131bef77f849bb027706d0c7ba",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "70ac6aee60de2712359b641c63db1724a02018d11db0ac92064319d14b19fe07",
+      "partition_seed": 7600,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7700": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "1c924784656bb8491b44040d5799903f4f2dcb07bd0fb4fa10a7f27ce51a255c",
+        "a4bf788034460c837725c75264090c38d595dd03d00ee0daa6919ce649db43ab",
+        "3386ceb07c7de709a12b70c20e6f53137a99c35494c9a85d90b5729affe8cde1",
+        "b8b72bc660a1a850d798c6529b0db0ca76467d9012fc24c5e940d3bb2c931913",
+        "e6a82a601e3e3161d467096553212412ab14b4f74fc50e306d8cddd93cc8f177",
+        "45840e94e2f6f1c3d5157645302fd6b8c486e4c5ef8a9d1ad9c04da21b3eeffd",
+        "22c6ab24fd87e004fa221e97ce75e91db3ddf1f2bb36955375e55554b909dede",
+        "256a2942068d8dc5b4644cb4ff842a10bea9c0c4ef70d2640a82f0f4bb7f7401",
+        "5ffca3341b77c90f2d60c442b1697d36cb85baa67ce06de7baa7981adf09737b",
+        "49ae2f276a3fba5a7605d1f0997557610ff8d9bcdb9496bf55380dba7c12d411"
+      ],
+      "diagnostic_indices_sha256": "5ff3f80972c24467b3d21abeec35b71f94f053a1752a3f62ae6245558acc5eff",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "b4ad86c56bff3f116b05d3cf02036e7104d350aea0753108aff0a27ce7279a15",
+      "partition_seed": 7700,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7800": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "51c844dbffc775ea5105416ea80b14097f2f07381d7f7dfaf1523ba6323f50b2",
+        "5e96ce3dfea2926374613646aec14965eaff584b02eb60a79b22729baa0bfb5e",
+        "79152e7d21eb0aaa130612c5be33a59b47f87ae8cf907e530accc0be0cf066ea",
+        "9fd0015e2c59f91ae42043a0b73bb9b1f26b399dee89f79a4944f644595db916",
+        "f1a78d5bbb4836fc110431517bd5b616259cbafb7977655f4cd558a9b6252cc8",
+        "a64c4d100352bdcdbf2765e85c42c5820520fc37c36ad296baaa890e338997c0",
+        "f8e1676d99ccb7370cde44b4b816896ec11a2f1d5221efd19473408e4eeddf6f",
+        "953ac65a8cb315a17763d7871312257dcc39a8535e84174fa6d3d27f67239b7a",
+        "5f6f28bc5ed00cd15d578ad9bf72f7f1bf2d4640cda7a98841aa01a7d44bd4fb",
+        "43e52a4dfb60117c8cabb66ce1286e2728515f3805254016a500eda9fd300853"
+      ],
+      "diagnostic_indices_sha256": "af46d077f05a314bfbac22e7768cd3a8cb75e9ec37b2119419ccc9fb3cb5724f",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "3e97e88e222ae35259b560c52961f9945c4e15bda2dd24d2b0030d753021bb74",
+      "partition_seed": 7800,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "7900": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "254927343d8c4ccd21cf3a91e594570818e5b78c02c3ea846cf59a6487e9a8bf",
+        "01777a5cfa5aef23d28b627ffc21d106fc5a26b7250277ea2e1dbcf3b6539ce4",
+        "a50f0c592fcd315d36c6b410fdd16a36c7fa48e985361e902a0301cfd0ac588e",
+        "eb24c300b7c57a2c5e5308759d2c6a84d03d8138814919c7c452f30b39cb7535",
+        "df248349fa241785ddcadf8e8635646de1bbdb7edac73bd0e2d9eba1828c9634",
+        "4bef3c7502fee5941f3b415ace6a323e5a658ea2464d8d2111f2bc75375c15d7",
+        "8ea1587fe66705229f1f7adaf3164e07ee0d82eb0a7b6f00fc57f196dd041407",
+        "a0c0ab332036c88d5a5d82a0c4c2a7402c9a18804a170a7a7c8158c5afd24fff",
+        "bee44ce0cd968cae41ae661eb1470371cb69be2c7ad4823c2f581b173b9e6e14",
+        "7d96437dd1b8aebfbca241fc7b0c2948112a068e0015f057c60b0ffa09a45d43"
+      ],
+      "diagnostic_indices_sha256": "ee5fa1cee18027d2be8a288c9d0e6c9a0309dd5e66a6ba3322d5ba6708e7d58e",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "2404e42ac70fd3eb2dca33f1a88b767e1a5cfe1c169960680b5afb6f14ea600b",
+      "partition_seed": 7900,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    },
+    "8000": {
+      "class_counts": [
+        [
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750,
+          250
+        ],
+        [
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          250,
+          2750
+        ]
+      ],
+      "client_indices_sha256": [
+        "68f9502ee1358c626470f5fcca991a97b212d680e395a8790c54d1dfc69802fd",
+        "5c5660c999460ea330f7ab3a02163ebfc026205b37355d6aedcaf692c875ed68",
+        "a227a8923eb45a96a26b613de9f5ff2240608c50a671bd2b783143b718a5c556",
+        "46048e472e33e51a78c9680c13766d472e63f347117e92972ba66ea45bbc8c22",
+        "2768f1bce0170f44cd643ac07337171cb804fbe4fd4bd19cb1d650a6befcff7b",
+        "f220760c928866ddd92baf42b3c6e748e99a20f41291f28c97f8cb3f029c4a13",
+        "1c161d4512d9273d2b4cbf135e580e81e2daf976e58501dad7edb9fceacb6eb6",
+        "4fdcecc1542227d2b0b1d6eb38e2525ba8d309b3d5b1a1aee846810225a08267",
+        "28137ce545db266f0309a66ad56cc14d49eb696dcdad680625b84636dbbe2299",
+        "f8b4a3ce5bccf42e3c4bb8f04a4eccffc4abb834e11ce02cef698439f228bd0f"
+      ],
+      "diagnostic_indices_sha256": "b3e917b8cf28cd10c9b01bc24e7b82ff8ad1414c82b32f7413ec71f1795f5559",
+      "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "index_csv_sha256": "12b1f8856c9971b9ae69e295b766165b3a2f721297ce36084cb520058855f38d",
+      "partition_seed": 8000,
+      "split_seed": null,
+      "training_examples": 50000,
+      "validation_examples": 0
+    }
+  },
+  "protocol": {
+    "accuracy_targets": [
+      0.45,
+      0.5,
+      0.55
+    ],
+    "additional_evaluation_points": 930,
+    "additional_training_rounds": 54000,
+    "architecture": "CIFAR_ResNet14_GroupNorm_Torch",
+    "automatic_boundary_extension": false,
+    "automatic_extra_methods_or_seed_replacement": false,
+    "baseline_arithmetic": "frozen_native_NumPy_float32_compressors_and_server_Torch_local_SGD_and_model_application",
+    "campaign": "resnet14_core_confirmation_v1",
+    "codec": "resnet_native_numpy_baselines_lossless_v1",
+    "codec_backend": "EVS1_bound1_packbits_regex_v1",
+    "codec_backend_scope": "byte_equivalent_bound1_CPU_acceleration_no_optimizer_or_wire_change",
+    "comparisons": [
+      [
+        "event",
+        "strom"
+      ],
+      [
+        "event",
+        "dense"
+      ],
+      [
+        "event",
+        "ef_topk"
+      ],
+      [
+        "event",
+        "stc"
+      ]
+    ],
+    "configs": {
+      "dense": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 1.5,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 1.0,
+        "stc_upload_fraction": 1.0,
+        "strom_threshold": 0.005,
+        "threshold": 0.05,
+        "topk_fraction": 1.0
+      },
+      "ef_topk": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 4.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.005,
+        "threshold": 0.05,
+        "topk_fraction": 0.01
+      },
+      "event": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.0025,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 1.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.005,
+        "threshold": 0.01,
+        "topk_fraction": 0.025
+      },
+      "stc": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 4.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 1.0,
+        "stc_upload_fraction": 1.0,
+        "strom_threshold": 0.005,
+        "threshold": 0.05,
+        "topk_fraction": 1.0
+      },
+      "strom": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 0.1,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.005,
+        "threshold": 0.05,
+        "topk_fraction": 0.025
+      }
+    },
+    "development_checkpoint_reuse": false,
+    "dimension": 175258,
+    "eval_stride": 60,
+    "execution": "sequential_single_device_same_recorded_runtime_as_completed_ResNet_pulses",
+    "expected_outcomes": 50,
+    "initialization_seed": 7777,
+    "intervals": "descriptive_unadjusted_paired_95pct_Student_t_ratios_on_log_scale",
+    "main_variants": {
+      "dense": "dense_float32",
+      "ef_topk": "lossless_ef_topk",
+      "event": "both_codecs",
+      "stc": "lossless_stc",
+      "strom": "both_codecs"
+    },
+    "matched_minibatches_and_partitions": true,
+    "n_clients": 10,
+    "new_methods": [
+      "dense",
+      "ef_topk",
+      "stc"
+    ],
+    "new_training_runs": 30,
+    "new_tuning": false,
+    "numerical_failure": "terminal_receipt_retained_continue_other_runs_final_analysis_requires_all_fifty_outcomes",
+    "partition_seeds": [
+      7100,
+      7200,
+      7300,
+      7400,
+      7500,
+      7600,
+      7700,
+      7800,
+      7900,
+      8000
+    ],
+    "point_ids": {
+      "dense": "dense_g1p5_a0",
+      "ef_topk": "ef_topk_p0p01_g4",
+      "event": "event_t0p01_q0p0025",
+      "stc": "stc_u1_d1_g4",
+      "strom": "strom_t0p005_g2"
+    },
+    "primary_communication_accounting": "actual_lossless_frames_initialization_requests_conservative_unicast",
+    "primary_predictive_endpoint": "Event_minus_each_reference_round1800_test_accuracy_pp",
+    "regime": "strong_55pct_dominant",
+    "reuse_policy": "all_twenty_completed_Event_Strom_outcomes_read_only_source_receipts_and_hashes_verified",
+    "reused_methods": [
+      "event",
+      "strom"
+    ],
+    "reused_training_results": 20,
+    "rounds": 1800,
+    "scope": "selected_five_method_common_seed_ResNet_confirmation_no_retuning_or_sparse_STC_extension",
+    "secondary_endpoints": [
+      "test_CE",
+      "worst_class_accuracy",
+      "training_CE_objective_L2_diagnostics",
+      "upload",
+      "download",
+      "total_unicast",
+      "logical_broadcast",
+      "traffic_to_fixed_accuracy_targets"
+    ],
+    "selection": "frozen_round1800_validation_CE_winners_after_600_round_screen_top3_continuation",
+    "selection_reference_commit": "a181e4ebab3df94e5add5a8ad566ca24ca540c6d",
+    "sparse_STC_secondary_runs": 0,
+    "target_rule": "first_saved_crossing_no_interpolation_no_stability_requirement",
+    "test_based_selection_or_early_stopping": false,
+    "test_examples": 10000,
+    "total_sampled_model_fingerprints": 1550,
+    "total_verified_rounds": 90000,
+    "training_diagnostic_examples": 5000,
+    "training_examples": 50000,
+    "training_seeds": [
+      97100,
+      97200,
+      97300,
+      97400,
+      97500,
+      97600,
+      97700,
+      97800,
+      97900,
+      98000
+    ],
+    "uncertainty_scope": "partition_SGD_variation_fixed_initialization_and_previously_inspected_CIFAR10_test_set",
+    "unreached_targets": "censored_at1800_ratio_on_common_hits_full_coverage_reported"
+  },
+  "reference_contract_sha256": "832d7234b042ba8c80ade3276e48f462f0e1325bf0e163d76f9a2e9d03fdadcb",
+  "references": {
+    "event_p7100": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_evaluation.csv",
+        "sha256": "19cbbbf136c5c1a1afcf1aac84d117d91c91732c136d3b28af70f020c164de2e"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_history.csv",
+        "sha256": "a2e7d117136559b17cccb79afc70b39822348ec9cf3230fbe0971a66e848499b"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7100.json",
+        "sha256": "32496df34e24a9e62d21dbe4ec17795641ebbbb05858112d005792324e044dae"
+      },
+      "pulse_reuse_receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7100_reuse.json",
+        "sha256": "1cf922d47168d31499af6b69eb295ee5331ea13e424edfa38d2ec6e62727562e"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_receipt.json",
+        "sha256": "bf8384f61cfe703c9f05977d5cc4c11764a622fcd969e46b65b4092bcc4203af"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_rounds.csv",
+        "sha256": "f2f19dfdc6064345d9f02ac696f0d60c6a64db354c8700bdd05ddd41ae61e448"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_summary.csv",
+        "sha256": "13f6ad6dfa5f05892e52190c7196591516f68261bae9de73e179567d3df6e749"
+      }
+    },
+    "event_p7200": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7200_confirmation_r1800_evaluation.csv",
+        "sha256": "3057edc16759e4f49cc6f170fe8eaf135bc545120da67c0e880e5e6cceef2109"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7200_confirmation_r1800_history.csv",
+        "sha256": "b7bcebcaa0c5614f5a42a406d07fab7c026eb7d0e67a06a7c9e2f49e0e9c7484"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7200.json",
+        "sha256": "fdfb414ce83b429d94f38729e5c00ca108216f3e25a1759c480c5ac66a564a6e"
+      },
+      "pulse_reuse_receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7200_reuse.json",
+        "sha256": "9f21b66e4684159fbcedbe59814aa893e74f6b79d960af90f0172e462dbd1cab"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7200_confirmation_r1800_receipt.json",
+        "sha256": "37daaacd8b95e622b186c718c2b22536bfd3eaed8470350bfb446673ba152605"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7200_confirmation_r1800_rounds.csv",
+        "sha256": "9d9e3765df6091fd6d5da1ebcb2916e691dd72e412e7d1d9909eec7dc34a8d2d"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7200_confirmation_r1800_summary.csv",
+        "sha256": "5de1ac6c035dffb8b6d3091566c8df666b48bba698d6f40576baf9e45ccdf166"
+      }
+    },
+    "event_p7300": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7300_confirmation_r1800_evaluation.csv",
+        "sha256": "1ef84ac628efc6a1e6c51f5370322e0e1bafb905036b1a8a42fa261676829e1e"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7300_confirmation_r1800_history.csv",
+        "sha256": "5c86436b0a724c1e461cc4523159baefd127b64b864118ba9fef9b20f97fc789"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7300.json",
+        "sha256": "5bf0e46e0999bd41f6c92c5e2553ea9cf8f9680bc33f1b43268ac68a8fb64c2a"
+      },
+      "pulse_reuse_receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7300_reuse.json",
+        "sha256": "63eafb9856dcf9d8de6085e9062fd745300aa2e490ffc20fbd3c2d1c74ce27c3"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7300_confirmation_r1800_receipt.json",
+        "sha256": "9b665efb24be67ef79a4056ddb0c915fccd55fada28fb32192317f0ad6e61159"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7300_confirmation_r1800_rounds.csv",
+        "sha256": "a10f661449bd95ec53e1ee766f7600f226d832b189e5df398b0dcc19dc028d65"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_transfer_v1/event_p7300_confirmation_r1800_summary.csv",
+        "sha256": "8b0307e717abd93ae900e3fb4354e4c668971e19000fb0c0b5133f5bc71e33fa"
+      }
+    },
+    "event_p7400": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7400_confirmation_r1800_evaluation.csv",
+        "sha256": "b7c1c74c20848e3659a142231d738d376c823337009d65a37f05eb6c542dfdda"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7400_confirmation_r1800_history.csv",
+        "sha256": "684d9297fa7fe75b18deb21b92502e8c31e51a84303ea87b56335b8d4ae89fda"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7400.json",
+        "sha256": "192aef5b1305e57b62701fb9dc9ccb71e8a561c5041bfe24599d3521ba4e42de"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7400_confirmation_r1800_receipt.json",
+        "sha256": "13ebc6d5c30048a9eaf92044dfd06b2b42f7cde55e291a08f359bb63617f480e"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7400_confirmation_r1800_rounds.csv",
+        "sha256": "c64ed62337c9760f87884d731f8175356f289a07c0b8d004e199d9ac6dedf06e"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7400_confirmation_r1800_summary.csv",
+        "sha256": "297d33800596cbb69d666b6c8ac33e4748b43a7656cc2283d0290adebc6c942a"
+      }
+    },
+    "event_p7500": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7500_confirmation_r1800_evaluation.csv",
+        "sha256": "ca3d979f6ecfadc8606dec65ab5ca1ee562b7eb565caffd01fbae39f666b8ea1"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7500_confirmation_r1800_history.csv",
+        "sha256": "9ecd9b59207830ca286db672e15215f486200623a269d0afde8ff414ab066bcf"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7500.json",
+        "sha256": "687eee9d02773b445fea07ca6fc9812ed287fce07fb7c3af0bf3268cbf0d8598"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7500_confirmation_r1800_receipt.json",
+        "sha256": "b52a7c8f8f17e42d6979d00d1af36f27de1d27c6e4ed2168b08396a9847a6670"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7500_confirmation_r1800_rounds.csv",
+        "sha256": "a7944b4c6bb72e14fb4bedee03a6c91a9b9785029c909676a1eeb74d136437d5"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7500_confirmation_r1800_summary.csv",
+        "sha256": "198f6bdcba9ba5e5553012b95ad896be627d7177dcb9ef54596bd7b483787395"
+      }
+    },
+    "event_p7600": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7600_confirmation_r1800_evaluation.csv",
+        "sha256": "d3aee32c9a301ec283fb8d4b61004966074fe348aa0e99b94d57067296673cf8"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7600_confirmation_r1800_history.csv",
+        "sha256": "c89fd981ed9f564c14fe07418a191181fe615dd825bf7852f050b5d1a2d68663"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7600.json",
+        "sha256": "91dfe606661a3dd557ca5ca4b0f9b5795d3fe3f6789be6e1ed7a1789505d8e53"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7600_confirmation_r1800_receipt.json",
+        "sha256": "acaddc786328190885c8bd089b3bf3f412391ce34586c70f1cabc8413eb43552"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7600_confirmation_r1800_rounds.csv",
+        "sha256": "50f90f47593ce5fa6ddafb979ebd114e09f0311ef20e1727d813853d61f43aa7"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7600_confirmation_r1800_summary.csv",
+        "sha256": "52b4578070bbdecc23aca600d333feb63d4ee5488612b29d364059f7a290acf0"
+      }
+    },
+    "event_p7700": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_evaluation.csv",
+        "sha256": "aaef1d4d3f84ab5afbe06d252cd9f8c488a17eb358b581414aa64e5ec1639692"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_history.csv",
+        "sha256": "4e77e9fc19b5a931b47799497a3094bcaf634d22b4a9832929cc415bca15c4ec"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7700.json",
+        "sha256": "50f5320e34a1f81a67944cbf2d84d8b343a7e5d0e697bcf205d4a9ca0c5831bc"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_receipt.json",
+        "sha256": "2f3d1e9074b97f5d28e9a8f1dcf6a2b79c16ce0a52de6bc23712b7381b02c458"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_rounds.csv",
+        "sha256": "5ab5c4f83ffe2e88d54a73b5eb1ef996e7fb350d68ea7fc829c946d841e8f60d"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_summary.csv",
+        "sha256": "ab756b81101fc43423238c3d1d76d4899bb8ffeb0b02d8a81e55c1d7c2dea455"
+      }
+    },
+    "event_p7800": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7800_confirmation_r1800_evaluation.csv",
+        "sha256": "46b33cf71b26eee6c7a372c0130ba2089e3a50efde8c74422245f16e88e42004"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7800_confirmation_r1800_history.csv",
+        "sha256": "8cda687441aeb58531bd402a6549381f469e23c8c443505710c700c835d1656f"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7800.json",
+        "sha256": "1c71aa56504df7ea21f2abe39a83641cef565f692ca7f4d8c636bb0274e10d16"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7800_confirmation_r1800_receipt.json",
+        "sha256": "6d91fc825c528080807081f1e11d3b218db7f32c02bba29422f136bd8f3bac2f"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7800_confirmation_r1800_rounds.csv",
+        "sha256": "243ed80f1727d4878e047f4fb35a62c487cdf2920deef164c32bf00ce96b2801"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7800_confirmation_r1800_summary.csv",
+        "sha256": "c70aaa19e4557ee48550db55fac6cbd5d1fcf3c644a62743fef9cfe2d262dbaa"
+      }
+    },
+    "event_p7900": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7900_confirmation_r1800_evaluation.csv",
+        "sha256": "4e97d049202ddc571ac18505075085b3d4c833d31a306b641318cfc92953d06e"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7900_confirmation_r1800_history.csv",
+        "sha256": "b9ed4a760f58cfdc5d23863155fc0b8a0b9e1877b6b83665b05dd5ec46710f77"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7900.json",
+        "sha256": "ea0113233c9a8e6dfaa2d9f27be2b667a5d00a812741a7fa0576abbbae914b88"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7900_confirmation_r1800_receipt.json",
+        "sha256": "7ad00444bd6399eb069048765a077a5b62b95b894875f4da9d32a629361c557d"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7900_confirmation_r1800_rounds.csv",
+        "sha256": "660b8d516d2918017b7c77a74616beab1cf8a0aa7c9ae362e11d0e2601d9e18f"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p7900_confirmation_r1800_summary.csv",
+        "sha256": "a6e55f15fa3704586f74c4dd211571b3d4b0e51c34cf315fae324a44f9143b66"
+      }
+    },
+    "event_p8000": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p8000_confirmation_r1800_evaluation.csv",
+        "sha256": "28e31da807844f7bd4ee91129e58070a454efb034f0393870d51a8e806ceb92b"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p8000_confirmation_r1800_history.csv",
+        "sha256": "1f93ff5c146d0c1765d63abfed7ab12a8f81f5331883ebaafcd2752a79270158"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p8000.json",
+        "sha256": "e83b468f74b4694d3eb01a813c8e5eb7c9a906e8712188b65105ecaabecc9715"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p8000_confirmation_r1800_receipt.json",
+        "sha256": "454ff7e9e46a07998875a2100225e28a5c1fe04e523019d118d4bc1f7b109bd4"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p8000_confirmation_r1800_rounds.csv",
+        "sha256": "1ef3ec22e892306fb61e279b1f870ca7d9b4b6ee71845d0c98c70e78537aec21"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/event_p8000_confirmation_r1800_summary.csv",
+        "sha256": "00edc95b7e97e30f5c84309d11c27877dd25a7e281df59f78d48c5eabd928d11"
+      }
+    },
+    "strom_p7100": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7100_confirmation_r1800_evaluation.csv",
+        "sha256": "243ad21145d5ac007914d001f5a20ff1bfffab9f751676118262e447f2f5b24f"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7100_confirmation_r1800_history.csv",
+        "sha256": "788df63f482f5b2fca3f606666aaef113c0b4ae29573d0f21a8b36f2dfe4e663"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7100.json",
+        "sha256": "32496df34e24a9e62d21dbe4ec17795641ebbbb05858112d005792324e044dae"
+      },
+      "pulse_reuse_receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7100_reuse.json",
+        "sha256": "58ee433be3550fb5c16e4cf0fafa8ee971c301136e17e38cf55b858eba8709b9"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7100_confirmation_r1800_receipt.json",
+        "sha256": "bad670338cb4431e043dcd3e38a84364de8374937982eddbe0750fc961793a70"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7100_confirmation_r1800_rounds.csv",
+        "sha256": "a9b2ca83f0b1dabb8abdd1e53d0d6344a0f2ba92b6f0ada74fffa88f6388f7b9"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7100_confirmation_r1800_summary.csv",
+        "sha256": "ada4fe6dddd73f1e62edc2ee4ce5110011bc9557517be00f3761306a2788724a"
+      }
+    },
+    "strom_p7200": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7200_confirmation_r1800_evaluation.csv",
+        "sha256": "a4f59cef9fd1e2f2c7d6927d2a474ea89dd1c3fd1743a1ce97bd5b2e3802d58f"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7200_confirmation_r1800_history.csv",
+        "sha256": "42a5093e6c5933eccba87fc5a11742a6da4dee331d45fce32f1fda6b15f3a530"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7200.json",
+        "sha256": "fdfb414ce83b429d94f38729e5c00ca108216f3e25a1759c480c5ac66a564a6e"
+      },
+      "pulse_reuse_receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7200_reuse.json",
+        "sha256": "c5fabe1153531554b542ad967365c658b7631e0fa2acc40dc613f439bd8d18f0"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7200_confirmation_r1800_receipt.json",
+        "sha256": "c24a0d86af7b55732efcdcb8c0feee22e518b562c46ffd7e73881ec832b8e10c"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7200_confirmation_r1800_rounds.csv",
+        "sha256": "3daf5412bcb6c4d491fafa84d229f0ae874ef21a1fe849b474402469b4fa9f00"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7200_confirmation_r1800_summary.csv",
+        "sha256": "38000bbe049dcde31937ccbc32e017ce6a572a7fa90509c8cc31925a91a24429"
+      }
+    },
+    "strom_p7300": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_evaluation.csv",
+        "sha256": "8923abb004f0f40d48232f4ca4cb8d64a81e5cc182271b45b03b6da75f43a6c9"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_history.csv",
+        "sha256": "e821195aa1abb2d091e4d086fe8e6a8f51c37fa321340bf283e0197ebb501b0b"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7300.json",
+        "sha256": "5bf0e46e0999bd41f6c92c5e2553ea9cf8f9680bc33f1b43268ac68a8fb64c2a"
+      },
+      "pulse_reuse_receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7300_reuse.json",
+        "sha256": "8eee184ea953207d7e78e49ceb7687d3e8cb03bea51e8855884cc675762e2cb4"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_receipt.json",
+        "sha256": "6a805beaa187e8b411001c1f33e0cb70421442eb536d279281440f15851b90c7"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_rounds.csv",
+        "sha256": "f71463752e49352aad91fd4f620c0719ee35ed97967f7e6347b091f46e828704"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_summary.csv",
+        "sha256": "1b8a485bb36c3a6681b9f835ac946d98254ce92afdd4ebcd0561df80958944a6"
+      }
+    },
+    "strom_p7400": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7400_confirmation_r1800_evaluation.csv",
+        "sha256": "faa11922b74d16ba71c56b44695a0763caed48355fe6afbc99002dcdbd3a7649"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7400_confirmation_r1800_history.csv",
+        "sha256": "3f19b0f59c6fc19dcc3336eb23b949fe0ad98202c25b1faf7aafd8e23de7f856"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7400.json",
+        "sha256": "192aef5b1305e57b62701fb9dc9ccb71e8a561c5041bfe24599d3521ba4e42de"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7400_confirmation_r1800_receipt.json",
+        "sha256": "fa4f74544052e083b1a67f82a78a8197bf5616abc7faa0cea8c5a5a117426a16"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7400_confirmation_r1800_rounds.csv",
+        "sha256": "4e8b7ee26378cece67e5c6650428ca442fcc1d2bdd475817c741ff83a867da63"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7400_confirmation_r1800_summary.csv",
+        "sha256": "a4387c48cce1e0fdf4f6ecb19c526c940197fa0817be703ab77f4c8a3b3e0477"
+      }
+    },
+    "strom_p7500": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7500_confirmation_r1800_evaluation.csv",
+        "sha256": "f8dda5f769408605dd8cf91c40b580e2692522b762d203193b9bf04d276aa9b5"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7500_confirmation_r1800_history.csv",
+        "sha256": "544033f776d5fb1d87abea8ed719dcb051a45b560bee484c5d93794c1372bd59"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7500.json",
+        "sha256": "687eee9d02773b445fea07ca6fc9812ed287fce07fb7c3af0bf3268cbf0d8598"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7500_confirmation_r1800_receipt.json",
+        "sha256": "343fe32d74efb62cbb6174dcf20d7633d86e3bbe70ed2e81178ff979b56ca00c"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7500_confirmation_r1800_rounds.csv",
+        "sha256": "7e76367be18d27eebde7d3fa31e455c21624a88e50d9e0904acd99baebbc7b98"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7500_confirmation_r1800_summary.csv",
+        "sha256": "d29d6ff0ef476563fb60f3219e35502228d33b96fa55384c95c5b7b70defa22e"
+      }
+    },
+    "strom_p7600": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7600_confirmation_r1800_evaluation.csv",
+        "sha256": "4ac73dc9aa61da8f082f6224a160f12cf8b8ce2d567b4092726f4d6958299055"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7600_confirmation_r1800_history.csv",
+        "sha256": "84a6d6529c902ffc398c628ead2e7693869df2fccebd9eef364c2ba2cfaa2353"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7600.json",
+        "sha256": "91dfe606661a3dd557ca5ca4b0f9b5795d3fe3f6789be6e1ed7a1789505d8e53"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7600_confirmation_r1800_receipt.json",
+        "sha256": "80705ca1c9b26ca80a176ca46b0aa4fd9e9ec2f0936b90b499b5db4e6e56e75d"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7600_confirmation_r1800_rounds.csv",
+        "sha256": "e4e5f6401c89cc7f01b2f93eb677a632d5862a25ac3ae809958e1d85ea8afff3"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7600_confirmation_r1800_summary.csv",
+        "sha256": "1c09553116de49e4a1f90c3963668cf0fb152b3e5ee1048c8c2db2ab078b3f33"
+      }
+    },
+    "strom_p7700": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7700_confirmation_r1800_evaluation.csv",
+        "sha256": "4a4acd11d54dc4b7e054b246f3a1fadde65e7e4ad283d324461f035169523676"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7700_confirmation_r1800_history.csv",
+        "sha256": "15ee3241409ae32adce9559a6ab1551b3dd8525958d29236fa07a8447652fbcf"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7700.json",
+        "sha256": "50f5320e34a1f81a67944cbf2d84d8b343a7e5d0e697bcf205d4a9ca0c5831bc"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7700_confirmation_r1800_receipt.json",
+        "sha256": "b93376e937a8183d9b31e1cc7c2d7e70871723068c02c164046da3eb5ea17922"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7700_confirmation_r1800_rounds.csv",
+        "sha256": "f29bc39569ae5dd9ff088d81416a0aa7db8479cc556445b90ae012db254893fd"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7700_confirmation_r1800_summary.csv",
+        "sha256": "646fd16492f6e2c078ca100c6544bb78eac8e1031337dcf41ce643130a121cc1"
+      }
+    },
+    "strom_p7800": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7800_confirmation_r1800_evaluation.csv",
+        "sha256": "653d539b7de8211c7e930942d22e1455d9b83347c61fff858e39af2427c26776"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7800_confirmation_r1800_history.csv",
+        "sha256": "b0581717690f9d765ee310aebd47ac7f511841b1ee7b63d12af91225441f886b"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7800.json",
+        "sha256": "1c71aa56504df7ea21f2abe39a83641cef565f692ca7f4d8c636bb0274e10d16"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7800_confirmation_r1800_receipt.json",
+        "sha256": "009f01b99d7805d76c6b1638cbe56fdfcd3ae112bf3c32148aae2356051e542c"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7800_confirmation_r1800_rounds.csv",
+        "sha256": "d60f8bf0f1d5a8b3078eee30b113fd1c735bd0ddf33edc98a588681f1baa120a"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7800_confirmation_r1800_summary.csv",
+        "sha256": "5b4b413e8f420b4f10f5b7ead36428becedefe06a5bed7cdd80e25dd70a5eaa7"
+      }
+    },
+    "strom_p7900": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7900_confirmation_r1800_evaluation.csv",
+        "sha256": "00dcc6b705fc872f101ef66b694415baf5e9fc9fede33104e30a5b45b2311d85"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7900_confirmation_r1800_history.csv",
+        "sha256": "7ea82bca21c6d9f0c3ca5424d62d2b236e84c7215f8e6a57ca330a51810e23f7"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7900.json",
+        "sha256": "ea0113233c9a8e6dfaa2d9f27be2b667a5d00a812741a7fa0576abbbae914b88"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7900_confirmation_r1800_receipt.json",
+        "sha256": "e854b12237e434a5aaa0b60e28189a48f27290322d1ca15e7f1b48bfa0bb4c3d"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7900_confirmation_r1800_rounds.csv",
+        "sha256": "4ac76feb726cd561943889c8cddcccacd24769e2da676888d43c0d00f10b8ef9"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p7900_confirmation_r1800_summary.csv",
+        "sha256": "8483f7158616e552eb3bd8b0dfa11b6a56eaf6e765fcd06d7b68875834c494ab"
+      }
+    },
+    "strom_p8000": {
+      "evaluation": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p8000_confirmation_r1800_evaluation.csv",
+        "sha256": "22c7ae93b2bf0776446eeeabd81d08819137bd80845c3c464ff07f92ebfb1182"
+      },
+      "history": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p8000_confirmation_r1800_history.csv",
+        "sha256": "48490ad4ad46b858575b214b0587dbe3b60ac787ae75f81c771d9e6ce2560ba5"
+      },
+      "partition": {
+        "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p8000.json",
+        "sha256": "e83b468f74b4694d3eb01a813c8e5eb7c9a906e8712188b65105ecaabecc9715"
+      },
+      "receipt": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p8000_confirmation_r1800_receipt.json",
+        "sha256": "bb5187ae20eb64db85400c0792fbca0968b70fa64955eacc5af2c803ac18b428"
+      },
+      "rounds": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p8000_confirmation_r1800_rounds.csv",
+        "sha256": "71ff8814c4f5c66ac3c0c323ec6646622e7a43e7dcd98877602a66fdcdda22af"
+      },
+      "summary": {
+        "path": "experiments/results/resnet14_ten_seed_v1/strom_p8000_confirmation_r1800_summary.csv",
+        "sha256": "802c019f2fcebdb602bb63aa60f3da583a9179c159bc4af12894d03c3b0e8635"
+      }
+    }
+  },
+  "selection": {
+    "calibration_contract_sha256": "504744f153517886437dc7fee89d8dc4fdffb996857f6dc426ece71daa8d9915",
+    "configs": {
+      "dense": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 1.5,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 1.0,
+        "stc_upload_fraction": 1.0,
+        "strom_threshold": 0.005,
+        "threshold": 0.05,
+        "topk_fraction": 1.0
+      },
+      "ef_topk": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 4.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 0.01,
+        "stc_upload_fraction": 0.01,
+        "strom_threshold": 0.005,
+        "threshold": 0.05,
+        "topk_fraction": 0.01
+      },
+      "stc": {
+        "batch_size": 32,
+        "eval_stride": 60,
+        "event_memory": "persistent",
+        "event_reset": "full",
+        "init_scale": 1.0,
+        "jump0": 0.01,
+        "jump_exponent": 0.2,
+        "jump_scale": 100.0,
+        "local_lr": 0.05,
+        "local_steps": 5,
+        "regularization": 0.0005,
+        "rho": 0.999,
+        "rounds": 1800,
+        "server_gain": 4.0,
+        "server_gain_exponent": 0.0,
+        "server_gain_scale": 100.0,
+        "stc_download_fraction": 1.0,
+        "stc_upload_fraction": 1.0,
+        "strom_threshold": 0.005,
+        "threshold": 0.05,
+        "topk_fraction": 1.0
+      }
+    },
+    "files": {
+      "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_evaluation.csv": "9af936a6aab5949c9207bfb4326d75403ac40f474aa43d503793e434e2e735f9",
+      "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_history.csv": "03b4361fac333d64883a1ed7d4c01bc7e11dce6bdef50f146e7566b2da8ec7e4",
+      "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_receipt.json": "e8d23d08cde53f20fcd45419ee89c45a28c90dfb5cd43d87480c5ee6f6c36c51",
+      "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_rounds.csv": "7cb98362b3e21ef8e2bf2f40256c59013dd52752c6a1d69d9357c26554686ae3",
+      "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_summary.csv": "39d5b671cae2601c7282d7680a57c22f95fca01d0a7d7409ff7e212e7f7b30dc",
+      "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_evaluation.csv": "ea56558b079d2a2087824077c569fc5b335d98425ce44fe0dd1998f43096a489",
+      "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_history.csv": "14d74716d307742064b331fec868440edc606b686caf62012d73ba8ad3b0be1e",
+      "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_receipt.json": "5d794a274b64a9fb4c5dd4659d8506bc457b2c8d777bdb1f26dd9a86a7eeed51",
+      "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_rounds.csv": "2b1af85c40a15c6179efb5142d7a59d09f173c9b42028132256d9705421bd818",
+      "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_summary.csv": "f4ca21b53be59e3e6dd50be75cb41c10e13b13977227b66796f8fa22517768af",
+      "experiments/results/resnet14_baseline_development_v1/frozen_selection.json": "0e214658779d2ff0d4be89864d336293a12c58d49082b0213a79b740a29b9cbf",
+      "experiments/results/resnet14_baseline_development_v1/promotion.json": "06860e6e3c260a186c8d03fcfd8c1584ddd1f647283a208214b964df9cc30736",
+      "experiments/results/resnet14_baseline_development_v1/protocol.json": "fbc12aca0435e5b23894e748a55ee7c30b5847bcaebb1aae3cbde4e1a9b9dc42",
+      "experiments/results/resnet14_baseline_development_v1/selected.csv": "bbf59ff3591e878333469b8b183ec8bed5f41f62d9d16d76e32d100d7eb4d261",
+      "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_evaluation.csv": "b28eededfa0a791bd819c75aa5768d557482b406fdf64673f01890b6bb62efa9",
+      "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_history.csv": "2b03dd4de05bf8aba77b118f29ac62d5d39b6eb685ef6a56eca60f4f26556e9b",
+      "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_receipt.json": "1c177659297b9fbbf12ffbe8995e99ba06b8162372986281c91a3a871415d334",
+      "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_rounds.csv": "053defdd1577925a3ac44b960a459186364db3eeeac92a19b22f08dc853b774e",
+      "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_summary.csv": "0cdde145b33b199377099cbdd4844dc88e50fb032fe432c70b382147812ae403"
+    },
+    "selected": {
+      "dense": [
+        "dense_g1p5_a0"
+      ],
+      "ef_topk": [
+        "ef_topk_p0p01_g4"
+      ],
+      "stc": [
+        "stc_u1_d1_g4"
+      ]
+    }
+  },
+  "source_hashes": {
+    "experiments/core_float_host.py": "9eeb8a0231574fb2545012b00284e45c374faa4ace2af28080c357224ee0977a",
+    "experiments/core_fresh_comparison.py": "0c67564bf629fe3cdbb452f4bb47717470418896dc69f9f81a168c3696f83034",
+    "experiments/event_codec_development.py": "043aa0a6ec9205eb7c9b161052c87d1872820ba33fae4d2e070583fa2cc3a8fc",
+    "experiments/event_codec_development_audit.py": "3cc8374f906a815dc366dd18f53e67c0eb17538a69670a6dd66064893960f81b",
+    "experiments/event_codec_full_horizon.py": "3783288c77ef7b912e809ed831c9f24d93cb2fd38dff8e320b73208b706e9de3",
+    "experiments/event_codec_pilot.py": "9baf3fef2b45a6c7fb3329a3b551d9f3d102910d100b570367503cb02e901c08",
+    "experiments/event_strom_fresh_confirmation.py": "0b3ef439c9652bd112e9d6a4358ff0d83eaffa9e7082c6f3e6e18deff736bac5",
+    "experiments/fast_pulse_codec.py": "4f49570dcc9ffb7ea8ad8b8998fafa04a37b9e74f6bef1971a757aba978055b3",
+    "experiments/m3_dense_schedule.py": "2ec24f8e953a90915fcd9bfc17ae19e9bd0965665123bf4dc840b3f4c0c5f1bd",
+    "experiments/p12_headline_ten_seed.py": "b7f64ebe4b9e0e8923d69a577e22ff50dac2af8aba58c078f2d7d7cb54833235",
+    "experiments/p13_cifar10_resnet14.py": "0b18c345c94893b4d6989d3a9da7d9597ae90ec1befda7a80dd437760f356a65",
+    "experiments/p13_cifar10_resnet14_torch.py": "63e137fa57619c51c73cd4777112a7b9763534d1ef5e812ca834dd916b48d92c",
+    "experiments/p19_cifar10_cnn_final_horizons.py": "dc11a729f7f9f3172528c486689e72d9ed3f00c2581cec940708881d8c532f55",
+    "experiments/resnet14_baseline_development.py": "7f1c1665797ee8087b9ea06042f08e3b6dfee49af84e298f8a1bdd720a066b3e",
+    "experiments/resnet14_baseline_development_audit.py": "18416652585ce1298de83c95938ebab1758fd0d7e25aa7f1a30bb1c7f53cc9e4",
+    "experiments/resnet14_baseline_fast_host.py": "169a2c56693e6071f6ccaeaea7cb71262ed058421c3d720ecc2427822d9bbe5a",
+    "experiments/resnet14_baseline_host.py": "3f78af0d01f98c8a154605243112d966296b4ad61b9f6f0d2da8bb0598f27c59",
+    "experiments/resnet14_boundary.py": "34da6231b6dcc76bc53945350d336f4c432325b574e10db018e9166e984571f1",
+    "experiments/resnet14_boundary_audit.py": "729032c94c4137e439e921b91b09a9f8544d73bff5bc4ff08609dffab7e14746",
+    "experiments/resnet14_core_confirmation.py": "f2c27bb292e7cf2bbb9d31fa7d25b3baf662474951907a2703005d21d81038de",
+    "experiments/resnet14_ten_seed.py": "14a76b10e0b856b7c0035226f7e4690504bdfe40d1a277953444b1600a60ef82",
+    "experiments/resnet14_transfer.py": "fa31bb0afc8c1cfe618bcebfdd2e4d926ae0867b46788901701a0711ebac35f0",
+    "experiments/resnet14_transfer_audit.py": "fcae74b6a999ecb3957b24ea41e72570ddbf13c8bb61355e35764cd510ae4b6b",
+    "experiments/resnet14_transfer_data.py": "753581d5b54c31204ac8f2930433d10f04e97a541a99e1024277f89fb365e0ad",
+    "experiments/resnet14_transfer_host.py": "73a0334c1a7cf40d0ede541aa36ed614a8aa79c394175ee58c8da8a1e3bff3f7",
+    "experiments/stc_cifar10_confirmation.py": "927f0e70178a8ba64dc523578cb688506aa2098aa5457cc170866302a9c21f15",
+    "experiments/stc_cifar10_development.py": "59eab8b9783c39cc002a29f6382a46b7beb6c147e69322e752a088d228a98c69",
+    "experiments/stc_cifar10_development_audit.py": "97649fd48723fda225b709e8aec609e12603d4c7d5035f4ea7879cc726d616dc",
+    "experiments/strom_codec_development.py": "2ea4357aa6d9ef393c2c340e6b820943b41e24620686721e9f96cdd1fa49d834",
+    "experiments/strom_codec_development_audit.py": "85fecf3fe60760632eb0931474d03ad34c4b0f5e8aaa88b2a79cacfdfe03d686",
+    "experiments/strom_codec_host.py": "e815c2457d6118888bb45a0e16db48cbb565e12a67b47b7545dc2fdc11d527dd",
+    "experiments/strom_development_data.py": "fdb7f69c8673a363e824b0e111623b36ce0b1a1e0a46b1c20fc78e5f9cb55b95",
+    "src/neuromorphicfl/__init__.py": "872c4c69253ed71f0bbabef64004cba29beb305e2aa71a194b7701571677de18",
+    "src/neuromorphicfl/async_simulation.py": "8c9c5a390cb1f7e4b4794fa765c25944463d609d493439d2a60681930b4219b9",
+    "src/neuromorphicfl/baseline_checkpoint.py": "63835e71195dfbd1f50953392db348b8d9fbc760833da25adada579675eb2d75",
+    "src/neuromorphicfl/bidirectional_protocol.py": "cd1c99779a5533aa862e3274bbd84a5bbb6c0aad1cd27e5c2e5dec8a94f78d7d",
+    "src/neuromorphicfl/calibrated_certificate.py": "af9018b142b1eae8cfbaeb305f48afda9979f1e5043cd65fd79044f493442a79",
+    "src/neuromorphicfl/cifar10_benchmark.py": "448a96c1addabeb0b15977a9e7ab3dee41a7c87bf48d7ee971d3e6b1e69ea58a",
+    "src/neuromorphicfl/cifar10_resnet.py": "1bd498545749c4337729dd5353bf6871b0106b7298bf04e1cf0a07e92db0bb0d",
+    "src/neuromorphicfl/cifar10_resnet_torch.py": "9cf19236c39e23aa2cd891547b7fba9128db1cbfbf8caee487ae213a7274ca2d",
+    "src/neuromorphicfl/competitive_vector.py": "e219b01f4c4c23f761986904a3118b236f8d5c6332c95122273bed4347c790f1",
+    "src/neuromorphicfl/confirmation_metrics.py": "e20c1e293fc5519609c5a69a62e27dcee9fb1d47dec7b352b22d69e970572074",
+    "src/neuromorphicfl/delayed_async.py": "e524ff711b30c583cff4297289554f825e7c43fa32da8969834bcf6f11174aed",
+    "src/neuromorphicfl/descent_aware.py": "32f97ab211abb318d4ba0f39fe3230cec894f0dce6d25bf1c7e758dff1ce6cab",
+    "src/neuromorphicfl/event_codec.py": "7faacce3a8eb605b27ae8a70318d759f0dcc22cc0f1ce44684b66555921b5b9b",
+    "src/neuromorphicfl/event_codec_pilot.py": "c37f6f417d317d60a3b92d0990e110f43c62d0a4a5cffd711e732e3538004114",
+    "src/neuromorphicfl/fedavg_cnn_compatibility.py": "ae2816edad2dc6ffc6204c15a296c984eb3e1fb5067757c47ac52d8c3c39afcc",
+    "src/neuromorphicfl/fedavg_event_compatibility.py": "7ba5b6b79a2dd9f2c53432abb3a6d38effc9df01cbd76b2e291df5ed8bf04105",
+    "src/neuromorphicfl/final_baseline_campaign.py": "e7dabedf0e2690e0823d9c46135e76b0c440588d7f8fcac99028055a9a557367",
+    "src/neuromorphicfl/fmnist_cnn_benchmark.py": "138842397dd6126c475c9af9a7083c396a80f5d2c4ce68fa0fa69dfee12a2b10",
+    "src/neuromorphicfl/fmnist_event_benchmark.py": "ce7ac49888d150de5b1bd5b6f23ad5ab76c9786ea92f8e1839a3fde9e1ddf433",
+    "src/neuromorphicfl/fmnist_multiclass_benchmark.py": "826bf6a9ff9e2a6ccad05c912d72365c1f84786e8fc91f138f51a93773a90666",
+    "src/neuromorphicfl/homeostatic.py": "3e741940d6df8e7bcaac0a1bffdf60737e674670595e90023b9eb4cdb5e00c02",
+    "src/neuromorphicfl/logistic_certificate.py": "7f133dd03f1fa39b2d31f31de5bb5c97c00d42fe3c233a9940e57ba79cabb31b",
+    "src/neuromorphicfl/mechanism_audit.py": "0a1dbaef5da929bef9a5533d9c374b049eab34ba6cd0d300c3456127beb94e06",
+    "src/neuromorphicfl/metrics.py": "5faba3bf4c7324be84d8f952a97be920272a474c4024a1e8dbd14b8adb3a8e2d",
+    "src/neuromorphicfl/mlp_depth_scaling.py": "ceb4b19175471512c4f4957157054932109c76a429994860d13d1614f599237d",
+    "src/neuromorphicfl/mlp_event_gate.py": "72d65e661e2f53ac6543dd9861e6bbaadc11453d0cf6fc6a30f65dff703367b8",
+    "src/neuromorphicfl/objectives.py": "cd0e87bddd7a29e31a2e4151302cbbfc3446b410ae0a7d3c575e68f7fe077a27",
+    "src/neuromorphicfl/optimizers.py": "65d7ed19d7454b3d4d4f814e5f5d6a61d2cf7d6bf5bc485e178139cc3a54f193",
+    "src/neuromorphicfl/partial_participation.py": "c61970428cf3c086ef31728e23b3d12c73c560f745a8136b8ef9092d46ba858a",
+    "src/neuromorphicfl/q1_nearest_neighbor.py": "f45d918a285b140612bbe9db7571553e7a59c09fe86bc036eec80914f9cd44d5",
+    "src/neuromorphicfl/rotated_geometry.py": "59b78150c6ef7657cbf92d72502bfb8556e847cb37bfe57120c6d62701a77359",
+    "src/neuromorphicfl/selective_block_certificate.py": "d12df818bde4f3042082f76ae1a78a3cacd434965c69b6581ee3bdc9522bcfbb",
+    "src/neuromorphicfl/selective_calibration.py": "547b5c52084ff73952addaee7fea0233ecf09bb8a119cfa5fb609ed39a3f5258",
+    "src/neuromorphicfl/simulation.py": "3196fd68eb2a469cc1776c3e5ed1c238c97bdcd4cfb44ca3eeddad7933f186ff",
+    "src/neuromorphicfl/sparse_interval_certificate.py": "93830632316fcf5dd9552d8369c1e7857a4ff35a0882ab24f2a6af2a0130518b",
+    "src/neuromorphicfl/stc.py": "e05c6cead5c1b75d4b6b46c0e32b073028b959b8ee5b812627cece002c6446e7",
+    "src/neuromorphicfl/timing_aware.py": "d22c03fac2f124eafbfa5e70ec67b04476d716f0fcf5ece3ce2f8cc3a889889f",
+    "src/neuromorphicfl/vector_quadratic.py": "ffa04b2acd6aca775e1a020a8bf9d12512f459499a0845fac0f8ffa0793cd6aa",
+    "src/neuromorphicfl/vector_timing.py": "704e125fd7e8b01192ca12f4b43b7b8113265e4b8a9a76a5051396bc1903bd4a"
+  }
+}

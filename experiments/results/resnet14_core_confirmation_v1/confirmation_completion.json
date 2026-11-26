@@ -1,0 +1,307 @@
+{
+  "expected": 50,
+  "expected_new": 30,
+  "expected_reused": 20,
+  "results": [
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7100,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7100,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7100,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7100,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7100,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7200,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7200,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7200,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7200,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7200,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7300,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7300,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7300,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7300,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7300,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7400,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7400,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7400,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7400,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7400,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7500,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7500,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7500,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7500,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7500,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7600,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7600,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7600,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7600,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7600,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7700,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7700,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7700,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7700,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7700,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7800,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7800,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7800,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7800,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7800,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 7900,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 7900,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 7900,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 7900,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 7900,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "origin": "verified_reuse",
+      "partition_seed": 8000,
+      "state": "reused"
+    },
+    {
+      "method": "strom",
+      "origin": "verified_reuse",
+      "partition_seed": 8000,
+      "state": "reused"
+    },
+    {
+      "method": "dense",
+      "origin": "new_run",
+      "partition_seed": 8000,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "origin": "new_run",
+      "partition_seed": 8000,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "origin": "new_run",
+      "partition_seed": 8000,
+      "state": "complete"
+    }
+  ]
+}

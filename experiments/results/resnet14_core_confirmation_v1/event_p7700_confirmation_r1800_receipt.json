@@ -1,0 +1,41 @@
+{
+  "identity": {
+    "comparison_id": "event",
+    "config_sha256": "9f2127de33160001a615a6217f3b62eec22391e38abd1fcfc0749dcd9a82670e",
+    "contract_sha256": "fbfc4b97be7ddc51cdcf8302777187812b7c5de5f062b46a75e4eeba765960eb",
+    "method": "event",
+    "partition_seed": 7700,
+    "phase": "confirmation",
+    "point_id": "event_t0p01_q0p0025",
+    "stage_horizon": 1800,
+    "train_seed": 97700
+  },
+  "references": {
+    "evaluation": {
+      "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_evaluation.csv",
+      "sha256": "aaef1d4d3f84ab5afbe06d252cd9f8c488a17eb358b581414aa64e5ec1639692"
+    },
+    "history": {
+      "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_history.csv",
+      "sha256": "4e77e9fc19b5a931b47799497a3094bcaf634d22b4a9832929cc415bca15c4ec"
+    },
+    "partition": {
+      "path": "experiments/results/resnet14_ten_seed_v1/confirmation_partition_p7700.json",
+      "sha256": "50f5320e34a1f81a67944cbf2d84d8b343a7e5d0e697bcf205d4a9ca0c5831bc"
+    },
+    "receipt": {
+      "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_receipt.json",
+      "sha256": "2f3d1e9074b97f5d28e9a8f1dcf6a2b79c16ce0a52de6bc23712b7381b02c458"
+    },
+    "rounds": {
+      "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_rounds.csv",
+      "sha256": "5ab5c4f83ffe2e88d54a73b5eb1ef996e7fb350d68ea7fc829c946d841e8f60d"
+    },
+    "summary": {
+      "path": "experiments/results/resnet14_ten_seed_v1/event_p7700_confirmation_r1800_summary.csv",
+      "sha256": "ab756b81101fc43423238c3d1d76d4899bb8ffeb0b02d8a81e55c1d7c2dea455"
+    }
+  },
+  "source_contract_sha256": "832d7234b042ba8c80ade3276e48f462f0e1325bf0e163d76f9a2e9d03fdadcb",
+  "state": "reused"
+}

@@ -1,0 +1,14 @@
+{
+  "all_outcomes_retained": true,
+  "development_checkpoint_reuse": false,
+  "extra_sparse_STC_runs": 0,
+  "new_runs": 30,
+  "reused_runs": 20,
+  "rounds_verified": 90000,
+  "sampled_model_fingerprints": 1550,
+  "scope": "selected_five_method_common_seed_ResNet_confirmation_no_retuning_or_sparse_STC_extension",
+  "seed_pairs": 10,
+  "selection_sha256": "c2fab6bd6df29dbf7c4db3bb5612e719f40a2c2977f40376debdd9b15da66e3f",
+  "test_based_tuning_or_stopping": false,
+  "unreached_targets_censored": true
+}

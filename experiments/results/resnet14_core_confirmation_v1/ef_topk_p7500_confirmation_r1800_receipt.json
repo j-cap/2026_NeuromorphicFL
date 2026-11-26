@@ -1,0 +1,163 @@
+{
+  "data_manifest": {
+    "class_counts": [
+      [
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750,
+        250
+      ],
+      [
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        250,
+        2750
+      ]
+    ],
+    "client_indices_sha256": [
+      "3af1f701f8d7b78ead9fc1f938abca3ec27f44af4b8d4636952c2522e45c9f4d",
+      "d5983685cb5b79054569aaa98d53c11095ff8f5d0e96d978a359db71473c798a",
+      "1b7f16f682a4a0d0032db3333ac7403500c7437474adcdcc3625089abe1be1cd",
+      "d365e3d93a5c8bb4d396750ac7ae6539fe7a972d9bf85524f6e1d79cebdc1a52",
+      "82edc4c1f9062ea426e34846470eb32291f2c1ae180ea8f40565b49d5c0b3436",
+      "605daff8821bf16e31480383b4495e9d858c4688f33fd37f27ed77efe4bc71c4",
+      "93c6717c14182dd7e662218a8ae641b4c037afeb01bb10a9833d31695e6a0775",
+      "503f5cbc7ac0df2134e5776d87be69c08f1388c3b6a52f5aae87502d00775ffc",
+      "175c4c4e4c3712fc9174ba5143c7aa05aa2c09351ca63b0c6e7b52d2b7d64c26",
+      "e445fe56d42d3c614fa0b4ff8c17fa11bc7c6286687cebe46886d0c57931913a"
+    ],
+    "diagnostic_indices_sha256": "359880feeda81d6b4598284fcdc7a1dda330d37ff99be5fd459e1e0a3726cedb",
+    "holdout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "index_csv_sha256": "97bcf63635f6d43c55e4e27176d5d509070c63fa84cae39a8f914af78e864157",
+    "partition_seed": 7500,
+    "split_seed": null,
+    "training_examples": 50000,
+    "validation_examples": 0
+  },
+  "identity": {
+    "comparison_id": "ef_topk",
+    "config_sha256": "c368e99e32ffdf0e283425e7c83c8f77ed37a43d246daedc695832cf1c6c62ed",
+    "contract_sha256": "fbfc4b97be7ddc51cdcf8302777187812b7c5de5f062b46a75e4eeba765960eb",
+    "method": "ef_topk",
+    "partition_seed": 7500,
+    "phase": "confirmation",
+    "point_id": "ef_topk_p0p01_g4",
+    "stage_horizon": 1800,
+    "train_seed": 97500
+  },
+  "sha256": {
+    "evaluation": "91414d22c494b74bce1534c0eae14400409e82a0b2558d305f76144f2979e8ed",
+    "history": "4a9af8e130a8401b9534599c57e85ecc95e922a2bad154634675cc8bdfb29c56",
+    "rounds": "3f35e53bdfbf2ed20c40485c8009efddc7c1049ee914d266792a24a891209c38",
+    "summary": "0855a4a3c65ff79fde26f98d48bed8c748398b9f1e734269e7882cae86a5333b"
+  },
+  "state": "complete"
+}

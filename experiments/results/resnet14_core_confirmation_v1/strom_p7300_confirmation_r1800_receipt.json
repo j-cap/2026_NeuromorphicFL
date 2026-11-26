@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "comparison_id": "strom",
+    "config_sha256": "cfa99f54b7d8001a4d6ea299a0059017b434040fb040179579f50d0792f8dd13",
+    "contract_sha256": "fbfc4b97be7ddc51cdcf8302777187812b7c5de5f062b46a75e4eeba765960eb",
+    "method": "strom",
+    "partition_seed": 7300,
+    "phase": "confirmation",
+    "point_id": "strom_t0p005_g2",
+    "stage_horizon": 1800,
+    "train_seed": 97300
+  },
+  "references": {
+    "evaluation": {
+      "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_evaluation.csv",
+      "sha256": "8923abb004f0f40d48232f4ca4cb8d64a81e5cc182271b45b03b6da75f43a6c9"
+    },
+    "history": {
+      "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_history.csv",
+      "sha256": "e821195aa1abb2d091e4d086fe8e6a8f51c37fa321340bf283e0197ebb501b0b"
+    },
+    "partition": {
+      "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7300.json",
+      "sha256": "5bf0e46e0999bd41f6c92c5e2553ea9cf8f9680bc33f1b43268ac68a8fb64c2a"
+    },
+    "pulse_reuse_receipt": {
+      "path": "experiments/results/resnet14_ten_seed_v1/strom_p7300_reuse.json",
+      "sha256": "8eee184ea953207d7e78e49ceb7687d3e8cb03bea51e8855884cc675762e2cb4"
+    },
+    "receipt": {
+      "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_receipt.json",
+      "sha256": "6a805beaa187e8b411001c1f33e0cb70421442eb536d279281440f15851b90c7"
+    },
+    "rounds": {
+      "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_rounds.csv",
+      "sha256": "f71463752e49352aad91fd4f620c0719ee35ed97967f7e6347b091f46e828704"
+    },
+    "summary": {
+      "path": "experiments/results/resnet14_transfer_v1/strom_p7300_confirmation_r1800_summary.csv",
+      "sha256": "1b8a485bb36c3a6681b9f835ac946d98254ce92afdd4ebcd0561df80958944a6"
+    }
+  },
+  "source_contract_sha256": "832d7234b042ba8c80ade3276e48f462f0e1325bf0e163d76f9a2e9d03fdadcb",
+  "state": "reused"
+}

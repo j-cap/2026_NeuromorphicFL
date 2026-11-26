@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "comparison_id": "event",
+    "config_sha256": "9f2127de33160001a615a6217f3b62eec22391e38abd1fcfc0749dcd9a82670e",
+    "contract_sha256": "fbfc4b97be7ddc51cdcf8302777187812b7c5de5f062b46a75e4eeba765960eb",
+    "method": "event",
+    "partition_seed": 7100,
+    "phase": "confirmation",
+    "point_id": "event_t0p01_q0p0025",
+    "stage_horizon": 1800,
+    "train_seed": 97100
+  },
+  "references": {
+    "evaluation": {
+      "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_evaluation.csv",
+      "sha256": "19cbbbf136c5c1a1afcf1aac84d117d91c91732c136d3b28af70f020c164de2e"
+    },
+    "history": {
+      "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_history.csv",
+      "sha256": "a2e7d117136559b17cccb79afc70b39822348ec9cf3230fbe0971a66e848499b"
+    },
+    "partition": {
+      "path": "experiments/results/resnet14_transfer_v1/confirmation_partition_p7100.json",
+      "sha256": "32496df34e24a9e62d21dbe4ec17795641ebbbb05858112d005792324e044dae"
+    },
+    "pulse_reuse_receipt": {
+      "path": "experiments/results/resnet14_ten_seed_v1/event_p7100_reuse.json",
+      "sha256": "1cf922d47168d31499af6b69eb295ee5331ea13e424edfa38d2ec6e62727562e"
+    },
+    "receipt": {
+      "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_receipt.json",
+      "sha256": "bf8384f61cfe703c9f05977d5cc4c11764a622fcd969e46b65b4092bcc4203af"
+    },
+    "rounds": {
+      "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_rounds.csv",
+      "sha256": "f2f19dfdc6064345d9f02ac696f0d60c6a64db354c8700bdd05ddd41ae61e448"
+    },
+    "summary": {
+      "path": "experiments/results/resnet14_transfer_v1/event_p7100_confirmation_r1800_summary.csv",
+      "sha256": "13f6ad6dfa5f05892e52190c7196591516f68261bae9de73e179567d3df6e749"
+    }
+  },
+  "source_contract_sha256": "832d7234b042ba8c80ade3276e48f462f0e1325bf0e163d76f9a2e9d03fdadcb",
+  "state": "reused"
+}
