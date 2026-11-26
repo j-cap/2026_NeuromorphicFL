@@ -1,0 +1,168 @@
+{
+  "data_manifest": {
+    "class_counts": [
+      [
+        3300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      [
+        300,
+        3300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      [
+        300,
+        300,
+        3300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      [
+        300,
+        300,
+        300,
+        3300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      [
+        300,
+        300,
+        300,
+        300,
+        3300,
+        300,
+        300,
+        300,
+        300,
+        300
+      ],
+      [
+        300,
+        300,
+        300,
+        300,
+        300,
+        3300,
+        300,
+        300,
+        300,
+        300
+      ],
+      [
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        3300,
+        300,
+        300,
+        300
+      ],
+      [
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        3300,
+        300,
+        300
+      ],
+      [
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        3300,
+        300
+      ],
+      [
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        300,
+        3300
+      ]
+    ],
+    "client_indices_sha256": [
+      "26cb30371248669ad63de542b8f4a9e32c142405f4b26409319ecffaf9706e01",
+      "4b8b954020b73bf629799a113853ede77802d74153b86eb9bff5857ded1eb436",
+      "32834b472c43317372d9a038083d7a706347978ee5f4050493d9ff0d3ec07ea3",
+      "d5d4cb7966ddfef698c5fd9d3d96d24370af1bf4c08333586b7cd86376ca4712",
+      "fec35ac814fb225ca0de50a87128bfa8ae258bc8bb05f756649425298b5ef926",
+      "8024754e465fc4ef9e0071be6ba35c2be4963cc5da168622e482de2a89b33384",
+      "f85081004b1a94669bff9d3b899a0df8e2cab15a11c9a90c462c0aced9638711",
+      "7c91f6447e116e2f61438502a5312165c0408d7681113907597bdfffa9ed1022",
+      "2857a9bcdece6b98324440b98ed3d0640dac0fd21e5e9296ac9fd75473c0c94a",
+      "d0943aaf2bd66570ea886a4cd2322cb09374d1a5c6377916be0ab96c548fcf46"
+    ],
+    "diagnostic_indices_sha256": "cccff84b811d825df0651868b054068490cbda3617a39cdd671da8c35c944f0b",
+    "examples_per_client": 6000,
+    "heldout_indices_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "partition_seed": 11100,
+    "scope": "test",
+    "split_seed": null,
+    "test_manifest_sha256": "f3723c3cb41e38357ff8719dc1204a5470209f16afbd6e3adcd763efb207d632",
+    "training_examples": 60000,
+    "validation_examples": 0
+  },
+  "identity": {
+    "architecture": "mlp_784_32_16_10",
+    "config_sha256": "c6810322f1914cda34edd2423cd1ffd0c5720b4df41877c177ad274e847a4309",
+    "contract_sha256": "0b8838e535fccd9e70e3babe4416b7f43f7b335c13e5393ad723913ffff717d8",
+    "dataset": "fashion_mnist",
+    "method": "ef_topk",
+    "partition_seed": 11100,
+    "phase": "confirmation",
+    "point_id": "ef_topk_p0p1_g2",
+    "selection_sha256": "104950f27d8c601f9fbf31ba92059859756a3869e2e2a661aadac588728f5703",
+    "stage_horizon": 1500,
+    "train_seed": 101100
+  },
+  "invocation_wall_seconds": 83.71570570000017,
+  "sha256": {
+    "evaluation": "b74694de8ee3a4164b8a1a7ef702cd6fc73488054ad040927917f1f3c28b8e84",
+    "history": "fe4dfdaaad6516b4ac0ed789cbe418861e19376424f1ac609a022df8c3811e78",
+    "rounds": "91fe6df437791977a5301eaa7191b8fbe6f849590c10bf2a5e98a02fa9469c54",
+    "summary": "3c5bd5522964131323c4bf36261303bddb93838e74dc6eaa5bad48b43a70af17"
+  },
+  "state": "complete"
+}

@@ -1,0 +1,259 @@
+{
+  "complete": true,
+  "contract_sha256": "0b8838e535fccd9e70e3babe4416b7f43f7b335c13e5393ad723913ffff717d8",
+  "expected": 50,
+  "finished": 50,
+  "selection_sha256": "104950f27d8c601f9fbf31ba92059859756a3869e2e2a661aadac588728f5703",
+  "states": [
+    {
+      "method": "event",
+      "partition_seed": 11100,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11200,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11300,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11400,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11500,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11600,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11700,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11800,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 11900,
+      "state": "complete"
+    },
+    {
+      "method": "event",
+      "partition_seed": 12000,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11100,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11200,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11300,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11400,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11500,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11600,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11700,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11800,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 11900,
+      "state": "complete"
+    },
+    {
+      "method": "strom",
+      "partition_seed": 12000,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11100,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11200,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11300,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11400,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11500,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11600,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11700,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11800,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 11900,
+      "state": "complete"
+    },
+    {
+      "method": "dense",
+      "partition_seed": 12000,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11100,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11200,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11300,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11400,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11500,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11600,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11700,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11800,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 11900,
+      "state": "complete"
+    },
+    {
+      "method": "stc",
+      "partition_seed": 12000,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11100,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11200,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11300,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11400,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11500,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11600,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11700,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11800,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 11900,
+      "state": "complete"
+    },
+    {
+      "method": "ef_topk",
+      "partition_seed": 12000,
+      "state": "complete"
+    }
+  ]
+}

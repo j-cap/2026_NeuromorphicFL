@@ -1,0 +1,10 @@
+{
+  "contract_sha256": "0b8838e535fccd9e70e3babe4416b7f43f7b335c13e5393ad723913ffff717d8",
+  "frozen_selection_sha256": "e188d62b45eba18b33b04ab85110803b36f4d0687efdde5d875c766e515e0680",
+  "raw_receipts_unchanged": true,
+  "round_records": 75000,
+  "runs": 50,
+  "sampled_fingerprints": 1550,
+  "selection_sha256": "104950f27d8c601f9fbf31ba92059859756a3869e2e2a661aadac588728f5703",
+  "statistics": "descriptive_unadjusted_paired_Student_t_log_ratios"
+}
