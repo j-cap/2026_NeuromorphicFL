@@ -1,46 +1,52 @@
-# Event-FedAvg manuscript contract — consolidated 2026-11-26
+# Event-FedAvg manuscript contract - completed 2026-11-26
 
-The completed compact-CNN and ResNet-14 CIFAR-10 five-method panels are frozen.
-The research snapshot before consolidation is `14216ff50455774fce31386621f344fc3f07d1b8`.
-The reviewed manuscript base is paper-repository main `310a0805d133ab2f0873a36f9f08fb6e8036887c`.
-The later paper-source M1, M3, P11 and participation clarifications are preserved.
+The compact-CNN and ResNet-14 CIFAR-10 panels and Fashion-MNIST MLP panel are
+closed: three architectures, two datasets, five selected operating points,
+ten paired seeds per architecture. Research input is commit 63bc32b; MLP results
+are b2e2ce8. The reviewed paper base is 757cfe9. No further fitting, tuning or
+method replacement is part of this matrix. Original CIFAR freezes remain intact.
 
 The central question is whether persistent leaky coordinate evidence, full reset,
-independent model quanta and exact aggregate transport yield a favorable
+independent model quanta and exact aggregate transport yield favorable
 bidirectional communication cost for predictive quality in synchronous FedAvg.
+The numerical methods are Event-FedAvg, Dense FedAvg, STC, Ström-style residual
+pulses in FedAvg, and EF-TopK. CIFAR panels use 1,800 rounds; the MLP uses 1,500.
 
-The primary evidence is two CIFAR-10 architectures, five fixed operating points,
-ten paired seeds per architecture, 1,800 rounds. The methods are Event-FedAvg,
-Dense FedAvg, STC, Ström-style residual pulses in FedAvg, and EF-TopK. There is
-no further training, tuning, additional STC selection, or method replacement in
-this panel. Remaining MLP tuning is the separate next stage.
+Every family uses dataset/model-specific development calibration. ResNet uses
+18 x 600-round screens and three 1,200-round continuations per family; MLP uses
+18 x 500-round screens and three 1,000-round continuations. Both use validation
+CE for promotion/selection, with traffic and identifier as tie breakers.
+Compact-CNN historical budgets/criteria differ. No global hyperparameter
+optimality or complete method frontier is established.
 
-All methods use architecture-specific development-calibrated settings. ResNet
-uses equal accumulated budgets (18 x 600-round screens, three 1,200-round
-continuations per family), with validation-CE selection. Compact-CNN historical
-budgets and criteria differ and must be identified accurately. Neither panel
-establishes global hyperparameter optimality or a full method frontier.
+Event has the lowest final total unicast traffic at every panel and in every
+paired comparison against every reference. This final-cost lead is distinct
+from quality: compact CNN has the highest mean accuracy, ResNet improves on
+residual pulses but selected STC/EF finish at higher mean accuracy, and all MLP
+paired final accuracy intervals span zero. Equivalence is not established.
 
-The primary result is lower paired geometric-mean unicast cost to the declared
-45%, 50%, and 55% accuracy targets versus all four references. Compact-CNN Dense
-at 55% has only nine common hits. All other target contrasts have ten. Event
-also has the lowest final total traffic at both selected panels, the largest
-compact-CNN mean accuracy, and a clear ResNet improvement over residual pulses.
-EF-TopK and STC have higher mean final ResNet accuracy at higher traffic.
+For CIFAR, Event has lower paired cost to all declared 45/50/55% targets;
+compact Dense at 55% has nine common hits. The MLP has declared 80/85/87%
+targets. At 85%, Event saves 17.6% versus STC but spends 10.0% more than Ström.
+At 80%, the STC/Ström cost intervals span no saving; at 87%, ratios are
+conditional on common hits, with censoring and transient crossings explicit.
+Never extend the all-target CIFAR claim to all three architectures.
 
-The paper must not claim universal accuracy dominance, final-accuracy equivalence,
-a general faster-convergence rate, unconditional convergence, measured energy or
-latency savings, or a field-wide SOTA ranking. Sparse STC's competitive development
-points remain a visible limitation of quality-point selection.
+Do not claim universal predictive dominance, accuracy equivalence, a general
+faster-convergence rate, unconditional convergence, measured energy or latency
+savings, or a field-wide SOTA ranking. Competitive sparse STC development points
+remain a visible limitation of selecting one validation-CE operating point.
 
 The state/event-budget proof and conditional alignment result remain. The event
-uplink bound is updated for 128-bit frames plus padding. The mechanism audit and
-50-client partial-participation study retain their original settings/accounting
-and are supporting evidence, not newly calibrated five-method panels. Earlier
-Fashion-MNIST tables are historical pending the separate calibration stage.
+uplink bound includes 128-bit frames plus padding. Mechanism/alignment and
+partial-participation studies retain original settings/accounting as supporting
+evidence; their conclusions are not transferred to the new calibrated matrix.
 
-The paper can use up to ten pages under the user's agreed page budget. Use the
-standard IEEE conference class and bibliography size. New consolidation edits
-are blue through `\coreColor`; earlier review wrappers are black. Do not shrink
-the bibliography to fit. Rebuild plots/tables only from committed evidence;
-never modify raw campaign outputs or the frozen `src/neuromorphicfl` inventory.
+Use at most ten pages with standard IEEE class and bibliography size. New MLP
+integration blocks are orange through the mlpColor/mlpRev commands; earlier
+blue consolidation edits remain. Set both color commands to empty for a clean
+copy. Rebuild plots/tables only from committed CSVs. Never modify campaign
+outputs, training drivers or the frozen src/neuromorphicfl inventory.
+
+See THREE_ARCHITECTURE_CONSOLIDATION.md for the input freeze, regeneration,
+commit/push and paper synchronization commands.

@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "scope": "Consolidated calibrated CIFAR-10 panels, preserved historical evidence, reviewed manuscript, and exact original experiment/source snapshots",
+  "scope": "Closed three-architecture CIFAR-10/Fashion-MNIST comparison; preserved historical/CIFAR freezes, reviewed manuscript and exact campaign/source snapshots",
   "files": [
     {
       "path": ".github/workflows/ijcnn_evidence_check.yml",
       "role": "manuscript source, validation, or review snapshot",
-      "sha256": "799201e8902d2dcb5833104f72ebfa60f0a200502fba64b60feee114de8834f2"
+      "sha256": "300448375273ac323d877d21d438144b3541465d4a845f51e457cbdcd6c6bab2"
     },
     {
       "path": ".github/workflows/ijcnn_manuscript_check.yml",
@@ -2380,22 +2380,22 @@
     {
       "path": "paper/ijcnn2027/ANONYMOUS_SUPPLEMENT.md",
       "role": "anonymous supplement guide",
-      "sha256": "b9e9eb0aed2f8ee5e96555c3498e614028d2c65f2647e7ed54961938ab9bbb4d"
+      "sha256": "78439c802765b261d0caccf3cb46adf70a25ed3699b4b159929896f46ee76289"
     },
     {
       "path": "paper/ijcnn2027/CALIBRATED_PANEL_CONSOLIDATION.md",
       "role": "manuscript source, validation, or review snapshot",
-      "sha256": "149694ee29626ab21c59572e0af0d98465fe704467cf3d82c3d3c94fe94e5886"
+      "sha256": "9099fe5c5262f0d3c6843f27ef741bd3616be5549671a6f8f5e88895cc823ac0"
     },
     {
       "path": "paper/ijcnn2027/CLAIM_EVIDENCE.md",
       "role": "manuscript source, validation, or review snapshot",
-      "sha256": "11b86516ebe00e7927352d1bebfb346f7c6470380995f1d93f3953cc58e1703f"
+      "sha256": "1192a1a2ffe69d6f28f1ebb3d8e1044345f7a7136c9ba1c0e78adc2525e92278"
     },
     {
       "path": "paper/ijcnn2027/EVIDENCE_FREEZE.md",
       "role": "manuscript source, validation, or review snapshot",
-      "sha256": "01bfcdcff7572ffcb162ec069dd0f73be13a5c76a7486bb4243988260d96d864"
+      "sha256": "6ee9ccbb46b12a73857b3f39d803a9b8514f8fe2650f77d93c1208f234b75a24"
     },
     {
       "path": "paper/ijcnn2027/IEEE_TEMPLATE.md",
@@ -2490,7 +2490,7 @@
     {
       "path": "paper/ijcnn2027/PAPER_CONTRACT.md",
       "role": "paper contract",
-      "sha256": "aec9421b68c02d470eb88259b60e14e49cad9aad67a80d74032d383cdbcf2c3a"
+      "sha256": "4e3e180473ba17fecc9474b83cc4fd9cafc2c4b2a9c95b9d1948227205ec41b2"
     },
     {
       "path": "paper/ijcnn2027/PLAN.md",
@@ -2505,12 +2505,17 @@
     {
       "path": "paper/ijcnn2027/REPRODUCIBILITY.md",
       "role": "reproducibility guide",
-      "sha256": "3f67c123ca8710be9d440f354a6bf2029c49f1ac69f52a2105b8e7ad554feb04"
+      "sha256": "146cfd25df73dbcf81b9153640567cba938f96b39d1a87ed2d91a7e2828421da"
     },
     {
       "path": "paper/ijcnn2027/SUBMISSION_ATTESTATIONS.md",
       "role": "submission checklist",
       "sha256": "70acaff899df216e321f512df2282976fe1216e638cb64c774fff2d8d35b4ffc"
+    },
+    {
+      "path": "paper/ijcnn2027/THREE_ARCHITECTURE_CONSOLIDATION.md",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "9e3648d9dd6f54f5469b7b8f681c08835f38cfb5406a9572c7069f27aaff1b5d"
     },
     {
       "path": "paper/ijcnn2027/build_alignment_factorial.py",
@@ -2520,7 +2525,7 @@
     {
       "path": "paper/ijcnn2027/build_anonymous_supplement.py",
       "role": "anonymous supplement builder",
-      "sha256": "74bd1d7ba9a099b83229801932bda650465504ddb136480c7ea145a92cd60c41"
+      "sha256": "fdcdfc423d0da199524a74a6dc33718ab94f557c01f96657a34ec13ebacee6f4"
     },
     {
       "path": "paper/ijcnn2027/build_calibrated_core.py",
@@ -2533,6 +2538,11 @@
       "sha256": "897e1ea60bf0741fd6647c0282b8904b5b98702b2be5d5d19557d58485e0472f"
     },
     {
+      "path": "paper/ijcnn2027/build_three_architecture.py",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "3abaab4517379e3f90e1aecbfce234db7c6eb7528b3ef52a6977a89658cc79b4"
+    },
+    {
       "path": "paper/ijcnn2027/build_visuals.py",
       "role": "reproduction code",
       "sha256": "eb77485b9d4287ba8641a731a57af3866f042a71b87518df4aaedc93a794efc0"
@@ -2540,7 +2550,7 @@
     {
       "path": "paper/ijcnn2027/check_manuscript_claims.py",
       "role": "reproduction code",
-      "sha256": "b4a388f767dc717b1981044d10f38b025cfc35b5381a4da25aa6cc76b0878c2a"
+      "sha256": "a58dd49900369c64d026d3b0dad81dfac044bd228769f4081b860a425f8a1b76"
     },
     {
       "path": "paper/ijcnn2027/check_submission_compliance.py",
@@ -2555,7 +2565,7 @@
     {
       "path": "paper/ijcnn2027/dist/event-fedavg-anonymous-supplement.zip",
       "role": "anonymous supplementary archive",
-      "sha256": "1939d85fad97c8d2fd3599237c77eb68e0aa220934e4bc1d8f09c2a9963fb149"
+      "sha256": "eed82e6410e23f5289f24db67ad05ce4198b7bb4b0042f5277592cfd5d87b891"
     },
     {
       "path": "paper/ijcnn2027/evidence/calibrated_core_endpoint_effects.csv",
@@ -2641,6 +2651,36 @@
       "path": "paper/ijcnn2027/evidence/t4_alignment_audit.csv",
       "role": "frozen source",
       "sha256": "40ab919f093bcda4962af2e0e327125264c3fc17133129c3da6ea943cef84a98"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/three_architecture_coverage.csv",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "abc19edb56c07e17c1c2995f5dd9f984e2d0a5188a45509effa6068965584d87"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/three_architecture_endpoint_effects.csv",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "2399acf16695dfe0454e1975f4ee543fdf7c7deaf06a8c8803ab0bfe06095d05"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/three_architecture_endpoints.csv",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "cee66491d13b6b1fd8a1381ba872d56595cb0ad7e2530d2ae593901b0e9a396f"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/three_architecture_freeze.json",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "366471fd8464384aa565805a2416ce6b513eff527e13c57ef4bcac407a37c70a"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/three_architecture_history.csv",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "b0783b5f545a13e0a03220d4480363fa863da68e0ec6f86d513fdecd9025f842"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/three_architecture_targets.csv",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "e59e1b6c179318a0de122bd9c88e98693080ec06dac822818d0cf57d746ac946"
     },
     {
       "path": "paper/ijcnn2027/figures/calibrated_core_target_ratios.pdf",
@@ -2753,6 +2793,21 @@
       "sha256": "1ab9af3bed5350d40d0d37e5e680fbe79c3cac377b813fc65c396f8754d52609"
     },
     {
+      "path": "paper/ijcnn2027/figures/three_architecture_protocol.pdf",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "7a2c291c11a67a144a5ee584a0169c9f77f72b3e8ed6e1420b5b27a0d8221d96"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/three_architecture_target_ratios.pdf",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "ee73c2f3a5713aa6b1650c61d26c3a6ae7c58a6d393aa4231b2b8086a8ef88c0"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/three_architecture_trajectories.pdf",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "83b1f14f293927b3383081445b4030c201d66715d1e070b4ca995f5d73f82c20"
+    },
+    {
       "path": "paper/ijcnn2027/generated/calibrated_core_results.tex",
       "role": "manuscript evidence or artifact",
       "sha256": "d6176e7d2c2017a0effc7309c4f454907ae8a57af78e71ffcf5c0d6cf694b13b"
@@ -2798,9 +2853,19 @@
       "sha256": "7b39a71349b66cda18c03a0b6587c1d5a98da5039f7c26de45bbd20f074d35e3"
     },
     {
+      "path": "paper/ijcnn2027/generated/three_architecture_results.tex",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "32adce80b59fb639779530d5131f14649b5469414a5bd20b2b526f4d2a14b8f3"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/three_architecture_targets.tex",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "3e431543a7ea1d35220bd00f21f1c6c60d922c15dbfd8366e4738c9e0eae6fbf"
+    },
+    {
       "path": "paper/ijcnn2027/main.tex",
       "role": "manuscript",
-      "sha256": "5ce4b468dcc20402b9c1fe7758616a0768b106a51721cc1b233d259e44803083"
+      "sha256": "cf00e210157d21257e4858c01a12a214727026c52d6c7554b54314168634d2a3"
     },
     {
       "path": "paper/ijcnn2027/references.bib",
@@ -2810,12 +2875,12 @@
     {
       "path": "paper/ijcnn2027/reproduce.py",
       "role": "reproduction code",
-      "sha256": "3bb82bd77849b2da6d085922c30360d71e6ea18d23fd7f9d8aa0f21ef28ac10c"
+      "sha256": "6e2b097616c50a9181b1283c19833752e41ae2ecea57190f94703a6d744d7a7a"
     },
     {
       "path": "paper/ijcnn2027/reproduce_anonymous.py",
       "role": "anonymous supplement validator",
-      "sha256": "8001c151130f34e15bb301b4c2df04a2cc81732e3a5466ad5a20f690abf6c2c5"
+      "sha256": "c4a6da3b0de6dd313e1f0fbb7da80cf9cf08b0bdb312eaf07fe01ca221b7a8e6"
     },
     {
       "path": "paper/ijcnn2027/requirements-compliance.txt",
@@ -2836,6 +2901,11 @@
       "path": "paper/ijcnn2027/review/event_fedavg_calibrated_review.pdf",
       "role": "manuscript source, validation, or review snapshot",
       "sha256": "956cd67fe0eba0fdbe8579a097375e1c4ccaedb5d89137a6b0c5d1035b98af55"
+    },
+    {
+      "path": "paper/ijcnn2027/review/event_fedavg_three_architecture_review.pdf",
+      "role": "closed three-architecture source, evidence, product or marked review",
+      "sha256": "2b475eed734473031068f187304f1353c49cae64018155681024da9725ce4390"
     },
     {
       "path": "paper/ijcnn2027/supplementary/M3_DENSE_SCHEDULE_FAIRNESS.md",

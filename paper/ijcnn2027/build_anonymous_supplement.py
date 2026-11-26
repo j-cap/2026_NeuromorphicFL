@@ -21,6 +21,10 @@ FORBIDDEN = (
     "weberj",
     "c:\\users\\weber",
 )
+OMITTED = {
+    "experiments/stc_cifar10_confirmation.py",
+    "experiments/FMNIST_MLP_DEVELOPMENT_RESULTS.md",
+}
 
 
 def add_if_present(paths: set[Path], relative: str) -> None:
@@ -42,7 +46,9 @@ def selected_files() -> set[Path]:
         "paper/ijcnn2027/build_evidence.py",
         "paper/ijcnn2027/build_visuals.py",
         "paper/ijcnn2027/build_calibrated_core.py",
+        "paper/ijcnn2027/build_three_architecture.py",
         "paper/ijcnn2027/evidence/calibrated_core_freeze.json",
+        "paper/ijcnn2027/evidence/three_architecture_freeze.json",
         "paper/ijcnn2027/build_alignment_factorial.py",
         "paper/ijcnn2027/check_manuscript_claims.py",
         "paper/ijcnn2027/check_theory_contract.py",
@@ -56,11 +62,11 @@ def selected_files() -> set[Path]:
     # contains an identifying repository name in its help examples; it is not
     # required by any builder. Preserve that omission explicitly in the archive
     # freeze rather than rewriting a frozen scientific source.
-    freeze = json.loads((PAPER / "evidence/calibrated_core_freeze.json").read_text())
-    omitted = {"experiments/stc_cifar10_confirmation.py"}
-    for relative in freeze["files"]:
-        if relative not in omitted:
-            add_if_present(paths, relative)
+    for name in ("calibrated_core_freeze.json", "three_architecture_freeze.json"):
+        freeze = json.loads((PAPER / "evidence" / name).read_text())
+        for relative in freeze["files"]:
+            if relative not in OMITTED:
+                add_if_present(paths, relative)
 
     for relative in exact:
         add_if_present(paths, relative)
@@ -72,6 +78,7 @@ def selected_files() -> set[Path]:
         "paper/ijcnn2027/figures/communication_frontier_*.pdf",
         "paper/ijcnn2027/figures/convergence_*.pdf",
         "paper/ijcnn2027/figures/calibrated_*.pdf",
+        "paper/ijcnn2027/figures/three_architecture_*.pdf",
         "paper/ijcnn2027/figures/p20_*.pdf",
         "paper/ijcnn2027/supplementary/*.md",
         "experiments/p*.py",
@@ -135,22 +142,38 @@ def write_member(archive: zipfile.ZipFile, name: str, content: bytes) -> None:
     archive.writestr(info, content, compresslevel=9)
 
 
+def anonymous_freezes() -> dict[Path, bytes]:
+    """Declare omitted identifying extras without rewriting scientific inputs."""
+    output = {}
+    for name in ("calibrated_core_freeze.json", "three_architecture_freeze.json"):
+        path = PAPER / "evidence" / name
+        manifest = json.loads(path.read_text())
+        manifest["artifact_profile"] = "anonymous_output_reproduction"
+        manifest["omitted_artifact_extras"] = {
+            item: manifest["files"].pop(item)
+            for item in sorted(OMITTED) if item in manifest["files"]
+        }
+        # The third-panel freeze includes the previous manifest itself.
+        # Its artifact-profile hash must describe the copy actually shipped.
+        previous = PAPER / "evidence/calibrated_core_freeze.json"
+        previous_name = previous.relative_to(REPO).as_posix()
+        if previous_name in manifest["files"]:
+            manifest["files"][previous_name] = hashlib.sha256(output[previous]).hexdigest()
+        output[path] = (json.dumps(manifest, indent=2) + "\n").encode()
+    return output
+
+
 def build(output: Path) -> tuple[int, str]:
     files = selected_files()
+    profiles = anonymous_freezes()
     payloads: list[tuple[str, bytes]] = []
     readme = (PAPER / "ANONYMOUS_SUPPLEMENT.md").read_bytes()
     scan_text(PAPER / "ANONYMOUS_SUPPLEMENT.md", readme)
     payloads.append((f"{ARCHIVE_ROOT}/README.md", readme))
     for path in sorted(files, key=lambda item: item.relative_to(REPO).as_posix()):
         content = path.read_bytes()
-        if path == PAPER / "evidence/calibrated_core_freeze.json":
-            manifest = json.loads(content)
-            omitted_path = "experiments/stc_cifar10_confirmation.py"
-            manifest["artifact_profile"] = "anonymous_output_reproduction"
-            manifest["omitted_training_only_sources"] = {
-                omitted_path: manifest["files"].pop(omitted_path)
-            }
-            content = (json.dumps(manifest, indent=2) + "\n").encode()
+        if path in profiles:
+            content = profiles[path]
         if path.parent == PAPER / "supplementary" and path.suffix == ".md":
             note = content.decode("utf-8")
             note = re.sub(r"https://github[.]com/j-cap/[^\s)]+", "[source snapshot]", note)

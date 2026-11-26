@@ -12,15 +12,19 @@ From the source repository, create the deterministic submission archive with:
 python paper/ijcnn2027/build_anonymous_supplement.py
 ```
 
-The current headline is the frozen calibrated CIFAR compact-CNN/ResNet panel.
-The archive includes its original results, regenerated products and builder,
-as well as the preserved historical evidence. The archive input manifest is an
-explicit artifact-reproduction profile: one historical training-only entry
-point with an identifying repository name in its help examples is omitted and
-its original hash recorded under `omitted_training_only_sources`. Repository links in supporting prose are anonymized. No numerical
-output is edited. Full original source-contract audits require the complete
-research checkout; artifact checks hash every included input and reproduce the
-same published products.
+The current headline is the closed three-architecture, five-method matrix:
+compact CNN and ResNet-14 on CIFAR-10, and MLP on Fashion-MNIST. The archive
+contains original results, rebuilt products and both current/previous builders,
+with all declared targets, MLP censoring and the 85% Ström exception visible.
+
+The input manifests have an explicit anonymous artifact profile. One historical
+training-only driver and one development report containing a machine-specific
+example path are omitted; their original hashes are recorded under
+omitted_artifact_extras. The third-panel manifest's reference to the previous
+manifest hashes its anonymous copy. No numerical output or frozen scientific
+source is rewritten. Full campaign-source audits require the full research
+checkout; artifact checks hash every included input and reproduce the products.
+Repository links in supporting prose are anonymized.
 
 ## Quick reproduction
 

@@ -31,6 +31,7 @@ def main() -> None:
         PAPER / "build_visuals.py",
         PAPER / "build_alignment_factorial.py",
         PAPER / "build_calibrated_core.py",
+        PAPER / "build_three_architecture.py",
     )
     if args.regenerate:
         for builder in builders:

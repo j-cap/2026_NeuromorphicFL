@@ -1,15 +1,14 @@
-# Current calibrated-panel reproduction (2026-11-26)
+# Current three-architecture reproduction (2026-11-26)
 
-The current main paper uses `build_calibrated_core.py` and the compact-CNN and
-ResNet-14 core confirmation CSVs. See `CALIBRATED_PANEL_CONSOLIDATION.md` for
-Windows commands and commit/push instructions. `reproduce.py --regenerate`
-rebuilds the new products as well as the preserved historical evidence products.
-The full new input inventory is locked in `evidence/calibrated_core_freeze.json`.
-No full training runs are triggered by reproduction. New manuscript text is blue.
-
-The requirements-evidence NumPy/pandas pins describe the archived NumPy campaigns;
-ResNet training's distinct Torch/CUDA environment is recorded in its immutable
-protocol. The current figure builder needs only NumPy and Matplotlib, not Torch.
+The current main paper uses build_three_architecture.py with the compact-CNN,
+ResNet-14 and Fashion-MNIST MLP confirmation CSVs. Current Windows regeneration,
+commit/push and paper-sync commands are in THREE_ARCHITECTURE_CONSOLIDATION.md.
+The old calibrated_core_freeze.json and its products remain unchanged; the
+new three_architecture_freeze.json locks the MLP inputs and prior freeze.
+The reproducibility driver rebuilds/checks both sets of products, historical
+figures, theory and prose claims without training. New integration text is
+orange and earlier blue edits remain. NumPy/Matplotlib suffice for the new
+builder; no images, Torch or saved training checkpoints are loaded.
 
 # IJCNN reproducibility guide
 

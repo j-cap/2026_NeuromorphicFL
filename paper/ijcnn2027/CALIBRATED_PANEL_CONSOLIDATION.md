@@ -1,5 +1,9 @@
 # Calibrated panel freeze and manuscript consolidation
 
+Historical two-CIFAR consolidation. The completed third-architecture
+integration and current commands are in THREE_ARCHITECTURE_CONSOLIDATION.md.
+The two-CIFAR numerical freeze below remains unchanged.
+
 Frozen on 2026-11-26. Research source before this edit: `14216ff`.
 The agreed five methods and all completed CIFAR runs are closed for this panel.
 No additional fitting or tuning is required to reproduce the manuscript update.

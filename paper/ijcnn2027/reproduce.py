@@ -150,11 +150,13 @@ def main() -> None:
         run(sys.executable, str(PAPER / "build_visuals.py"))
         run(sys.executable, str(PAPER / "build_alignment_factorial.py"))
         run(sys.executable, str(PAPER / "build_calibrated_core.py"))
+        run(sys.executable, str(PAPER / "build_three_architecture.py"))
 
     run(sys.executable, str(PAPER / "build_evidence.py"), "--check")
     run(sys.executable, str(PAPER / "build_visuals.py"), "--check")
     run(sys.executable, str(PAPER / "build_alignment_factorial.py"), "--check")
     run(sys.executable, str(PAPER / "build_calibrated_core.py"), "--check")
+    run(sys.executable, str(PAPER / "build_three_architecture.py"), "--check")
     run(sys.executable, str(PAPER / "check_manuscript_claims.py"))
     run(sys.executable, str(PAPER / "check_theory_contract.py"))
     run(sys.executable, str(REPO / ".github" / "scripts" / "check_actions_policy.py"))

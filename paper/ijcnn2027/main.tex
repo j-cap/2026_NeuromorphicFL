@@ -34,6 +34,11 @@
 \definecolor{coreblue}{RGB}{0,75,155}
 \newcommand{\coreColor}{\color{coreblue}}
 \newcommand{\coreRev}[1]{{\coreColor #1}}
+% Completed MLP integration: new/rewritten blocks are orange.
+% Set both \coreColor and \mlpColor to empty for a clean submission copy.
+\definecolor{mlporange}{RGB}{175,75,0}
+\newcommand{\mlpColor}{\color{mlporange}}
+\newcommand{\mlpRev}[1]{{\mlpColor #1}}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
@@ -59,25 +64,24 @@
 \maketitle
 
 \begin{abstract}
-\coreRev{Event-FedAvg reduces federated communication by converting persistent,
+\mlpRev{Event-FedAvg reduces federated communication by converting persistent,
 leaky client evidence into signed coordinate events. Fired coordinates reset
 fully; an independently scheduled model quantum scales the server aggregate.
 Lossless support encoding and aggregate-first downlink encoding synchronize
 clients exactly within conventional synchronous rounds. We prove bounded
 encoder state and a pathwise event budget, and derive a finite-horizon
-gradient-norm bound conditional on expected aggregate alignment. Two CIFAR-10
-architectures are evaluated for 1,800 rounds over ten paired seeds against
+gradient-norm bound conditional on expected aggregate alignment. We evaluate
+three architectures on CIFAR-10 and Fashion-MNIST over ten paired seeds against
 dataset- and architecture-calibrated Dense FedAvg, STC, Str\"om-style residual
 pulses, and EF-TopK. Event-FedAvg has the lowest final bidirectional unicast
-cost among the five selected operating points on both architectures.
-At the declared 50\% accuracy target, it saves 57.8\% of traffic versus STC
-on the compact CNN and 23.4\% on ResNet-14; savings versus EF-TopK are 95.8\%
-and 65.4\%, respectively. Event also has the highest mean final compact-CNN
-accuracy. On ResNet-14, it reaches $75.47\pm0.57\%$ at 5.752~Gbit, while
-STC reaches $76.19\pm1.18\%$ at 6.460~Gbit. These results establish a favorable
-communication-to-accuracy tradeoff at the calibrated operating points, with
-explicit final-quality tradeoffs, rather than unconditional convergence or
-global dominance of a method's full rate--quality frontier.}
+cost among the five selected operating points on all three architectures.
+At the declared middle accuracy targets, it saves 57.8\% and 23.4\% of traffic
+versus STC on the two CIFAR-10 models and 17.6\% on the Fashion-MNIST MLP.
+The MLP attains $86.94\pm0.18\%$ with 0.497~Gbit, versus
+$86.98\pm0.19\%$ with 0.796~Gbit for STC. Final ResNet accuracy favors STC
+and EF-TopK in mean; residual pulses use less traffic to the MLP's 85\% target.
+The evidence supports communication-efficient calibrated operating points,
+with explicit predictive and target-specific tradeoffs.}
 \end{abstract}
 
 \section{Introduction}
@@ -118,16 +122,17 @@ This returns the exact update to every client without retransmitting each
 client's pulse list. A smaller exact ordered representation remains available.
 Partial participation is studied separately with explicit catch-up costs.}
 
-\coreRev{We provide three contributions: (i) a complete synchronous signed-event
+\mlpRev{We provide three contributions: (i) a complete synchronous signed-event
 protocol with leaky evidence, full reset, independent model quanta, and exact
 bidirectional transport; (ii) pathwise state and event-budget bounds, an exact
 alignment decomposition, and a conditional finite-horizon gradient-norm bound;
-and (iii) two calibrated five-method, ten-seed CIFAR-10 panels with conservative
-unicast accounting. Event-FedAvg uses the least total communication at the
-selected final operating points and has lower paired geometric-mean cost to
-all three declared accuracy targets than every comparator. The evaluation
-separates this communication advantage from final predictive quality, and a
-controlled mechanism audit supports persistence at one operating point.
+and (iii) three calibrated five-method, ten-seed panels on CIFAR-10 and
+Fashion-MNIST with conservative unicast accounting. Event-FedAvg uses the least
+total communication at each selected final operating point. Paired costs to
+declared accuracy targets quantify when this advantage holds during training;
+the MLP also identifies a target at which residual pulses are cheaper.
+Final accuracy and test loss remain visible alongside cost, and a controlled
+mechanism audit supports persistence at one operating point.
 Figure~\ref{fig:event-fedavg-method} summarizes the protocol.}
 
 \section{\rev{Related Work}}
@@ -227,8 +232,8 @@ conventional model.}
 
 \begin{figure*}[!t]
  \centering
- \includegraphics[width=.98\textwidth]{figures/calibrated_event_protocol.pdf}
- \caption{\coreRev{The synchronous Event-FedAvg protocol. Thresholding and full
+ \includegraphics[width=.98\textwidth]{figures/three_architecture_protocol.pdf}
+ \caption{\mlpRev{The synchronous Event-FedAvg protocol. Thresholding and full
  reset generate client pulses; lossless support coding reduces upload cost.
  The server applies its independent quantum and returns an exact aggregate
  representation, including floating-point fidelity corrections when required.
@@ -646,33 +651,38 @@ numerical bound.}
 \section{Experimental Protocol}
 \label{sec:experiments}
 
-\coreRev{\textbf{Purpose and common host.}
+\mlpRev{\textbf{Purpose and common host.}
 We test whether the complete protocol reduces bidirectional communication for
 predictive quality against close, calibrated alternatives. The primary panels
 use CIFAR-10 with a 20,570-parameter compact CNN and a 175,258-parameter
-GroupNorm ResNet-14. Ten fully participating clients each hold 5,000 examples:
-55\% from one dominant class and 5\% from each other class. All methods run
-1,800 rounds with five local SGD steps, batch size 32, learning rate 0.05,
-L2 coefficient 0.0005, and initialization seed 7777. Data, initialization,
+GroupNorm ResNet-14, and Fashion-MNIST with a 25,818-parameter tanh MLP
+(784--32--16--10). Ten clients participate in every synchronous round.
+Each holds 5,000 CIFAR-10 or 6,000 Fashion-MNIST examples: 55\% from its
+dominant class and 5\% from each other class. CIFAR methods run 1,800 rounds
+with learning rate 0.05 and L2 coefficient 0.0005; MLP methods run 1,500 rounds
+with learning rate 0.1 and L2 coefficient 0.0001. All use five local SGD steps,
+batch size 32, and initialization seed 7777. Data, initialization,
 local minibatch order and evaluation cadence are matched within each seed.
 Only the communication operator and its server gain differ.}
 
-\coreRev{\textbf{Architecture-specific calibration.}
+\mlpRev{\textbf{Architecture-specific calibration.}
 Every method uses a development-calibrated setting for the dataset and model;
-none is selected from the new common-seed test outcomes. ResNet-14 receives a
-common bounded budget per method: 18 configurations screened for 600 rounds,
-then the best three continued to 1,800 rounds (14,400 unique training rounds
-per family). Selection minimizes validation CE on a 45,000/5,000 training split,
-with traffic and configuration identifier as tie breakers. The families use
-comparable accumulated budgets but different search geometries. This is
-bounded development tuning, not a guarantee of global hyperparameter optimality.}
+none is selected from the new common-seed test outcomes. ResNet-14 and the MLP
+each receive a common bounded budget per method: 18 configurations screened
+for 600 or 500 rounds, then the best three continued to 1,800 or 1,500 rounds,
+respectively. This gives 14,400 unique training rounds per ResNet family and
+12,000 per MLP family. Selection minimizes validation CE on 45,000/5,000
+(CIFAR-10) or 54,000/6,000 (Fashion-MNIST) training/validation splits, with
+traffic and configuration identifier as tie breakers. Families receive the
+same accumulated budget within a panel but have different search geometries.
+These bounded searches do not guarantee global hyperparameter optimality.}
 
-\coreRev{The compact-CNN panel preserves its earlier dataset-specific
+\mlpRev{The compact-CNN panel preserves its earlier dataset-specific
 calibrations: Event and Str\"om use validation CE; STC uses regularized training
 objective; EF-TopK uses its archived training-CE selection; Dense uses the
 training-objective-selected schedule. Historical budgets and selection rules
-therefore differ in that panel. The ResNet panel supplies the more controlled
-common-budget comparison. Full grids, continuations and selection records
+therefore differ in that panel. The ResNet and MLP panels supply the controlled
+common-budget comparisons. Full grids, continuations and selection records
 accompany the frozen evidence.}
 
 \coreRev{\textbf{Frozen operating points.}
@@ -687,6 +697,14 @@ with gains one and four. STC uses per-tensor upload/download retention $p=1$
 and gains two and four; ternarization and both error-feedback residuals remain
 active, so $p=1$ is not full-precision Dense FedAvg.}
 
+\mlpRev{The MLP's selected Event setting is
+$(\vartheta,q_0,\alpha)=(0.025,0.005,0.1)$, with $\rho=0.999$, full reset,
+$r_0=100$ and gain one. Str\"om uses threshold 0.02 and native gain 0.3
+(FedAvg-equivalent gain three at local learning rate 0.1).
+Dense uses $\gamma_r=2(1+r/100)^{-0.3}$.
+STC retains $p=1$ in both directions with gain two; EF-TopK retains 10\%
+with gain two. These selections remain fixed for all ten confirmation seeds.}
+
 \coreRev{\textbf{Representation fairness.}
 STC retains its native lossy server compressor and server residual.
 EF-TopK retains float32 sparse values and client residuals, without adding a
@@ -698,60 +716,64 @@ coding only to the proposed method. Exact codec round trips and reconstructed
 client models are checked by the runners. The accelerated CPU codec used for
 the new ResNet baselines is byte-equivalent to the frozen original codec.}
 
-\coreRev{\textbf{Confirmation and metrics.}
+\mlpRev{\textbf{Confirmation and metrics.}
 Each architecture has ten common partition/SGD seed pairs, distinct from its
 development partition: 6000--6900/86000--86900 for the compact CNN and
-7100--8000/97100--98000 for ResNet-14, in steps of 100. Confirmation fits start
-fresh on all 50,000 training images and use the fixed official 10,000-image
-test set. The two panels contain 100 method--seed outcomes; 40 pulse runs are
-verified exact reuses. Accuracy and unregularized test CE at round 1,800 are
-fixed predictive endpoints. Each run is evaluated at round one and every
-60 rounds. Independent audits verify receipts, cumulative traffic prefixes,
+7100--8000/97100--98000 for ResNet-14, and 11100--12000/101100--102000 for the
+MLP, in steps of 100. Confirmation fits start fresh on all 50,000 CIFAR-10 or
+60,000 Fashion-MNIST training images and use the official 10,000-image test
+sets. The panels contain 150 method--seed outcomes; 40 CIFAR pulse runs are
+verified exact reuses. The fifty MLP fits are new and reuse no development
+checkpoints. Accuracy and unregularized test CE at the fixed final round are
+predictive endpoints. Evaluation is after round one and every 60 CIFAR rounds
+or 50 MLP rounds. Audits verify receipts, cumulative traffic prefixes,
 and sampled model fingerprints without changing training.}
 
-\coreRev{Targets 45\%, 50\%, and 55\% were declared before the corresponding
-common-seed confirmation. Cost to target is the first saved per-run crossing,
+\mlpRev{Targets 45\%, 50\%, and 55\% for CIFAR-10 and 80\%, 85\%, and 87\%
+for Fashion-MNIST were declared before the corresponding common-seed
+confirmation. Cost to target is the first saved per-run crossing,
 without interpolation or a requirement to remain above it. All fits continue
-to 1,800 rounds. These early-to-intermediate targets complement final predictive
-quality; they do not measure near-optimal convergence. A missed target is
+to their fixed horizon. These targets complement final predictive quality;
+their meaning differs across datasets. A missed target is
 reported as censored, never as zero cost. Traffic ratios are computed within
 paired seeds, summarized geometrically, and assigned descriptive unadjusted
 95\% Student-$t$ intervals on the log scale. Endpoint tables show arithmetic
-means and sample SDs. The shared test set has been inspected in prior studies;
+means and sample SDs. Both test sets have been inspected in prior studies;
 new seeds are fresh runs, not a new untouched dataset.}
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=.97\textwidth]{figures/calibrated_core_trajectories.pdf}
-\caption{\coreRev{Predictive accuracy against cumulative bidirectional unicast
-traffic for the frozen five-method panels. Lines are paired-seed arithmetic
+\includegraphics[width=.99\textwidth]{figures/three_architecture_trajectories.pdf}
+\caption{\mlpRev{Predictive accuracy against cumulative bidirectional unicast
+traffic for all three frozen five-method panels. Lines are paired-seed arithmetic
 means and shading is $\pm$ one sample SD of accuracy. The horizontal axis is
 logarithmic. These descriptive mean curves do not define the per-run target
 crossings used for the paired cost comparisons.}}
 \label{fig:calibrated-trajectories}
 \end{figure*}
 
-\input{generated/calibrated_core_results}
+\input{generated/three_architecture_results}
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=.97\textwidth]{figures/calibrated_core_target_ratios.pdf}
-\caption{\coreRev{Event/reference unicast cost ratios at all three declared
-accuracy targets. Every paired geometric-mean ratio is below one; error bars
-are descriptive unadjusted 95\% intervals. Compact-CNN Dense reaches 55\% in
-9/10 runs, so that contrast uses nine common hits. All other method--target
-combinations have ten common hits.}}
+\includegraphics[width=.99\textwidth]{figures/three_architecture_target_ratios.pdf}
+\caption{\mlpRev{Event/reference unicast cost at each dataset's three declared
+accuracy targets. Below one favors Event; bars are descriptive unadjusted
+95\% intervals. Compact-CNN Dense at 55\% uses nine common hits; all other
+CIFAR contrasts use ten. MLP 80\%/85\% contrasts use ten pairs; at 87\%,
+common hits are 7/9/6/8 versus Str\"om/STC/EF-TopK/Dense. Ratios at 87\%
+are conditional on these hits. The MLP's 85\% Str\"om ratio exceeds one.}}
 \label{fig:calibrated-targets}
 \end{figure*}
 
-\input{generated/calibrated_core_targets}
+\input{generated/three_architecture_targets}
 
 \section{Results and Discussion}
 \label{sec:results}
 
-\coreRev{\textbf{Lower communication to declared predictive accuracy.}
+\mlpRev{\textbf{Communication to declared predictive accuracy.}
 Event-FedAvg has lower paired geometric-mean unicast cost than every comparator
-at each declared target on both architectures (Fig.~\ref{fig:calibrated-targets}).
+at each declared target on both CIFAR architectures (Fig.~\ref{fig:calibrated-targets}).
 At 50\% accuracy, every method succeeds on all ten seeds.
 On the compact CNN, Event saves 57.8\% versus STC, 95.8\% versus EF-TopK,
 29.2\% versus Str\"om, and 99.1\% versus Dense.
@@ -763,6 +785,18 @@ ResNet STC at 55\% has nine individual cost wins out of ten.
 The benefit is therefore reproducible across the declared targets and is not
 an artifact of choosing one favorable crossing after inspection.}
 
+\mlpRev{On the MLP, all methods reach 80\% and 85\% in every run.
+At 85\%, Event saves 17.6\% [11.9,22.8] versus STC, 93.3\% versus EF-TopK,
+and 97.6\% versus Dense, but uses 10.0\% [0.7,20.3] more traffic than
+Str\"om. Event reaches this target at mean sampled round 330, compared with
+265 for STC and 255 for Str\"om. It uses fewer bits than STC in all ten pairs;
+Str\"om uses fewer bits than Event in nine. At 80\%, Event's cost intervals
+against STC and Str\"om span one on the ratio scale. At 87\%, Event/STC reach
+the target in 9/10 runs, Str\"om in 8/10, EF-TopK in 7/10 and Dense in 9/10.
+Only three Event runs finish at or above 87\%; first crossings can be transient
+for every family. The conditional high-target ratios are therefore read
+alongside coverage and fixed-horizon quality.}
+
 \coreRev{This result primarily concerns message cost rather than a universal
 reduction in training rounds. Against ResNet STC at 50\%, Event crosses at the
 same saved round in nine pairs and earlier in one; their mean first crossings
@@ -770,9 +804,12 @@ are rounds 306 and 312. Exact support and aggregate transport reduce the bits
 needed for those updates. We therefore describe improved communication to
 predictive quality rather than a general faster-convergence rate.}
 
-\coreRev{\textbf{Final operating points and predictive tradeoffs.}
-Event has the lowest total round-1,800 unicast cost in both panels and in every
+\mlpRev{\textbf{Final operating points and predictive tradeoffs.}
+Event has the lowest final unicast cost in all three panels and in every
 paired comparison with each reference (Table~\ref{tab:calibrated-core}).
+This comparison concerns the frozen 1,800-round CIFAR and 1,500-round MLP
+budgets, with quality reported at the same endpoints.}
+\coreRev{
 For the compact CNN it also has the largest mean accuracy, $57.55\pm0.49\%$,
 at 0.499~Gbit. Relative to the closest pulse comparator, Str\"om, the final
 cost saving is 3.9\% [3.0,4.8], while the accuracy difference is
@@ -792,6 +829,19 @@ The STC interval does not establish equivalence or noninferiority.
 Test CE is reported alongside accuracy because the two metrics need not rank
 methods identically. These are favorable cost--quality operating points,
 not predictive dominance over every comparator.}
+
+\mlpRev{On Fashion-MNIST, Event reaches $86.94\pm0.18\%$ at 0.497~Gbit,
+compared with $86.98\pm0.19\%$ at 0.796~Gbit for STC and
+$86.90\pm0.24\%$ at 0.581~Gbit for Str\"om.
+Its paired final traffic savings are 37.6\% [37.2,37.9] and
+14.5\% [14.2,14.8], respectively. Event's accuracy differences are
+$-0.042$ points [$-0.206,0.122$] against STC and $+0.038$ points
+[$-0.120,0.196$] against Str\"om. All four MLP paired accuracy intervals span
+zero, so equivalence is not established. Test CE and directional traffic remain
+visible in Table~\ref{tab:calibrated-core}: against STC, Event saves 82.2\%
+of upload traffic while using 6.1\% more synchronization/control traffic.
+The net saving supports a favorable final communication--quality point despite
+the intermediate-target exception.}
 
 \coreRev{\textbf{What the communication comparison establishes.}
 Savings remain after charging separate downlink copies to ten clients.
@@ -861,8 +911,8 @@ and diagnostic plot are provided in the supplementary artifact.}
 
 
 
-\coreRev{\textbf{Supporting evidence.}
-The Fashion-MNIST MLP/CNN studies and the following 50-client robustness test
+\mlpRev{\textbf{Supporting evidence.}
+Earlier Fashion-MNIST studies and the following 50-client robustness test
 are retained as supporting evidence under their original frozen calibration
 and accounting. They are not additional common-budget five-method panels.}
 
@@ -888,16 +938,18 @@ are not compute-matched. The new five-method ranking is untested here.}
 \section{Limitations}
 \label{sec:limitations}
 
-\coreRev{The primary evidence comprises two CIFAR-10 architectures, ten
+\mlpRev{The primary evidence comprises three architectures on two datasets, ten
 synchronous clients, and one development partition per architecture. Each
 method is tuned for its dataset/model, with a common bounded development budget
-on ResNet; historical compact-CNN selection rules differ. Ten paired seeds
+on ResNet and the MLP; historical compact-CNN selection rules differ. Ten paired seeds
 measure run variation, not hyperparameter-selection uncertainty or simultaneous
 inference. STC and EF-TopK select the largest screened ResNet gain, four, so the
 bounded search need not contain their optima. The selected configurations do
 not characterize complete communication--quality frontiers. Broader datasets and model families remain
 to be evaluated under this common calibration protocol. The targets are sampled finite-training
-crossings and can be transient. The theorem assumes aggregate alignment and
+crossings and can be transient; the MLP's 85\% Str\"om comparison also shows
+that Event's final-cost lead need not hold at every target.
+The theorem assumes aggregate alignment and
 does not establish an unconditional convergence rate. Supporting mechanism and
 partial-participation studies use earlier frozen settings. All communication
 costs describe serialized payload accounting; network latency, loss, transport
@@ -909,16 +961,18 @@ headers and hardware energy are not measured.}
 \section{Conclusion}
 \label{sec:conclusion}
 
-\coreRev{Event-FedAvg combines persistent leaky evidence, full reset, signed
+\mlpRev{Event-FedAvg combines persistent leaky evidence, full reset, signed
 coordinate events, independent server quanta, and exact aggregate transport.
-The completed calibrated CIFAR panels identify its clearest advantage: lower
-total unicast communication to each declared predictive-accuracy target and
-the lowest final communication among the five selected operating points.
-It also gives the largest mean final compact-CNN accuracy and a clear ResNet
-improvement over residual pulses. ResNet STC and EF-TopK retain higher mean
-final accuracy at greater communication cost, defining the scope of the
-advantage. State and event-budget bounds characterize the encoder; optimization
-bounds remain conditional on aggregate alignment.}
+Across three architectures on two datasets, it uses the least final total
+unicast communication among the five development-calibrated operating points.
+The Fashion-MNIST MLP confirms a 37.6\% final saving versus STC at competitive
+predictive quality; its accuracy interval does not establish equivalence.
+Cost to declared targets strengthens the CIFAR result and identifies an MLP
+target at which residual pulses are cheaper. Higher mean ResNet accuracy for
+STC and EF-TopK remains an explicit tradeoff. The contribution is therefore a
+communication-efficient synchronous protocol supported by calibrated comparisons.
+State and event-budget bounds characterize the encoder; optimization bounds
+remain conditional on aggregate alignment.}
 
 \end{samepage}
 

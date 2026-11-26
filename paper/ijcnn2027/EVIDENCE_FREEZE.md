@@ -1,4 +1,12 @@
-# Current panel freeze — 2026-11-26
+# Current three-architecture freeze — 2026-11-26
+
+All three five-method, ten-seed panels are closed. See
+THREE_ARCHITECTURE_CONSOLIDATION.md and evidence/three_architecture_freeze.json.
+The MLP adds the explicit 85% Ström target exception; final-cost savings and
+fixed-horizon predictive quality remain separate. The previous CIFAR freeze
+and every original study file are preserved.
+
+# Previous two-CIFAR freeze
 
 The calibrated CIFAR five-method panels are closed. Current scope and selection
 boundaries are in `PAPER_CONTRACT.md`, `CLAIM_EVIDENCE.md`, and
