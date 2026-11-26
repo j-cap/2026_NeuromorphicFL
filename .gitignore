@@ -138,3 +138,11 @@ paper/ijcnn2027/*.pdf
 paper/ijcnn2027/*.synctex.gz
 paper/ijcnn2027/tmp/
 paper/ijcnn2027/dist/*.zip
+
+# Calibrated Fashion-MNIST MLP panel; checkpoints/cache/progress stay local.
+!experiments/results/fmnist_mlp_calibrated_v1/
+!experiments/results/fmnist_mlp_calibrated_v1/*.csv
+!experiments/results/fmnist_mlp_calibrated_v1/*.json
+!experiments/results/fmnist_mlp_calibrated_v1/comparison.pdf
+!experiments/results/fmnist_mlp_calibrated_v1/comparison.png
+fmnist_mlp_calibrated.log
