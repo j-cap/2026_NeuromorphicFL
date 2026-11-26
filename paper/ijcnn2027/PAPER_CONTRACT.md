@@ -1,167 +1,46 @@
-# Event-FedAvg IJCNN paper contract
+# Event-FedAvg manuscript contract — consolidated 2026-11-26
 
-This contract freezes the intended conference-paper story before manuscript
-extraction. Changes to the central claim require an explicit update here and in
-`CLAIM_EVIDENCE.md`.
+The completed compact-CNN and ResNet-14 CIFAR-10 five-method panels are frozen.
+The research snapshot before consolidation is `14216ff50455774fce31386621f344fc3f07d1b8`.
+The reviewed manuscript base is paper-repository main `310a0805d133ab2f0873a36f9f08fb6e8036887c`.
+The later paper-source M1, M3, P11 and participation clarifications are preserved.
 
-## Working title
+The central question is whether persistent leaky coordinate evidence, full reset,
+independent model quanta and exact aggregate transport yield a favorable
+bidirectional communication cost for predictive quality in synchronous FedAvg.
 
-**Event-FedAvg: Stateful Event-Driven Communication for Federated Learning**
+The primary evidence is two CIFAR-10 architectures, five fixed operating points,
+ten paired seeds per architecture, 1,800 rounds. The methods are Event-FedAvg,
+Dense FedAvg, STC, Ström-style residual pulses in FedAvg, and EF-TopK. There is
+no further training, tuning, additional STC selection, or method replacement in
+this panel. Remaining MLP tuning is the separate next stage.
 
-The title deliberately leads with the algorithm and its communication role.
-The leaky integrate-and-fire inspiration is explained in the paper rather than
-used to imply that the trained model is a spiking neural network.
+All methods use architecture-specific development-calibrated settings. ResNet
+uses equal accumulated budgets (18 x 600-round screens, three 1,200-round
+continuations per family), with validation-CE selection. Compact-CNN historical
+budgets and criteria differ and must be identified accurately. Neither panel
+establishes global hyperparameter optimality or a full method frontier.
 
-## Central question
+The primary result is lower paired geometric-mean unicast cost to the declared
+45%, 50%, and 55% accuracy targets versus all four references. Compact-CNN Dense
+at 55% has only nine common hits. All other target contrasts have ten. Event
+also has the lowest final total traffic at both selected panels, the largest
+compact-CNN mean accuracy, and a clear ResNet improvement over residual pulses.
+EF-TopK and STC have higher mean final ResNet accuracy at higher traffic.
 
-Can a leaky integrate-and-fire-inspired, stateful communication layer provide
-a useful communication--performance operating point for conventional
-multi-step federated averaging?
+The paper must not claim universal accuracy dominance, final-accuracy equivalence,
+a general faster-convergence rate, unconditional convergence, measured energy or
+latency savings, or a field-wide SOTA ranking. Sparse STC's competitive development
+points remain a visible limitation of quality-point selection.
 
-## Intended answer
+The state/event-budget proof and conditional alignment result remain. The event
+uplink bound is updated for 128-bit frames plus padding. The mechanism audit and
+50-client partial-participation study retain their original settings/accounting
+and are supporting evidence, not newly calibrated five-method panels. Earlier
+Fashion-MNIST tables are historical pending the separate calibration stage.
 
-Yes, within the evaluated scope. Event-FedAvg accumulates weighted local-model
-deltas in persistent leaky evidence states, emits sparse signed coordinate
-events after first passage, fully resets fired coordinates, and applies an
-independently scheduled server-model quantum. Across the established
-Fashion-MNIST campaigns and the independent CIFAR-10 compact-CNN campaign, it
-provides a strong predictive operating point under conservative bidirectional
-communication accounting. On CIFAR-10 it remains nondominated and stronger
-than the closest tested residual-pulse alternative at comparable traffic.
-
-This answer is bounded to the evaluated synchronous, full-participation,
-software-accounted settings. The three-seed CIFAR-10 result supports transfer
-to a second image dataset and architecture, not broad dataset generalization or
-statistical significance.
-
-The mechanism-level alignment factorial uses ten paired seeds. It supports the
-stability of the measured heterogeneity and local-depth effects at one frozen
-Fashion-MNIST operating point, not generality across tasks or hyperparameters.
-
-## Contributions
-
-1. **A complete Event-FedAvg communication operator.** Conventional multi-step
-   local FedAvg deltas drive leaky client evidence states. First-passage signed
-   coordinate events, full reset, an independent model quantum, and exact
-   replay/checkpoint synchronization define the complete algorithm and
-   end-to-end protocol.
-2. **A scoped mathematical characterization.** The encoder has a bounded
-   post-reset state and a pathwise event budget. Smoothness yields an exact
-   descent-versus-harm decomposition, an explicit aggregate-alignment
-   condition yields a finite-horizon stationarity result, and the measured
-   alignment admits an exact pulse-level decomposition into local mass, memory
-   opposition, local drift, and heterogeneity.
-3. **Controlled communication--performance evidence.** Development-only tuning,
-   held-out partitions, close residual and error-feedback baselines, and
-   symmetric uplink-plus-downlink accounting test the practical operating
-   point. An exact empirical-gradient $2\times2$ audit varies partition
-   heterogeneity and local-update depth without changing the training rule.
-
-## Novelty boundary
-
-The contribution is the complete combination of:
-
-- persistent leaky evidence;
-- one threshold test per active client-coordinate-round;
-- signed coordinate transmission;
-- full reset that discards threshold overshoot;
-- a model-update quantum independent of the trigger threshold;
-- algebraic server aggregation without a second client weighting;
-- ordered sparse replay with dense-checkpoint fallback.
-
-The paper does not claim novelty for accumulated gradients, threshold
-sparsification, sign communication, error feedback, event-triggered learning,
-LIF dynamics, or the generic accumulate--threshold--pulse motif. The P2
-operator audit treats Strom-style residual-conserving pulses as the closest
-algorithmic predecessor, LENA as the closest accumulated-memory/full-clear
-precedent, and model-deviation triggers as a separate event-communication
-family. The defensible wording is that the targeted search did not identify
-the complete frozen operator; this is not a universal priority claim. The P10
-refresh on 2026-09-06 preserved this boundary, with one additional refresh
-required near the actual submission date.
-
-## Claim boundary
-
-The paper may claim:
-
-- exact algorithm and synchronization semantics;
-- encoder-state and event-budget properties;
-- a deterministic one-step descent inequality;
-- conditional finite-horizon stationarity;
-- an empirical communication--performance frontier;
-- finite-horizon empirical aggregate alignment;
-- negative qualifications concerning late-stage descent and schedule decay.
-
-The paper must not claim:
-
-- unconditional convergence of the complete model-coupled method;
-- a uniform pathwise alignment constant with zero defect;
-- uniform accuracy superiority over every baseline operating point;
-- measured hardware energy savings or deployment latency;
-- robustness to partial participation or asynchronous FedAvg unless new
-  evidence is added;
-- broad dataset generalization beyond the tested Fashion-MNIST and CIFAR-10
-  settings.
-
-## Intended reader takeaway
-
-After reading the paper, a federated-learning researcher should be able to
-answer four questions:
-
-1. What state does Event-FedAvg retain and when does it communicate?
-2. How does it differ from residual-conserving threshold pulses?
-3. What can and cannot currently be proven about its optimization behavior?
-4. What predictive quality is obtained for a given total communication cost?
-
-## Main-paper structure and page budget
-
-The manuscript must fit the current six-page IJCNN limit as a self-contained
-paper. The budget below is a constraint, not a requirement to fill space.
-
-| Section | Target pages | Purpose |
-|---|---:|---|
-| Abstract and introduction | 0.65 | Problem, result, contributions, limits |
-| Related work | 0.40 | Closest operator-level distinctions |
-| Method and protocol | 1.15 | Frozen transition, algorithm, communication |
-| Theory | 0.95 | Encoder properties, exact alignment identity, and conditional result |
-| Experimental protocol | 0.55 | Fair tuning, partitions, metrics, accounting |
-| Results and discussion | 1.30 | Frontier, matched controls, factorial audit |
-| Limitations and conclusion | 0.25 | Precise boundary and takeaway |
-| References | 1.00 | Curated citations only |
-
-## Visual budget
-
-The main paper should use at most four principal visual elements:
-
-1. **Method figure:** local delta, leaky evidence, event/reset, server update,
-   and client synchronization.
-2. **Frontier figure:** predictive performance versus total bidirectional
-   communication for both final benchmarks.
-3. **Main result table:** quality-selected and nearest-traffic comparisons.
-4. **Alignment-factorial table:** exact decomposition summaries for IID versus
-   strong non-IID data and $E=1$ versus $E=5$.
-
-The extended T4 defect bound, schedule comparison, observer-effect audit, and
-exploratory mechanism figures remain in the living report.
-
-## Author and review roles
-
-The author list is intentionally not inferred from repository history. Before
-P0 is closed, the project team must confirm:
-
-- lead author and corresponding author;
-- all co-authors and contribution expectations;
-- FL-method reviewer;
-- mathematical reviewer;
-- final presentation/compliance reviewer.
-
-These assignments may be maintained privately if public repository disclosure
-would be inappropriate during anonymous review.
-
-## Scope-control decision
-
-The default final scientific addition, the CIFAR-10 compact-CNN campaign, is
-complete. T5 is not part of the conference scope unless a focused review shows that the coupled
-alignment mechanism is a submission-blocking theoretical gap. Partial
-participation, network emulation, hardware energy measurement, and stronger
-coupled convergence theory are journal-extension candidates.
+The paper can use up to ten pages under the user's agreed page budget. Use the
+standard IEEE conference class and bibliography size. New consolidation edits
+are blue through `\coreColor`; earlier review wrappers are black. Do not shrink
+the bibliography to fit. Rebuild plots/tables only from committed evidence;
+never modify raw campaign outputs or the frozen `src/neuromorphicfl` inventory.

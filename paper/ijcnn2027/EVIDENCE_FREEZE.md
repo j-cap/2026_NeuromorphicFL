@@ -1,3 +1,13 @@
+# Current panel freeze — 2026-11-26
+
+The calibrated CIFAR five-method panels are closed. Current scope and selection
+boundaries are in `PAPER_CONTRACT.md`, `CLAIM_EVIDENCE.md`, and
+`CALIBRATED_PANEL_CONSOLIDATION.md`. `evidence/calibrated_core_freeze.json`
+pins the original campaign files, reused inputs and implementation sources.
+The global reproducibility manifest also pins the new manuscript products.
+This is an intentional manuscript freeze; original experiment evidence is not
+rewritten. The material below is an archived earlier freeze record.
+
 # P1, P3, and P12 evidence freeze
 
 ## Current headline authority: P12

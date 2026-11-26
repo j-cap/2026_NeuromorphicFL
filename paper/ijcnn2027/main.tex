@@ -2,6 +2,8 @@
 
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+\usepackage{array}
+\usepackage{needspace}
 \usepackage{graphicx}
 \usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{microtype}
@@ -20,9 +22,18 @@
 \newcommand{\spacerev}[1]{#1}
 \newcommand{\actionrev}[1]{#1}
 \definecolor{p19blue}{RGB}{0,85,170}
-\newcommand{\pNineteenRev}[1]{\textcolor{p19blue}{#1}}
+\newcommand{\pNineteenRev}[1]{#1}
 \definecolor{reviewred}{RGB}{190,0,0}
-\newcommand{\reviewrev}[1]{\textcolor{reviewred}{#1}}
+\newcommand{\reviewrev}[1]{#1}
+% Historical M1 revision wrappers now render black.
+% New consolidation changes are highlighted separately by \coreColor.
+\newcommand{\mOneColor}{}
+\newcommand{\mOneRev}[1]{{\mOneColor #1}}
+% November 26 consolidation: all newly written manuscript text is blue.
+% Set \coreColor to empty for a clean submission copy.
+\definecolor{coreblue}{RGB}{0,75,155}
+\newcommand{\coreColor}{\color{coreblue}}
+\newcommand{\coreRev}[1]{{\coreColor #1}}
 \newtheorem{proposition}{Proposition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{algorithm}{Algorithm}
@@ -48,24 +59,25 @@
 \maketitle
 
 \begin{abstract}
-\reviewrev{Federated learning exchanges high-dimensional model updates even
-when individual parameters change only slightly. Event-FedAvg instead
-accumulates weighted local-model changes in leaky client states and emits signed
-coordinate events at threshold crossings within synchronous FL rounds. The server sums coincident events,
-applies an independently scheduled model quantum, and returns either sparse
-replay or a smaller checkpoint so that all clients remain synchronized. We
-prove pathwise state and event-budget bounds and, conditional on expected
-aggregate alignment, a finite-horizon expected-gradient bound involving the
-event count. Across ten paired seeds for Fashion-MNIST MLP/CNN and CIFAR-10
-CNN/ResNet-14, Event-FedAvg is nondominated among the observed mean
-communication--accuracy operating points under a stated bidirectional bit
-model. A 120-round matched-traffic audit finds that cross-round state materially
-affects accuracy at the audited operating point, while full reset shows no
-clear advantage over subtractive reset. On ResNet-14, Event-FedAvg reaches
-$75.14\pm0.90\%$ accuracy at $38.66\pm0.36$ Gbit, compared with
-$74.21\pm0.74\%$ at $336.56$ Gbit for development-tuned dense FedAvg. These
-end-to-end comparisons neither isolate sparsification nor establish
-unconditional convergence or measured network and energy savings.}
+\coreRev{Event-FedAvg reduces federated communication by converting persistent,
+leaky client evidence into signed coordinate events. Fired coordinates reset
+fully; an independently scheduled model quantum scales the server aggregate.
+Lossless support encoding and aggregate-first downlink encoding synchronize
+clients exactly within conventional synchronous rounds. We prove bounded
+encoder state and a pathwise event budget, and derive a finite-horizon
+gradient-norm bound conditional on expected aggregate alignment. Two CIFAR-10
+architectures are evaluated for 1,800 rounds over ten paired seeds against
+dataset- and architecture-calibrated Dense FedAvg, STC, Str\"om-style residual
+pulses, and EF-TopK. Event-FedAvg has the lowest final bidirectional unicast
+cost among the five selected operating points on both architectures.
+At the declared 50\% accuracy target, it saves 57.8\% of traffic versus STC
+on the compact CNN and 23.4\% on ResNet-14; savings versus EF-TopK are 95.8\%
+and 65.4\%, respectively. Event also has the highest mean final compact-CNN
+accuracy. On ResNet-14, it reaches $75.47\pm0.57\%$ at 5.752~Gbit, while
+STC reaches $76.19\pm1.18\%$ at 6.460~Gbit. These results establish a favorable
+communication-to-accuracy tradeoff at the calibrated operating points, with
+explicit final-quality tradeoffs, rather than unconditional convergence or
+global dominance of a method's full rate--quality frontier.}
 \end{abstract}
 
 \section{Introduction}
@@ -79,13 +91,16 @@ message that brings all clients to the next common model. For bandwidth-limited
 edge systems, this repeated exchange can become the main scaling bottleneck of
 federated averaging (FedAvg) \cite{mcmahan2017fedavg}.
 
-\spacerev{A model parameter may change too little to justify transmission in a
-single round, yet consistently directed changes can accumulate over time.
-Round-wise compression does not directly exploit this persistence.
-Error-feedback instead stores discarded compression residuals for later
-correction~\cite{stich2018memory,richtarik2021ef21}. This motivates our design
-question: \emph{Can each client integrate weak parameter-wise updates and
-communicate only when their accumulated state crosses a threshold?}}
+\mOneRev{Cross-round accumulation is already used in error feedback and
+coordinate residual thresholding
+\cite{stich2018memory,richtarik2021ef21,strom2015distributed}.
+These methods retain untransmitted corrections for later application.
+Here we study an encoder that intentionally discards part of its accumulated
+evidence through leakage and full reset. The question is whether this choice,
+combined with signed coordinate messages and separately scheduled server steps,
+can provide a favorable bidirectional communication--accuracy tradeoff while
+maintaining exact synchronization. Communication savings and optimization
+behavior must therefore be assessed together.}
 
 \spacerev{Event-FedAvg is a stateful communication layer for a conventional
 model and optimizer. Inspired by leaky integrate-and-fire neurons
@@ -93,55 +108,117 @@ model and optimizer. Inspired by leaky integrate-and-fire neurons
 state, adds new local evidence, emits an index and sign at a threshold, and
 resets. An independent \emph{model quantum} determines how far each net event
 moves the server parameter. Only coordinate-payload generation is event-driven.
-The FL protocol remains synchronous and no round is skipped.}
+The full-participation protocol remains synchronous; sparse client
+sampling is separately evaluated.}
 
-\spacerev{After every round, the server synchronizes all clients by returning
-either the ordered sparse update sequence or, when cheaper, a complete model
-checkpoint. Thus every client begins the next round from the same model, even
-when no event was emitted.}
+\coreRev{With full participation, lossless encoding of client pulse positions
+reduces upload cost. The server first aggregates coincident pulses, then
+encodes the integer counts and any floating-point fidelity corrections.
+This returns the exact update to every client without retransmitting each
+client's pulse list. A smaller exact ordered representation remains available.
+Partial participation is studied separately with explicit catch-up costs.}
 
-\reviewrev{We contribute the complete encoder, server update, and
-synchronization protocol rather than claiming its individual ingredients as
-new. We establish pathwise state and event-budget guarantees, derive a
-finite-horizon gradient-norm bound under an explicit expected-alignment
-condition, and decompose the realized alignment into measurable mechanisms.
-Ten-seed comparisons against four referenced baselines use matched local
-training and total bidirectional traffic. A separate ten-seed audit isolates
-cross-round memory and reset semantics. Every method is evaluated as an
-end-to-end protocol, so differences are not attributed to sparsification alone.
-Figure~\ref{fig:event-fedavg-method} summarizes a complete round.}
+\coreRev{We provide three contributions: (i) a complete synchronous signed-event
+protocol with leaky evidence, full reset, independent model quanta, and exact
+bidirectional transport; (ii) pathwise state and event-budget bounds, an exact
+alignment decomposition, and a conditional finite-horizon gradient-norm bound;
+and (iii) two calibrated five-method, ten-seed CIFAR-10 panels with conservative
+unicast accounting. Event-FedAvg uses the least total communication at the
+selected final operating points and has lower paired geometric-mean cost to
+all three declared accuracy targets than every comparator. The evaluation
+separates this communication advantage from final predictive quality, and a
+controlled mechanism audit supports persistence at one operating point.
+Figure~\ref{fig:event-fedavg-method} summarizes the protocol.}
 
 \section{\rev{Related Work}}
 \label{sec:related-work}
 
-\spacerev{One-bit, sign, and sparse methods reduce message precision or density,
-while memory and error feedback preserve discarded residuals
-\cite{seide2014onebit,bernstein2018signsgd,stich2018memory,richtarik2021ef21}.}
-\reviewrev{Table~\ref{tab:structural-comparison} distinguishes the closest
-communication operators. Other event-triggered methods likewise suppress
-vector exchange~\cite{he2023etfl,yoon2025etfl,zhai2026gossip}. Event-FedAvg's
-novelty claim is the complete operator and synchronization protocol rather than
-any individual ingredient.}
 
-\begin{table}[!h]
-\caption{Closest communication operators.}
+
+\mOneRev{One-bit, sign, and sparse methods reduce message precision or density,
+while error feedback retains untransmitted corrections
+\cite{seide2014onebit,bernstein2018signsgd,stich2018memory,richtarik2021ef21}.
+Str\"om's residual-pulse method is the closest coordinate-encoder predecessor:
+it accumulates gradients, emits signed threshold-sized updates, and subtracts
+the transmitted quantum so that overshoot remains
+\cite{strom2015distributed}. Event-FedAvg leaks gradient-scale evidence and
+sets a fired coordinate's entire state to zero. Its server applies a
+separately scheduled model quantum. These choices specify a different operator;
+their individual predictive advantages are not established by the protocol
+comparison.}
+
+\begin{table*}[!t]
+\caption{\coreRev{Communication rules and comparison scope. The four numerical
+comparators share a synchronous FedAvg host with Event-FedAvg. The final two
+rows describe original protocols used only for structural context.}}
 \label{tab:structural-comparison}
-\centering
-\scriptsize
-\setlength{\tabcolsep}{2pt}
-\renewcommand{\arraystretch}{0.92}
-\begin{tabular}{@{}lllll@{}}
+\centering\footnotesize\coreColor
+\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{.13\textwidth}
+ >{\raggedright\arraybackslash}p{.19\textwidth}
+ >{\raggedright\arraybackslash}p{.24\textwidth}
+ >{\raggedright\arraybackslash}p{.20\textwidth}
+ >{\raggedright\arraybackslash}p{.18\textwidth}@{}}
 \toprule
-Method & Gran. & State/reset & Step & Sync. \\
+Method & Coordinate/message rule & Stored state & Uplink and downlink & Comparison scope \\
 \midrule
-Strom~\cite{strom2015distributed} & Coord. & Residual/sub. & $\vartheta$ & Server \\
-LENA~\cite{ghadikolaei2021lena} & Vector & Error/retain & -- & Broadcast \\
-STC~\cite{sattler2020stc} & Vector & Residual/retain & -- & Bidirectional \\
-SPARQ~\cite{singh2023sparq} & Vector & Last model & -- & Neighbors \\
-Event-FedAvg & Coord. & Leaky/full & $q_r$ & Exact round \\
+Dense FedAvg~\cite{mcmahan2017fedavg}
+ & All model coordinates & No compression residual
+ & Float32 deltas and model synchronization & Numerical; server gain tuned \\
+STC~\cite{sattler2020stc}
+ & Per-tensor top-$k$ and ternarization & Client and server error-feedback residuals
+ & Sparse support, signs and tensor scales; server recompression
+ & Numerical; native two-sided residual protocol \\
+Str\"om-style~\cite{strom2015distributed}
+ & Coordinate residual threshold & Subtract transmitted quantum; retain overshoot
+ & Signed pulses; exact aggregate downlink
+ & Numerical; residual encoder adapted to FedAvg \\
+EF-TopK~\cite{stich2018memory}
+ & Global top-$k$ selection & Weighted client-delta error feedback
+ & Float32 sparse values; exact server-update transport
+ & Numerical; no second lossy server compressor \\
+Event-FedAvg
+ & Coordinate threshold once per active round & Leaky evidence; full reset on firing
+ & Signed pulses; scheduled quantum; exact aggregate downlink
+ & Proposed synchronous server protocol \\
+\midrule
+LENA~\cite{ghadikolaei2021lena}
+ & Vector significance test & Accumulated error; clear on upload in basic algorithm
+ & Vector correction and drift; model broadcast
+ & Structural context; parameter server \\
+SPARQ-SGD~\cite{singh2023sparq}
+ & Scheduled vector-deviation test & Own and neighbor model estimates
+ & Compressed model differences & Structural context; neighbor consensus \\
 \bottomrule
 \end{tabular}
-\end{table}
+\par\smallskip\parbox{.99\textwidth}{\footnotesize
+Str\"om's original protocol exchanges updates peer to peer. The numerical row
+refers explicitly to its residual-pulse encoder inside the common FedAvg host,
+not a reproduction of that original distributed system. LENA's full clearing
+retains the accumulated correction in its message; Event-FedAvg discards fired
+evidence. Lossless transport extensions preserve each numerical comparator's
+specified update and residual semantics.}
+\end{table*}
+
+\mOneRev{Full clearing of accumulated memory also appears in LENA: its basic
+algorithm clears an error vector on upload, transmits a vector-valued
+correction, and uses drift information for silent workers
+\cite{ghadikolaei2021lena}. Sparse ternary compression (STC) already combines
+client/server residuals, sparse indices and signs, a data-dependent magnitude,
+and bidirectional FL communication~\cite{sattler2020stc}.
+SPARQ-SGD triggers compressed model-difference messages from vector deviations
+and updates model estimates used for neighbor consensus
+\cite{singh2023sparq}. Other event-triggered methods likewise regulate model
+or gradient messages~\cite{he2023etfl,yoon2025etfl,zhai2026gossip}.
+Table~\ref{tab:structural-comparison} separates the transmission rule, state
+update, message representation, and coordination in the original protocols.
+Accumulation, thresholding, full clearing, and sparse downlink are established
+ingredients. We assess their specified combination here. \coreRev{STC, residual pulses,
+EF-TopK, and Dense FedAvg form the numerical core; LENA and SPARQ-SGD supply
+structural context because their original communication/coordination rules
+differ from this numerical host.}}
+
+
 \spacerev{Federated spiking-neural-network work trains models whose neurons exchange
 spikes and maintain LIF states
 \cite{venkatesha2021fedsnn,chaki2023tradeoffs,tao2026sfedhifi}. Here, the
@@ -150,19 +227,20 @@ conventional model.}
 
 \begin{figure*}[!t]
  \centering
- \includegraphics[width=0.88\textwidth]{figures/event_fedavg_method.pdf}
- \caption{\spacerev{Event-FedAvg accumulates weighted local changes in leaky
- client states, emits signed threshold events, and scales their server aggregate
- by the independent quantum $q_r$. After every round, ordered replay or a
- checkpoint synchronizes all clients.}}
+ \includegraphics[width=.98\textwidth]{figures/calibrated_event_protocol.pdf}
+ \caption{\coreRev{The synchronous Event-FedAvg protocol. Thresholding and full
+ reset generate client pulses; lossless support coding reduces upload cost.
+ The server applies its independent quantum and returns an exact aggregate
+ representation, including floating-point fidelity corrections when required.
+ Clients start the next round from the same server model.}}
  \label{fig:event-fedavg-method}
 \end{figure*}
 
 \section{Event-FedAvg}
 \label{sec:method}
 
-\spacerev{We follow one round from local training through event encoding to the
-server update and downlink synchronization.}
+\spacerev{We first define the full-participation communication
+operator. The partial-participation extension is specified below.}
 
 \subsection{Round notation and local update}
 
@@ -173,8 +251,9 @@ The server model at the start of round $r$ is
 $\vect{w}^r\in\mathbb{R}^d$, and every client starts from this same model.
 Client $i$ has local objective $F_i$ and aggregation weight $p_i>0$, with
 $\sum_i p_i=1$. \newrev{The weights are protocol parameters known to the
-server and clients before training. All experiments use equally sized client
-datasets and therefore set $p_i=1/M$.}
+server and clients before training. All reported client partitions are equally weighted, so $p_i=1/M$;
+the partial-participation extension corrects selected contributions for
+sampling.}
 The global objective is
 \begin{equation}
  F(\vect{w})=\sum_{i=1}^M p_iF_i(\vect{w}).
@@ -252,19 +331,27 @@ $\alpha\geq0$. Clients infer $q_r$ from the round index, so an event carries no
 floating-point magnitude. Pulses for the same parameter and round reinforce
 when their signs agree and cancel otherwise.}
 
-\spacerev{A nonempty client packet has a 64-bit metadata header. Each event adds
-one sign bit and a $\lceil\log_2d\rceil$-bit address for one of $d$ parameters.}
-\reviewrev{The server returns either the ordered uplink stream or a dense model
-checkpoint, whichever is smaller. Replay is not required
-by~\eqref{eq:server-update}. We use it conservatively to preserve the original
-address--sign events and avoid defining a second codec. Encoding $\vect{C}^r$
-could exploit cancellation and may be smaller, but must represent nonunit
-integers. Replay is therefore not claimed to be bit-optimal. Adding this third
-option could only reduce the reported communication cost.}
-\spacerev{Our metric charges every upload, initial synchronization, per-round
-request, and separate response to each client. These accounting choices do not
-change~\eqref{eq:server-update}. Algorithm~\ref{alg:event-fedavg} gives the full
-ordering.}
+\coreRev{Client pulses use an exact integer frame with a 128-bit header.
+The encoder selects the shortest byte-padded representation from Rice-coded
+position gaps, explicit indices, bitmap support, and dense alternatives.
+For signed unit pulses, the selected payload carries support and signs, with
+no floating-point magnitude per coordinate. Empty client supports are silent.}
+
+\coreRev{The downlink encodes the aggregate integer count vector rather than
+concatenating client messages. In real arithmetic, this vector and the known
+$q_r$ specify~\eqref{eq:server-update}. The implementation preserves its native
+ordered float32 update: when canonical count scaling differs in the last bits,
+a sparse mask and float32 fidelity corrections are included and charged.
+The server chooses the smaller exact counts-plus-corrections frame or an exact
+ordered-pulse frame. Decoding reproduces the update bit for bit; this transport
+step adds no second lossy optimization operator.}
+
+\coreRev{Primary accounting sums all serialized upload bytes, metadata and
+padding, initial model synchronization, 32-bit per-client round requests, and
+a separate copy of each server message for each recipient. Logical broadcast,
+which charges a shared server payload once, is supplementary. These modeled
+payload costs do not include a physical network's transport headers or latency.
+Algorithm~\ref{alg:event-fedavg} states the ordering.}
 
 \begin{samepage}
 \noindent\rule{\columnwidth}{0.8pt}
@@ -283,26 +370,45 @@ round $r=1,\ldots,R$:
   (p_i/\eta_r)\vect{\delta}_i^r$ and forms $\vect{m}_i^r$ and
   $\vect{c}_i^r$ using~\eqref{eq:event-pulse}.
   \item Client $i$ resets the fired states using~\eqref{eq:full-reset} and
-  sends the indices and signs of the nonzero entries of $\vect{c}_i^r$.
+  \coreRev{sends an exactly encoded support and signs of the nonzero entries
+  of $\vect{c}_i^r$.}
   \item \textbf{Server update:} The server forms
   $\vect{C}^r=\sum_i\vect{c}_i^r$ and sets
   $\vect{w}^{r+1}=\vect{w}^r+q_r\vect{C}^r$.
-  \item \textbf{Synchronization after every round:} Including when no event
-  fires, the server returns the ordered sparse stream or a smaller dense
-  checkpoint. Every client then holds $\vect{w}^{r+1}$.
+  \item \textbf{Synchronization after every round:} \coreRev{The server returns the smaller exact aggregate-with-corrections
+  or ordered-pulse representation, including for an empty aggregate.
+  Every client then holds $\vect{w}^{r+1}$.}
 \end{enumerate}
 \end{algorithm}
 \vspace{-2pt}
 \noindent\rule{\columnwidth}{0.8pt}
 \end{samepage}
 
+\noindent\textbf{Partial-participation extension.}
+Let $\mathcal P_r$ contain the selected clients, with inclusion
+probabilities $\pi_i=\Pr(i\in\mathcal P_r)$. Only selected clients
+train and emit; their pre-threshold evidence uses
+$(p_i/\pi_i)\vect{\delta}_i^r/\eta_r$.
+For fixed potential local changes at a common server model,
+the unthresholded sampled sum is unbiased:
+$\E_{\mathcal P_r}[\sum_{i\in\mathcal P_r}
+(p_i/\pi_i)\vect{\delta}_i^r]=\sum_i p_i\vect{\delta}_i^r$.
+This identity does \emph{not} extend to the emitted event aggregate:
+the stateful threshold, sign, and full reset are nonlinear,
+and inactive clients emit nothing. The server sums only selected
+events without applying a second sampling weight.
+Inactive encoder states persist; upon return after $g$ rounds,
+a client applies $\rho^g$ before adding new evidence.
+Selected clients synchronize exactly before training and after
+aggregation; terminal catch-up of stale clients is charged to traffic.
+The theory below concerns full participation
+($\mathcal P_r=\{1,\ldots,M\}$), not convergence under sampling.
+
 \section{\rev{Finite-Horizon Communication and Alignment Analysis}}
 \label{sec:theory}
 
-\newrev{This section answers three questions in sequence: how many coordinate
-events the encoder can emit along a realized optimization trajectory, how those events
-align with the current global descent direction, and what additional alignment
-condition is sufficient for a finite-horizon optimization bound.}
+\newrev{We analyze the event budget, realized gradient alignment,
+and a conditional finite-horizon optimization bound.}
 
 \newrev{For the first $R$ rounds, let $N_R^{\rm coord}$ denote the total number of
 client-coordinate events. Every fired coordinate of every client contributes
@@ -323,8 +429,16 @@ $|z_{ij}^r|<\vartheta$ in every round. \rev{The total in
  \sum_{r=1}^R\sum_i\norm{\vect{a}_i^r}_1\right).
  \label{eq:event-budget}
 \end{equation}
-Consequently, if $P_R$ is the number of nonempty packets, the exact event
-uplink is $64P_R+(\lceil\log_2d\rceil+1)N_R^{\rm coord}$ bits.
+\coreRev{Let $P_R$ count nonempty client packets and
+$b_d=\lceil\log_2d\rceil$. The serialized event uplink satisfies}
+\begin{equation}
+ \coreRev{U_R\leq135P_R+(b_d+1)N_R^{\rm coord}.}
+ \label{eq:encoded-uplink-bound}
+\end{equation}
+\coreRev{The bound includes 128 header bits and at most seven padding bits
+per packet: the codec can always select explicit indices plus signs.
+It concerns client event payloads; synchronization and request costs are
+accounted separately.}
 \end{proposition}
 The threshold test and reset prove the state claim. Partition each \newrev{coordinate-state}
 trajectory into disjoint reset-to-event blocks. On a block $s{:}t$, the
@@ -399,37 +513,13 @@ For every realized round,
  \label{eq:alignment-decomposition}
 \end{equation}
 \end{proposition}
-For each emitted pair, introduce the two intermediate quantities in separate
-exact steps. First, adding and subtracting the local gradient gives
-\begin{align*}
--g_j^rs_{ij}^r
-&=-g_{ij}^rs_{ij}^r+(g_{ij}^r-g_j^r)s_{ij}^r.
-\end{align*}
-The second term is the client-to-global heterogeneity contribution. Next,
-adding and subtracting the local-update proxy gives
-\begin{align*}
--g_{ij}^rs_{ij}^r
-&=v_{ij}^rs_{ij}^r+(-g_{ij}^r-v_{ij}^r)s_{ij}^r.
-\end{align*}
-Here $\vect{v}_i^r$ is the negative average stochastic gradient along the
-local trajectory, so the second term measures its mismatch with the current
-negative local gradient. Combining both steps yields
-\begin{align*}
--g_j^rs_{ij}^r
-&=v_{ij}^rs_{ij}^r+(-g_{ij}^r-v_{ij}^r)s_{ij}^r
- +(g_{ij}^r-g_j^r)s_{ij}^r.
-\end{align*}
-Finally, because $s_{ij}^r\in\{-1,+1\}$,
-\begin{equation*}
-v_{ij}^rs_{ij}^r
-=|v_{ij}^r|-2|v_{ij}^r|\ind{s_{ij}^rv_{ij}^r<0}.
-\end{equation*}
-The factor two changes the nominal $+|v_{ij}^r|$ contribution into
-$-|v_{ij}^r|$ when the pulse opposes the proxy. Summing over emitted pairs
-therefore produces $P_r-R_r+L_r+B_r$ and proves
-\eqref{eq:alignment-decomposition}. The terms isolate current-update
-agreement, memory opposition, local mismatch, and heterogeneity. Since $L_r$
-and $B_r$ have unrestricted signs, the identity alone cannot ensure alignment.
+For each emitted pair, add and subtract $g_{ij}^r$ and $v_{ij}^r$
+from $-g_j^rs_{ij}^r$. The identity
+$v_{ij}^rs_{ij}^r=|v_{ij}^r|-2|v_{ij}^r|
+\ind{s_{ij}^rv_{ij}^r<0}$ then yields
+\eqref{eq:alignment-decomposition} upon summation.
+The mismatch terms $L_r$ and $B_r$ have unrestricted signs,
+so the identity alone does not guarantee descent.
 
 \begin{proposition}[\rev{One-round descent}]
 If $F$ is $L$-smooth, the server update and the aggregate-norm bound give
@@ -463,31 +553,32 @@ $J_R$ with $\Pr(J_R=r)=q_r/Q_R$. Then}
 \begin{align}
  \E\norm{\nabla F(\vect{w}^{J_R})}_2^2
  &\leq
- \frac{F(\vect{w}^1)-F_{\inf}}{\kappa Q_R}
- + \frac{\sum_{r=1}^Rq_r\beta_r}{\kappa Q_R} \notag\\
- &\quad +\frac{LM}{2\kappa Q_R}
- \sum_{r=1}^Rq_r^2\E N_r .
+ \underbrace{\frac{F(\vect{w}^1)-F_{\inf}}{\kappa Q_R}}_{
+   \substack{\scriptscriptstyle\text{initial}\\[-2pt]\scriptscriptstyle\text{gap}}}
+ + \underbrace{\frac{\sum_{r=1}^Rq_r\beta_r}{\kappa Q_R}}_{
+   \substack{\scriptscriptstyle\text{alignment}\\[-2pt]\scriptscriptstyle\text{defect}}}
+ \notag\\
+ &\quad+
+ \underbrace{\frac{LM}{2\kappa Q_R}
+ \sum_{r=1}^Rq_r^2\E N_r}_{
+   \substack{\scriptscriptstyle\text{event}\\[-2pt]\scriptscriptstyle\text{curvature}}}.
  \label{eq:stationarity}
 \end{align}
 \end{theorem}
 
-\reviewrev{The encoder analysis alone bounds the client states and the number of
-transmitted events. To obtain an optimization result, we additionally assume
-that the aggregate event update is sufficiently aligned with the negative
-global gradient in expectation, as stated
-in~\eqref{eq:alignment-assumption-paper}. Under this condition,
-Theorem~\ref{thm:conditional-stationarity} bounds the $q_r$-weighted average
-squared gradient norm over the first $R$ rounds. The bound improves when the
-initial objective gap and alignment defects are small and when the
-quantum-weighted event cost remains controlled. The theorem does not prove that
-Event-FedAvg always satisfies the alignment condition. It states the
-optimization consequence when that condition holds.}
-
-\rev{Operationally, the three right-hand terms identify what must be controlled:
-cumulative update mass, the $q_r$-weighted alignment defect, and discrete-event
-curvature. The last grows with $q_r^2\E N_r$. A small bound therefore requires
-sufficient mass, controlled defects, and a quantum schedule that keeps the
-event-curvature sum small relative to $Q_R$.}
+\reviewrev{The event-budget bound is pathwise, whereas
+Theorem~\ref{thm:conditional-stationarity} additionally assumes conditional
+expected descent alignment; this property does not follow from the encoder.
+Equation~\eqref{eq:stationarity} controls a $q_r$-weighted random iterate,
+not necessarily the final model. In particular, a useful small bound requires
+the initial-gap term $1/Q_R$, the normalized defect
+$\sum_r q_r\beta_r/Q_R$, and the normalized event-curvature term
+$\sum_r q_r^2\E N_r/Q_R$ to be collectively small.
+Since the theorem does not bound $\beta_r$ or establish its decay,
+it does not by itself guarantee vanishing gradients.
+The diagnostics below examine realized alignment and these two
+event-dependent terms on finite trajectories, not the assumed
+conditional expectation or an asymptotic rate.}
 
 \rev{Taking expectations in~\eqref{eq:descent} and applying
 \eqref{eq:alignment-assumption-paper}, then dividing by $\kappa q_r$, yields}
@@ -550,223 +641,174 @@ seeds, or tasks. Because we neither estimate global $L$ nor audit every round,
 these quantities diagnose the theorem's mechanism rather than certify its
 numerical bound.}
 
-\begin{figure*}[t]
- \centering
- \includegraphics[width=0.92\textwidth]{figures/communication_frontier_legend.pdf}
- \par\vspace{1mm}
- \subfloat[Fashion-MNIST MLP]{%
-  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_fmnist_mlp.pdf}}\hfill
- \subfloat[Fashion-MNIST CNN]{%
-  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_fmnist_cnn.pdf}}\hfill
- \subfloat[CIFAR-10 CNN]{%
-  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_cnn.pdf}}\hfill
- \subfloat[\rev{CIFAR-10 ResNet-14}]{%
-  \includegraphics[width=0.245\textwidth]{figures/communication_frontier_cifar_resnet14.pdf}}
- \par\vspace{0.5mm}
- \caption{\reviewrev{Ten-seed test-set communication--accuracy comparison.
- Traffic axes are logarithmic and use panel-specific ranges. Filled markers are
- quality-selected and hollow markers are nearest-traffic settings. Dotted lines
- connect points that are nondominated in the observed mean plane. Error bars
- show mean $\pm$ sample standard deviation over matched seeds.}}
- \label{fig:communication-frontier}
-\end{figure*}
-
-\begin{figure*}[t]
- \centering
- \includegraphics[width=0.74\textwidth]{figures/convergence_legend.pdf}
- \par\vspace{0.5mm}
- \subfloat[Fashion-MNIST MLP]{%
-  \includegraphics[width=0.49\textwidth]{figures/convergence_fmnist_mlp.pdf}}\hfill
- \subfloat[Fashion-MNIST CNN]{%
-  \includegraphics[width=0.49\textwidth]{figures/convergence_fmnist_cnn.pdf}}
- \par\vspace{0.5mm}
- \subfloat[CIFAR-10 CNN]{%
-  \includegraphics[width=0.49\textwidth]{figures/convergence_cifar_cnn.pdf}}\hfill
- \subfloat[CIFAR-10 ResNet-14]{%
-  \includegraphics[width=0.49\textwidth]{figures/convergence_cifar_resnet14.pdf}}
- \par\vspace{0.5mm}
- \caption{\reviewrev{Test-set convergence behavior over ten matched seeds for
- all four dataset--model pairs. Color and line style identify methods. Lines
- and colored bands show the mean and pointwise 95\% confidence interval. The
- pale-gray span marks the final 20\% used for the visual saturation check.}}
- \label{fig:convergence-trajectories}
-\end{figure*}
-
-\input{generated/main_results_table}
+\input{generated/p11_alignment_table}
 
 \section{Experimental Protocol}
 \label{sec:experiments}
 
-\textbf{Tasks and models.}
-\spacerev{We evaluate ten-client image classification under strong label skew.
-Fashion-MNIST uses a 25,818-parameter MLP for 1,500 rounds and a
-14,538-parameter CNN for 1,800 rounds. Each client has 6,000 examples, with 55\%
-from one dominant class and 5\% from each other class. \pNineteenRev{CIFAR-10 uses a
-20,570-parameter CNN for 1,800 rounds and a 175,258-parameter group-normalized
-ResNet-14 for 3,000 rounds.} Each client has 5,000 examples under the same class
-proportions. All runs use full participation, five local SGD steps, batch size
-32, and learning rate $0.1$ for Fashion-MNIST or $0.05$ for CIFAR-10. We set
-$r_0=100$. Within a benchmark, every method uses the same final-round horizon.
-The frozen Event-FedAvg tuples
-$(\rho,\vartheta,q_0,\alpha)$ are $(0.999,0.025,0.005,0.1)$,
-$(0.999,0.025,0.010,0.3)$, $(0.999,0.025,0.005,0.2)$, and
-$(0.999,0.0125,0.005,0.3)$ in the listed model order.}
+\coreRev{\textbf{Purpose and common host.}
+We test whether the complete protocol reduces bidirectional communication for
+predictive quality against close, calibrated alternatives. The primary panels
+use CIFAR-10 with a 20,570-parameter compact CNN and a 175,258-parameter
+GroupNorm ResNet-14. Ten fully participating clients each hold 5,000 examples:
+55\% from one dominant class and 5\% from each other class. All methods run
+1,800 rounds with five local SGD steps, batch size 32, learning rate 0.05,
+L2 coefficient 0.0005, and initialization seed 7777. Data, initialization,
+local minibatch order and evaluation cadence are matched within each seed.
+Only the communication operator and its server gain differ.}
 
-\textbf{Practical parameter selection.}
-\reviewrev{The retention $\rho$ controls how quickly unused evidence fades and
-gives the approximate memory horizon $1/(1-\rho)$ when constant. We fix
-$\rho=0.999$ across benchmarks to retain long but finite memory. The threshold
-$\vartheta$ is the evidence required to fire, so increasing it generally lowers
-event traffic. The initial quantum $q_0$ sets the server-model displacement of
-one net event, while $r_0$ and $\alpha$ set the time scale and decay rate of
-$q_r=q_0(1+r/r_0)^{-\alpha}$. We fix $r_0=100$ globally and fix $\alpha$ per
-benchmark before the final scale search. We then select the task-specific
-$(\vartheta,q_0)$ pair by final development training loss and freeze all
-settings before the multi-seed evaluation. A separate three-seed compact-CNN
-audit at 120 rounds gave $48.25\pm1.07\%$ for $\rho=0.999$ and
-$48.32\pm1.05\%$ for $\rho=1$, at $200.2$ and $202.1$ Mbit. It therefore
-provides no evidence of an isolated leakage benefit. The anonymous supplementary
-artifact reports every method-specific candidate, development score, frozen
-selection, per-seed summary, and audit component.}
+\coreRev{\textbf{Architecture-specific calibration.}
+Every method uses a development-calibrated setting for the dataset and model;
+none is selected from the new common-seed test outcomes. ResNet-14 receives a
+common bounded budget per method: 18 configurations screened for 600 rounds,
+then the best three continued to 1,800 rounds (14,400 unique training rounds
+per family). Selection minimizes validation CE on a 45,000/5,000 training split,
+with traffic and configuration identifier as tie breakers. The families use
+comparable accumulated budgets but different search geometries. This is
+bounded development tuning, not a guarantee of global hyperparameter optimality.}
 
-\spacerev{Each comparison method has a development-selected quality setting and,
-when available, a nearest-traffic setting. EF-TopK retains fractions $0.05$
-and $0.01$. Strom's quality/traffic thresholds are $0.00125/0.02$,
-$0.005/0.02$, and $0.0025/0.01$ for the three smaller models. The CIFAR-10
-EF-TopK class-wise reference uses $0.05$. The compact CIFAR-10 CNN uses dense
-server gain $\gamma=2$, while the ResNet-14 dense audit selects $\gamma=1.5$.
-Table~\ref{tab:main-results} summarizes the primary final-round endpoints.}
+\coreRev{The compact-CNN panel preserves its earlier dataset-specific
+calibrations: Event and Str\"om use validation CE; STC uses regularized training
+objective; EF-TopK uses its archived training-CE selection; Dense uses the
+training-objective-selected schedule. Historical budgets and selection rules
+therefore differ in that panel. The ResNet panel supplies the more controlled
+common-budget comparison. Full grids, continuations and selection records
+accompany the frozen evidence.}
 
-\textbf{Selection and evaluation.}
-We compare Event-FedAvg with dense FedAvg~\cite{mcmahan2017fedavg}, Sign-EF
-based on sign quantization and error feedback
-\cite{seide2014onebit,bernstein2018signsgd}, EF-TopK with memory
-\cite{stich2018memory,richtarik2021ef21}, and Strom's residual-conserving
-threshold pulses~\cite{strom2015distributed}. \emph{Matched local learning}
-means identical client data, initialization, local steps, learning rate, and
-minibatch order for every method sharing a seed. Only communication and its
-server update differ.
+\coreRev{\textbf{Frozen operating points.}
+Both Event models use $\rho=0.999$, $r_0=100$, $\alpha=0.2$ and gain one;
+$(\vartheta,q_0)=(0.05,0.01)$ for the compact CNN and $(0.01,0.0025)$
+for ResNet-14. Str\"om-style residual pulses use thresholds 0.05 and 0.005,
+respectively, and native gain 0.10 (FedAvg-equivalent gain two). They preserve
+nonleaky subtractive residuals in the common server host. Dense uses
+$\gamma_r=4(1+r/100)^{-0.3}$ for the compact CNN and constant 1.5 for ResNet.
+EF-TopK retains the largest 5\% and 1\% of weighted client-delta coordinates,
+with gains one and four. STC uses per-tensor upload/download retention $p=1$
+and gains two and four; ternarization and both error-feedback residuals remain
+active, so $p=1$ is not full-precision Dense FedAvg.}
 
-\reviewrev{We choose one common horizon per benchmark before its multi-seed
-campaign. The Fashion-MNIST and compact CIFAR-10 audits extend all frozen
-operating points on one strong-skew partition and training seed. The ResNet-14
-audit instead extends the selected dense development trajectory. The first two
-audits apply a fixed plateau rule to smoothed test cross-entropy over the final
-20\% of rounds. The ResNet-14 audit extends the dense trajectory to 3,600 rounds
-and identifies 3,000 rounds as the generalization plateau before later
-deterioration. The resulting horizon is fixed for every method and seed,
-without method-specific early stopping or checkpoint selection. The audit seed
-is included in the ten-seed Fashion-MNIST and compact-CIFAR aggregates, whereas
-the ResNet-14 audit seed is separate. We therefore describe the campaigns as
-fixed-horizon test-set evaluations, not completely untouched held-out tests.}
+\coreRev{\textbf{Representation fairness.}
+STC retains its native lossy server compressor and server residual.
+EF-TopK retains float32 sparse values and client residuals, without adding a
+second lossy server operator. All compressed comparators receive lossless
+support encoding and exact server-update transport where applicable;
+Str\"om and Event share the same pulse-codec portfolio. Thus the comparison
+charges serialized representations rather than granting efficient support
+coding only to the proposed method. Exact codec round trips and reconstructed
+client models are checked by the runners. The accelerated CPU codec used for
+the new ResNet baselines is byte-equivalent to the frozen original codec.}
 
-\spacerev{Hyperparameters are selected on one development partition per
-benchmark by final training loss. For dense FedAvg, server gain $\gamma$ scales
-the aggregate as
-$\vect{w}^{r+1}=\vect{w}^r+\gamma\sum_i p_i\vect{\delta}_i^r$. For the compact
-CIFAR-10 CNN, $\gamma=2$ is selected from
-$\{0.25,0.5,0.75,1,1.5,2,4\}$. The ResNet-14 choice $\gamma=1.5$ follows a
-separate 900-round development audit and is frozen for the 3,000-round evaluation. For Strom and
-EF-TopK, we also freeze the setting nearest Event-FedAvg in log traffic.
-Table~\ref{tab:main-results} reports Event-FedAvg, dense FedAvg, and the
-preselected quality-oriented sparse comparator for each benchmark. Test
-accuracy is not used to select configurations or this table entry. Test
-cross-entropy enters only the shared horizon audits described above.
-Figure~\ref{fig:communication-frontier} contains all remaining frozen points,
-including nearest-traffic settings and secondary method families. Values
-are means and sample standard deviations over ten paired strong-skew partitions
-and training seeds. We record test cross-entropy, accuracy, worst-class
-accuracy, coordinate events, and communication. \reviewrev{Because the
-event-triggered methods in Section~\ref{sec:related-work} use different message
-or network semantics, they are conceptual prior art rather than
-protocol-matched numerical baselines.}}
+\coreRev{\textbf{Confirmation and metrics.}
+Each architecture has ten common partition/SGD seed pairs, distinct from its
+development partition: 6000--6900/86000--86900 for the compact CNN and
+7100--8000/97100--98000 for ResNet-14, in steps of 100. Confirmation fits start
+fresh on all 50,000 training images and use the fixed official 10,000-image
+test set. The two panels contain 100 method--seed outcomes; 40 pulse runs are
+verified exact reuses. Accuracy and unregularized test CE at round 1,800 are
+fixed predictive endpoints. Each run is evaluated at round one and every
+60 rounds. Independent audits verify receipts, cumulative traffic prefixes,
+and sampled model fingerprints without changing training.}
 
-\textbf{Communication metric.}
-\reviewrev{Our primary protocol-level counter is conservative bidirectional
-unicast. It charges every upload, the initial model sent separately to each
-client, a 32-bit request per client and round, and a separate
-replay-or-checkpoint response to each client. Headers, addresses, signs, and
-32-bit dense values are included, and the cheaper exact downlink representation
-is used each round. The logical-broadcast sensitivity instead charges one
-shared downlink copy. Both models apply the same rules to every method. Neither
-represents measured link-layer traffic, retransmissions, latency, or energy.}
+\coreRev{Targets 45\%, 50\%, and 55\% were declared before the corresponding
+common-seed confirmation. Cost to target is the first saved per-run crossing,
+without interpolation or a requirement to remain above it. All fits continue
+to 1,800 rounds. These early-to-intermediate targets complement final predictive
+quality; they do not measure near-optimal convergence. A missed target is
+reported as censored, never as zero cost. Traffic ratios are computed within
+paired seeds, summarized geometrically, and assigned descriptive unadjusted
+95\% Student-$t$ intervals on the log scale. Endpoint tables show arithmetic
+means and sample SDs. The shared test set has been inspected in prior studies;
+new seeds are fresh runs, not a new untouched dataset.}
 
-\textbf{Alignment study.}
-\spacerev{A Fashion-MNIST MLP $2\times2$ study crosses IID or strong non-IID
-data with one or five local steps while holding other settings fixed. For ten
-paired seeds, rounds $1,5,10,\ldots,150$ are audited by independently rerunning
-the same trajectory. Exact full-client gradients are evaluated after the event
-decision, so diagnostics cannot alter later crossings.}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.97\textwidth]{figures/calibrated_core_trajectories.pdf}
+\caption{\coreRev{Predictive accuracy against cumulative bidirectional unicast
+traffic for the frozen five-method panels. Lines are paired-seed arithmetic
+means and shading is $\pm$ one sample SD of accuracy. The horizontal axis is
+logarithmic. These descriptive mean curves do not define the per-run target
+crossings used for the paired cost comparisons.}}
+\label{fig:calibrated-trajectories}
+\end{figure*}
 
-\textbf{Mechanism audits.}
-\reviewrev{The selected Event-FedAvg operator uses persistent cross-round state
-and full reset. Baseline comparisons cannot isolate these internal choices, so
-we conduct a controlled compact CIFAR-10 CNN audit. Because it reuses the
-original frozen reference runs, it retains their 120-round endpoint rather than
-redesigning the control after the later 1,800-round extension. It is therefore
-an early operating-point mechanism test, not long-horizon evidence. For the
-memoryless and subtractive-reset families, one threshold is selected on the
-development partition by minimum log-distance to the frozen operator's total
-traffic. The
-selected thresholds are $0.010$ and $0.025$, respectively, and neither lies at
-a search-grid boundary. The settings are then frozen for the same ten paired
-evaluation seeds. All other training, quantum, and communication settings
-remain unchanged.}
+\input{generated/calibrated_core_results}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.97\textwidth]{figures/calibrated_core_target_ratios.pdf}
+\caption{\coreRev{Event/reference unicast cost ratios at all three declared
+accuracy targets. Every paired geometric-mean ratio is below one; error bars
+are descriptive unadjusted 95\% intervals. Compact-CNN Dense reaches 55\% in
+9/10 runs, so that contrast uses nine common hits. All other method--target
+combinations have ten common hits.}}
+\label{fig:calibrated-targets}
+\end{figure*}
+
+\input{generated/calibrated_core_targets}
 
 \section{Results and Discussion}
 \label{sec:results}
 
-\spacerev{Figure~\ref{fig:communication-frontier} compares total bidirectional
-traffic and accuracy over the same ten matched seeds per panel. Filled markers
-show quality-selected settings and hollow markers show nearest-traffic settings.
-Table~\ref{tab:main-results} reports the three primary final-round endpoints
-per benchmark, while the figure retains all evaluated operating points.}
+\coreRev{\textbf{Lower communication to declared predictive accuracy.}
+Event-FedAvg has lower paired geometric-mean unicast cost than every comparator
+at each declared target on both architectures (Fig.~\ref{fig:calibrated-targets}).
+At 50\% accuracy, every method succeeds on all ten seeds.
+On the compact CNN, Event saves 57.8\% versus STC, 95.8\% versus EF-TopK,
+29.2\% versus Str\"om, and 99.1\% versus Dense.
+On ResNet-14, the corresponding savings are 23.4\%, 65.4\%, 51.4\%, and 98.3\%
+(Table~\ref{tab:calibrated-targets}). Event uses fewer bits in every individual
+50\% target pair against all four references in both panels.
+The same direction holds at 45\% and 55\% in paired mean cost;
+ResNet STC at 55\% has nine individual cost wins out of ten.
+The benefit is therefore reproducible across the declared targets and is not
+an artifact of choosing one favorable crossing after inspection.}
 
-\input{generated/p11_alignment_table}
+\coreRev{This result primarily concerns message cost rather than a universal
+reduction in training rounds. Against ResNet STC at 50\%, Event crosses at the
+same saved round in nine pairs and earlier in one; their mean first crossings
+are rounds 306 and 312. Exact support and aggregate transport reduce the bits
+needed for those updates. We therefore describe improved communication to
+predictive quality rather than a general faster-convergence rate.}
 
-\newrev{At the audited final horizons, Event-FedAvg uses $6.3\%$, $7.9\%$,
-$14.2\%$, and $11.5\%$ of dense traffic in the model order of
-Table~\ref{tab:main-results}, while matching or exceeding dense mean accuracy.
-The paired Fashion-MNIST differences are positive on nine of ten MLP seeds and
-eight of ten CNN seeds. On compact CIFAR-10, the $2.54$-point advantage has a
-95\% interval of $[1.67,3.41]$ points. On ResNet-14, the $0.93$-point advantage
-has interval $[0.17,1.69]$ points and holds for seven pairs. These are
-end-to-end protocol comparisons. Event-FedAvg changes the representation and
-the induced server update, while dense FedAvg uses a development-selected
-constant gain.}
+\coreRev{\textbf{Final operating points and predictive tradeoffs.}
+Event has the lowest total round-1,800 unicast cost in both panels and in every
+paired comparison with each reference (Table~\ref{tab:calibrated-core}).
+For the compact CNN it also has the largest mean accuracy, $57.55\pm0.49\%$,
+at 0.499~Gbit. Relative to the closest pulse comparator, Str\"om, the final
+cost saving is 3.9\% [3.0,4.8], while the accuracy difference is
+$+0.27$ percentage points with interval $[-0.43,0.97]$.
+Thus the final predictive difference is unresolved; the stronger distinction
+is the 29.2\% lower cost to the declared 50\% target.}
 
-\input{generated/matched_accuracy_traffic_table}
+\coreRev{On ResNet-14, Event reaches $75.47\pm0.57\%$ at 5.752~Gbit,
+compared with $72.16\pm0.52\%$ at 8.305~Gbit for Str\"om.
+The paired advantage is $+3.31$ points [2.84,3.78] with 30.7\% less traffic.
+EF-TopK has the highest final mean accuracy, $76.41\pm0.87\%$,
+at 12.389~Gbit. Event saves 53.6\% [53.4,53.8] but has a paired accuracy
+difference of $-0.94$ points [$-1.58,-0.31$].
+STC reaches $76.19\pm1.18\%$ at 6.460~Gbit; Event saves 11.0\% [10.6,11.3]
+with a $-0.72$-point accuracy difference [$-1.61,0.16$].
+The STC interval does not establish equivalence or noninferiority.
+Test CE is reported alongside accuracy because the two metrics need not rank
+methods identically. These are favorable cost--quality operating points,
+not predictive dominance over every comparator.}
 
-\reviewrev{Table~\ref{tab:matched-accuracy-traffic} uses the first recorded
-checkpoint where the ten-seed mean reaches each uniform task-relative target.
-This post-hoc description of fixed trajectories is not target-based early
-stopping. Event-FedAvg uses $91.5$--$95.6\%$ less traffic across the twelve
-cells. Figure~\ref{fig:communication-frontier} retains all sparse baselines.}
-
-\reviewrev{With one shared downlink copy, the corresponding Event-to-dense
-ratios are $2.1\%$, $2.6\%$, $4.7\%$, and $3.8\%$. This sensitivity reuses the
-recorded streams and does not establish rankings for arbitrary network costs.}
-
-\pNineteenRev{Figure~\ref{fig:convergence-trajectories} shows test-set
-cross-entropy for all four final-horizon campaigns. The Fashion-MNIST curves have largely
-flattened by their endpoints. On the compact CIFAR-10 CNN, Event-FedAvg accuracy
-is already $57.17\%$ at round 1,200 and remains $57.15\%$ at round 1,800, while
-its test loss rises modestly after the accuracy plateau. Dense FedAvg and
-both Strom settings also deteriorate late, whereas EF-TopK and Sign-EF retain
-small improvements. Two nearest-traffic Strom runs collapse to chance-level
-accuracy, which explains its large $15.1$-point standard deviation in
-Figure~\ref{fig:communication-frontier}. On ResNet-14, Event-FedAvg reaches its
-minimum mean test loss near round 1,800 and then enters a generalization
-plateau, while EF-TopK and Sign-EF continue improving at round 3,000.
-\reviewrev{We therefore describe the campaigns as practically saturated or
-past their best generalization region, not as fully converged.} Strom's
-larger fluctuations are consistent with a fixed residual pulse that couples
-threshold and update magnitude in this synchronous adaptation. They do not
-imply general instability of the original asynchronous method.}
+\coreRev{\textbf{What the communication comparison establishes.}
+Savings remain after charging separate downlink copies to ten clients.
+They need not hold in each direction: versus ResNet STC, Event reduces
+uplink by 70.6\% but increases downlink by 47.8\% on the paired geometric scale,
+yielding an 11.0\% total saving. Logical-broadcast accounting gives a larger
+59.7\% total saving against this STC point, but is not the primary metric.
+The result therefore does not depend on a free broadcast assumption.
+Nor does it establish a globally superior rate--quality frontier:
+a sparse STC development point ($p=0.05$, gain four) used less validation
+traffic and had higher validation accuracy than Event, but worse validation
+CE, and was not the CE-selected confirmation point. The panel compares
+preselected, quality-calibrated configurations, not all possible STC budgets.}
 
 \textbf{Mechanism audit.}
-\reviewrev{The controlled audit isolates cross-round state and reset semantics
-over ten paired seeds at the original 120-round operating point.}
+\reviewrev{Ten paired seeds isolate cross-round memory and reset
+at the original 120-round operating point.}
 
 \input{generated/p15_operator_ablation_table}
 
@@ -783,51 +825,102 @@ superiority of full reset. We retain full reset because it defines the tested
 operator and yields the bounded-state invariant and disjoint blocks used in
 the analysis.
 
-\reviewrev{Table~\ref{tab:alignment-factorial} focuses on the quantities that
-map directly to the gradient-norm bound. It reports ten seeds and 31 audited
-checkpoints per seed at rounds $1,5,10,\ldots,150$. Each audit independently
-reruns training from the same initialization. The displayed
-$\widehat\kappa_{\mathcal A}$ is the trajectory ratio in
-\eqref{eq:empirical-alignment-ratio}, not mean $A_r$ or theoretical $\kappa$.
-Across the four cells, $96.1$--$99.0\%$ of aggregates have positive
-first-order alignment. Under strong non-IID data, five local steps retain
-frequent positive alignment but reduce the frequency of objective decreases to
-$69.7\%$. Thus positive first-order alignment is not sufficient for realized
-descent.}
+\reviewrev{Table~\ref{tab:alignment-factorial} reports ten seeds
+and 31 independently audited checkpoints per seed.
+The displayed $\widehat\kappa_{\mathcal A}$ is the realized
+trajectory ratio in~\eqref{eq:empirical-alignment-ratio},
+not the theoretical $\kappa$ or a bound on it.}
 
-\reviewrev{For $\kappa_0=8$, most checkpoints have zero realized defect, but
-nonzero $\widehat{\mathcal D}_{\mathcal A}$ excludes uniform alignment. A
-post-hoc check over $\kappa_0\in\{4,8,12\}$ gives $75.2$--$95.5\%$ zero-defect
-checkpoints and $\widehat{\mathcal D}_{\mathcal A}=0.020$--$0.073$, while the
-event-curvature ordering is unchanged. The artifact retains all decomposition
-terms, including zero memory opposition in all $1{,}240$ snapshots. These
-finite-trajectory diagnostics are not specific to $\kappa_0=8$, but they do not
-certify~\eqref{eq:alignment-assumption-paper}.}
+\reviewrev{Across the four audited conditions,
+$96.1$--$99.0\%$ of emitted aggregates have positive first-order
+alignment, but the fraction of objective decreases falls to
+$69.7\%$ under strong non-IID data with five local steps.
+Thus favorable sampled alignment is not sufficient for actual
+descent. At the exploratory reference $\kappa_0=8$, the
+reported $\widehat{\mathcal D}_{\mathcal A}$ and
+$\widehat{\mathcal V}_{\mathcal A}$ diagnose, respectively,
+sampled alignment shortfall and event curvature.
+A post-hoc sensitivity check over $\kappa_0\in\{4,8,12\}$
+gives $75.2$--$95.5\%$ zero-defect checkpoints and
+$\widehat{\mathcal D}_{\mathcal A}=0.020$--$0.073$.
+Neither these finite sampled ratios nor positive realized
+alignment validate the conditional expectation
+in~\eqref{eq:alignment-assumption-paper} or yield a numerical
+certificate without a global smoothness bound.}
+
+\reviewrev{A retrospective theory-to-trajectory audit makes this
+distinction quantitative: positive alignment without an objective
+decrease occurs at $29.4\%$ of the sampled strong-non-IID,
+five-local-step checkpoints, versus $0.0\%$ for IID data with one
+local step. Across the four conditions, mean realized curvature
+remainders increase with the sampled event-scale diagnostic.
+These associations motivate retaining both terms in
+\eqref{eq:stationarity}, but do not certify its conditional
+expectation or a global smoothness bound. The per-seed contrasts
+and diagnostic plot are provided in the supplementary artifact.}
+
+
+
+\coreRev{\textbf{Supporting evidence.}
+The Fashion-MNIST MLP/CNN studies and the following 50-client robustness test
+are retained as supporting evidence under their original frozen calibration
+and accounting. They are not additional common-budget five-method panels.}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.97\columnwidth]{figures/p20_participation_accuracy.pdf}
+\caption{\coreRev{Supporting compact-CIFAR study with 50 clients, 10\% and
+20\% participation, and original frozen settings. Error bars: ten-seed sample
+SD. Circles: Event; triangles: EF-TopK; squares: Dense.
+This study uses replay/checkpoint catch-up accounting, not the new
+full-participation aggregate protocol or newly calibrated STC panel.}}
+\label{fig:partial-participation}
+\end{figure}
+
+\coreRev{At 20\% and 10\% participation, Event attains
+$56.44\pm0.61\%$ and $55.39\pm0.80\%$ accuracy using 10.68 and 6.53~Gbit.
+Relative to the original EF-TopK comparator, total communication falls by
+42.5\% and 13.4\%, with paired accuracy intervals spanning zero.
+Synchronization and terminal catch-up costs are charged; equivalence is not
+established. The fixed-round scenarios differ in local computation, so they
+are not compute-matched. The new five-method ranking is untested here.}
 
 \section{Limitations}
 \label{sec:limitations}
 
-\reviewrev{The evaluation covers synchronous full participation, ten clients,
-two image datasets, and configurations selected on one development partition.
-Ten paired seeds measure matched-run variation but not simultaneous inference
-or hyperparameter-selection uncertainty. The alignment study varies only
-partitioning and local steps in one Fashion-MNIST setting, and the theorem
-assumes aggregate alignment without an asymptotic claim. Broader data,
-participation, and hyperparameter regimes remain open. The reported bit savings
-follow stated accounting models and do not measure physical-network traffic,
-latency, packet loss, or hardware energy.}
+\coreRev{The primary evidence comprises two CIFAR-10 architectures, ten
+synchronous clients, and one development partition per architecture. Each
+method is tuned for its dataset/model, with a common bounded development budget
+on ResNet; historical compact-CNN selection rules differ. Ten paired seeds
+measure run variation, not hyperparameter-selection uncertainty or simultaneous
+inference. STC and EF-TopK select the largest screened ResNet gain, four, so the
+bounded search need not contain their optima. The selected configurations do
+not characterize complete communication--quality frontiers. Broader datasets and model families remain
+to be evaluated under this common calibration protocol. The targets are sampled finite-training
+crossings and can be transient. The theorem assumes aggregate alignment and
+does not establish an unconditional convergence rate. Supporting mechanism and
+partial-participation studies use earlier frozen settings. All communication
+costs describe serialized payload accounting; network latency, loss, transport
+headers and hardware energy are not measured.}
 
+% Keep the heading with its paragraph after the expanded comparison table.
+\Needspace{4\baselineskip}
+\begin{samepage}
 \section{Conclusion}
 \label{sec:conclusion}
 
-\reviewrev{Event-FedAvg converts accumulated local changes into sparse signed
-events with exact round-to-round synchronization. We bound its state and event
-count and give a conditional finite-horizon gradient-norm result. It is
-nondominated among the evaluated mean operating points across four ten-client
-settings. The audits support cross-round persistence at one operating point and
-show a widening gap between alignment and descent under stronger heterogeneity
-and more local steps. Future work should test partial participation,
-asynchronous operation, and measured communication and energy.}
+\coreRev{Event-FedAvg combines persistent leaky evidence, full reset, signed
+coordinate events, independent server quanta, and exact aggregate transport.
+The completed calibrated CIFAR panels identify its clearest advantage: lower
+total unicast communication to each declared predictive-accuracy target and
+the lowest final communication among the five selected operating points.
+It also gives the largest mean final compact-CNN accuracy and a clear ResNet
+improvement over residual pulses. ResNet STC and EF-TopK retain higher mean
+final accuracy at greater communication cost, defining the scope of the
+advantage. State and event-budget bounds characterize the encoder; optimization
+bounds remain conditional on aggregate alignment.}
+
+\end{samepage}
 
 \begin{samepage}
 \section*{Acknowledgment}
@@ -838,12 +931,8 @@ take responsibility for the content. AI output did not serve as scientific
 evidence.}
 \end{samepage}
 
-\begingroup
-% IEEEtran selects \footnotesize inside the bibliography environment.  Keep
-% the references compact enough for the conference page limit.
-\let\footnotesize\scriptsize
+% Preserve the standard IEEEtran conference bibliography font size.
 \bibliographystyle{IEEEtran}
 \bibliography{references}
-\endgroup
 
 \end{document}

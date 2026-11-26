@@ -1,51 +1,27 @@
-# IJCNN claim--evidence matrix
+# Current manuscript claim–evidence map — 2026-11-26
 
-This matrix controls what may enter the conference manuscript. “Ready” means
-that suitable evidence exists in the repository; it does not mean that the
-material has already been compressed into paper form.
+This map supersedes the historical P12/P13/P19 headline selection. Those outputs
+remain archived and checked by their original builders.
 
-| ID | Intended claim | Primary evidence | Paper placement | Status / boundary |
-|---|---|---|---|---|
-| C1 | Event-FedAvg is a completely specified multi-step FedAvg communication operator. | Compact transition and round procedure in `paper/ijcnn2027/main.tex`; full semantics in `report/sections/11_theory_t1_formal_semantics.tex`; correspondence audit in `P4_THEORY_AUDIT.md` | Method | Extracted and ready under synchronous full participation. |
-| C2 | The targeted literature search did not identify the complete frozen operator; relative to the closest Strom residual-pulse predecessor, its defining differences are leakage, full reset, independent trigger/update resolution, and exact synchronization semantics. | `paper/ijcnn2027/RELATED_WORK.md`, `report/sections/10b_novelty_equivalence_audit.tex`, `report/sections/10f_final_matched_baseline_campaign.tex`, and the nearest-traffic Strom control | Introduction, related work, results | Ready for the 2026-09-04 search snapshot and qualified as an absence-search result; refresh at P10. Novelty belongs to the complete operator, not its ingredients. |
-| C3 | Sparse replay with checkpoint fallback gives exact post-catch-up client synchronization and a complete bidirectional accounting model. | `report/sections/10d_bidirectional_protocol.tex` and T1 communication semantics | Method and experiment protocol | Ready under the evaluated synchronous full-participation protocol. |
-| C4 | Event-FedAvg occupies a strong communication--performance operating point on the established Fashion-MNIST MLP and CNN campaigns. | Ten-seed P12 evidence in `paper/ijcnn2027/evidence/p12_headline_ten_seed.csv` and `p12_paired_differences.csv`; protocol and audit in `P12_HEADLINE_TEN_SEED_PROTOCOL.md` and `P12_HEADLINE_TEN_SEED_RESULTS.md` | Main frontier figure and result table | Ready; seven predeclared new pairs preserve the MLP advantage and the CNN Pareto qualification. Avoid uniform dominance language. |
-| C5 | Post-reset encoder state is bounded and the realized event stream has a pathwise evidence-variation budget. | Compact proposition in `paper/ijcnn2027/main.tex`; proof in `report/sections/12_theory_t2_encoder_properties.tex`; randomized checks in `check_theory_contract.py` | Theory | Extracted and ready; detailed first-passage and sign-reliability results remain outside the core. |
-| C6 | Smoothness yields an exact one-step descent inequality, and aggregate alignment with explicit defect yields conditional finite-horizon stationarity. | Compact proposition in `paper/ijcnn2027/main.tex`, full proof in `report/sections/13_theory_t3_optimization_interface.tex`, and audit in `P4_THEORY_AUDIT.md` | Theory | Extracted and explicitly conditional; no unconditional or experiment-covered asymptotic convergence claim. |
-| C7 | Aggregate Event-FedAvg pulses are usually globally aligned on the frozen strong-non-IID MLP, with weaker late-stage margins. | Compact audit paragraph in `paper/ijcnn2027/main.tex`; exact full-client-gradient baseline in `report/sections/14_theory_t4_defect_schedule.tex` | Theory/results bridge | Extracted as finite-trajectory evidence only; the earlier 5000-example T3a diagnostic is not used for headline values. |
-| C8 | Replacing the empirical quantum schedule by an asymptotically admissible exponent does not by itself improve finite-horizon late descent. | `report/sections/14_theory_t4_defect_schedule.tex` and the three T4 schedule CSVs | Limitations or technical report | Ready negative result; not a headline contribution. |
-| C9 | The communication--performance result transfers from Fashion-MNIST to CIFAR-10 with a compact conventional CNN, including against a development-tuned dense server gain. | Ten-seed P12 evidence and paired intervals; historical selection trail in `P3_PROTOCOL.md`, `P3_DECISION.md`, and `P8_REVISION_AUDIT.md` | Main frontier figure and result table | Ready; the seven-seed extension preserves the Event-FedAvg advantage over frozen Strom and dense comparators. The worst-class interval crosses zero, and broad generalization is not claimed. |
-| C12 | Weak leakage is not material at the selected resolution, while decoupling trigger and update resolution is important for the tested operating point. | `paper/ijcnn2027/evidence/p8_targeted_revision.csv` and `P8_REVISION_AUDIT.md` | Results and discussion | Ready as a compact one-factor audit; do not generalize the negative leakage result or the failed coupled schedule beyond the tested configuration. |
-| C10 | Event-FedAvg reduces measured hardware energy or real-network latency. | None | Excluded | Not claimable in the conference paper. |
-| C11 | The current results cover partial participation and asynchronous FedAvg. | Earlier special-case experiments only; not the frozen final claim | Excluded or limitations | Not claimable without a dedicated final-method campaign. |
+| Claim | Evidence | Scope |
+|---|---|---|
+| Complete signed-event operator and exact synchronization | Main equations/algorithm; frozen event codec and runner sources; panel receipts; `check_theory_contract.py` | Synchronous server-based FL; separate scoped partial-participation extension |
+| Bounded post-reset state and pathwise event count | Main proposition; randomized algebra checks | No assumption that weak evidence eventually fires |
+| Serialized event-upload upper bound | Explicit-index candidate in EVS1; 128-bit header and at most seven padding bits per nonempty client packet | `135 P + (ceil(log2 d)+1) N`; requests/synchronization excluded from this component bound |
+| Conditional finite-horizon gradient result | Main theorem and exact alignment identity; P11 diagnostics and theory-to-trajectory note | Alignment is assumed, not proved by sampled trajectories; no final-iterate or asymptotic guarantee |
+| Event has the least final unicast traffic at both fixed panels | `calibrated_core_endpoints.csv`; source `main_runs.csv` / `confirmation_runs.csv` | Five selected operating points, ten matched seeds per model |
+| Lower cost to all declared accuracy targets | `calibrated_core_targets.csv`; all 24 paired contrasts; source histories | First sampled per-run crossing; unadjusted paired log-ratio intervals; one Dense 55% miss stays censored |
+| 50% STC savings: compact 57.8%, ResNet 23.4% | Generated target table and target effects CSV | All ten pairs reach; Event uses fewer bits in all pairs |
+| 50% EF-TopK savings: compact 95.8%, ResNet 65.4% | Same sources | Cost to a predictive target, not a universal convergence-rate claim |
+| Best compact-CNN mean final accuracy | Generated endpoint table | Ström paired accuracy interval spans zero; EF-TopK has lowest mean CE |
+| ResNet Event/Ström quality and cost advantage | Endpoint effects: +3.308 pp, 30.735% saving | Adapted residual encoder in common FedAvg host |
+| ResNet final STC/EF quality tradeoffs | Endpoint effects: Event–STC -0.724 pp [-1.611,0.163]; Event–EF -0.943 [-1.575,-0.311] | Neither equivalence to STC nor predictive dominance of EF is established |
+| Every family uses architecture-specific calibration | Frozen development selections/protocols | Common accumulated ResNet budget, different historical compact-CNN rules; bounded searches only |
+| Competitive sparse STC points remain possible | ResNet development study, p=.05/gain4 and p=.01/gain4 | Development only; not substituted into confirmation and not a method-wide frontier claim |
+| Persistence helps at an earlier audited operating point | P15 ten-seed 120-round operator audit | Full reset's accuracy advantage unresolved; no isolated leak benefit claimed |
+| Earlier partial participation retains savings | Frozen P20 50-client ten-seed runs and supporting figure | Original replay/checkpoint catch-up costs; no newly calibrated STC/EF ranking transfer |
 
-## Evidence-selection decisions
-
-### Alignment audit
-
-The paper uses the T4 baseline's exact full-client empirical gradients. The
-T3a 5000-example reference audit remains useful historical evidence but should
-not supply competing headline values.
-
-### Schedule experiment
-
-The admissible-schedule comparison is retained as a limitation: a formal
-Robbins--Monro exponent condition is not a practical finite-horizon cure. Its
-full table and decomposition remain outside the main paper unless review makes
-them necessary.
-
-### Second benchmark
-
-P3 closed with a pass, and P12 preserved that decision over ten paired seeds.
-Event-FedAvg is nondominated on the frozen CIFAR-10
-compact-CNN campaign and has the best mean test CE and accuracy among the
-quality-selected methods while using the least total traffic. C9 is limited to
-this concrete transfer; the unresolved worst-class paired interval remains a
-visible qualification.
-
-## Paper-level evidence gate
-
-Before manuscript freeze, every sentence containing a comparative,
-generalization, convergence, synchronization, communication, or novelty claim
-must identify one of the claim IDs above. New claim IDs require an explicit
-evidence source and boundary.
+`build_calibrated_core.py --check` validates the frozen input hashes, reconstructs
+100 endpoints and first crossings, and matches the original summary/target CSVs.
+`check_manuscript_claims.py` checks headline numbers, target coverage and necessary
+qualifications against those regenerated tables.

@@ -1,426 +1,16 @@
 {
   "schema_version": 1,
-  "scope": "IJCNN 2027 submission-candidate sources, products, manuscript, and central implementation",
+  "scope": "Consolidated calibrated CIFAR-10 panels, preserved historical evidence, reviewed manuscript, and exact original experiment/source snapshots",
   "files": [
     {
-      "path": "experiments/results/final_baseline_campaign/observed_heldout_summary.csv",
-      "role": "frozen source",
-      "sha256": "262aa0019da47ea93eae92b85923243629b4e6ffdf8b51d667eb9c82ec032b18"
-    },
-    {
-      "path": "experiments/results/final_baseline_campaign/observed_traffic_matched_summary.csv",
-      "role": "frozen source",
-      "sha256": "bf617f04a95842c91bea0f15bc4de75b546a4678b2eef10bda2e11459631839c"
-    },
-    {
-      "path": "experiments/results/p3_cifar10/protocol.json",
-      "role": "frozen source",
-      "sha256": "b18789ff442c15a412e1931f0cc78359a124c483bf0c161d3a91afbcaaa36f6c"
-    },
-    {
-      "path": "experiments/results/p3_cifar10/partition_audit.csv",
-      "role": "frozen source",
-      "sha256": "840b42676fe716ab03bf68111c8ee4b8f47baa8a71abbdd2ce57ae7cc649a817"
-    },
-    {
-      "path": "experiments/results/p3_cifar10/development_summary.csv",
-      "role": "frozen source",
-      "sha256": "0e0c3b12f4103c9c8eb15b5facb24c723c42e6c7cf4497d2943e0228f424b739"
-    },
-    {
-      "path": "experiments/results/p3_cifar10/selection.json",
-      "role": "frozen source",
-      "sha256": "96590a206d76814dac4a0e9c0d38360cf48edbbfb501985c3de78bbd9a89fe50"
-    },
-    {
-      "path": "experiments/results/p3_cifar10/heldout_runs.csv",
-      "role": "frozen source",
-      "sha256": "249a1867e0fcd0b33f6b4fe6587371020282223535f007c0a691be858572745a"
-    },
-    {
-      "path": "experiments/results/p3_cifar10/master_results.csv",
-      "role": "frozen source",
-      "sha256": "87b1fd0bcd9a8d33104ff91a40c2c13c6ecbbea387e7ab323c0e7fdcc6634b3d"
-    },
-    {
-      "path": "experiments/results/p8_targeted_revision/development_summary.csv",
-      "role": "frozen source",
-      "sha256": "78fcde345648261e35e5e3ee696fcc2fa78dc8022d6c1471388b43f54dce2403"
-    },
-    {
-      "path": "experiments/results/p8_targeted_revision/selection.json",
-      "role": "frozen source",
-      "sha256": "3c299aaa099f10659329000b559d5dced7af6b34d2a99fa02e225e2a746973bd"
-    },
-    {
-      "path": "experiments/results/p8_targeted_revision/heldout_runs.csv",
-      "role": "frozen source",
-      "sha256": "ee71de71dc388690eb9f62794b66d54400eefc4ff616341ab12ddf7c10bfdfe3"
-    },
-    {
-      "path": "experiments/results/p8_targeted_revision/heldout_summary.csv",
-      "role": "frozen source",
-      "sha256": "d74c8ca121625b1afa7dfef395a711b1bd5097bcbd5469881993b56a45659edb"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/t4_alignment_audit.csv",
-      "role": "frozen source",
-      "sha256": "40ab919f093bcda4962af2e0e327125264c3fc17133129c3da6ea943cef84a98"
-    },
-    {
-      "path": "experiments/results/p11_alignment_factorial/combined_summary.csv",
-      "role": "frozen source",
-      "sha256": "2c84bc00edd49ebc6ef0d45617d3e8a0869907d9ebc5d7f545735daeb283143c"
-    },
-    {
-      "path": "experiments/results/p11_alignment_factorial/combined_rounds.csv",
-      "role": "frozen source",
-      "sha256": "bbe23e1c338be90bb1a2cdc229384492d72402cc36316e8530cf6944812de497"
-    },
-    {
-      "path": "experiments/results/p11_alignment_factorial/aggregate_metrics.csv",
-      "role": "frozen analysis",
-      "sha256": "dfa62fe2fa2e34f624836b4cf8dd982faafd91c32341c8b38cc1afc5e81a73bf"
-    },
-    {
-      "path": "experiments/results/p11_alignment_factorial/paired_effects.csv",
-      "role": "frozen analysis",
-      "sha256": "71bee0c413903b9409e84c2733c1e67692127d36fdd96b00acd8cc3c67641f70"
-    },
-    {
-      "path": "experiments/results/p12_headline_ten_seed/heldout_runs.csv",
-      "role": "frozen source",
-      "sha256": "7e343be7d70df8005a0b9d9289d4050849e5d67ba40140a06a38b6ffd98a1fe9"
-    },
-    {
-      "path": "experiments/results/p12_headline_ten_seed/summary.csv",
-      "role": "frozen analysis",
-      "sha256": "5f096c57323aed80b40d5645c85140de587b5a08ce1017da1387af3608a67c3a"
-    },
-    {
-      "path": "experiments/results/p12_headline_ten_seed/paired_differences.csv",
-      "role": "frozen analysis",
-      "sha256": "366bdf80c350edaabac2debcae4beca59c2ae48fc4793bc7c65635c2f67665ee"
-    },
-    {
-      "path": "experiments/results/p12_headline_ten_seed/protocol.json",
-      "role": "frozen protocol",
-      "sha256": "36b45dc163f07c27d309b308ba3d0ef3bea69d057c107a6d571abd91bae3f5b8"
-    },
-    {
-      "path": "experiments/results/p13_cifar10_resnet14/heldout_summary.csv",
-      "role": "frozen analysis",
-      "sha256": "a392868c572be40651916b52cefa0d2afdb745ef7b1c1dc5440ec1aaa8b65796"
-    },
-    {
-      "path": "experiments/results/p13_cifar10_resnet14/selection.json",
-      "role": "frozen selection",
-      "sha256": "5681f0f70e03f7312c05bc5045263a166bbf2f3cf909da4c7871ff5af556eb87"
-    },
-    {
-      "path": "experiments/results/p13_cifar10_resnet14/gate.json",
-      "role": "frozen protocol gate",
-      "sha256": "11147b74e489ca12b380176849b96a33d6c6b34d3468bb644cd28ec5161221cb"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/fmnist_master_results.csv",
-      "role": "generated evidence",
-      "sha256": "21fb2a7f609f6829be69240e21aee73827aea9d4add2690d6d2b179fea57e403"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/cifar10_master_results.csv",
-      "role": "generated evidence",
-      "sha256": "326262c8d696f2a6db9a478dd2a0dbc3a55f6137ed267c551e1ddbc70688dcc3"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/p8_targeted_revision.csv",
-      "role": "generated evidence",
-      "sha256": "d74c8ca121625b1afa7dfef395a711b1bd5097bcbd5469881993b56a45659edb"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/p11_alignment_factorial.csv",
-      "role": "generated evidence",
-      "sha256": "1b407367283d36367e2791b633c69668d0c1751d51e3e1f856c7af88d5937980"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/p12_headline_ten_seed.csv",
-      "role": "generated evidence",
-      "sha256": "5f096c57323aed80b40d5645c85140de587b5a08ce1017da1387af3608a67c3a"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/p12_paired_differences.csv",
-      "role": "generated evidence",
-      "sha256": "366bdf80c350edaabac2debcae4beca59c2ae48fc4793bc7c65635c2f67665ee"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/p13_resnet14_ten_seed.csv",
-      "role": "generated evidence",
-      "sha256": "34da24980332d0c0ddb81d0739697e98dacdc581b70eea1337f1ab778a8e18f5"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/p13_resnet14_paired.csv",
-      "role": "generated evidence",
-      "sha256": "db22e730a41e72a35fb48e8984a410d78df3185463de70969eb5df04ce3cb085"
-    },
-    {
-      "path": "paper/ijcnn2027/evidence/matched_accuracy_traffic.csv",
-      "role": "frozen analysis",
-      "sha256": "4e1e11c833d64b0c24d1a03cedd35fe55ebffadd412a30e237ad8a3ec5d80ee9"
-    },
-    {
-      "path": "paper/ijcnn2027/generated/fmnist_quality_table.tex",
-      "role": "generated table",
-      "sha256": "bbc9dc3fcaef6d87fe3d68527605103016c878b039c86a26f545fc388a6695f6"
-    },
-    {
-      "path": "paper/ijcnn2027/generated/fmnist_traffic_table.tex",
-      "role": "generated table",
-      "sha256": "4fff8ab0da457d4508f838b1653555c7c7425704140251f419a07278ddaa8a6e"
-    },
-    {
-      "path": "paper/ijcnn2027/generated/cifar10_table.tex",
-      "role": "generated table",
-      "sha256": "70f570f78e0286a5bb085404a15b745e49edae412dc5c7756d4937c779d23efe"
-    },
-    {
-      "path": "paper/ijcnn2027/generated/main_results_table.tex",
-      "role": "generated table",
-      "sha256": "e7c35f26e9ae343dba85679b59e022d0de9585956b7f2d1a8e055410ac442281"
-    },
-    {
-      "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
-      "role": "generated table",
-      "sha256": "bd9837b21d757f7df9de29875718eec4dddc77ec4de96806c9d9357e902e4508"
-    },
-    {
-      "path": "paper/ijcnn2027/generated/matched_accuracy_traffic_table.tex",
-      "role": "generated table",
-      "sha256": "b5f03c00336e4279d94b6b67c4b903190cbc53b4fb8b41b0416b51d0a0b71676"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
-      "role": "generated figure",
-      "sha256": "e78776b3bbef56b8b4f3cd781a5b009b866d16fe571c8f1153da6468d94b0f85"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/event_fedavg_method.drawio",
-      "role": "editable figure source",
-      "sha256": "73112ccabd3869eafd8ef3a3c7919eeba5832f9c9fd3776fb9efd0bce3674d4c"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/communication_frontier_fmnist_mlp.pdf",
-      "role": "generated figure panel",
-      "sha256": "b6230bdef7d461513f951d4f592e161e1c3494aba8c742eb9443d696d067b016"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/communication_frontier_fmnist_cnn.pdf",
-      "role": "generated figure panel",
-      "sha256": "3f7bdd154e4847b8e57316b934c6f9059abb86442c411d49b523d4eb526a81d9"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/communication_frontier_cifar_cnn.pdf",
-      "role": "generated figure panel",
-      "sha256": "bf6153d75d61e919d18bbb795a4955e0a11197dbd5122136c69eadbf418a8521"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/communication_frontier_cifar_resnet14.pdf",
-      "role": "generated figure panel",
-      "sha256": "2a4ef2dc8082e57f7daab308af4c78d1e6681e7af35ed0592be0354859e24426"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/communication_frontier_legend.pdf",
-      "role": "generated figure legend",
-      "sha256": "22617674a5110e9c9f23059bc269dcf0574a4cc71c55e1ecb0ffdb728a75ea73"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/convergence_fmnist_mlp.pdf",
-      "role": "generated convergence panel",
-      "sha256": "6f10865bda09cf5ca16be54cdb698f7f9d81c34f92c0e662454d9d58ca92303d"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/convergence_fmnist_cnn.pdf",
-      "role": "generated convergence panel",
-      "sha256": "5987db1e39a46024be5b252f820f2ec733ac798eefbadc9e9d32bf8322e7f741"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/convergence_cifar_cnn.pdf",
-      "role": "generated convergence panel",
-      "sha256": "86ddb324df2bfaab0ec7cc3c5c8d7925ae74901817a9dd029a6ad1fbdb32dcea"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/convergence_cifar_resnet14.pdf",
-      "role": "generated convergence panel",
-      "sha256": "f363feeb1264518eb318c82f98c150c81026120880005b4801ee4a1d5253ef0d"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/convergence_legend.pdf",
-      "role": "generated figure legend",
-      "sha256": "30ecfd36de6b1934a5843d176ae8db20e25d8405523a2945d22b98ce0530bb3b"
-    },
-    {
-      "path": "paper/ijcnn2027/figures/resnet14_communication_trajectory.pdf",
-      "role": "generated trajectory figure",
-      "sha256": "1ab9af3bed5350d40d0d37e5e680fbe79c3cac377b813fc65c396f8754d52609"
-    },
-    {
-      "path": "paper/ijcnn2027/main.tex",
-      "role": "manuscript",
-      "sha256": "f202cdc449fe0df9dbcc840566d8e8232f10a43a0cf7cf26f1b3d1136dcff802"
-    },
-    {
-      "path": "paper/ijcnn2027/references.bib",
-      "role": "manuscript",
-      "sha256": "9d7e267f5fb7c0753dede1c8e4d40c95f301548677f1e1d384ac9ffc63426759"
-    },
-    {
-      "path": "paper/ijcnn2027/IEEE_TEMPLATE.md",
-      "role": "template provenance",
-      "sha256": "fae6202ac99175af83c59a03fac87246aea08c401e407825e9ba55e630ade377"
-    },
-    {
-      "path": "paper/ijcnn2027/IEEEtran.cls",
-      "role": "official IEEE conference class",
-      "sha256": "c972aca108fda004c3514d63658e02816da2e54d9a1451e870b9bd970e003f55"
-    },
-    {
-      "path": "paper/ijcnn2027/P10_SUBMISSION_COMPLIANCE.md",
-      "role": "submission audit",
-      "sha256": "9bd2b5f2fbe43b4c3450b8d14ad42eb7f2d5dc258e1aef007cd86652b2295d83"
-    },
-    {
-      "path": "paper/ijcnn2027/SUBMISSION_ATTESTATIONS.md",
-      "role": "submission checklist",
-      "sha256": "70acaff899df216e321f512df2282976fe1216e638cb64c774fff2d8d35b4ffc"
-    },
-    {
-      "path": "paper/ijcnn2027/RELATED_WORK.md",
-      "role": "literature audit",
-      "sha256": "c4cbb51a7473a05979df28b04578bb396bb02f16afec8f99f696b29916d1295f"
-    },
-    {
-      "path": "paper/ijcnn2027/PAPER_CONTRACT.md",
-      "role": "paper contract",
-      "sha256": "ac8550212451439c77d54ebeedb8f9710c8201b7fa36d607ca9be7f92a8803f0"
-    },
-    {
-      "path": "paper/ijcnn2027/PLAN.md",
-      "role": "submission plan",
-      "sha256": "c3249863ed7ee8d9d03b27b108bd7406e25bd260024db248e71c9f389c63f55d"
-    },
-    {
-      "path": "paper/ijcnn2027/P12_HEADLINE_TEN_SEED_PROTOCOL.md",
-      "role": "experiment protocol",
-      "sha256": "733097d145eaadb3d0537e960b856919e51cd3e0797154947f2f1610bcd0b51e"
-    },
-    {
-      "path": "paper/ijcnn2027/P12_HEADLINE_TEN_SEED_RESULTS.md",
-      "role": "experiment audit",
-      "sha256": "b5e453939b092f31b84e7931afbceb9be948d5bf30fb41b2b807c8edc131e0fa"
-    },
-    {
-      "path": "paper/ijcnn2027/check_submission_compliance.py",
-      "role": "submission validation code",
-      "sha256": "af188bb0d15b2d40832a4d228ec1090b159ecb6799bdb2dccfbc8c9887b78dfa"
-    },
-    {
-      "path": "paper/ijcnn2027/requirements-compliance.txt",
-      "role": "submission validation environment",
-      "sha256": "3ec8922905dc4e3a10c3b46bd7fba023c37ffc309d51c6bed2a13ec3e98177fd"
+      "path": ".github/workflows/ijcnn_evidence_check.yml",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "799201e8902d2dcb5833104f72ebfa60f0a200502fba64b60feee114de8834f2"
     },
     {
       "path": ".github/workflows/ijcnn_manuscript_check.yml",
       "role": "submission validation workflow",
       "sha256": "a0e25e354f7fcce71253a2dec5d022062f6815d82ca2813fcd73ce145c73ffb2"
-    },
-    {
-      "path": "paper/ijcnn2027/build_evidence.py",
-      "role": "reproduction code",
-      "sha256": "897e1ea60bf0741fd6647c0282b8904b5b98702b2be5d5d19557d58485e0472f"
-    },
-    {
-      "path": "paper/ijcnn2027/build_visuals.py",
-      "role": "reproduction code",
-      "sha256": "eb77485b9d4287ba8641a731a57af3866f042a71b87518df4aaedc93a794efc0"
-    },
-    {
-      "path": "paper/ijcnn2027/build_alignment_factorial.py",
-      "role": "reproduction code",
-      "sha256": "2157a5145fb7f73235c2da591e52f082125ebe4c07add87eb4520d006b29aeb0"
-    },
-    {
-      "path": "paper/ijcnn2027/check_manuscript_claims.py",
-      "role": "reproduction code",
-      "sha256": "7ef722d74a8ee3a0f52ebaba3815e5b5a80d1f7867874daf2203a24aeaaf1314"
-    },
-    {
-      "path": "paper/ijcnn2027/check_theory_contract.py",
-      "role": "reproduction code",
-      "sha256": "45959efc5b3cc33ea75415e6ebd4b1b65e592453cfcba37afc63901b2741d3ff"
-    },
-    {
-      "path": "paper/ijcnn2027/reproduce.py",
-      "role": "reproduction code",
-      "sha256": "9e49f8d869d53deef835a5c4b9684a740c138c5acd219b1ff75184e748f3d36a"
-    },
-    {
-      "path": "paper/ijcnn2027/requirements-evidence.txt",
-      "role": "environment",
-      "sha256": "87ed85985476093d01d1405178e61bcdfd650f171481af44d2fd3815ca570d2a"
-    },
-    {
-      "path": "paper/ijcnn2027/requirements-reproduction.txt",
-      "role": "environment",
-      "sha256": "b7005e51cd0a7857a7c78210aa2932b558634634142793619a1933cba82d55d8"
-    },
-    {
-      "path": "experiments/final_baseline_point.py",
-      "role": "experiment code",
-      "sha256": "0c2657efa551fd06e91394ec050186f9674e6a41bece4249a8ffcc488e115129"
-    },
-    {
-      "path": "experiments/p3_cifar10_campaign.py",
-      "role": "experiment code",
-      "sha256": "b746fa1da15240327d3447445a32c3e1fbe2d58cc5a523545b4535ab4fe041e8"
-    },
-    {
-      "path": "experiments/p8_targeted_revision.py",
-      "role": "experiment code",
-      "sha256": "9cebd56489633971fafde5c8b6d04911b031f87df20cce1f7dfe2861175cb98b"
-    },
-    {
-      "path": "experiments/p11_alignment_factorial.py",
-      "role": "experiment code",
-      "sha256": "c91425c58fd8e70d4041f07b1981a290716c3a558f57e23e4ae58e2e479ab101"
-    },
-    {
-      "path": "experiments/p12_headline_ten_seed.py",
-      "role": "experiment code",
-      "sha256": "b7f64ebe4b9e0e8923d69a577e22ff50dac2af8aba58c078f2d7d7cb54833235"
-    },
-    {
-      "path": "experiments/p13_cifar10_resnet14_torch.py",
-      "role": "experiment code",
-      "sha256": "63e137fa57619c51c73cd4777112a7b9763534d1ef5e812ca834dd916b48d92c"
-    },
-    {
-      "path": "experiments/P13_CIFAR10_RESNET14_PROTOCOL.md",
-      "role": "experiment protocol",
-      "sha256": "ce7fb64edd0ffba64315112b5f758884f6ac5d70302d139bac06b73df28b7dac"
-    },
-    {
-      "path": "tools/p13_workstation.sh",
-      "role": "experiment launcher",
-      "sha256": "5c32229d3d4364342638b8cacc07e7a8b948594861b4b50ff87c428b76feb01d"
-    },
-    {
-      "path": "environment-resnet14.yml",
-      "role": "experiment environment",
-      "sha256": "e66fcb1d319cca3172320b154629e77b1d90781611697da3d733c83bcee65704"
-    },
-    {
-      "path": "experiments/p15_operator_ablation.py",
-      "role": "future experiment code",
-      "sha256": "f7d05261f0bf02b04ef95f2d78d903774a3f15d1d388a2364bfc7ea7a5bbd8eb"
     },
     {
       "path": ".github/workflows/p11_alignment_factorial.yml",
@@ -433,14 +23,2584 @@
       "sha256": "a39548d8cbe7b1dd343678344b5e370982736dbd1f12634665cdf63d5af59790"
     },
     {
-      "path": "src/neuromorphicfl/cifar10_benchmark.py",
-      "role": "experiment code",
-      "sha256": "84794f79be4e90fa8d9f1ecb4e050e56e969c5ac74e9896b7d8e064c1289afc0"
+      "path": "environment-resnet14.yml",
+      "role": "experiment environment",
+      "sha256": "e66fcb1d319cca3172320b154629e77b1d90781611697da3d733c83bcee65704"
     },
     {
-      "path": "src/neuromorphicfl/final_baseline_campaign.py",
+      "path": "experiments/P13_CIFAR10_RESNET14_PROTOCOL.md",
+      "role": "experiment protocol",
+      "sha256": "ce7fb64edd0ffba64315112b5f758884f6ac5d70302d139bac06b73df28b7dac"
+    },
+    {
+      "path": "experiments/core_float_host.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "9eeb8a0231574fb2545012b00284e45c374faa4ace2af28080c357224ee0977a"
+    },
+    {
+      "path": "experiments/core_fresh_comparison.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "0c67564bf629fe3cdbb452f4bb47717470418896dc69f9f81a168c3696f83034"
+    },
+    {
+      "path": "experiments/event_codec_development.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "043aa0a6ec9205eb7c9b161052c87d1872820ba33fae4d2e070583fa2cc3a8fc"
+    },
+    {
+      "path": "experiments/event_codec_development_audit.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "3cc8374f906a815dc366dd18f53e67c0eb17538a69670a6dd66064893960f81b"
+    },
+    {
+      "path": "experiments/event_codec_full_horizon.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "3783288c77ef7b912e809ed831c9f24d93cb2fd38dff8e320b73208b706e9de3"
+    },
+    {
+      "path": "experiments/event_codec_pilot.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "9baf3fef2b45a6c7fb3329a3b551d9f3d102910d100b570367503cb02e901c08"
+    },
+    {
+      "path": "experiments/event_strom_fresh_confirmation.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "0b3ef439c9652bd112e9d6a4358ff0d83eaffa9e7082c6f3e6e18deff736bac5"
+    },
+    {
+      "path": "experiments/fast_pulse_codec.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "4f49570dcc9ffb7ea8ad8b8998fafa04a37b9e74f6bef1971a757aba978055b3"
+    },
+    {
+      "path": "experiments/final_baseline_point.py",
       "role": "experiment code",
-      "sha256": "18c2c450a0b2d151d1b30333763bf1c7385cfb4dbc07c93a62589889bc4067c2"
+      "sha256": "0c2657efa551fd06e91394ec050186f9674e6a41bece4249a8ffcc488e115129"
+    },
+    {
+      "path": "experiments/m3_dense_schedule.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "2ec24f8e953a90915fcd9bfc17ae19e9bd0965665123bf4dc840b3f4c0c5f1bd"
+    },
+    {
+      "path": "experiments/p11_alignment_factorial.py",
+      "role": "experiment code",
+      "sha256": "c91425c58fd8e70d4041f07b1981a290716c3a558f57e23e4ae58e2e479ab101"
+    },
+    {
+      "path": "experiments/p12_headline_ten_seed.py",
+      "role": "experiment code",
+      "sha256": "b7f64ebe4b9e0e8923d69a577e22ff50dac2af8aba58c078f2d7d7cb54833235"
+    },
+    {
+      "path": "experiments/p13_cifar10_resnet14.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "0b18c345c94893b4d6989d3a9da7d9597ae90ec1befda7a80dd437760f356a65"
+    },
+    {
+      "path": "experiments/p13_cifar10_resnet14_torch.py",
+      "role": "experiment code",
+      "sha256": "63e137fa57619c51c73cd4777112a7b9763534d1ef5e812ca834dd916b48d92c"
+    },
+    {
+      "path": "experiments/p15_operator_ablation.py",
+      "role": "future experiment code",
+      "sha256": "f7d05261f0bf02b04ef95f2d78d903774a3f15d1d388a2364bfc7ea7a5bbd8eb"
+    },
+    {
+      "path": "experiments/p19_cifar10_cnn_final_horizons.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "dc11a729f7f9f3172528c486689e72d9ed3f00c2581cec940708881d8c532f55"
+    },
+    {
+      "path": "experiments/p3_cifar10_campaign.py",
+      "role": "experiment code",
+      "sha256": "b746fa1da15240327d3447445a32c3e1fbe2d58cc5a523545b4535ab4fe041e8"
+    },
+    {
+      "path": "experiments/p8_targeted_revision.py",
+      "role": "experiment code",
+      "sha256": "9cebd56489633971fafde5c8b6d04911b031f87df20cce1f7dfe2861175cb98b"
+    },
+    {
+      "path": "experiments/resnet14_baseline_development.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "7f1c1665797ee8087b9ea06042f08e3b6dfee49af84e298f8a1bdd720a066b3e"
+    },
+    {
+      "path": "experiments/resnet14_baseline_development_audit.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "18416652585ce1298de83c95938ebab1758fd0d7e25aa7f1a30bb1c7f53cc9e4"
+    },
+    {
+      "path": "experiments/resnet14_baseline_fast_host.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "169a2c56693e6071f6ccaeaea7cb71262ed058421c3d720ecc2427822d9bbe5a"
+    },
+    {
+      "path": "experiments/resnet14_baseline_host.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "3f78af0d01f98c8a154605243112d966296b4ad61b9f6f0d2da8bb0598f27c59"
+    },
+    {
+      "path": "experiments/resnet14_boundary.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "34da6231b6dcc76bc53945350d336f4c432325b574e10db018e9166e984571f1"
+    },
+    {
+      "path": "experiments/resnet14_boundary_audit.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "729032c94c4137e439e921b91b09a9f8544d73bff5bc4ff08609dffab7e14746"
+    },
+    {
+      "path": "experiments/resnet14_core_confirmation.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "f2c27bb292e7cf2bbb9d31fa7d25b3baf662474951907a2703005d21d81038de"
+    },
+    {
+      "path": "experiments/resnet14_ten_seed.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "14a76b10e0b856b7c0035226f7e4690504bdfe40d1a277953444b1600a60ef82"
+    },
+    {
+      "path": "experiments/resnet14_transfer.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "fa31bb0afc8c1cfe618bcebfdd2e4d926ae0867b46788901701a0711ebac35f0"
+    },
+    {
+      "path": "experiments/resnet14_transfer_audit.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "fcae74b6a999ecb3957b24ea41e72570ddbf13c8bb61355e35764cd510ae4b6b"
+    },
+    {
+      "path": "experiments/resnet14_transfer_data.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "753581d5b54c31204ac8f2930433d10f04e97a541a99e1024277f89fb365e0ad"
+    },
+    {
+      "path": "experiments/resnet14_transfer_host.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "73a0334c1a7cf40d0ede541aa36ed614a8aa79c394175ee58c8da8a1e3bff3f7"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/analysis_audit.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "c826dddde1e674cf38dab2778d10c5a21ebe8e652e87bbfdd31f559294d4ea35"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/analysis_codec_diagnostics.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "0e8a97b457d3e283a87372d74501b4975d947d0ec9e22a244c1390199ac7943b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/analysis_endpoint_effects.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "dd34821f9e948ad56fddc09444ce7caefdb3c6cd3181dc8bf5d933513273311c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/analysis_independent_audit.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "1d9162acb29e6673f1e26025679e15646e94e58ab14c227153fac3c8e8aa5b99"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/analysis_target_descriptive.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "07da87246a360bb2370a84feaef8f2ab0f78a583ab1e41303cb4a04e4d799e7e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/analysis_target_effects.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "936b0d6d8c03353225a49c4c2f396124374eacc9e7768f20868ab155011dcd6d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/comparison.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ffca758743396fd5f2e4d2fc11738255846e4668a3c81b240c9c08765c02011d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/comparison.pdf",
+      "role": "frozen calibrated panel source",
+      "sha256": "c262121f87a15357b3f4f6ddc163bc93099bda8fa1e730f862c765cdb7b35f07"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/comparison.png",
+      "role": "frozen calibrated panel source",
+      "sha256": "a7c2e599fa45135c40e2012835c33c714e0ec9bea7c034160b1e39905f9c8423"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/comparison_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "29305392c176f132e83aa5ca7d25389e1d2cdd2495012367a5434b65eb3317de"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/completion_audit.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "d32dbe3d89d2a0dfc520f1c53304846b9f20525b97d0c23a9672357ff4cdc7a0"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s0_p6000_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "2644a301ace846baee16ecb62a7a37983b5f8e545a758892df3ff1e077e4c25c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s0_p6000_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4c179ae37469729954432efc62d4b25c57de24e674f7f1db55a963cb730b6118"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s0_p6000_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "8668dfc34487e23479bc7261b788ca380000b547cb24e7ccfda3fd824e7b0f66"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s0_p6000_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e755ac92a4ce83884b10708b040a3473d67c3c507551e28ddfba7ec5acfd7311"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s0_p6000_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c85655772e0d0e93ce9458a49b230e3c44a2c41fab36713800b3b7e126d81ad0"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s1_p6100_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "58be631850f432a4372eb7ae6386bba665b60f3b85b57f21e5f4000f5064b984"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s1_p6100_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3481dcd29829e7aaf194f1cc57c1dbd7034e5cce2023b7c8185508ced926d7a4"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s1_p6100_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "e58ce1907df7009cabeb52670f327ff641db438245546d5d69b46f737c896bc1"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s1_p6100_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d48d2de2c382c5a8526fd9d0a3b64e2eb1755d4a275cb8199ae0e408611b9398"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s1_p6100_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "2d99a9499b8339e945b9e3d67a5d338713ec851726ad9c9333c306b40fad0d06"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s2_p6200_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "2ce7932b31a94f58d4b0181cf82144ddb6941e47e9667caba5a1deeeae2cb262"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s2_p6200_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b25d36170f6e58f0549715cc7d91a55c784f6b3e9f69bee8b073141456059d93"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s2_p6200_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "eb520d9df6c1e26ec151371d9007356d52de29ecaaa98134b3e57be799647f93"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s2_p6200_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e5ea573c9f0cbed98646e0d603c45c19342ab77f76c901e62792065ce74527eb"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s2_p6200_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "59682f7013b6d9383b682fc16842b234531d70de7c9ce9c79181480100273735"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s3_p6300_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "bee2173df6f67e764d422b4685c3e30d7e609eaba96dce282e0ffc7f0f496b05"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s3_p6300_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "952ba2a72aad159ce1108cb60f3968ca9c058371415bc2669de930a67a8699de"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s3_p6300_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "4b3d3ca7cfb81508ec4eedb24564b85fff2abad9f75047558801ef2d38f3dd06"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s3_p6300_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1ae5edcea0c943dc3347c741bf67f4966787516e4af8cbb5d15185069b2c6ef5"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s3_p6300_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fc771e803f6f74ecf9e8790bc2f4784b276b568d82582fad18bdc15bb099aca4"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s4_p6400_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "2363a066c566e773a85e20b7f048b6e73972ce2794802c821bb139d2c2631872"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s4_p6400_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "bdbd44d4a2b69749025e8cdb401e4082fb7a0534a27422571666606e25b78fc3"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s4_p6400_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "f25d77e86fdd4166cb1aa865180afa9026a76f3576505d521f6148ed25a7f7c2"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s4_p6400_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b3454f147a3c5343364cf29056903219510313bd913e6d672e982d91576f1be2"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s4_p6400_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6286875dd5a1db82a9512254a36a0151d90cb2635f20fd2a97919fd763ccbbbc"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s5_p6500_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "30745d8466662e990e2ec02336fab26af6556586b7807dd71d835a2163bfc9af"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s5_p6500_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b335cb3a1c35496cb6a15f5886fadcacbdba4c2ce7bfa57f1df8b3882af1d050"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s5_p6500_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "fbd6ea04204b9dbcd9eb5589c34f2e37ae484b1c78e762417e593fa163300b77"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s5_p6500_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d5a0d7c6f9496ac9498097d5189d10642958e135db47978aa0e4b190daa1b80a"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s5_p6500_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a1ea79ddc531c82d9221d548a19e9d6f00ceeb8f8340fad9564491ba26fadf73"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s6_p6600_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "29504265679c881902c3c15ab7abb5e99457dd6ef2a0472344c83c1b181f53e3"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s6_p6600_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "df7a031d2fb69ee962d79e0517f0a6dbf12fb9ca3706892a33d0b392408658f7"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s6_p6600_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "4da69c632c3e1e21f35b0320d3a96b7f2e68e324a1d2afb5d35fd38dd7dbef95"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s6_p6600_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5c5ee60ee6d2da48442dd22e8b5d25fa72a344cf9dae6942223557b99a503bcc"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s6_p6600_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7be20ecc8f9931a50d11d3b34c4b395df70fc57e8979543af79a6b4f03f5b80e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s7_p6700_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3cc3ca396e45a95ce6a77f29179a74b6810b68b7296c5ff3b1cdf7fed613107c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s7_p6700_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fc126491ab0b1c70379d4a1052f350229b0002c15cfeca120d6b03b9e2e1290a"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s7_p6700_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "28bfaf7458398ba657cb4f3f0a774a83cb23f214812b9e12589c1084e805367f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s7_p6700_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3422352fd6646016a43bcb30b7fadfe88b5dae23eeb869039bf0afe68a98b345"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s7_p6700_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "67117aef10d52350d3e0aadf41742f344b3eae69e50939e2e163c6198a26c08b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s8_p6800_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6aba8a543d7f16d5753505d130778f8bf0f27f176f31742158bd80ee62d98368"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s8_p6800_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4c40943160a88b310657da6f40f63c562d48914a09817ef776bcaa25c1ab8b6c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s8_p6800_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "63d4c74aceb7d7b72308f28e81be5ef58d95ed63e835df11a8a6640dffeb9be1"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s8_p6800_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "03e67811f91f447580734fc62d77ca867bdada5582c16b939b5e0919016d11bc"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s8_p6800_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5d8c0301d8c071843a6dc4189f8c8c3c99f82bcffc0d24bc07adc54754cefc0d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s9_p6900_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a08a4d92bcef12cfcfbabb559d5b96683de3c50ca39f462280b871f4f3c7a552"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s9_p6900_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "271c9bf8bbb55905e75c5655893290dcf4cc8d2471ed077185a282c7681b7375"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s9_p6900_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "ec6dfa67e3a643c35fed7b8dc726f7eabf66af77a5e7deb281deda6569136fc7"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s9_p6900_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "415cc480c8032661e9c6e2a14862c303cc6ed7bfe9b5ece24889ac18f6004202"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/dense_s9_p6900_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8a7732c204b153ce2a68ddd6f27693e53e3e9e17666f79c42c1de85515f80636"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s0_p6000_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ae361437ba0369974b44df251aac5627c6e9f0dab0f99da40e79a98d2b084dbf"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s0_p6000_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "813f3b1d4c59eed3cf9e1127411371ebf7f392e680b415db92095ca8af74ff19"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s0_p6000_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "cce374fa30b87748b6addc3e9bec8657c7a1272c211ba616978559c858210924"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s0_p6000_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "84bb70f07423834e95c562648cab88a47c90a70f42b0f15da83a7a1b82326915"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s0_p6000_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "50345e9553eac565dedf0f6ce8159f775932e727290b3dac5c9e33fcef261baa"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s1_p6100_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b981cb54477dd0f062afbdf2d5db497f4cc86bbf092fee7ae7d592e8a7389e2c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s1_p6100_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a00f26fc121685cf9cd7633f74c3ac3897cff97b02980c6800dcab40ed0c912f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s1_p6100_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "a6ac013a62a650d28aff6c11c4f61dc206cf5cbeea6b222b5d0ac525ceb88305"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s1_p6100_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e713ce277f014cf52ae2890cc697a4062e56e8323980f10f5342412cda67669e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s1_p6100_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "0e7a1dcda11aec6e8d302efd080c0a1ce3ba1ab72b594a6a4e25244957014d75"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s2_p6200_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "01c81187d172a8c050061b2bef8c2559651acd0c77d235cb552edec21b43b2c7"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s2_p6200_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "caae5aa3e272e2fb96b6502e73c846b87e159ac0ef5d8be1d9fb6f01e6f57bfe"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s2_p6200_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "8d075927e92fc09d4e05eeff881ad0ab71cd9b1a90482a11d0fda6a5bc85cb6e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s2_p6200_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "65bc3997852c079141cb6f8a145027803da97599b0c1c4090ed2a367c2f1ee51"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s2_p6200_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "09b640f7fd005a278117e1e8e521bb5063267356f9c18060c712f6664eb59d9f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s3_p6300_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7e973b145ccb00bae7bafa87142277a94d549d4206d237e6b71260b24830cbc4"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s3_p6300_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1ac54f2af7de530cfd51d36a7ca18f0cdeb54a022627714cf479490d62e7988f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s3_p6300_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "1f9a9b95e9b8ceb232f94d80803ab43aa78c7aec7920cd56a632407afb285765"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s3_p6300_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7d15de9a11f58d839b63d747a3c23c6a1c671eac31421db202c0351be9494d1d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s3_p6300_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "38cbe920a07e76dcf1d1c2684f85343b4a8ec3508721febcf3b98e44346a07d6"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s4_p6400_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "0dd9f915a17edc83171a6458e2ca6a9174273161ebcf995530dfb179c014cbcc"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s4_p6400_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b187e664f6e4a0a7dc05d81d355b3edcbe46b2c88360da1c986b9f8f8f6b5003"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s4_p6400_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "7694a0be6ab805b9756340aaea94c1fdfe07a6785b663217f4af2aeea683e60e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s4_p6400_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "bb14a0f172c141c21df642bf40a5c57670ff94d0b24c828d3f6be8ad9fc321da"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s4_p6400_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1b96f23c6567c856de90426fe9a823326336088d9204375a2d10455ea55fb324"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s5_p6500_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "531074a322b36d36cca8b6f4e42e1a6debc978da6aa06fdbe7357b2d655eb4ad"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s5_p6500_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8fbc82e1f6445910bbe57c6e98c2bee5552df33f7ede04a85d19aebcb44e6491"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s5_p6500_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "261660b0eac5677f84cd27c80223b373b0bb1f30ffee0f31b2e38d4fda31dc97"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s5_p6500_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "77ff9211235bb7da103cf14613d8a6b91ba334bceab2da93d4350d2767296d32"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s5_p6500_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "744fa28cc0ae86df1b3327ed1d968766a73f9a790c109e7a38bd3c0da9627791"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s6_p6600_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "10bea92ec4f8fee3f0d64db7272a6cc4cd044f3e1d2ed52ff504281dcb11c8d3"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s6_p6600_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d9eb06aae103ea2b909ea491bc21461aa5d555e93af8c16a94ff5e943477930f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s6_p6600_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "3173195d8b9db1473d0e31ef6b6a8421507379965b1ce714fc7e8856c99e1c08"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s6_p6600_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "238ca351b1961f19077467cc8ee8757f91dbed2092f0cf2efa144f74be3cd87e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s6_p6600_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "68166d92e7922ecb0ff0eafcdc38e016c22e8bdf19338da80873829e80a32871"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s7_p6700_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b2542242078d38257ef8f23bf82fdb29f1a7cd33c2a5f89a643c94e5b855272d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s7_p6700_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "aaca5063db708437b53ef3f697db0fa9835d2aa58c4d7736ff34f247dcf16950"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s7_p6700_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "eb77739f9691b2a18b205840a3cc233d3e9a5a99df208d51bd25da402bfcac30"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s7_p6700_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "75e44d2e53e70fbc7c6ac5cbe38c605da930015f5b58d11cdafa2f4155902383"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s7_p6700_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "010ff8c3edae8d58ed55690eb3dbba711a2de8560e08044ed6c5af67e3f5966b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s8_p6800_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "11dab7c66e6225c7672e9b0e609b46d742c408ed36436cdcfe1429f044bc3436"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s8_p6800_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "97854f23ee7b0504d2ee1dc7b74b37b624a6bc64a44f955699ed5efb532451d5"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s8_p6800_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "2ce81821159f3dd09fb9fa571d6f249761aa79b6b22f310084f9fc85074d10aa"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s8_p6800_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5fb6c7d991db71fc9f2551ee7ea0d4a038d00fc1135dbcca420e51145b1e4e9f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s8_p6800_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5b66039aa8c2bdcd480d7824970b3343f21f6028fa6fe700b24658087a9c6aeb"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s9_p6900_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "20ba05849a6f1598a31ecaa9f7dcb9b0554ef91862f170a5f401253b8c20f77e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s9_p6900_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c834e87eb2098427a7633fcd8c6c4b5ff82332622091da1b2239500275f4ab27"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s9_p6900_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "e5197aa0a07106d71edc09d99a6e99819171f2864d77c2dfcf0e4cb58e1f0c04"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s9_p6900_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "565b54d2fd413de4c105c922bad80b0bac5fcb2830d4d03c91f3a4be75ea1daa"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/ef_topk_s9_p6900_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e0ab16b07a6745a06cbf5c9c41ef796a3619f73a7ad7d07c83e5191739f715bd"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/endpoint_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5ebf8d445c58e68a9e52907c21b6427fd0c88dfe3f536a0386f3598b847e1630"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s0_p6000_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "a87bd4cf5c0883fba3d12e3d54743afa42e52f76152aba7fcb7b0c4f47149ba6"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s1_p6100_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "faf52bf97596bce8b6d7762fe584697f10f83d1b8482ca55cfeb2584d3925b1b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s2_p6200_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "56eb63db209d24dd8ac956cf9a3b33ff0f1d6fe08a2ea6533760ca520fb1fd47"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s3_p6300_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "2487a2a53bcb768dc9d8f83c45f1f0180021bc7c51df70ad7269f75b2ad69e8a"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s4_p6400_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "65d71980e15bfffcc4e0140bdc6764f56c8be59f4c18a6a0334588d129f0e524"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s5_p6500_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "92584c8b89e679470bdd6088aa4106a85a9491b95f11a613efa591858434a931"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s6_p6600_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "3df2b22f78414d7b67ef1ddc2cdb04b89f29b10df40508c139d6feade7243e97"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s7_p6700_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "4d6c0e9ea19a2b3206499644cd05ee902f1b5d821eab621265ad11d8a790d6fa"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s8_p6800_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "abdc79a341d360da0174538c7a3df243c436c2b99aec87b5283995c8adfb203d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/event_s9_p6900_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "15a07a41423b2a40f3b7f45e0db6c8a92b8f269b4bd0e5d777a457f1a58d3e9e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/main_runs.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c97add130292beaf9f27223760957d2f9fdc317544b61eb177088e3088cae98e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/paired_per_seed.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e141566357dc6d31409e9fb548eb96e932a2e32060a103101e99390545d3c534"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/paired_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fd45c356c08b55fd9e18f26f0520a9201c1f6a87f8d347e9c5eb04b637c66d1b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/paired_target_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "979d96d855f12a4ddbcc52798c4559b86f30348787f9623c6124240c28694b6a"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/protocol.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "5bb489fe7f9846d4f98c872e93fc2594d95f51af04bee76160f3137ac713da28"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s0_p6000_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6a1460bf2c2dbc804f5e288671028a918d336104bdd2d15e247ffac8ba2c186b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s0_p6000_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "de87cfb4588d6e6d2935ca72ae43a1332eb605968d391154ebae693beb0226c5"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s0_p6000_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "00ec2f80641f04f13a7271c09b695462144d29ec2be767c2879cb5a7b49634d6"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s0_p6000_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "9dfcf1e64ba3f3c8c2871f8e4673accb2be28a4d01af1b80c083c8b53bdf2b69"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s0_p6000_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3953225478ea2ac18388fe0304c4ebf0f7e6d141f40775aa7b1bf423757bbedd"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s1_p6100_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "18e0fe483ff41c3861b100c5fd819b82cd486c662de285b8535c1f422c5c8970"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s1_p6100_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3d570c30950f9c2721ae1d4176b1f849bc94e2672c5e8e2639b45363d86f203b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s1_p6100_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "f15042dac889da4846e4d8c0a296f8ebaf854573265f9c264642f57cdb338d5a"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s1_p6100_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "04000f9fff5334a6f48f81c04ae75c589dd0c45a1215b9bd400e77895c3867ba"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s1_p6100_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "442a684431bcdc7ebfedcba85912983f0e6ae06efce82cf84875868769c4730f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s2_p6200_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b77465a0cab0d922aa39d7774bda24a42d61a441bdb1b1edf5e1bd27d8c1c2c9"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s2_p6200_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "0d71315b03d07a51125b47a1da5266858ce7d4e2652fefd289d6dd06e3262c35"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s2_p6200_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "03c85c34a924f1b340f031a7f79c1d46533cf446d18525ef5d2537cbe7cca0e2"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s2_p6200_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "23a7d1f60b1b08a01dfe10f638fe8f91ade957530e18e9164d427fa0f4778290"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s2_p6200_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "30a371aaf44ed7588e799c98b843430eb5de30156c0914339ea0d0569a169e8d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s3_p6300_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "13a0562c02a61c91157f6908b3048ad4684f1a9ec3b3d79d099e8d7c7e645fc7"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s3_p6300_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1c9dc6df4f2e40b76f475179aa27007022d8671f9760d089e954a3d829312eb8"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s3_p6300_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "00f1a8c67426015dff9cf81e6b21e9f8ee0c2b2cccd539b2849571399d050f2c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s3_p6300_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b213b7ba2e5972662fd6ca4664b604887558dc3cb75bc511d45e931f884ab838"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s3_p6300_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f0eebb8e0edaa45de5a7dcf826762dfea5ed15c646eacb55fa5635a0a42d1779"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s4_p6400_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "87d3c8e848791c722646280f341dc5b803ef88ec3b85fb00e5cb1fc98af2af28"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s4_p6400_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "23e268ae2d77b31f70cbc22aa9c00cd9840fab224b838449856ae15430de8d31"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s4_p6400_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "2ca5be479b149048ff16325f055dd29df7dfb4f35309ecea3271c7fbd8a53c0f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s4_p6400_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "eaeec3e02f0680c70164f6bd9b8d505ee36a8a9220b57d692057e79a7eb90fc1"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s4_p6400_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e092f72c19cdbdc6969b186c5d85ce5f1332052a86e6c82fbbf66f176713b4fd"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s5_p6500_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "28fd2100b20c65746065bae0082eae9762a1bcc38182e25dfef112fb60d73bb9"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s5_p6500_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "de3d27f02ca25c76e3210bab5d02983dde1da0777f5278d362b5d153556cb480"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s5_p6500_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "ab0548f54b6cb0d8644f0754c8051d1cd5294bb7d51861269acf285edf0e2ac2"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s5_p6500_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d498bdef14fb4d0f1e66aaf243e69c68727c6ff2c10ef365c26f3d2a06d61105"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s5_p6500_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fb70ea0cc33d9adf32ef0fec453baddbf4aa78b7e669702a517eb45e6af38c8d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s6_p6600_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f440d28bf8e0fd03d9a43211d97bdb4b051ed41a31fc34fd35580aa408165e19"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s6_p6600_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5687ea14b5469653eab9ca031a77ea8990e44d2515b63298326c897382b406f9"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s6_p6600_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "37226e7775b37b87af412b3bc25dcb7328f0ef64f8eff3c54b80a9881c5a9414"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s6_p6600_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "247b284cea93f251501979b8b859ff3a075f0ac1b96751fbf8e9b0fccfbe6875"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s6_p6600_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ee84d3831fe8dbe93e0bd235847c922bc50fe07625cb04e043b6d4cc73c0ce71"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s7_p6700_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "81ac4e60bacb917c1c30d1913e40ed49849f3a6fab043c458296d77eca950058"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s7_p6700_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "aa759860790e8ed71116717a5895ccc62717a56aeaa198c9b40ecbd10b82f2a9"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s7_p6700_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "60159e7f0592c42366420aaf3c67870ef2c05d9341c385245f46cc11a9e42e96"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s7_p6700_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b4077d0dce68826c59848d3128acbd582a9703b0ce9998d9bbf19f61fdc312f1"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s7_p6700_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ed075ff46e8b1b877867a551984a4174059de747f8fcc18ded422179452d9e46"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s8_p6800_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c9c0460a36af0c865abc31a5e79c042500ea3ec61939ce5aca3f99e5448aab2c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s8_p6800_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "9f5892a76db3ec63645281fc49e5939e4c547a14f5434b793980b53a5e1b3177"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s8_p6800_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "740d53dee467556759bdbc8d893d8d124b3d5bda972af3afac63da98a475e380"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s8_p6800_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "035dedb1bfffc33734247c7251a297f5a16cab5462ae646af74e7ca2adc66795"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s8_p6800_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a98c30971f89467d948a36c8cc517d898ddef2eafff13e9fa123c50cdcc55e9c"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s9_p6900_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "229d9bf03c7c90106a7f1ecaa002e3cd151f4b831af2b2e3a2f02030d9f06309"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s9_p6900_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4fa7122d05335d6fcbec055214a903472682cd9d4bcb39ee3e197bfd51707e18"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s9_p6900_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "3ac45cca360912334ee17ea6f061cf6c748d2a26cde7f09f7029db054e0503b0"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s9_p6900_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "58021e69f262938259cd6579f854be54c49999fcd2833eae5f17285f2bd3ce80"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/stc_s9_p6900_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b09a6baab1ccf8e12a157432622b887c7447433583cc107487a761002e369c2d"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s0_p6000_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "63e3815a913351a5d5bc0b1a4229d8d458bf4b24190b86be14e473dae6687be5"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s1_p6100_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "ca5a106356cd8ff0f48ffbd32df626bf046d75da58653935cd4bb16039c69c9f"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s2_p6200_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "a5b958efb513429767b0c44968a39eba38622bb56ad9666fe2bbe7d9dcb81c44"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s3_p6300_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "1871615851833d517df12e165cda669b395ea05c8321aa7e70783fcf8242cb55"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s4_p6400_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "c7ef553e535c7b18ce2a4a7bcc72afe06fdbf27cc86e15b503a8b68cc8319259"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s5_p6500_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "c44f68aa1bdc5f9a6dca9825d9582faa0e8e1a74d0471d0da04d07dc34456dd9"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s6_p6600_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "4eb0e41ea4f3ebf1222fc55b91efdded45a0ccf23e344dc34094f54016a67f3b"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s7_p6700_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "a8bc5f64251508ac5f3d794300cf03c824cdcdc8fbed5614e34a8ee38e209048"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s8_p6800_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "706e72aa46b4fd332b4a77df9e893797e1a65d237461451f236a0b748d0ac80e"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/strom_s9_p6900_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "5b9b451eb275b0030dfc537c9ef244ec088710111c5360fa85e43ad4c4a80acb"
+    },
+    {
+      "path": "experiments/results/core_fresh_comparison_v1/traffic_to_target.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "53af6ac2f905ece9ea1687b83defe6af09f5a5e7069fe4f30c102027b219ecab"
+    },
+    {
+      "path": "experiments/results/final_baseline_campaign/observed_heldout_summary.csv",
+      "role": "frozen source",
+      "sha256": "262aa0019da47ea93eae92b85923243629b4e6ffdf8b51d667eb9c82ec032b18"
+    },
+    {
+      "path": "experiments/results/final_baseline_campaign/observed_traffic_matched_summary.csv",
+      "role": "frozen source",
+      "sha256": "bf617f04a95842c91bea0f15bc4de75b546a4678b2eef10bda2e11459631839c"
+    },
+    {
+      "path": "experiments/results/p11_alignment_factorial/aggregate_metrics.csv",
+      "role": "frozen analysis",
+      "sha256": "dfa62fe2fa2e34f624836b4cf8dd982faafd91c32341c8b38cc1afc5e81a73bf"
+    },
+    {
+      "path": "experiments/results/p11_alignment_factorial/combined_rounds.csv",
+      "role": "frozen source",
+      "sha256": "bbe23e1c338be90bb1a2cdc229384492d72402cc36316e8530cf6944812de497"
+    },
+    {
+      "path": "experiments/results/p11_alignment_factorial/combined_summary.csv",
+      "role": "frozen source",
+      "sha256": "2c84bc00edd49ebc6ef0d45617d3e8a0869907d9ebc5d7f545735daeb283143c"
+    },
+    {
+      "path": "experiments/results/p11_alignment_factorial/paired_effects.csv",
+      "role": "frozen analysis",
+      "sha256": "71bee0c413903b9409e84c2733c1e67692127d36fdd96b00acd8cc3c67641f70"
+    },
+    {
+      "path": "experiments/results/p12_headline_ten_seed/heldout_runs.csv",
+      "role": "frozen source",
+      "sha256": "7e343be7d70df8005a0b9d9289d4050849e5d67ba40140a06a38b6ffd98a1fe9"
+    },
+    {
+      "path": "experiments/results/p12_headline_ten_seed/paired_differences.csv",
+      "role": "frozen analysis",
+      "sha256": "366bdf80c350edaabac2debcae4beca59c2ae48fc4793bc7c65635c2f67665ee"
+    },
+    {
+      "path": "experiments/results/p12_headline_ten_seed/protocol.json",
+      "role": "frozen protocol",
+      "sha256": "36b45dc163f07c27d309b308ba3d0ef3bea69d057c107a6d571abd91bae3f5b8"
+    },
+    {
+      "path": "experiments/results/p12_headline_ten_seed/summary.csv",
+      "role": "frozen analysis",
+      "sha256": "5f096c57323aed80b40d5645c85140de587b5a08ce1017da1387af3608a67c3a"
+    },
+    {
+      "path": "experiments/results/p13_cifar10_resnet14/gate.json",
+      "role": "frozen protocol gate",
+      "sha256": "11147b74e489ca12b380176849b96a33d6c6b34d3468bb644cd28ec5161221cb"
+    },
+    {
+      "path": "experiments/results/p13_cifar10_resnet14/heldout_summary.csv",
+      "role": "frozen analysis",
+      "sha256": "a392868c572be40651916b52cefa0d2afdb745ef7b1c1dc5440ec1aaa8b65796"
+    },
+    {
+      "path": "experiments/results/p13_cifar10_resnet14/selection.json",
+      "role": "frozen selection",
+      "sha256": "5681f0f70e03f7312c05bc5045263a166bbf2f3cf909da4c7871ff5af556eb87"
+    },
+    {
+      "path": "experiments/results/p20_cifar10_partial_participation/stress_ten_seed_runs.csv",
+      "role": "frozen calibrated panel or supporting source",
+      "sha256": "3b1481dc3df21a8aa7a32633271fd4943ca8b0d00686b50931ee577bb2c4a8e1"
+    },
+    {
+      "path": "experiments/results/p20_cifar10_partial_participation/ten_seed_runs.csv",
+      "role": "frozen calibrated panel or supporting source",
+      "sha256": "62c0f6be2eaf0ead4cad76c4c77ca45277aebf95269692bbc3e4db06383b3749"
+    },
+    {
+      "path": "experiments/results/p3_cifar10/development_summary.csv",
+      "role": "frozen source",
+      "sha256": "0e0c3b12f4103c9c8eb15b5facb24c723c42e6c7cf4497d2943e0228f424b739"
+    },
+    {
+      "path": "experiments/results/p3_cifar10/heldout_runs.csv",
+      "role": "frozen source",
+      "sha256": "249a1867e0fcd0b33f6b4fe6587371020282223535f007c0a691be858572745a"
+    },
+    {
+      "path": "experiments/results/p3_cifar10/master_results.csv",
+      "role": "frozen source",
+      "sha256": "87b1fd0bcd9a8d33104ff91a40c2c13c6ecbbea387e7ab323c0e7fdcc6634b3d"
+    },
+    {
+      "path": "experiments/results/p3_cifar10/partition_audit.csv",
+      "role": "frozen source",
+      "sha256": "840b42676fe716ab03bf68111c8ee4b8f47baa8a71abbdd2ce57ae7cc649a817"
+    },
+    {
+      "path": "experiments/results/p3_cifar10/protocol.json",
+      "role": "frozen source",
+      "sha256": "b18789ff442c15a412e1931f0cc78359a124c483bf0c161d3a91afbcaaa36f6c"
+    },
+    {
+      "path": "experiments/results/p3_cifar10/selection.json",
+      "role": "frozen source",
+      "sha256": "96590a206d76814dac4a0e9c0d38360cf48edbbfb501985c3de78bbd9a89fe50"
+    },
+    {
+      "path": "experiments/results/p8_targeted_revision/development_summary.csv",
+      "role": "frozen source",
+      "sha256": "78fcde345648261e35e5e3ee696fcc2fa78dc8022d6c1471388b43f54dce2403"
+    },
+    {
+      "path": "experiments/results/p8_targeted_revision/heldout_runs.csv",
+      "role": "frozen source",
+      "sha256": "ee71de71dc388690eb9f62794b66d54400eefc4ff616341ab12ddf7c10bfdfe3"
+    },
+    {
+      "path": "experiments/results/p8_targeted_revision/heldout_summary.csv",
+      "role": "frozen source",
+      "sha256": "d74c8ca121625b1afa7dfef395a711b1bd5097bcbd5469881993b56a45659edb"
+    },
+    {
+      "path": "experiments/results/p8_targeted_revision/selection.json",
+      "role": "frozen source",
+      "sha256": "3c299aaa099f10659329000b559d5dced7af6b34d2a99fa02e225e2a746973bd"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "9af936a6aab5949c9207bfb4326d75403ac40f474aa43d503793e434e2e735f9"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "03b4361fac333d64883a1ed7d4c01bc7e11dce6bdef50f146e7566b2da8ec7e4"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "e8d23d08cde53f20fcd45419ee89c45a28c90dfb5cd43d87480c5ee6f6c36c51"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7cb98362b3e21ef8e2bf2f40256c59013dd52752c6a1d69d9357c26554686ae3"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/dense_g1p5_a0_development_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "39d5b671cae2601c7282d7680a57c22f95fca01d0a7d7409ff7e212e7f7b30dc"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ea56558b079d2a2087824077c569fc5b335d98425ce44fe0dd1998f43096a489"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "14d74716d307742064b331fec868440edc606b686caf62012d73ba8ad3b0be1e"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "5d794a274b64a9fb4c5dd4659d8506bc457b2c8d777bdb1f26dd9a86a7eeed51"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "2b1af85c40a15c6179efb5142d7a59d09f173c9b42028132256d9705421bd818"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/ef_topk_p0p01_g4_development_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f4ca21b53be59e3e6dd50be75cb41c10e13b13977227b66796f8fa22517768af"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/frozen_selection.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "0e214658779d2ff0d4be89864d336293a12c58d49082b0213a79b740a29b9cbf"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/promotion.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "06860e6e3c260a186c8d03fcfd8c1584ddd1f647283a208214b964df9cc30736"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/protocol.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "fbc12aca0435e5b23894e748a55ee7c30b5847bcaebb1aae3cbde4e1a9b9dc42"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/selected.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "bbf59ff3591e878333469b8b183ec8bed5f41f62d9d16d76e32d100d7eb4d261"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b28eededfa0a791bd819c75aa5768d557482b406fdf64673f01890b6bb62efa9"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "2b03dd4de05bf8aba77b118f29ac62d5d39b6eb685ef6a56eca60f4f26556e9b"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "1c177659297b9fbbf12ffbe8995e99ba06b8162372986281c91a3a871415d334"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "053defdd1577925a3ac44b960a459186364db3eeeac92a19b22f08dc853b774e"
+    },
+    {
+      "path": "experiments/results/resnet14_baseline_development_v1/stc_u1_d1_g4_development_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "0cdde145b33b199377099cbdd4844dc88e50fb032fe432c70b382147812ae403"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_audit.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "46593f21beb75c4749a691c11e12924ab7b0b4171a372bee92158428ecfff6a5"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_codec_diagnostics.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "34bbb61090ae4e3074ba186f86ed53f64157d1520f5f57eac382542d05c14863"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_compute_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6803131b974eafdd4b6ea9a3b7a252720185bb4bc4fc1de2b4d53e1aa2655a0d"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_compute_timings.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a9028988be3cd64795e95ad275e3f6a0a326a9d6c63022ab2eea3aed618da011"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_endpoint_effects.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8b1c1f07a6ebfdb9a9c57f2d79cbf8840f50bf60a58d1bc756f95d20a9401905"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_endpoints.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7aa6a1a155109cf8f3572d473b532aa6d69574c80434d45cbd202cf6e25c38b3"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_independent_audit.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "9ab2aa3247950e7e1bc754ccff817392bcf42c1b1b17e216b91b3f3e4672d0ae"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_target_descriptive.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fe4bb2bb953d2815a43217a23028c49a67d1b98ab2808e051ae319327447a739"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/analysis_target_effects.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4eb73f63bef0ed05f9fcb1a440010625e31f4e77849d59c54308f4b7006aaf34"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation.pdf",
+      "role": "frozen calibrated panel source",
+      "sha256": "baa2460d7bf491126274634279089fdf296ff43cf3a0cfd44164327af315b9f5"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation.png",
+      "role": "frozen calibrated panel source",
+      "sha256": "024f430689decd9a3692520521a7cd0266887015b0109aee640db50620da23cf"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_completion.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "10364fccb25b0560eb5465fce5941cc489b56176e9ed8bd17dfdb4e7e8b0bc38"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8a5112753a2eac72e3bc25511f8d53f32819cc9ac5f666d2ce021b525b333e2f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7100.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "32496df34e24a9e62d21dbe4ec17795641ebbbb05858112d005792324e044dae"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7200.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "fdfb414ce83b429d94f38729e5c00ca108216f3e25a1759c480c5ac66a564a6e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7300.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "5bf0e46e0999bd41f6c92c5e2553ea9cf8f9680bc33f1b43268ac68a8fb64c2a"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7400.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "192aef5b1305e57b62701fb9dc9ccb71e8a561c5041bfe24599d3521ba4e42de"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7500.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "687eee9d02773b445fea07ca6fc9812ed287fce07fb7c3af0bf3268cbf0d8598"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7600.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "91dfe606661a3dd557ca5ca4b0f9b5795d3fe3f6789be6e1ed7a1789505d8e53"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7700.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "50f5320e34a1f81a67944cbf2d84d8b343a7e5d0e697bcf205d4a9ca0c5831bc"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7800.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "1c71aa56504df7ea21f2abe39a83641cef565f692ca7f4d8c636bb0274e10d16"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p7900.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "ea0113233c9a8e6dfaa2d9f27be2b667a5d00a812741a7fa0576abbbae914b88"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_partition_p8000.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "e83b468f74b4694d3eb01a813c8e5eb7c9a906e8712188b65105ecaabecc9715"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/confirmation_runs.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d5a6dfb6e8359e9af252a05849bcf8380144daa7f7f863918667f0d4be62dfda"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7100_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4c682daa12f2243e522115c31f24a4d0d1168fd02bbd3c1ed3b7645154fff564"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7100_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "991df27bc8c5b7650635112b215bb7e6747eda92b5c57284f3f46f12ef83e7ab"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7100_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "2a0c1e84b5cf3c45e91c5da0b6a613e638f006bdf3b5187f1e026f61996ceffc"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7100_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "0468a1b1358c54ce4fc2d617f64c89fb435bf31c37a0f322f21e6306e6af4d1d"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7100_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7ca5c4976f6b220e4ad013aaf2174021f3d46f11812030b18b03e7e7c27233ae"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7200_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3dc4f822b71b41987323be9a8cfe32076a3b95e8e3a597df1a08414be219235c"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7200_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "66c6339b6b6e22f70853b3361d1b9434e3d82a0511c81d1b241533a4524d7151"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7200_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "7372d5cda27ebc3330bba74a44ccb71c440c39d7edc27a2b4046286164ae97be"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7200_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d7eeff7ac6007e0a710f1690b12ea68c5d55d0cc199352a778d8303201c1a0d4"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7200_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fc91cbbcb1861655b156b79d0cc4c0c29b701ad0a9cb2f077e5474d838a38015"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7300_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ea4043562dd9ef94887bd717eca64eee3da01ed7e188a0d0a3b5f440b4ddb69f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7300_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3f324101099e59310344410c4bf8195a4971a874727c7115420ecf3f6574be29"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7300_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "6909a55de75223064ce90f780bc161b5d16beb262b31bc5d9faa2c1734cc50f0"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7300_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4a6320916253470d50cb0da874151f0ad0462f84cbd06c1e384d0149f6878182"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7300_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "81cec55fd542a0267670611524ddd857e4275ead6751ec58b37aebdaa5a9e87e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7400_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "17fcacb28eb5f5203aa1b52bb95ba9db834ac262a8307b44770d0d371ba6d601"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7400_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5d78d05abab227209ff3eb8ddc79c40002ffc4a67908d71f63eacf650e017420"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7400_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "77413a5ac2a90e59bbb290c63a81dbf8878e7a3db0f8fd0b4e5b8f13a9f43a24"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7400_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "36ab0a3278c810173440b67fa9b71745cab0371f10b45720731b0f57cecb4080"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7400_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "620b490900ddfc33a8e5d1d41b4c93b6628d3bc8042848e3952d42513feffaba"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7500_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c92fe3c4ac3421cfae3def8a11d5cdfea6692f1a2a84db8fa499cef564b52f76"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7500_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8c2aa048671bd4b506ff5c3306e7e9b551ed907809cfd846e4860df5307e1456"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7500_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "f9a9b89b60c733712b3690ecac8649e7e2263ed9d825cd6dbc3296856bbaa403"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7500_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8adc224070b6167e862b635ee7840c297f8fc6cdcda4f39388c6e24743f45832"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7500_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f70284e780d194de9ef96d6ea290d6de17c38efb6858fbf64bfe5a573dd8ced5"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7600_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6d21b51a830f8bfcd9f7634805ad027e0ac89b70a3e09355ae68bb3eb95462c7"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7600_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6b0e37c7171afdf42787a78cbe42cfea0c638406058f18b22411cc6b5454f00b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7600_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "614871f4dfb27d7fd69104a8a6194265d1730c0a5bd7702f58b972269d1b34f7"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7600_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d0054c3ce8aa50d2d543d55491e4fe03f0bb5695f14bdff40b295102327de1dd"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7600_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "84765ca7a624f90de1027866c00c8429b358d840034b4e7ee6a7e2d5862caf6e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7700_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f6aceccd532c0fdb21752d3754096c7e26606ae174da2abe9a259f01ce1ec5af"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7700_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "eba8cc940505337a41b4d93049ed054df9a3cdb59ca2efe04682c1645acfe321"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7700_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "c6c50f2964371470f3a61542443912a8084dcba5b6d46873e1859383b5323837"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7700_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "de3f8574b7d57affe2fbefa2e220a9c9b5f7ef7e860118b02f2e8591ad739c00"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7700_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "aa27d7b8af9271993cc6838afd03e4e7ba988349576233147681c79a3e55c3c4"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7800_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "658685087eaa8b1b5dae545b9a4043121f09d2c81a3640b8df2562415cdd4365"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7800_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "2605dccf8091bab3d9ccdbf0cd89e8be93d423ea1abfe69639d7ac7debc3ff08"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7800_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "2b191a9fef68c04b163f78ed7f83055687f9e3e337c30fedee9033f1974fcc12"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7800_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "35b4c5f1ae3eebb778d7041b497db542639519b8862d1c8b00cf0c32d341e1f2"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7800_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "926393940f0d9214c35d6c2c2026f9acce2084830b412f4afa0b5691e5a8178a"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7900_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "48ed9c9829075570aabc62e829f1cdc943d6f69c7f6d39253988b5adac1ad943"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7900_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "20201ca970989da081c54cb73fab8bee2a19411b350e940a9e327e71d5cba4ba"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7900_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "a4c45364503577671042e5deb6b5db497cb111be21074e57de7f15838f15407f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7900_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8fd3cc1de56798ea1dfff6eeff1c4522b234241d3b99fbce360e4d9bb2edfa2f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p7900_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7bae377f84d582d46934b2fe43051a88816947f8963fcb7b290162fb2498a52d"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p8000_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8ebbbbe276c96a5d0fdb2ea5f2d26719131016de0dfe393d81732c11a4919f48"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p8000_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4d691c9ea45e83b7ac3f6993986901fe9b5301569d4a14cffa4874f3cf932d14"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p8000_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "6e86105ac0b549ea5170db593fc67720c1b4520ad8e0aac994b0301beb127cf8"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p8000_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7c7bed99a8cc121fd1a64d3e8f53c9fd6144151122290aa233aac21e64f1de15"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/dense_p8000_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "9a837cef5c8e2fd913b4556fa92863a17250acbf838255c573981fb220957801"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7100_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b3a60ce8c7bf865429e15d636f69e456e3ebafb6f14f1a54e135df2413ca072e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7100_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c666f9ea61e7ea5e6f00fe7baef453bae2c5b68e3398b7c49534c11bda2149d3"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7100_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "1336026c5eba890b8e722e0d48f388928c7f776ce808de0eb1f2e07504e291bc"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7100_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b9b755f9fdf600c7dd5473dd36613df068f849e8cd18d900f38f9218e50c421b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7100_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "cae3f7f44917a5bc124ccb17aca75efc2892dab39cadb9d01d2bc7e5f88c61a0"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7200_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e934208e4be6ef693b6fb0f344739d427057427566cd2309009730cc021fafee"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7200_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e3a22fb2ff796fb12f2be384fa1ccf82f44373b7f2a22b7a57858b04dae59aaf"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7200_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "feae4292a7352f59ad5b902b1ba927909d8200be3651ff2cccaa55e5369e02f2"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7200_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "90d58cb38cd7d7c77e7260452f4bf8990bdcfd69d6bc34a7492fdc219b998708"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7200_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3517a48e7178441ea096d8764b08f9f6267e54d55426123c2ceeae3419097b6d"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7300_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "100152b46415524f9a30ecb55fab6b011d335836bd56596a19ac411d4f80968b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7300_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ec975b1ac7972548807bf527bb91f64f9996562c139445d39cab3808b6a91cca"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7300_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "f798b2e8b9a23c429aa727562fc57af5c7bbd81a235dfae1f621a64377a9773e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7300_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "04172d24cd5d24c8f41f5f125334237dd218bd15ee43ce7616ff93328fc868d7"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7300_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b18c3e8583ffa97381ea69a871936b33c48d93299e7a9715ca227de351e1c7be"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7400_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a7dc7b5c8245b250ff19292b453d16c60a65eb80ab5822527094d16dc7cc5f99"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7400_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "da4960018d8956c5bd13ea1c71a10aead985ea6d8c6fdc010f99fedd76303b7b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7400_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "258d6b1a4164d83a0f06d83e33adef73ce6b1d429ba4b87066a7185dced76820"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7400_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b46e236827d2d9e71f727d5a8d84fa0d343993e7a9bc28a81c848ad717ee9acc"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7400_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "90d5b3c3ea9df8ec43e765cd73e21b84244aa70fe0693339957482bf9269ea5e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7500_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "91414d22c494b74bce1534c0eae14400409e82a0b2558d305f76144f2979e8ed"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7500_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4a9af8e130a8401b9534599c57e85ecc95e922a2bad154634675cc8bdfb29c56"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7500_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "b3abc622e010d1b58bb85b814e11aab053ffbdf95824758be2a29e3fc7f32f46"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7500_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3f35e53bdfbf2ed20c40485c8009efddc7c1049ee914d266792a24a891209c38"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7500_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "0855a4a3c65ff79fde26f98d48bed8c748398b9f1e734269e7882cae86a5333b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7600_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4380c53e1461757ad906e85a9906a9ef479ed16ef99dd0f69a97049a36729d05"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7600_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "bd2f691f598f7a6c190a94b29378102a7878c7c6cc8d5b55d1ba506b8d8619e5"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7600_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "6be84477968bb4ab2d0cbc87169c7b798d401c78892fc64be5cce481fa12d416"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7600_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "352ef45ddff5f7987a3f4a77667b153906e7128acd5e1410f9bc401476a80f2b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7600_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ddd2b4bd76c23649a6fa166c9f872920ec3eab0257993a09df68c30aa7c432a2"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7700_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "e1c85fa8a23a8f5e4769caff45e548e8e066f70dd224cc1fd40f90073a83f85f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7700_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1d5d5f8fee0fb3789af8c58c31f69226bc1b7d2723ff857e8f18f89332a528fb"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7700_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "6a8088549776e66e6b92e8e952083a576cbfd05f2001bbb6c28e803f558be9a3"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7700_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1c2de9120ddd68cf30b8dddf85d7c6d830adf7c0c849e9f3bddb37fdf0f24606"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7700_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c5d9f0466bd298a3bf7bfcfb495932dfd783a3d3212eb1625a3f4f33cdfba42b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7800_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "bc42bac1c6775c000489cba90128a50b811d3d3aa7d01c66c789a9ac611cc5fa"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7800_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a9254023d8b4bd72d33e0a4eb7c99b5bbc5ee7d1b265dc8c735437f7265bf71f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7800_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "2addc29d763cd7392c25e02c53c3f4b8c41c321d038bdd12dc88c3aa0ee16711"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7800_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a1e847071bad4a7932a76f2e61edce6efebfa40c29760e9c7d536d70edac58e8"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7800_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "d0889e619611992750101b20ae6fc675f934a0ed8d8c09a57b6b8e2c4c85c878"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7900_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "cb908c43412d4b4d433b3c77a9b62c1eca08a934d7fa3a7f9426932eff7aa218"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7900_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c7e729835b7ca001d82d09ff8a0d59de38c9d85992ec8244c7f29536a0bb3f93"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7900_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "80ff4ef652aa459989365249361a94db4918edbc599c59ce2ac3c857eccc0a84"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7900_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "03a7cd9e0d82f6191b7a6b7ff86ac655f7dad8f1d519d183593b574dbe6803a7"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p7900_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fbba03e0495ed96853a3f07cb6cef3ae19d57ce4a7b06d123e66891d504c3bb9"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p8000_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8028dd2f21798fef3c1ef81345d7f1348a2cdf665c2baa067276e601554194ee"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p8000_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "06c2ef0a8b7cf2a1c703db0aaecc736352f472335618595cecb1204031d9ac2f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p8000_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "7af950a79e210a8711906cdbd52a649b9f0b3e3d73b86cee26e30b74006932d2"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p8000_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7c7716e3e1d1b135a96cf3e2507d156d116690bad406dd0fe10abff14a20ca11"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/ef_topk_p8000_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "012aa97fba89535b3bd127b939d1eaf5c8e311b9f32b8d8be8737ffba981f7cb"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/endpoint_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3a6df2b13fa397c98622f1daf03d415462852f1b534a3bda4dde7c7a90ebf26a"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7100_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "d3a69f3baf499159a637a7c374e16cfe6cb91a158d1ec5bc5205bbf7a4976673"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7200_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "425f5cf1bf11fef91b38bf2e5a69ced0cbbdbe7db308ee6b62cab7d2482b62ce"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7300_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "0318e70cba56db79369c4eb07294a75443cc90635c7444f129213a8cda70a697"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7400_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "bcf1f439ee04ebc2d1f8a47979120f881f13e437e32fde186d5075da13812dfa"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7500_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "120d625e40f704c73329bff3ba7dd3194e6b4273b15427464771e71d4048f398"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7600_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "76522d87258469a69dd83cd5e72243776e637ad9f8c91cbc1da0b38c2190f6fc"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7700_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "73bc737a87242402060276081dfe9180e31220351ecc278904f34f04e552a434"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7800_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "49e1002e1e21e7a8d807d1795851fbcb4fa4b54096a131a8d236475b2a9457bc"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p7900_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "694731f0aaae088c34d4b49e8fffcbdff61cc1c01e0b50c4a00ce844ed59d324"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/event_p8000_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "9bb7d5073da9396d896b55d10ca78289c9fe37b0367c203ffecde98e0a972962"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/paired_per_seed.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "5906f48c6ab24a556e3f30a035566128f711d595d22fe0fed7178b2b4bf3f828"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/paired_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "454b1479bbb428dc6d463a3a226be4362d5debb5d49b42d8e283280063e8372f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/paired_target_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "50cc1252995cced49d787d289de1fa56bc79b032c37000fdcac39f9c61fb58d1"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/protocol.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "94d94bb6a3aae7909471bf404e3f41964dd3ca610ea430a94ee4a5b314c67a8d"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7100_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "b4e25117e1875755b8f27947a61091cc5d4a1b12c9ec7cdd9dedc592e28af173"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7100_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8491591cd6159a2075e87538106b10867e4e8c200dc6b3e92bd9e13776001161"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7100_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "18936691f235cedb211022b666d5fa0b15cf295387a24014702c72c11a16bc12"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7100_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "fbb17151705319b94a99faca0ff62e14ca80cf5a33fa64bc3e88db8a38f27286"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7100_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8b8efb46480dbf803f4aeaa4701c171dc46e09c20b48d9491d39729365c6a7f9"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7200_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f986ac79875c74353275c5df270007049b92adedead9f8821293f96933023bcb"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7200_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "80787ff4f99a96f3244b269545f42e066d893febaed59fa3278daf383686d2aa"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7200_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "c9bec332faed158d2470b20893420b0c614b7ebe8deb6030968565161ea147ca"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7200_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6b67919b366531a7683a916309de764d5df35b16f058666422062f69d4989abc"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7200_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1d1db0189b1de85550a43634d4fdfd15e557767695058f7524f69d2f163e5dc4"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7300_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "378b4ec11e37509d7c77167f14e1693e194d878c8d60c6f749b1091dca9cff37"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7300_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f3dcbf512f540a7eb4188f870db1b65675877e2cdbbc95d8b444f8eb1d7b54c8"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7300_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "f6be9a78461bf64fd1f7354988f5bb2f73f9ec11770a1a546e9bd72cd010cb35"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7300_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a733ab615927b104a851d61e483bc486d87577ce5687467d57bef69c0b7e61a6"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7300_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1d7a4f0e1b458392d02b40ba5980cd4f1ea65dca5d2b8057c891232b2c77926a"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7400_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8ce71aca1e652b31a7418b8babf200d5fb1563cd38c12067d883adaba1804cb6"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7400_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4f4576b5a81aee44621c6c98e5f854b4fb80c5b0fa9d6c9313b4342ce4a7ef9e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7400_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "1f7cd6d30d2570ae6ba1372f1582c95c023913b83bdcdfd00861a9b11dd8744e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7400_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "297b16dd6918ce7e2a2b6c71c5ad5b5fb3b8d7403dd3bc94f7f6f3583315408b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7400_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1de3a071afef64727d95f342856f2d1ac4fbd90b934629fafbe034e3eedd22fa"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7500_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "869dca8aa99ccc90177b62ac633f143be0c42d05218a517b048118e74efcd23f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7500_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "3e679698588759a85e206a8c0416df5ed5870e8a516e71e1f3fe9c7fc8fcd9a6"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7500_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "7d1081844c8586d58be3fd8b47386b8d1e15b8a17cd0a8a64c3694b69b7e0798"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7500_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "569a9d6db74dcba8d01133fc14472a911404913c0d47e1719e103c2e5ebe1ff7"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7500_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "ea1a29b155374f36984a5a0cf8cdfd86d3dc26c205ceb365e12731ba430da762"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7600_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "1539a9c2437128760e24ce03c859d805800b470eb225e88b673fa4730801a061"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7600_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "8fa46f20ff09a093cfe2d49aeba2722fa8d889d9a88ded43be924d5146810143"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7600_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "4559d388925635b6754ed470d68285765eaa13edd500ff02a5685fa32cf2bbb5"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7600_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "01fe857ba7f8650f40871b395c8610220a86fb7bea592960f61f6cbde1fe48d7"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7600_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "831fc2ef1765a8f5b3e55f769928315cc60eedc7f7bfed3d3500870372d009cf"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7700_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "04543d20ab12ec5438966317d3e9a727623ac7a4ac1a9a299a5421e324a9d00c"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7700_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c2069c742d1e9b7da267b3a24f8e564cdb361d42ca9535fcc698be55624be222"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7700_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "551da60cdbadfaab75dca1081d4f7f9877dd78060fe30ade51981c6cfb072273"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7700_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "4e71fcf60920cc85312ccf70a47f454186438574cfc462d20184030f882b4cde"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7700_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "eb8151c5a0385a7e67982d3be54c3e7a920892c008a5d94afb3fed38c2d40090"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7800_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7fe8bdd4a7911f69be7fcb6460d51557d0f21ea2fd3d1e8ce2810d0a52394b76"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7800_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "718280de04b36d34a5207e2fe88bf3c4034eb4b2fa863f03e007b244f5572966"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7800_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "8daf7e07e54ff169dbd64cf746904ef483192bfc7f706df308a4c7986c005eee"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7800_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "7706b23f93b8dacc59d996a10245d481d1083ae7a28ef061bf780abf15a32852"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7800_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "f406d2835185f0000dfe05b69c4c216e59e9ee4d8b3106a3bc214549c3eb3a59"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7900_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "a8c2667c199002caf27a0ebcbb6f85f4c4b114286940fc50144ca961eb77ad47"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7900_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c31fa49c4b7d7bb61cf352a49eebf8077951675b43f32dc4b5647a0f3c97e28f"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7900_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "63a8064d279027d3533087c85a95804d81e4d6804c86855998e0304a99f8880a"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7900_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "366b169922891519d29dc50590daf22c378fecf20fadfad4172fc6a2b1d78f01"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p7900_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "176316e66ed740fa9c09c1600fe3b8c270dc22c3548460d199f8d352254f403e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p8000_confirmation_r1800_evaluation.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "208e7d134e4cdd0e9571821f5e39add9dd685c5d0a4549e9bc152262c83b789b"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p8000_confirmation_r1800_history.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "6d4fcd797976d828263838cc00376a789b5d5a2a36c1b4240f2ad80cb48bdd24"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p8000_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "2d2995d56b7d1571ff3342d5297b4c6ffe2730617b76f1e50d13296758b2c795"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p8000_confirmation_r1800_rounds.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "38c9fa4a46bf951f0ecfb3f1829efb771e93659554254755e1f74c84292f0e70"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/stc_p8000_confirmation_r1800_summary.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "c43145ef7a16c14d13636657797a6e8ff49fe44fa2165c20073a883dcbeb9162"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7100_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "02ddb4cad0018b0962653f72da214d203daf350ee08c66f344900d753fb162fa"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7200_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "4ae5212732201a00108ccc6adbc8b6645beee92c7f716c5e80bb19d2c3a79d9e"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7300_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "f0eeb417cde24f3ca283a0a78915fa5437ef7289c4c0261120eba947bfa58912"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7400_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "59cc47fe0fe19beb71d9c11a1823456159e4465c8c305b2b02605c53f7863551"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7500_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "edf3c5f2cb2c30823faf8cc8b07957b00bf72d38880e819eaa617dbb544319b8"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7600_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "9bfd2560721e23a02af53956cf01dac61e69375a4c775cc6985efb202f1e5155"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7700_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "0c681bf702d876d6f4ea71d236e8df7c28eb996cd2eaddce192e0dd281a89b64"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7800_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "60b273a0fe3d0e9b61972beb0885d6ef7cb791bc04c8b6efcfbdc4ce472ea797"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p7900_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "caa2cb40a067552f257bfef4c8d50a6e17b03b3114da361c1cbbf6fbdb0fbaa6"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/strom_p8000_confirmation_r1800_receipt.json",
+      "role": "frozen calibrated panel source",
+      "sha256": "c802efb61aec9ab9a82d0ef78741e9f5980a9bfbbe3cef05fe464b86c9c9a77d"
+    },
+    {
+      "path": "experiments/results/resnet14_core_confirmation_v1/traffic_to_target.csv",
+      "role": "frozen calibrated panel source",
+      "sha256": "75a470ecae154d39be59752440f2da062542bbe598100a0e02e30c922be4621f"
+    },
+    {
+      "path": "experiments/stc_cifar10_confirmation.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "927f0e70178a8ba64dc523578cb688506aa2098aa5457cc170866302a9c21f15"
+    },
+    {
+      "path": "experiments/stc_cifar10_development.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "59eab8b9783c39cc002a29f6382a46b7beb6c147e69322e752a088d228a98c69"
+    },
+    {
+      "path": "experiments/stc_cifar10_development_audit.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "97649fd48723fda225b709e8aec609e12603d4c7d5035f4ea7879cc726d616dc"
+    },
+    {
+      "path": "experiments/strom_codec_development.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "2ea4357aa6d9ef393c2c340e6b820943b41e24620686721e9f96cdd1fa49d834"
+    },
+    {
+      "path": "experiments/strom_codec_development_audit.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "85fecf3fe60760632eb0931474d03ad34c4b0f5e8aaa88b2a79cacfdfe03d686"
+    },
+    {
+      "path": "experiments/strom_codec_host.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "e815c2457d6118888bb45a0e16db48cbb565e12a67b47b7545dc2fdc11d527dd"
+    },
+    {
+      "path": "experiments/strom_development_data.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "fdb7f69c8673a363e824b0e111623b36ce0b1a1e0a46b1c20fc78e5f9cb55b95"
+    },
+    {
+      "path": "paper/ijcnn2027/ANONYMOUS_SUPPLEMENT.md",
+      "role": "anonymous supplement guide",
+      "sha256": "b9e9eb0aed2f8ee5e96555c3498e614028d2c65f2647e7ed54961938ab9bbb4d"
+    },
+    {
+      "path": "paper/ijcnn2027/CALIBRATED_PANEL_CONSOLIDATION.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "149694ee29626ab21c59572e0af0d98465fe704467cf3d82c3d3c94fe94e5886"
+    },
+    {
+      "path": "paper/ijcnn2027/CLAIM_EVIDENCE.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "11b86516ebe00e7927352d1bebfb346f7c6470380995f1d93f3953cc58e1703f"
+    },
+    {
+      "path": "paper/ijcnn2027/EVIDENCE_FREEZE.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "01bfcdcff7572ffcb162ec069dd0f73be13a5c76a7486bb4243988260d96d864"
+    },
+    {
+      "path": "paper/ijcnn2027/IEEE_TEMPLATE.md",
+      "role": "template provenance",
+      "sha256": "fae6202ac99175af83c59a03fac87246aea08c401e407825e9ba55e630ade377"
+    },
+    {
+      "path": "paper/ijcnn2027/IEEEtran.bst",
+      "role": "IEEE bibliography style",
+      "sha256": "aa5c775bdeb820383cc7f3e558596838ad9a2600309a7353dc3444071f841460"
+    },
+    {
+      "path": "paper/ijcnn2027/IEEEtran.cls",
+      "role": "official IEEE conference class",
+      "sha256": "c972aca108fda004c3514d63658e02816da2e54d9a1451e870b9bd970e003f55"
+    },
+    {
+      "path": "paper/ijcnn2027/P10_SUBMISSION_COMPLIANCE.md",
+      "role": "submission audit",
+      "sha256": "9bd2b5f2fbe43b4c3450b8d14ad42eb7f2d5dc258e1aef007cd86652b2295d83"
+    },
+    {
+      "path": "paper/ijcnn2027/P11_ALIGNMENT_FACTORIAL.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "0d73dfe47954001479f67a693c1f8b18f96031bb8fc49ff277bb880aac112006"
+    },
+    {
+      "path": "paper/ijcnn2027/P12_HEADLINE_TEN_SEED_PROTOCOL.md",
+      "role": "experiment protocol",
+      "sha256": "733097d145eaadb3d0537e960b856919e51cd3e0797154947f2f1610bcd0b51e"
+    },
+    {
+      "path": "paper/ijcnn2027/P12_HEADLINE_TEN_SEED_RESULTS.md",
+      "role": "experiment audit",
+      "sha256": "b5e453939b092f31b84e7931afbceb9be948d5bf30fb41b2b807c8edc131e0fa"
+    },
+    {
+      "path": "paper/ijcnn2027/P14_FIGURE2_TEN_SEED_PROTOCOL.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "d1557f86ae9f5f8663f800dd8e4bc44d64347988aa11dc6017316c9bf20b4a5c"
+    },
+    {
+      "path": "paper/ijcnn2027/P14_FIGURE2_TEN_SEED_RESULTS.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "ceac27b76d6166a166304d7749166db4dd7ccfde063531de3ca35a732318e5ff"
+    },
+    {
+      "path": "paper/ijcnn2027/P16_FMNIST_HORIZON_AUDIT.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "e61e07546fb63844d9060467dfb1a71ef4c404a2bf0072dd8cb76459a75c66c7"
+    },
+    {
+      "path": "paper/ijcnn2027/P3_DECISION.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "2c1facd91273fba01cf46a5f527580539f3c70aea3587896c49ab8a23346767d"
+    },
+    {
+      "path": "paper/ijcnn2027/P3_PROTOCOL.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "12017b6294ec808e954bb844238b9c368e29aa49d294d7a9652c976e76cc164d"
+    },
+    {
+      "path": "paper/ijcnn2027/P4_THEORY_AUDIT.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "b67298da302373f8b22489042655e88a289e36834496eabb778f111aa456492e"
+    },
+    {
+      "path": "paper/ijcnn2027/P5_VISUAL_AUDIT.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "8c2d71c7bb96bff4e077093c3381c226373e30ca54824045dee49fe7ed63bfb0"
+    },
+    {
+      "path": "paper/ijcnn2027/P6_MANUSCRIPT_AUDIT.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "d23dbe6f56deaeecd9b233436f5cf20dc5da96f4c219e595b18e2a7d61101c6d"
+    },
+    {
+      "path": "paper/ijcnn2027/P7_PEER_REVIEW.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "818761df25efc0a0509baa27aa8be289904d6d7b3bf2671840a0d122d04fd6d5"
+    },
+    {
+      "path": "paper/ijcnn2027/P8_REVISION_AUDIT.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "c68e3fcd61d1989bae96503b7016b066362a9d6840e8f4eb7e368fe79b5ffaeb"
+    },
+    {
+      "path": "paper/ijcnn2027/P9_REPRODUCIBILITY_AUDIT.md",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "77fca11f48d06acbce652bb7ce1920205f5d2f03f1a35eecae6d795a54f0cd8b"
+    },
+    {
+      "path": "paper/ijcnn2027/PAPER_CONTRACT.md",
+      "role": "paper contract",
+      "sha256": "aec9421b68c02d470eb88259b60e14e49cad9aad67a80d74032d383cdbcf2c3a"
+    },
+    {
+      "path": "paper/ijcnn2027/PLAN.md",
+      "role": "submission plan",
+      "sha256": "c3249863ed7ee8d9d03b27b108bd7406e25bd260024db248e71c9f389c63f55d"
+    },
+    {
+      "path": "paper/ijcnn2027/RELATED_WORK.md",
+      "role": "literature audit",
+      "sha256": "c4cbb51a7473a05979df28b04578bb396bb02f16afec8f99f696b29916d1295f"
+    },
+    {
+      "path": "paper/ijcnn2027/REPRODUCIBILITY.md",
+      "role": "reproducibility guide",
+      "sha256": "3f67c123ca8710be9d440f354a6bf2029c49f1ac69f52a2105b8e7ad554feb04"
+    },
+    {
+      "path": "paper/ijcnn2027/SUBMISSION_ATTESTATIONS.md",
+      "role": "submission checklist",
+      "sha256": "70acaff899df216e321f512df2282976fe1216e638cb64c774fff2d8d35b4ffc"
+    },
+    {
+      "path": "paper/ijcnn2027/build_alignment_factorial.py",
+      "role": "reproduction code",
+      "sha256": "2157a5145fb7f73235c2da591e52f082125ebe4c07add87eb4520d006b29aeb0"
+    },
+    {
+      "path": "paper/ijcnn2027/build_anonymous_supplement.py",
+      "role": "anonymous supplement builder",
+      "sha256": "74bd1d7ba9a099b83229801932bda650465504ddb136480c7ea145a92cd60c41"
+    },
+    {
+      "path": "paper/ijcnn2027/build_calibrated_core.py",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "2b293114e430392c1def3af3cd3d17423769734586858a838f9b4a376df2c3e9"
+    },
+    {
+      "path": "paper/ijcnn2027/build_evidence.py",
+      "role": "reproduction code",
+      "sha256": "897e1ea60bf0741fd6647c0282b8904b5b98702b2be5d5d19557d58485e0472f"
+    },
+    {
+      "path": "paper/ijcnn2027/build_visuals.py",
+      "role": "reproduction code",
+      "sha256": "eb77485b9d4287ba8641a731a57af3866f042a71b87518df4aaedc93a794efc0"
+    },
+    {
+      "path": "paper/ijcnn2027/check_manuscript_claims.py",
+      "role": "reproduction code",
+      "sha256": "b4a388f767dc717b1981044d10f38b025cfc35b5381a4da25aa6cc76b0878c2a"
+    },
+    {
+      "path": "paper/ijcnn2027/check_submission_compliance.py",
+      "role": "submission validation code",
+      "sha256": "af188bb0d15b2d40832a4d228ec1090b159ecb6799bdb2dccfbc8c9887b78dfa"
+    },
+    {
+      "path": "paper/ijcnn2027/check_theory_contract.py",
+      "role": "reproduction code",
+      "sha256": "45959efc5b3cc33ea75415e6ebd4b1b65e592453cfcba37afc63901b2741d3ff"
+    },
+    {
+      "path": "paper/ijcnn2027/dist/event-fedavg-anonymous-supplement.zip",
+      "role": "anonymous supplementary archive",
+      "sha256": "1939d85fad97c8d2fd3599237c77eb68e0aa220934e4bc1d8f09c2a9963fb149"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/calibrated_core_endpoint_effects.csv",
+      "role": "manuscript evidence or artifact",
+      "sha256": "5f329e54abaa0a9c3fcf8510ed9202fb636cd2b2f721b1a6dc10df9f706fc879"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/calibrated_core_endpoints.csv",
+      "role": "manuscript evidence or artifact",
+      "sha256": "50e57495a8bc961cb14915adca62c9fe454e7b343fc46bf4573e14906defcb38"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/calibrated_core_freeze.json",
+      "role": "manuscript evidence or artifact",
+      "sha256": "2c88ab366e4fa0a940863ce3b65e45f6fb2fc3e7f87b4b8d0535999512784060"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/calibrated_core_history.csv",
+      "role": "manuscript evidence or artifact",
+      "sha256": "86961f99a2180c93a7fee1ea714717b7a6767b7088aec5181962d7db77f69276"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/calibrated_core_targets.csv",
+      "role": "manuscript evidence or artifact",
+      "sha256": "ed27f1b35f95b1e762a04420538e749f9c1985296ebe0ab638333f0d37977c5f"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/cifar10_master_results.csv",
+      "role": "generated evidence",
+      "sha256": "326262c8d696f2a6db9a478dd2a0dbc3a55f6137ed267c551e1ddbc70688dcc3"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/fmnist_master_results.csv",
+      "role": "generated evidence",
+      "sha256": "21fb2a7f609f6829be69240e21aee73827aea9d4add2690d6d2b179fea57e403"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/matched_accuracy_traffic.csv",
+      "role": "frozen analysis",
+      "sha256": "4e1e11c833d64b0c24d1a03cedd35fe55ebffadd412a30e237ad8a3ec5d80ee9"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/p11_alignment_factorial.csv",
+      "role": "generated evidence",
+      "sha256": "1b407367283d36367e2791b633c69668d0c1751d51e3e1f856c7af88d5937980"
     },
     {
       "path": "paper/ijcnn2027/evidence/p11_kappa_sensitivity.csv",
@@ -448,34 +2608,449 @@
       "sha256": "281b98729889698f3795738bb4342ff8318305733ffcbccffa5700dd481f0ae8"
     },
     {
-      "path": "paper/ijcnn2027/ANONYMOUS_SUPPLEMENT.md",
-      "role": "anonymous supplement guide",
-      "sha256": "0edfddbc271063cdffecf91db6b60ccaa39e02f16e64fa1691a3d6acb94c2c51"
+      "path": "paper/ijcnn2027/evidence/p12_headline_ten_seed.csv",
+      "role": "generated evidence",
+      "sha256": "5f096c57323aed80b40d5645c85140de587b5a08ce1017da1387af3608a67c3a"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/p12_paired_differences.csv",
+      "role": "generated evidence",
+      "sha256": "366bdf80c350edaabac2debcae4beca59c2ae48fc4793bc7c65635c2f67665ee"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/p13_resnet14_paired.csv",
+      "role": "generated evidence",
+      "sha256": "db22e730a41e72a35fb48e8984a410d78df3185463de70969eb5df04ce3cb085"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/p13_resnet14_ten_seed.csv",
+      "role": "generated evidence",
+      "sha256": "34da24980332d0c0ddb81d0739697e98dacdc581b70eea1337f1ab778a8e18f5"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/p14_figure2_ten_seed.csv",
+      "role": "manuscript evidence or artifact",
+      "sha256": "1f301201a721e1f8d873264e98ab2bbeca3e55c8bc18fcfad7ced4586b987d1e"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/p8_targeted_revision.csv",
+      "role": "generated evidence",
+      "sha256": "d74c8ca121625b1afa7dfef395a711b1bd5097bcbd5469881993b56a45659edb"
+    },
+    {
+      "path": "paper/ijcnn2027/evidence/t4_alignment_audit.csv",
+      "role": "frozen source",
+      "sha256": "40ab919f093bcda4962af2e0e327125264c3fc17133129c3da6ea943cef84a98"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/calibrated_core_target_ratios.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "0e1eeaffec84ec7e26b3c9ffc9237d02173b976ecfeec178e6fb0c5e86446ad5"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/calibrated_core_trajectories.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "284df6f624a934c6909c246323824ebf6d32908fa584cf4ca05ec5b9ba5de65e"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/calibrated_event_protocol.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "40ba1c1ce9e72bed6e9cc9fc570515ab4bf4dcbcb0c85b698fcc64ef3e3c3199"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/communication_frontier_cifar_cnn.pdf",
+      "role": "generated figure panel",
+      "sha256": "bf6153d75d61e919d18bbb795a4955e0a11197dbd5122136c69eadbf418a8521"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/communication_frontier_cifar_resnet14.pdf",
+      "role": "generated figure panel",
+      "sha256": "2a4ef2dc8082e57f7daab308af4c78d1e6681e7af35ed0592be0354859e24426"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/communication_frontier_fmnist_cnn.pdf",
+      "role": "generated figure panel",
+      "sha256": "3f7bdd154e4847b8e57316b934c6f9059abb86442c411d49b523d4eb526a81d9"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/communication_frontier_fmnist_mlp.pdf",
+      "role": "generated figure panel",
+      "sha256": "b6230bdef7d461513f951d4f592e161e1c3494aba8c742eb9443d696d067b016"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/communication_frontier_legend.pdf",
+      "role": "generated figure legend",
+      "sha256": "22617674a5110e9c9f23059bc269dcf0574a4cc71c55e1ecb0ffdb728a75ea73"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_cifar_cnn.pdf",
+      "role": "generated convergence panel",
+      "sha256": "86ddb324df2bfaab0ec7cc3c5c8d7925ae74901817a9dd029a6ad1fbdb32dcea"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_cifar_resnet14.pdf",
+      "role": "generated convergence panel",
+      "sha256": "f363feeb1264518eb318c82f98c150c81026120880005b4801ee4a1d5253ef0d"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_fmnist_cnn.pdf",
+      "role": "generated convergence panel",
+      "sha256": "5987db1e39a46024be5b252f820f2ec733ac798eefbadc9e9d32bf8322e7f741"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_fmnist_mlp.pdf",
+      "role": "generated convergence panel",
+      "sha256": "6f10865bda09cf5ca16be54cdb698f7f9d81c34f92c0e662454d9d58ca92303d"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/convergence_legend.pdf",
+      "role": "generated figure legend",
+      "sha256": "30ecfd36de6b1934a5843d176ae8db20e25d8405523a2945d22b98ce0530bb3b"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/event_fedavg_method.drawio",
+      "role": "editable figure source",
+      "sha256": "73112ccabd3869eafd8ef3a3c7919eeba5832f9c9fd3776fb9efd0bce3674d4c"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/event_fedavg_method.pdf",
+      "role": "generated figure",
+      "sha256": "e78776b3bbef56b8b4f3cd781a5b009b866d16fe571c8f1153da6468d94b0f85"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/p20_participation_accuracy.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "6efbf83d6323121324e9974689c91fdd77f93105213d0721275e3995b067be75"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/p20_participation_communication.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "65ed2f7e8bcc7e3b9519004e6056c0eb0ddd928e9c362614574ae789b69204a9"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/p20_participation_composition.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "da3ef925b377d25cc165806bd5956bdc08540b61531472cbb5860cda494e4a8c"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/p20_participation_method_legend.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "633237383a2a61d16423af730e47e939fcc9874f4fe9f2ad69d21fb54fc67e90"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/p20_participation_robustness.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "74b07abd3929e47f746131c330a63617ff9e68939f4a85967f28b54db6513049"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/p20_participation_traffic_legend.pdf",
+      "role": "manuscript evidence or artifact",
+      "sha256": "ba4987ef7b7fcb81d414ba705503994bbac89d45ad250b9d9708279d2b7ce9b0"
+    },
+    {
+      "path": "paper/ijcnn2027/figures/resnet14_communication_trajectory.pdf",
+      "role": "generated trajectory figure",
+      "sha256": "1ab9af3bed5350d40d0d37e5e680fbe79c3cac377b813fc65c396f8754d52609"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/calibrated_core_results.tex",
+      "role": "manuscript evidence or artifact",
+      "sha256": "d6176e7d2c2017a0effc7309c4f454907ae8a57af78e71ffcf5c0d6cf694b13b"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/calibrated_core_targets.tex",
+      "role": "manuscript evidence or artifact",
+      "sha256": "963b0e14dacc7f18adfe696b87c18baed1b6bc02959f1d8ae445db04216bbb39"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/cifar10_table.tex",
+      "role": "generated table",
+      "sha256": "70f570f78e0286a5bb085404a15b745e49edae412dc5c7756d4937c779d23efe"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/fmnist_quality_table.tex",
+      "role": "generated table",
+      "sha256": "bbc9dc3fcaef6d87fe3d68527605103016c878b039c86a26f545fc388a6695f6"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/fmnist_traffic_table.tex",
+      "role": "generated table",
+      "sha256": "4fff8ab0da457d4508f838b1653555c7c7425704140251f419a07278ddaa8a6e"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/main_results_table.tex",
+      "role": "generated table",
+      "sha256": "e7c35f26e9ae343dba85679b59e022d0de9585956b7f2d1a8e055410ac442281"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/matched_accuracy_traffic_table.tex",
+      "role": "generated table",
+      "sha256": "b5f03c00336e4279d94b6b67c4b903190cbc53b4fb8b41b0416b51d0a0b71676"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/p11_alignment_table.tex",
+      "role": "generated table",
+      "sha256": "bd9837b21d757f7df9de29875718eec4dddc77ec4de96806c9d9357e902e4508"
+    },
+    {
+      "path": "paper/ijcnn2027/generated/p15_operator_ablation_table.tex",
+      "role": "manuscript evidence or artifact",
+      "sha256": "7b39a71349b66cda18c03a0b6587c1d5a98da5039f7c26de45bbd20f074d35e3"
+    },
+    {
+      "path": "paper/ijcnn2027/main.tex",
+      "role": "manuscript",
+      "sha256": "5ce4b468dcc20402b9c1fe7758616a0768b106a51721cc1b233d259e44803083"
+    },
+    {
+      "path": "paper/ijcnn2027/references.bib",
+      "role": "manuscript",
+      "sha256": "ffdf05f008e0a2f14c1131290039720f378ba75c89cb3657683695c0b3bd5fdf"
+    },
+    {
+      "path": "paper/ijcnn2027/reproduce.py",
+      "role": "reproduction code",
+      "sha256": "3bb82bd77849b2da6d085922c30360d71e6ea18d23fd7f9d8aa0f21ef28ac10c"
     },
     {
       "path": "paper/ijcnn2027/reproduce_anonymous.py",
       "role": "anonymous supplement validator",
-      "sha256": "ec32f1562be7ddce30600921d2d1784480bb194c591699155b8442834f00a738"
+      "sha256": "8001c151130f34e15bb301b4c2df04a2cc81732e3a5466ad5a20f690abf6c2c5"
     },
     {
-      "path": "paper/ijcnn2027/build_anonymous_supplement.py",
-      "role": "anonymous supplement builder",
-      "sha256": "2c8be32416944ed4be39012b72cdfce9bde5c269d96606d0cd278d8177831a49"
+      "path": "paper/ijcnn2027/requirements-compliance.txt",
+      "role": "submission validation environment",
+      "sha256": "3ec8922905dc4e3a10c3b46bd7fba023c37ffc309d51c6bed2a13ec3e98177fd"
     },
     {
-      "path": "paper/ijcnn2027/dist/event-fedavg-anonymous-supplement.zip",
-      "role": "anonymous supplementary archive",
-      "sha256": "1968b9c64ba5154040821f3db55581b11a63b6eb95854439554f8a5df2f612ca"
+      "path": "paper/ijcnn2027/requirements-evidence.txt",
+      "role": "environment",
+      "sha256": "87ed85985476093d01d1405178e61bcdfd650f171481af44d2fd3815ca570d2a"
     },
     {
-      "path": "paper/ijcnn2027/REPRODUCIBILITY.md",
-      "role": "reproducibility guide",
-      "sha256": "9ecda8e02746af9495904ad3d1b758cc12fb41bf741d1b939b00ec96af55b1ea"
+      "path": "paper/ijcnn2027/requirements-reproduction.txt",
+      "role": "environment",
+      "sha256": "65dfcb5ee799b7ee28fa17a30c0f32315735645464d9cbea64c9457f38d7d5af"
     },
     {
-      "path": "paper/ijcnn2027/IEEEtran.bst",
-      "role": "IEEE bibliography style",
-      "sha256": "aa5c775bdeb820383cc7f3e558596838ad9a2600309a7353dc3444071f841460"
+      "path": "paper/ijcnn2027/review/event_fedavg_calibrated_review.pdf",
+      "role": "manuscript source, validation, or review snapshot",
+      "sha256": "956cd67fe0eba0fdbe8579a097375e1c4ccaedb5d89137a6b0c5d1035b98af55"
+    },
+    {
+      "path": "paper/ijcnn2027/supplementary/M3_DENSE_SCHEDULE_FAIRNESS.md",
+      "role": "manuscript evidence or artifact",
+      "sha256": "0494bdb1134a19ec82bc188484786df2f609192e548c47dbc6e7a81e14a73a5c"
+    },
+    {
+      "path": "paper/ijcnn2027/supplementary/P11_THEORY_TRAJECTORY_AUDIT.md",
+      "role": "manuscript evidence or artifact",
+      "sha256": "357174ba419bf72ef95483dd90271bf023f3e1ad5a6715a22f3408f148fefee0"
+    },
+    {
+      "path": "src/neuromorphicfl/__init__.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "872c4c69253ed71f0bbabef64004cba29beb305e2aa71a194b7701571677de18"
+    },
+    {
+      "path": "src/neuromorphicfl/async_simulation.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "8c9c5a390cb1f7e4b4794fa765c25944463d609d493439d2a60681930b4219b9"
+    },
+    {
+      "path": "src/neuromorphicfl/baseline_checkpoint.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "63835e71195dfbd1f50953392db348b8d9fbc760833da25adada579675eb2d75"
+    },
+    {
+      "path": "src/neuromorphicfl/bidirectional_protocol.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "cd1c99779a5533aa862e3274bbd84a5bbb6c0aad1cd27e5c2e5dec8a94f78d7d"
+    },
+    {
+      "path": "src/neuromorphicfl/calibrated_certificate.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "af9018b142b1eae8cfbaeb305f48afda9979f1e5043cd65fd79044f493442a79"
+    },
+    {
+      "path": "src/neuromorphicfl/cifar10_benchmark.py",
+      "role": "experiment code",
+      "sha256": "448a96c1addabeb0b15977a9e7ab3dee41a7c87bf48d7ee971d3e6b1e69ea58a"
+    },
+    {
+      "path": "src/neuromorphicfl/cifar10_resnet.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "1bd498545749c4337729dd5353bf6871b0106b7298bf04e1cf0a07e92db0bb0d"
+    },
+    {
+      "path": "src/neuromorphicfl/cifar10_resnet_torch.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "9cf19236c39e23aa2cd891547b7fba9128db1cbfbf8caee487ae213a7274ca2d"
+    },
+    {
+      "path": "src/neuromorphicfl/competitive_vector.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "e219b01f4c4c23f761986904a3118b236f8d5c6332c95122273bed4347c790f1"
+    },
+    {
+      "path": "src/neuromorphicfl/confirmation_metrics.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "e20c1e293fc5519609c5a69a62e27dcee9fb1d47dec7b352b22d69e970572074"
+    },
+    {
+      "path": "src/neuromorphicfl/delayed_async.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "e524ff711b30c583cff4297289554f825e7c43fa32da8969834bcf6f11174aed"
+    },
+    {
+      "path": "src/neuromorphicfl/descent_aware.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "32f97ab211abb318d4ba0f39fe3230cec894f0dce6d25bf1c7e758dff1ce6cab"
+    },
+    {
+      "path": "src/neuromorphicfl/event_codec.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "7faacce3a8eb605b27ae8a70318d759f0dcc22cc0f1ce44684b66555921b5b9b"
+    },
+    {
+      "path": "src/neuromorphicfl/event_codec_pilot.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "c37f6f417d317d60a3b92d0990e110f43c62d0a4a5cffd711e732e3538004114"
+    },
+    {
+      "path": "src/neuromorphicfl/fedavg_cnn_compatibility.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "ae2816edad2dc6ffc6204c15a296c984eb3e1fb5067757c47ac52d8c3c39afcc"
+    },
+    {
+      "path": "src/neuromorphicfl/fedavg_event_compatibility.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "7ba5b6b79a2dd9f2c53432abb3a6d38effc9df01cbd76b2e291df5ed8bf04105"
+    },
+    {
+      "path": "src/neuromorphicfl/final_baseline_campaign.py",
+      "role": "experiment code",
+      "sha256": "e7dabedf0e2690e0823d9c46135e76b0c440588d7f8fcac99028055a9a557367"
+    },
+    {
+      "path": "src/neuromorphicfl/fmnist_cnn_benchmark.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "138842397dd6126c475c9af9a7083c396a80f5d2c4ce68fa0fa69dfee12a2b10"
+    },
+    {
+      "path": "src/neuromorphicfl/fmnist_event_benchmark.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "ce7ac49888d150de5b1bd5b6f23ad5ab76c9786ea92f8e1839a3fde9e1ddf433"
+    },
+    {
+      "path": "src/neuromorphicfl/fmnist_multiclass_benchmark.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "826bf6a9ff9e2a6ccad05c912d72365c1f84786e8fc91f138f51a93773a90666"
+    },
+    {
+      "path": "src/neuromorphicfl/homeostatic.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "3e741940d6df8e7bcaac0a1bffdf60737e674670595e90023b9eb4cdb5e00c02"
+    },
+    {
+      "path": "src/neuromorphicfl/logistic_certificate.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "7f133dd03f1fa39b2d31f31de5bb5c97c00d42fe3c233a9940e57ba79cabb31b"
+    },
+    {
+      "path": "src/neuromorphicfl/mechanism_audit.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "0a1dbaef5da929bef9a5533d9c374b049eab34ba6cd0d300c3456127beb94e06"
+    },
+    {
+      "path": "src/neuromorphicfl/metrics.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "5faba3bf4c7324be84d8f952a97be920272a474c4024a1e8dbd14b8adb3a8e2d"
+    },
+    {
+      "path": "src/neuromorphicfl/mlp_depth_scaling.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "ceb4b19175471512c4f4957157054932109c76a429994860d13d1614f599237d"
+    },
+    {
+      "path": "src/neuromorphicfl/mlp_event_gate.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "72d65e661e2f53ac6543dd9861e6bbaadc11453d0cf6fc6a30f65dff703367b8"
+    },
+    {
+      "path": "src/neuromorphicfl/objectives.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "cd0e87bddd7a29e31a2e4151302cbbfc3446b410ae0a7d3c575e68f7fe077a27"
+    },
+    {
+      "path": "src/neuromorphicfl/optimizers.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "65d7ed19d7454b3d4d4f814e5f5d6a61d2cf7d6bf5bc485e178139cc3a54f193"
+    },
+    {
+      "path": "src/neuromorphicfl/partial_participation.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "c61970428cf3c086ef31728e23b3d12c73c560f745a8136b8ef9092d46ba858a"
+    },
+    {
+      "path": "src/neuromorphicfl/q1_nearest_neighbor.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "f45d918a285b140612bbe9db7571553e7a59c09fe86bc036eec80914f9cd44d5"
+    },
+    {
+      "path": "src/neuromorphicfl/rotated_geometry.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "59b78150c6ef7657cbf92d72502bfb8556e847cb37bfe57120c6d62701a77359"
+    },
+    {
+      "path": "src/neuromorphicfl/selective_block_certificate.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "d12df818bde4f3042082f76ae1a78a3cacd434965c69b6581ee3bdc9522bcfbb"
+    },
+    {
+      "path": "src/neuromorphicfl/selective_calibration.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "547b5c52084ff73952addaee7fea0233ecf09bb8a119cfa5fb609ed39a3f5258"
+    },
+    {
+      "path": "src/neuromorphicfl/simulation.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "3196fd68eb2a469cc1776c3e5ed1c238c97bdcd4cfb44ca3eeddad7933f186ff"
+    },
+    {
+      "path": "src/neuromorphicfl/sparse_interval_certificate.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "93830632316fcf5dd9552d8369c1e7857a4ff35a0882ab24f2a6af2a0130518b"
+    },
+    {
+      "path": "src/neuromorphicfl/stc.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "e05c6cead5c1b75d4b6b46c0e32b073028b959b8ee5b812627cece002c6446e7"
+    },
+    {
+      "path": "src/neuromorphicfl/timing_aware.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "d22c03fac2f124eafbfa5e70ec67b04476d716f0fcf5ece3ce2f8cc3a889889f"
+    },
+    {
+      "path": "src/neuromorphicfl/vector_quadratic.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "ffa04b2acd6aca775e1a020a8bf9d12512f459499a0845fac0f8ffa0793cd6aa"
+    },
+    {
+      "path": "src/neuromorphicfl/vector_timing.py",
+      "role": "frozen calibrated panel source",
+      "sha256": "704e125fd7e8b01192ca12f4b43b7b8113265e4b8a9a76a5051396bc1903bd4a"
+    },
+    {
+      "path": "tools/p13_workstation.sh",
+      "role": "experiment launcher",
+      "sha256": "5c32229d3d4364342638b8cacc07e7a8b948594861b4b50ff87c428b76feb01d"
     }
-  ]
+  ],
+  "freeze_date": "2026-11-26",
+  "source_updates_already_in_parent": {
+    "src/neuromorphicfl/cifar10_benchmark.py": "6ffa635: partial-participation support",
+    "src/neuromorphicfl/final_baseline_campaign.py": "55c9c6f: STC development support"
+  }
 }

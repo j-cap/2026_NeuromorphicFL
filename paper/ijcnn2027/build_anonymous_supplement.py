@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
+import re
 from pathlib import Path
 import zipfile
 
@@ -39,6 +41,8 @@ def selected_files() -> set[Path]:
         "paper/ijcnn2027/requirements-evidence.txt",
         "paper/ijcnn2027/build_evidence.py",
         "paper/ijcnn2027/build_visuals.py",
+        "paper/ijcnn2027/build_calibrated_core.py",
+        "paper/ijcnn2027/evidence/calibrated_core_freeze.json",
         "paper/ijcnn2027/build_alignment_factorial.py",
         "paper/ijcnn2027/check_manuscript_claims.py",
         "paper/ijcnn2027/check_theory_contract.py",
@@ -48,6 +52,16 @@ def selected_files() -> set[Path]:
         "experiments/results/final_baseline_campaign/observed_heldout_summary.csv",
         "experiments/results/final_baseline_campaign/observed_traffic_matched_summary.csv",
     )
+    # The archive is an artifact-reproduction profile. One historical driver
+    # contains an identifying repository name in its help examples; it is not
+    # required by any builder. Preserve that omission explicitly in the archive
+    # freeze rather than rewriting a frozen scientific source.
+    freeze = json.loads((PAPER / "evidence/calibrated_core_freeze.json").read_text())
+    omitted = {"experiments/stc_cifar10_confirmation.py"}
+    for relative in freeze["files"]:
+        if relative not in omitted:
+            add_if_present(paths, relative)
+
     for relative in exact:
         add_if_present(paths, relative)
 
@@ -57,6 +71,9 @@ def selected_files() -> set[Path]:
         "paper/ijcnn2027/generated/*.tex",
         "paper/ijcnn2027/figures/communication_frontier_*.pdf",
         "paper/ijcnn2027/figures/convergence_*.pdf",
+        "paper/ijcnn2027/figures/calibrated_*.pdf",
+        "paper/ijcnn2027/figures/p20_*.pdf",
+        "paper/ijcnn2027/supplementary/*.md",
         "experiments/p*.py",
         "experiments/final_baseline_*.py",
         "experiments/results/p3_cifar10/*.csv",
@@ -126,6 +143,19 @@ def build(output: Path) -> tuple[int, str]:
     payloads.append((f"{ARCHIVE_ROOT}/README.md", readme))
     for path in sorted(files, key=lambda item: item.relative_to(REPO).as_posix()):
         content = path.read_bytes()
+        if path == PAPER / "evidence/calibrated_core_freeze.json":
+            manifest = json.loads(content)
+            omitted_path = "experiments/stc_cifar10_confirmation.py"
+            manifest["artifact_profile"] = "anonymous_output_reproduction"
+            manifest["omitted_training_only_sources"] = {
+                omitted_path: manifest["files"].pop(omitted_path)
+            }
+            content = (json.dumps(manifest, indent=2) + "\n").encode()
+        if path.parent == PAPER / "supplementary" and path.suffix == ".md":
+            note = content.decode("utf-8")
+            note = re.sub(r"https://github[.]com/j-cap/[^\s)]+", "[source snapshot]", note)
+            note = note.replace("j-cap/2026_NeuromorphicFL", "[source repository]")
+            content = note.encode()
         scan_text(path, content)
         payloads.append((archive_name(path), content))
 

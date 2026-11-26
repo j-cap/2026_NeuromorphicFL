@@ -1,3 +1,16 @@
+# Current calibrated-panel reproduction (2026-11-26)
+
+The current main paper uses `build_calibrated_core.py` and the compact-CNN and
+ResNet-14 core confirmation CSVs. See `CALIBRATED_PANEL_CONSOLIDATION.md` for
+Windows commands and commit/push instructions. `reproduce.py --regenerate`
+rebuilds the new products as well as the preserved historical evidence products.
+The full new input inventory is locked in `evidence/calibrated_core_freeze.json`.
+No full training runs are triggered by reproduction. New manuscript text is blue.
+
+The requirements-evidence NumPy/pandas pins describe the archived NumPy campaigns;
+ResNet training's distinct Torch/CUDA environment is recorded in its immutable
+protocol. The current figure builder needs only NumPy and Matplotlib, not Torch.
+
 # IJCNN reproducibility guide
 
 This guide distinguishes two reproducibility levels. The submission gate uses
@@ -67,7 +80,8 @@ with `experiments/p12_headline_ten_seed.py`; its frozen matrix and result audit
 are in `P12_HEADLINE_TEN_SEED_PROTOCOL.md` and
 `P12_HEADLINE_TEN_SEED_RESULTS.md`.
 
-The single-environment P12 campaign is the current headline authority. The P1,
+The P12 campaign is a historical supporting authority, superseded for the
+current CIFAR headline by the two calibrated core panels. The P1,
 P3, and P8 artifacts remain the historical selection and audit trail.
 The P8 like-for-like rerun reproduced two of three seeds exactly; seed 3500
 followed a different last-bit threshold branch on a later execution platform.
