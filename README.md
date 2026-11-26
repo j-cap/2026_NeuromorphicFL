@@ -89,10 +89,14 @@ All 54 screens and nine continuations completed. The report preserves the
 CE-selected primary settings and includes both sparse STC finalists, whose
 communication/accuracy tradeoff challenges an overall Event advantage.
 These validation results are separate from the completed ten-pair Event/Ström
-test confirmation. The selected common-seed confirmation is prepared in
+test confirmation. The selected common-seed confirmation is documented in
 [`experiments/RESNET14_CORE_CONFIRMATION.md`](experiments/RESNET14_CORE_CONFIRMATION.md):
 thirty new Dense, EF-TopK and STC p=1/gain-4 fits reuse the twenty completed
 pulse outcomes. This campaign includes no additional sparse-STC points or tuning.
+All fifty outcomes are now complete and independently audited in
+[`experiments/RESNET14_CORE_CONFIRMATION_RESULTS.md`](experiments/RESNET14_CORE_CONFIRMATION_RESULTS.md).
+Event saves 23.4% of unicast traffic to 50% accuracy versus selected STC; final
+quality/cost tradeoffs and the limits of a faster-convergence claim remain explicit.
 Its [CPU codec acceleration](experiments/RESNET14_CODEC_SPEED.md) preserves exact
 message bytes, native updates, predictions and communication accounting while
 reducing the dominant STC serialization cost. Run commands stay the same.

@@ -4,6 +4,10 @@ Repository: **j-cap/2026_NeuromorphicFL**, the research-code repository.
 Entry point: `experiments/resnet14_core_confirmation.py`.
 Results: `experiments/results/resnet14_core_confirmation_v1/`.
 
+Status: all thirty new fits and twenty verified reuses completed. The
+[results and independent audit](RESNET14_CORE_CONFIRMATION_RESULTS.md) report
+the five-method test comparison, traffic-to-target results and paper scope.
+
 ## Scope and fixed choices
 
 Complete the original three-baseline panel after the
