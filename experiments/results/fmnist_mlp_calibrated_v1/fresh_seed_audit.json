@@ -1,0 +1,18 @@
+{
+  "overlap": [],
+  "prior_inventory_sha256": "2d70bb6fa978a97df63c30e5762eea01bfea2c1ec1c45f765d31c001f7daf642",
+  "prior_unique_seed_count": 48,
+  "selected_partition_seeds": [
+    11000,
+    11100,
+    11200,
+    11300,
+    11400,
+    11500,
+    11600,
+    11700,
+    11800,
+    11900,
+    12000
+  ]
+}

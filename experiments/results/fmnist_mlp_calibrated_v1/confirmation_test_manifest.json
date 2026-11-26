@@ -1,0 +1,13 @@
+{
+  "cache_sha256": {
+    "test_images.npy": "ce12b0cc9a8a783046baa0fdc5bb9a2c1d1224b238fa814e245797707b624dff",
+    "test_labels.npy": "33e7c41e1d27e7ea46528a86fd6d54e0eb0d60f705e95ae5e9c956635f269cbc"
+  },
+  "examples": 10000,
+  "normalization": "float32(raw)/127.5-1",
+  "raw_sha256": {
+    "t10k-images-idx3-ubyte.gz": "346e55b948d973a97e58d2351dde16a484bd415d4595297633bb08f03db6a073",
+    "t10k-labels-idx1-ubyte.gz": "67da17c76eaffca5446c3361aaab5c3cd6d1c2608764d35dfb1850b086bf8dd5"
+  },
+  "scope": "test"
+}
