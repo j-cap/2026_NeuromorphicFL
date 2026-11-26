@@ -1,0 +1,5 @@
+reference,n_development_splits,event_accuracy_difference_pp,event_CE_difference,event_unicast_saving_percent,event_uplink_saving_percent,event_downlink_saving_percent,inference
+strom,1,-0.3,-1.43448660771e-05,15.3595248446,20.3981080382,14.4763431392,single_development_split_no_confidence_interval_no_confirmatory_claim
+dense,1,0,-0.000719038382173,98.027434166,99.4464474568,96.6094211364,single_development_split_no_confidence_interval_no_confirmatory_claim
+stc,1,0.0666666666667,-0.00613605606059,38.4965462189,82.5611604902,-4.64059339714,single_development_split_no_confidence_interval_no_confirmatory_claim
+ef_topk,1,0.333333333333,-0.00614074295262,94.9762198746,95.3207453895,94.9151393829,single_development_split_no_confidence_interval_no_confirmatory_claim
