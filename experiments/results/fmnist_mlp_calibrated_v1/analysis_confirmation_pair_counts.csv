@@ -1,0 +1,5 @@
+reference,n,event_lower_final_cost,event_higher_accuracy,equal_accuracy,event_lower_CE
+strom,10,10,7,0,9
+dense,10,10,7,0,4
+stc,10,10,5,0,6
+ef_topk,10,10,6,0,8
