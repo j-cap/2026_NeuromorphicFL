@@ -1,0 +1,78 @@
+{
+  "contract_sha256": "5549ead3970cb21c4f3b363b11ea64436dca6e3562a070822341e24d197e3a35",
+  "dataset_images_loaded_or_model_evaluation_run": false,
+  "derived_csv_sha256": {
+    "coverage": "5e1c842722c0b124b6a4d78445e7e1fb878fae9c3091242d1197532bc209cbc6",
+    "endpoint_summary": "c37632b3cde6f6e7924c43abc704c5e5d0ea608cb74d1c16420ba3eea05027f7",
+    "history": "1e80e7cf78a9817a9b0f1fee0fb6a70228f5e3d2d5a8552031c9f3b0d1ea09b3",
+    "paired_endpoints": "522568bc11e3bf3a544d15ce62809f835ffacd7d5154eed44a96dc507bb74b71",
+    "paired_targets": "6973d5db5ca84561f813499cbc348f8596f3a57dceda4f873b726f7493286525",
+    "runs": "355d208bc86fa1c4bb1dcfcc749fe0392a8b69eae0c4185b57e152a37902ef33",
+    "target_crossings": "903654290e97da3d86547f8b6d5160add2aa4213703903f1cbb7022b5b2f39b4"
+  },
+  "evaluation_scope_read_from_result_files": "validation",
+  "original_receipts": {
+    "pilot_k05_dense_p13000": {
+      "receipt": "ca08e64c641d3db8f2ae30ca2d40246d47863f065310604055401d59b267a03c",
+      "state": "complete"
+    },
+    "pilot_k05_ef_topk_p13000": {
+      "receipt": "129528c482246157466aee5daf4c1de8b2c4b48892c1cdf332c9ef9fcaad6f82",
+      "state": "complete"
+    },
+    "pilot_k05_event_p13000": {
+      "receipt": "ae7c4bc8ffd34fff5631d590c6554e03a8f20e44ebb4a39938f50abcafd4337d",
+      "state": "complete"
+    },
+    "pilot_k05_stc_p13000": {
+      "receipt": "57f28e890354ca61875a30ea5e6753f03668c4aa056ff60017315802214d882d",
+      "state": "complete"
+    },
+    "pilot_k05_strom_p13000": {
+      "receipt": "98c768579d91cbe2d4b36dce68cd206758f311e8c91359404b47c6c9d7e0b6be",
+      "state": "complete"
+    },
+    "pilot_k10_dense_p13000": {
+      "receipt": "7b821da98c29600d975485c73dac31767fa150cd8bca0965493705b4739f3ddc",
+      "state": "complete"
+    },
+    "pilot_k10_ef_topk_p13000": {
+      "receipt": "cfae186e5088a535c7a087fd293987601b6b497a8c4f63ed2fcb776aa7afc6eb",
+      "state": "complete"
+    },
+    "pilot_k10_event_p13000": {
+      "receipt": "731a8274a2a736e344f0a1ba7da5fd0071278cf5bbf72f9389c92e5a9bfdd008",
+      "state": "complete"
+    },
+    "pilot_k10_stc_p13000": {
+      "receipt": "667e57e2fb1a420ff05f01884902a9fd4ece75a8c2830b81e8228ff2b3e2d0c9",
+      "state": "complete"
+    },
+    "pilot_k10_strom_p13000": {
+      "receipt": "984a61c2a995e601fcb9c05ecb48c7aafbcd3aff70c389d7ee97dd43c13ab4f8",
+      "state": "complete"
+    },
+    "pilot_k50_dense_p13000": {
+      "receipt": "f14266b599af81f39997f6b090757faa602eb7e2edf34140a3a143f589ede3a0",
+      "state": "complete"
+    },
+    "pilot_k50_ef_topk_p13000": {
+      "receipt": "4fcdf0e2fb6ec2701e06281d13d0155f4bc9cdd27b45978e6ae351cd087fdac4",
+      "state": "complete"
+    },
+    "pilot_k50_event_p13000": {
+      "receipt": "d59a1030b1970273d044b18a592534f18621715761749aa09872831dacfc4c84",
+      "state": "complete"
+    },
+    "pilot_k50_stc_p13000": {
+      "receipt": "e2b38273a4f7ac04c3e2265953a8a9acd43fdd070ec279250cba1ebc3e0dcbc6",
+      "state": "complete"
+    },
+    "pilot_k50_strom_p13000": {
+      "receipt": "143c4f4a29e3bc7a724d01f90ba7976804bed8f144217afc01f98846f34909c2",
+      "state": "complete"
+    }
+  },
+  "round_fingerprints_prefixes_frames_reconstruction_and_terminal_components_verified": true,
+  "training": false
+}

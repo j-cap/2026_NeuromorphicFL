@@ -1,0 +1,12 @@
+{
+  "all_fits_complete_finite": true,
+  "all_jobs_terminal": true,
+  "complete": 15,
+  "contract_sha256": "5549ead3970cb21c4f3b363b11ea64436dca6e3562a070822341e24d197e3a35",
+  "expected": 15,
+  "failed_or_missing_seed_pairs": "reported_explicitly_endpoint_effects_blocked_not_silently_dropped",
+  "numerical_failure": 0,
+  "pending": 0,
+  "phase": "pilot",
+  "selection_or_training_in_analysis": false
+}

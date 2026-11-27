@@ -1,0 +1,25 @@
+{
+  "elapsed_seconds_this_attempt": 145.06426129999454,
+  "identity": {
+    "active_clients": 10,
+    "config_sha256": "de3549ad7f1a93189196da02e37e74303ddce9a56384fb81b3892f0e034d0d75",
+    "confirmation_freeze_sha256": "",
+    "contract_sha256": "5549ead3970cb21c4f3b363b11ea64436dca6e3562a070822341e24d197e3a35",
+    "evaluation_scope": "validation",
+    "horizon": 300,
+    "method": "ef_topk",
+    "partition_manifest_sha256": "564fa4e59f61675763cd24f5fc6efdb6ed0ced5d17994f547262525a86983e4e",
+    "partition_seed": 13000,
+    "phase": "pilot",
+    "schedule_sha256": "7b1ec4965bdd9a0792302ad9b2a8cf3b4e50841aec8cb6e0171ef7889d4ad996",
+    "selection_seed": 213000,
+    "test_manifest_sha256": "",
+    "train_seed": 113000
+  },
+  "sha256": {
+    "history": "0882264f288e3cd8d346e0ed41e7c1702cd11d2baa045d8fac62b5a5dd6a5726",
+    "rounds": "fe6423bcbd8266caeed3874039b0f211f8b8a4ebf9c32c749f5c43ce164a3c02",
+    "summary": "28d5e9d2ba09d8a2605237180e1730634f7ef4d87bd0112b17ffb1ae05c6861b"
+  },
+  "state": "complete"
+}

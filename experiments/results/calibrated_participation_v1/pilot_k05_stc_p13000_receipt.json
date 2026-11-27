@@ -1,0 +1,25 @@
+{
+  "elapsed_seconds_this_attempt": 74.05810949999432,
+  "identity": {
+    "active_clients": 5,
+    "config_sha256": "b868e4e319cbed388bf158ebd76c04fc30f0ff0bef411d36282f4e95a59b4365",
+    "confirmation_freeze_sha256": "",
+    "contract_sha256": "5549ead3970cb21c4f3b363b11ea64436dca6e3562a070822341e24d197e3a35",
+    "evaluation_scope": "validation",
+    "horizon": 300,
+    "method": "stc",
+    "partition_manifest_sha256": "564fa4e59f61675763cd24f5fc6efdb6ed0ced5d17994f547262525a86983e4e",
+    "partition_seed": 13000,
+    "phase": "pilot",
+    "schedule_sha256": "d488d573365075e8419cb82dbbb105e57deedf5ab4f507abfc7f5107abd96f44",
+    "selection_seed": 213000,
+    "test_manifest_sha256": "",
+    "train_seed": 113000
+  },
+  "sha256": {
+    "history": "12f32980819839fda6dd9f1b07861ef2cd05ca831f5df15f5376f254d4674a7d",
+    "rounds": "532693d01c880b391088198b29cf954f873c786a99b4f37a6cc2c587a6fb0e1c",
+    "summary": "042f1dda63e1d883174f9e44a3b681a62f70134059563b99592db3c93187e1df"
+  },
+  "state": "complete"
+}
