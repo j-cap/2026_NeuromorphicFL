@@ -146,3 +146,10 @@ paper/ijcnn2027/dist/*.zip
 !experiments/results/fmnist_mlp_calibrated_v1/comparison.pdf
 !experiments/results/fmnist_mlp_calibrated_v1/comparison.png
 fmnist_mlp_calibrated.log
+
+# Separate fixed-setting participation study; binary checkpoints stay local.
+!experiments/results/calibrated_participation_v1/
+!experiments/results/calibrated_participation_v1/*.csv
+!experiments/results/calibrated_participation_v1/*.json
+!experiments/results/calibrated_participation_v1/*_comparison.pdf
+!experiments/results/calibrated_participation_v1/*_comparison.png
